@@ -4,6 +4,7 @@ const app = getApp()
 
 Page({
   data: {
+    statusBarHeight: 0,
     notificationCount: 2,
     banners: [
       {
@@ -66,6 +67,22 @@ Page({
   },
 
   onLoad() {
+    // 获取系统状态栏高度
+    try {
+      const systemInfo = wx.getSystemInfoSync()
+      // 添加更大的安全边距（额外增加20px）
+      this.setData({
+        statusBarHeight: systemInfo.statusBarHeight + 20
+      })
+      console.log('状态栏高度+额外边距:', systemInfo.statusBarHeight + 20)
+    } catch (e) {
+      // 使用固定的安全值
+      this.setData({
+        statusBarHeight: 64  // 更大的默认值
+      })
+      console.error('获取系统信息失败', e)
+    }
+    
     // 页面加载时获取数据
     this.fetchBanners()
     this.fetchActivities()

@@ -4,6 +4,7 @@ const app = getApp<IAppOption>()
 
 Page({
   data: {
+    statusBarHeight: 0,
     notificationCount: 2,
     banners: [
       {
@@ -40,6 +41,16 @@ Page({
   },
 
   onLoad() {
+    // 获取状态栏高度
+    try {
+      const systemInfo = wx.getSystemInfoSync();
+      this.setData({
+        statusBarHeight: systemInfo.statusBarHeight || 0
+      });
+    } catch (e) {
+      console.error('获取系统信息失败', e);
+    }
+    
     // 页面加载时获取数据
     this.fetchBanners()
     this.fetchActivities()

@@ -1,18 +1,19 @@
 <!--index.wxml-->
 <view class="index-container">
-  <!-- 由于设置了navigationStyle: "custom"，不需要显示导航栏组件 -->
-  
-  <!-- 搜索栏和会员等级 -->
-  <view class="search-container">
-    <view class="search-bar" bindtap="onSearchTap">
-      <icon type="search" size="14" color="#999"></icon>
-      <view class="search-text">搜索商品、活动</view>
-    </view>
-    <view class="user-info">
-      <view class="notification-icon" bindtap="onNotificationTap">
-        <image src="/assets/icons/notification.svg" mode="aspectFit"></image>
+  <!-- 替换原来的占位元素，使用新的header元素 -->
+  <view class="header" style="padding-top: {{statusBarHeight}}px;">
+    <!-- 搜索栏和会员等级 -->
+    <view class="search-container">
+      <view class="search-bar" bindtap="onSearchTap">
+        <icon type="search" size="14" color="#999"></icon>
+        <view class="search-text">搜索商品、活动</view>
       </view>
-      <view class="member-badge">初级会员</view>
+      <view class="user-info">
+        <view class="notification-icon" bindtap="onNotificationTap">
+          <image src="/assets/icons/notification.svg" mode="aspectFit"></image>
+        </view>
+        <view class="member-badge">初级会员</view>
+      </view>
     </view>
   </view>
   
@@ -25,46 +26,53 @@
     </swiper>
   </view>
   
-  <!-- 功能导航 -->
+  <!-- 功能导航 - 更新为SVG图标 -->
   <view class="nav-container">
     <view class="nav-grid">
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
-        <image class="nav-icon" src="/assets/icons/booking.png" mode="aspectFit" />
+        <image class="nav-icon" src="/assets/icons/reserve.svg" mode="aspectFit" />
         <text>球馆预约</text>
       </view>
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/activity/index">
-        <image class="nav-icon" src="/assets/icons/activity.png" mode="aspectFit" />
+        <image class="nav-icon" src="/assets/icons/event.svg" mode="aspectFit" />
         <text>活动中心</text>
       </view>
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/pointsExchange/index">
-        <image class="nav-icon" src="/assets/icons/mall.png" mode="aspectFit" />
+        <image class="nav-icon" src="/assets/icons/points.svg" mode="aspectFit" />
         <text>积分兑换</text>
       </view>
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
-        <image class="nav-icon" src="/assets/icons/booking_active.png" mode="aspectFit" />
+        <image class="nav-icon" src="/assets/icons/service.svg" mode="aspectFit" />
         <text>客服服务</text>
       </view>
     </view>
   </view>
   
-  <!-- 热门活动 -->
+  <!-- 热门活动部分 - 修改标题位置 -->
   <view class="section-container">
-    <view class="section">
-      <view class="section-header">
-        <view class="section-title">活动</view>
-        <view class="more-btn" bindtap="navigateTo" data-url="/pages/activity/index">查看全部 ></view>
-      </view>
-      <view class="activity-list">
-        <view class="activity-item" wx:for="{{activities}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="activity">
-          <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
-          <view class="activity-info">
-            <view class="activity-title">{{item.title}}</view>
-            <view class="activity-desc">{{item.description}}</view>
+    <!-- 标题和"查看全部"移到外部 -->
+    <view class="section-header">
+      <view class="section-title">活动</view>
+      <view class="more-btn" bindtap="navigateTo" data-url="/pages/activity/index">查看全部 ></view>
+    </view>
+    
+    <!-- 活动列表 -->
+    <view class="activity-list">
+      <view class="activity-card" wx:for="{{activities}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="activity">
+        <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
+        <view class="activity-info">
+          <view class="activity-title">{{item.title}}</view>
+          <view class="activity-desc">{{item.description}}</view>
+          <view class="activity-footer">
             <view class="activity-time">
-              <text class="time-icon">📅</text>
-              <text>{{item.timeRange}}</text>
-              <text class="location-icon">📍</text>
-              <text>{{item.location}}</text>
+              <view class="time-item">
+                <icon class="icon-calendar" type="waiting" size="14" color="#999999"></icon>
+                <text class="time-text">{{item.timeRange}}</text>
+              </view>
+              <view class="location-item">
+                <icon class="icon-location" type="info" size="14" color="#999999"></icon>
+                <text class="location-text">{{item.location}}</text>
+              </view>
             </view>
           </view>
         </view>
@@ -73,19 +81,18 @@
   </view>
   
   <!-- 热门商品 -->
-  <view class="section-container">
-    <view class="section">
-      <view class="section-header">
-        <view class="section-title">热门商品</view>
-        <view class="more-btn" bindtap="navigateTo" data-url="/pages/mall/index">查看全部 ></view>
-      </view>
-      <view class="product-grid">
-        <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="product">
-          <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill" />
-          <view class="product-info">
-            <view class="product-name">{{item.name}}</view>
-            <view class="product-price">¥{{item.price}}</view>
-          </view>
+  <view class="section-container" wx:if="{{products && products.length > 0}}">
+    <view class="section-header">
+      <view class="section-title">热门商品</view>
+      <view class="more-btn" bindtap="navigateTo" data-url="/pages/mall/index">查看全部 ></view>
+    </view>
+    
+    <view class="product-grid">
+      <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="product">
+        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill" />
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-price">¥{{item.price}}</view>
         </view>
       </view>
     </view>
