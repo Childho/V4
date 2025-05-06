@@ -1,0 +1,133 @@
+<view class="product-detail-container">
+  <nav-bar title="商品详情" showBack="{{true}}" />
+  
+  <!-- 商品轮播图 -->
+  <swiper class="product-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="{{3000}}" duration="{{500}}" circular="{{true}}">
+    <swiper-item wx:for="{{product.images}}" wx:key="index">
+      <image class="product-image" src="{{item}}" mode="aspectFill" />
+    </swiper-item>
+  </swiper>
+  
+  <!-- 商品基本信息 -->
+  <view class="product-info">
+    <view class="product-price">¥{{product.price}}</view>
+    <view class="product-name">{{product.name}}</view>
+    <view class="product-desc">{{product.description}}</view>
+    <view class="product-meta">
+      <view class="product-brand">
+        <text class="label">品牌：</text>
+        <text class="value">{{product.brand}}</text>
+      </view>
+      <view class="product-sales">
+        <text class="label">销量：</text>
+        <text class="value">{{product.salesCount}}件</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 商品规格 -->
+  <view class="product-specs">
+    <view class="section-title">规格参数</view>
+    <view class="specs-list">
+      <view class="specs-item" wx:for="{{product.specs}}" wx:key="name">
+        <text class="specs-label">{{item.name}}：</text>
+        <text class="specs-value">{{item.value}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 商品详情 -->
+  <view class="product-detail">
+    <view class="section-title">商品详情</view>
+    <view class="detail-content">
+      <rich-text nodes="{{product.detailContent}}"></rich-text>
+    </view>
+  </view>
+  
+  <!-- 相关推荐 -->
+  <view class="related-products" wx:if="{{relatedProducts.length > 0}}">
+    <view class="section-title">相关推荐</view>
+    <scroll-view scroll-x="true" class="related-scroll">
+      <view class="related-list">
+        <view class="related-item" wx:for="{{relatedProducts}}" wx:key="id" bindtap="navigateToProduct" data-id="{{item.id}}">
+          <image class="related-image" src="{{item.imageUrl}}" mode="aspectFill" />
+          <view class="related-name">{{item.name}}</view>
+          <view class="related-price">¥{{item.price}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="left-actions">
+      <view class="action-btn" bindtap="handleToHome">
+        <image src="/assets/icons/home.png" mode="aspectFit" />
+        <text>首页</text>
+      </view>
+      <view class="action-btn" bindtap="handleAddFavorite">
+        <image src="{{product.isFavorite ? '/assets/icons/heart_filled.png' : '/assets/icons/heart.png'}}" mode="aspectFit" />
+        <text>收藏</text>
+      </view>
+      <view class="action-btn" bindtap="handleToCart">
+        <image src="/assets/icons/cart.png" mode="aspectFit" />
+        <text>购物车</text>
+        <view class="badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
+      </view>
+    </view>
+    <view class="right-actions">
+      <button class="add-cart-btn" bindtap="handleAddToCart">加入购物车</button>
+      <button class="buy-now-btn" bindtap="handleBuyNow">立即购买</button>
+    </view>
+  </view>
+  
+  <!-- 规格选择弹窗 -->
+  <view class="specs-popup" wx:if="{{showSpecsPopup}}">
+    <view class="popup-mask" bindtap="closeSpecsPopup"></view>
+    <view class="popup-content">
+      <view class="popup-header">
+        <image class="popup-product-image" src="{{product.images[0]}}" mode="aspectFill" />
+        <view class="popup-product-info">
+          <view class="popup-product-price">¥{{product.price}}</view>
+          <view class="popup-product-name">{{product.name}}</view>
+          <view class="popup-selected-specs">已选：{{selectedSpecs}}</view>
+        </view>
+        <view class="popup-close" bindtap="closeSpecsPopup">×</view>
+      </view>
+      
+      <view class="popup-specs">
+        <view class="popup-specs-item" wx:for="{{product.optionGroups}}" wx:key="name">
+          <view class="popup-specs-title">{{item.name}}</view>
+          <view class="popup-specs-options">
+            <view 
+              class="popup-specs-option {{optionItem.selected ? 'selected' : ''}} {{optionItem.disabled ? 'disabled' : ''}}" 
+              wx:for="{{item.options}}" 
+              wx:for-item="optionItem"
+              wx:key="value"
+              bindtap="selectOption"
+              data-group-index="{{index}}"
+              data-option-index="{{optionIndex}}"
+              wx:for-index="optionIndex"
+            >
+              {{optionItem.value}}
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <view class="popup-quantity">
+        <view class="popup-quantity-title">数量</view>
+        <view class="popup-quantity-control">
+          <view class="quantity-minus {{quantity <= 1 ? 'disabled' : ''}}" bindtap="decreaseQuantity">-</view>
+          <input class="quantity-input" type="number" value="{{quantity}}" disabled />
+          <view class="quantity-plus" bindtap="increaseQuantity">+</view>
+        </view>
+      </view>
+      
+      <view class="popup-btns">
+        <button class="popup-add-cart-btn" bindtap="confirmAddToCart">加入购物车</button>
+        <button class="popup-buy-now-btn" bindtap="confirmBuyNow">立即购买</button>
+      </view>
+    </view>
+  </view>
+</view> 

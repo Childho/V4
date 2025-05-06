@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 我的服务</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部标签页 -->
+      <div class="flex" style="background-color: white; padding: 15px 0 10px;">
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="booking.html" style="text-decoration: none; color: inherit;">
+            <span>球馆预约</span>
+          </a>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="string_service.html" style="text-decoration: none; color: inherit;">
+            <span>穿线服务</span>
+          </a>
+        </div>
+        <div class="tab-item active" style="border-bottom: 3px solid #4F7FF3; color: #4F7FF3; font-weight: 600;">
+          <span>我的服务</span>
+        </div>
+      </div>
+      
+      <!-- 服务类型切换 -->
+      <div class="card">
+        <div class="flex" style="overflow-x: auto; padding: 5px 0;">
+          <div id="filter-all" onclick="filterServices('all')" style="min-width: auto; padding: 8px 20px; background-color: #4F7FF3; color: white; border-radius: 20px; margin-right: 15px; font-size: 14px;">全部</div>
+          <div id="filter-booking" onclick="filterServices('booking')" style="min-width: auto; padding: 8px 20px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 15px; font-size: 14px;">球馆预约</div>
+          <div id="filter-string" onclick="filterServices('string')" style="min-width: auto; padding: 8px 20px; background-color: #f6f6f6; color: #666; border-radius: 20px; font-size: 14px;">穿线服务</div>
+        </div>
+      </div>
+      
+      <!-- 服务记录列表 -->
+      <!-- 球馆预约记录 -->
+      <div class="card service-item" data-type="booking">
+        <div style="border-left: 4px solid #4F7FF3; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">球馆预约</div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #333;">润羽赛事羽毛球馆</div>
+          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">已确认</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> 南山大道1105号海润工业区西区3楼</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-clock" style="margin-right: 5px;"></i> 2023-06-10 | 14:00-16:00</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-tag" style="margin-right: 5px;"></i> ¥60 (会员9折优惠已应用)</div>
+        </div>
+        
+        <div class="flex" style="gap: 10px;">
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">取消预约</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">查看详情</button>
+        </div>
+      </div>
+      
+      <!-- 穿线服务 - 穿线中状态 -->
+      <div class="card service-item" data-type="string">
+        <div style="border-left: 4px solid #F56C6C; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务</div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #333;">YONEX BG-65 羽毛线</div>
+          <div style="font-size: 14px; color: #E6A23C; font-weight: 600;">穿线中</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-info-circle" style="margin-right: 5px;"></i> YONEX天斧88D | 主线24磅 | 横线23磅</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-store" style="margin-right: 5px;"></i> 倍特爱特装店</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 2023-06-10 | 预计取拍时间：2023-06-11</div>
+        </div>
+        
+        <div class="flex" style="gap: 10px;">
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">联系店铺</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">查看详情</button>
+        </div>
+      </div>
+      
+      <!-- 穿线服务 - 未开始状态 -->
+      <div class="card service-item" data-type="string">
+        <div style="border-left: 4px solid #F56C6C; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务</div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #333;">VICTOR VS-850 羽毛线</div>
+          <div style="font-size: 14px; color: #909399; font-weight: 600;">未开始</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-info-circle" style="margin-right: 5px;"></i> VICTOR SJ-6000 | 主线25磅 | 横线24磅</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-store" style="margin-right: 5px;"></i> 羽你同行东区店</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 2023-06-11 | 请尽快送拍</div>
+        </div>
+        
+        <div class="flex" style="gap: 10px;">
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">取消订单</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">查看详情</button>
+        </div>
+      </div>
+      
+      <!-- 历史记录 -->
+      <div style="padding: 15px; font-size: 14px; color: #999; position: relative; text-align: center;">
+        <span style="display: inline-block; padding: 0 10px; background-color: #f6f6f6; position: relative; z-index: 1;">历史记录</span>
+        <div style="height: 1px; background-color: #eee; position: absolute; top: 50%; left: 0; right: 0; z-index: 0;"></div>
+      </div>
+      
+      <!-- 穿线服务 - 已完成状态 -->
+      <div class="card service-item" data-type="string">
+        <div style="border-left: 4px solid #F56C6C; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务</div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #333;">李宁 NO.1 羽毛线</div>
+          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">已完成</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-info-circle" style="margin-right: 5px;"></i> 李宁N7II | 主线26磅 | 横线25磅</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-store" style="margin-right: 5px;"></i> 倍特爱特装店</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 2023-06-05 | 已于2023-06-06取拍</div>
+        </div>
+        
+        <div class="flex" style="gap: 10px;">
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">再次下单</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">评价服务</button>
+        </div>
+      </div>
+      
+      <!-- 球馆预约历史 -->
+      <div class="card service-item" data-type="booking">
+        <div style="border-left: 4px solid #4F7FF3; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">球馆预约</div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #333;">星悦羽毛球馆</div>
+          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">已完成</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> 南山大道1105号海润工业区西区3楼</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-clock" style="margin-right: 5px;"></i> 2023-06-03 | 10:00-12:00</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-tag" style="margin-right: 5px;"></i> ¥50 (会员8.5折优惠已应用)</div>
+        </div>
+        
+        <div class="flex" style="gap: 10px;">
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">再次预约</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">评价场馆</button>
+        </div>
+      </div>
+      
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 服务过滤功能
+    function filterServices(type) {
+      // 更新筛选按钮样式
+      document.getElementById('filter-all').style.backgroundColor = type === 'all' ? '#4F7FF3' : '#f6f6f6';
+      document.getElementById('filter-all').style.color = type === 'all' ? 'white' : '#666';
+      
+      document.getElementById('filter-booking').style.backgroundColor = type === 'booking' ? '#4F7FF3' : '#f6f6f6';
+      document.getElementById('filter-booking').style.color = type === 'booking' ? 'white' : '#666';
+      
+      document.getElementById('filter-string').style.backgroundColor = type === 'string' ? '#4F7FF3' : '#f6f6f6';
+      document.getElementById('filter-string').style.color = type === 'string' ? 'white' : '#666';
+      
+      // 过滤服务项目
+      const serviceItems = document.querySelectorAll('.service-item');
+      serviceItems.forEach(item => {
+        if (type === 'all' || item.dataset.type === type) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html> 

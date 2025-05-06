@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 每日打卡</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 标题 -->
+      <div style="background-color: white; padding: 15px; text-align: center; position: relative;">
+        <i class="fas fa-chevron-left" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 18px;"></i>
+        <span style="font-size: 18px; font-weight: 600;">每日打卡</span>
+      </div>
+
+      <!-- 签到状态 -->
+      <div class="card" style="position: relative; padding-top: 60px; padding-bottom: 30px; background: linear-gradient(135deg, #4F7FF3, #6a5ef7); color: white;">
+        <!-- 签到图标 -->
+        <div style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; background-color: white; border-radius: 40px; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+          <i class="fas fa-calendar-check" style="font-size: 40px; color: #4F7FF3;"></i>
+        </div>
+        
+        <div style="text-align: center;">
+          <h2 style="font-size: 22px; margin-bottom: 10px;">恭喜你，今日已打卡</h2>
+          <p style="font-size: 16px; margin-bottom: 20px;">已连续签到3天,继续保持！</p>
+          <div style="background-color: rgba(255,255,255,0.2); border-radius: 12px; padding: 15px; margin: 0 15px;">
+            <div style="margin-bottom: 10px; font-size: 15px;">连续签到7天可获得额外30积分</div>
+            <div class="flex justify-between" style="padding: 0 10px;">
+              <div style="text-align: center; position: relative;">
+                <div style="width: 30px; height: 30px; background-color: white; border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 5px; position: relative; z-index: 1;">
+                  <i class="fas fa-check" style="color: #67C23A;"></i>
+                </div>
+                <div style="font-size: 12px;">第1天</div>
+                <!-- 连接线 -->
+                <div style="position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: white; z-index: 0;"></div>
+              </div>
+              <div style="text-align: center; position: relative;">
+                <div style="width: 30px; height: 30px; background-color: white; border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 5px; position: relative; z-index: 1;">
+                  <i class="fas fa-check" style="color: #67C23A;"></i>
+                </div>
+                <div style="font-size: 12px;">第2天</div>
+                <!-- 连接线 -->
+                <div style="position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: white; z-index: 0;"></div>
+              </div>
+              <div style="text-align: center; position: relative;">
+                <div style="width: 30px; height: 30px; background-color: white; border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 5px; position: relative; z-index: 1;">
+                  <i class="fas fa-check" style="color: #67C23A;"></i>
+                </div>
+                <div style="font-size: 12px;">第3天</div>
+                <!-- 连接线 -->
+                <div style="position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: rgba(255,255,255,0.3); z-index: 0;"></div>
+              </div>
+              <div style="text-align: center; position: relative;">
+                <div style="width: 30px; height: 30px; background-color: rgba(255,255,255,0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 5px; position: relative; z-index: 1;">
+                  <span style="color: #666;">4</span>
+                </div>
+                <div style="font-size: 12px;">第4天</div>
+                <!-- 连接线 -->
+                <div style="position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: rgba(255,255,255,0.3); z-index: 0;"></div>
+              </div>
+              <div style="text-align: center; position: relative;">
+                <div style="width: 30px; height: 30px; background-color: rgba(255,255,255,0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 5px; position: relative; z-index: 1;">
+                  <span style="color: #666;">5</span>
+                </div>
+                <div style="font-size: 12px;">第5天</div>
+                <!-- 连接线 -->
+                <div style="position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: rgba(255,255,255,0.3); z-index: 0;"></div>
+              </div>
+              <div style="text-align: center; position: relative;">
+                <div style="width: 30px; height: 30px; background-color: rgba(255,255,255,0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 5px; position: relative; z-index: 1;">
+                  <span style="color: #666;">6</span>
+                </div>
+                <div style="font-size: 12px;">第6天</div>
+                <!-- 连接线 -->
+                <div style="position: absolute; top: 15px; left: 50%; width: 100%; height: 2px; background-color: rgba(255,255,255,0.3); z-index: 0;"></div>
+              </div>
+              <div style="text-align: center;">
+                <div style="width: 30px; height: 30px; background-color: rgba(255,255,255,0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 5px; position: relative; z-index: 1;">
+                  <i class="fas fa-gift" style="color: #F56C6C;"></i>
+                </div>
+                <div style="font-size: 12px;">第7天</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 今日获得 -->
+      <div class="card">
+        <div class="card-title">今日获得</div>
+        <div class="flex justify-between items-center">
+          <div class="flex items-center">
+            <img src="https://img.icons8.com/color/48/000000/medal2--v1.png" alt="积分" style="width: 40px; height: 40px; margin-right: 10px;">
+            <div>
+              <div style="font-size: 16px; font-weight: 600;">积分 +10</div>
+              <div style="font-size: 12px; color: #999;">每日打卡奖励</div>
+            </div>
+          </div>
+          <span style="font-size: 14px; color: #4F7FF3;">已到账</span>
+        </div>
+      </div>
+
+      <!-- 每日任务 -->
+      <div class="card">
+        <div class="card-title">每日任务</div>
+        
+        <div class="list-item">
+          <div class="flex items-center">
+            <i class="fas fa-check-circle" style="color: #67C23A; margin-right: 10px; font-size: 20px;"></i>
+            <div>
+              <div style="font-size: 15px;">每日签到</div>
+              <div style="font-size: 12px; color: #999;">每日签到获得10积分</div>
+            </div>
+          </div>
+          <div>
+            <span style="padding: 4px 10px; background-color: #f0f9eb; color: #67C23A; border-radius: 12px; font-size: 12px;">已完成</span>
+          </div>
+        </div>
+        
+        <div class="list-item">
+          <div class="flex items-center">
+            <i class="fas fa-share-alt" style="color: #4F7FF3; margin-right: 10px; font-size: 20px;"></i>
+            <div>
+              <div style="font-size: 15px;">分享小程序</div>
+              <div style="font-size: 12px; color: #999;">分享给好友获得5积分</div>
+            </div>
+          </div>
+          <div>
+            <button class="btn" style="padding: 6px 12px; font-size: 13px;">去完成</button>
+          </div>
+        </div>
+        
+        <div class="list-item">
+          <div class="flex items-center">
+            <i class="fas fa-shopping-cart" style="color: #E6A23C; margin-right: 10px; font-size: 20px;"></i>
+            <div>
+              <div style="font-size: 15px;">商城消费</div>
+              <div style="font-size: 12px; color: #999;">消费满100元获得20积分</div>
+            </div>
+          </div>
+          <div>
+            <button class="btn" style="padding: 6px 12px; font-size: 13px;">去完成</button>
+          </div>
+        </div>
+        
+        <div class="list-item">
+          <div class="flex items-center">
+            <i class="fas fa-volleyball-ball" style="color: #909399; margin-right: 10px; font-size: 20px;"></i>
+            <div>
+              <div style="font-size: 15px;">预约打球</div>
+              <div style="font-size: 12px; color: #999;">成功预约场地获得15积分</div>
+            </div>
+          </div>
+          <div>
+            <button class="btn" style="padding: 6px 12px; font-size: 13px;">去完成</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 额外任务 -->
+      <div class="card">
+        <div class="card-title">额外任务</div>
+        
+        <div class="list-item">
+          <div class="flex items-center">
+            <i class="fas fa-users" style="color: #4F7FF3; margin-right: 10px; font-size: 20px;"></i>
+            <div>
+              <div style="font-size: 15px;">邀请好友</div>
+              <div style="font-size: 12px; color: #999;">成功邀请1位好友注册获得30积分</div>
+            </div>
+          </div>
+          <div>
+            <button class="btn" style="padding: 6px 12px; font-size: 13px;">去邀请</button>
+          </div>
+        </div>
+        
+        <div class="list-item">
+          <div class="flex items-center">
+            <i class="fas fa-comment" style="color: #F56C6C; margin-right: 10px; font-size: 20px;"></i>
+            <div>
+              <div style="font-size: 15px;">评价订单</div>
+              <div style="font-size: 12px; color: #999;">评价已完成的订单获得5积分/单</div>
+            </div>
+          </div>
+          <div>
+            <button class="btn" style="padding: 6px 12px; font-size: 13px;">去完成</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 积分说明 -->
+      <div style="padding: 15px; text-align: center;">
+        <span style="font-size: 12px; color: #999;">查看 <a href="#" style="color: #4F7FF3;">积分规则说明</a></span>
+      </div>
+
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+  </div>
+</body>
+</html> 

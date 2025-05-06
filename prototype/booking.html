@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 服务中心</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部标签页 -->
+      <div class="flex" style="background-color: white; padding: 15px 0 10px;">
+        <div class="tab-item active" style="border-bottom: 3px solid #4F7FF3; color: #4F7FF3; font-weight: 600;">
+          <span>球馆预约</span>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="string_service.html" style="text-decoration: none; color: inherit;">
+            <span>穿线服务</span>
+          </a>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="service_history.html" style="text-decoration: none; color: inherit;">
+            <span>我的服务</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- 日期选择器 -->
+      <div class="card">
+        <div class="flex justify-between items-center" style="margin-bottom: 15px;">
+          <span style="font-size: 16px; font-weight: 600;">选择日期</span>
+          <span style="font-size: 14px; color: #999;">2023年6月</span>
+        </div>
+        
+        <div class="flex" style="overflow-x: auto; padding-bottom: 10px;">
+          <div style="min-width: 60px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f0f5ff; border-radius: 10px; margin-right: 10px; border: 2px solid #4F7FF3;">
+            <span style="font-size: 14px; color: #999;">今天</span>
+            <span style="font-size: 20px; font-weight: bold; color: #4F7FF3; margin: 5px 0;">10</span>
+            <span style="font-size: 14px; color: #999;">周三</span>
+          </div>
+          <div style="min-width: 60px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f6f6f6; border-radius: 10px; margin-right: 10px;">
+            <span style="font-size: 14px; color: #999;">明天</span>
+            <span style="font-size: 20px; font-weight: bold; margin: 5px 0;">11</span>
+            <span style="font-size: 14px; color: #999;">周四</span>
+          </div>
+          <div style="min-width: 60px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f6f6f6; border-radius: 10px; margin-right: 10px;">
+            <span style="font-size: 14px; color: #999;">后天</span>
+            <span style="font-size: 20px; font-weight: bold; margin: 5px 0;">12</span>
+            <span style="font-size: 14px; color: #999;">周五</span>
+          </div>
+          <div style="min-width: 60px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f6f6f6; border-radius: 10px; margin-right: 10px;">
+            <span style="font-size: 14px; color: #999;"></span>
+            <span style="font-size: 20px; font-weight: bold; margin: 5px 0;">13</span>
+            <span style="font-size: 14px; color: #999;">周六</span>
+          </div>
+          <div style="min-width: 60px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #f6f6f6; border-radius: 10px; margin-right: 10px;">
+            <span style="font-size: 14px; color: #999;"></span>
+            <span style="font-size: 20px; font-weight: bold; margin: 5px 0;">14</span>
+            <span style="font-size: 14px; color: #999;">周日</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 场地列表 -->
+      <div class="card">
+        <div class="flex justify-between items-center">
+          <span style="font-size: 16px; font-weight: 600;">羽毛球馆</span>
+          <div class="flex items-center">
+            <i class="fas fa-sort-amount-down" style="font-size: 14px; color: #999; margin-right: 5px;"></i>
+            <span style="font-size: 14px; color: #999;">按距离排序</span>
+          </div>
+        </div>
+        
+        <!-- 球馆卡片 -->
+        <div style="margin-top: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+          <div class="flex">
+            <img src="https://images.unsplash.com/photo-1626259437325-a3d1c58a9ebf?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="球馆1" style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover;">
+            <div style="margin-left: 15px; flex: 1;">
+              <div style="font-size: 16px; font-weight: 600;">润羽赛事羽毛球馆</div>
+              <div style="font-size: 13px; color: #666; margin-top: 5px;">
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star-half-alt" style="color: #F56C6C;"></i>
+                <span style="margin-left: 5px;">4.8 (120条评价)</span>
+              </div>
+              <div style="font-size: 13px; color: #999; margin-top: 5px;">
+                <i class="fas fa-map-marker-alt"></i>
+                <span style="margin-left: 5px;">南山大道1105号海润工业区西区3楼</span> 
+                <span style="margin-left: 10px;">1.2km</span>
+              </div>
+              <div style="font-size: 13px; color: #4F7FF3; margin-top: 5px;">
+                <i class="fas fa-tag"></i>
+                <span style="margin-left: 5px;">会员9折</span>
+                <span style="margin-left: 10px;">6片场地</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 预约时间选择 -->
+          <div style="margin-top: 15px;">
+            <div style="font-size: 14px; margin-bottom: 10px;">可预约时段：</div>
+            <div class="flex" style="flex-wrap: wrap; gap: 10px;">
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f0f5ff; border-radius: 6px; font-size: 14px; color: #4F7FF3; border: 1px solid #4F7FF3;">09:00-10:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f6f6f6; border-radius: 6px; font-size: 14px; color: #999;">10:00-11:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f6f6f6; border-radius: 6px; font-size: 14px; color: #999;">11:00-12:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f0f5ff; border-radius: 6px; font-size: 14px; color: #4F7FF3; border: 1px solid #4F7FF3;">14:00-15:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f0f5ff; border-radius: 6px; font-size: 14px; color: #4F7FF3; border: 1px solid #4F7FF3;">15:00-16:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f6f6f6; border-radius: 6px; font-size: 14px; color: #999;">16:00-17:00</div>
+            </div>
+          </div>
+          
+          <button class="btn" style="margin-top: 15px;">立即预约</button>
+        </div>
+        
+        <!-- 球馆卡片2 -->
+        <div style="margin-top: 15px;">
+          <div class="flex">
+            <img src="https://images.unsplash.com/photo-1626259437325-a3d1c58a9ebf?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="球馆2" style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover;">
+            <div style="margin-left: 15px; flex: 1;">
+              <div style="font-size: 16px; font-weight: 600;">星悦羽毛球馆</div>
+              <div style="font-size: 13px; color: #666; margin-top: 5px;">
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <i class="fas fa-star" style="color: #F56C6C;"></i>
+                <span style="margin-left: 5px;">5.0 (86条评价)</span>
+              </div>
+              <div style="font-size: 13px; color: #999; margin-top: 5px;">
+                <i class="fas fa-map-marker-alt"></i>
+                <span style="margin-left: 5px;">南山大道1105号海润工业区西区3楼</span>
+                <span style="margin-left: 10px;">3.5km</span>
+              </div>
+              <div style="font-size: 13px; color: #4F7FF3; margin-top: 5px;">
+                <i class="fas fa-tag"></i>
+                <span style="margin-left: 5px;">会员8.5折</span>
+                <span style="margin-left: 10px;">8片场地</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 预约时间选择 -->
+          <div style="margin-top: 15px;">
+            <div style="font-size: 14px; margin-bottom: 10px;">可预约时段：</div>
+            <div class="flex" style="flex-wrap: wrap; gap: 10px;">
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f6f6f6; border-radius: 6px; font-size: 14px; color: #999;">09:00-10:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f0f5ff; border-radius: 6px; font-size: 14px; color: #4F7FF3; border: 1px solid #4F7FF3;">10:00-11:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f0f5ff; border-radius: 6px; font-size: 14px; color: #4F7FF3; border: 1px solid #4F7FF3;">11:00-12:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f6f6f6; border-radius: 6px; font-size: 14px; color: #999;">14:00-15:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f0f5ff; border-radius: 6px; font-size: 14px; color: #4F7FF3; border: 1px solid #4F7FF3;">15:00-16:00</div>
+              <div style="min-width: 80px; text-align: center; padding: 8px 0; background-color: #f0f5ff; border-radius: 6px; font-size: 14px; color: #4F7FF3; border: 1px solid #4F7FF3;">16:00-17:00</div>
+            </div>
+          </div>
+          
+          <button class="btn" style="margin-top: 15px;">立即预约</button>
+        </div>
+      </div>
+      
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

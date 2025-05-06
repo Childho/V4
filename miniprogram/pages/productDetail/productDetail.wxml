@@ -1,0 +1,23 @@
+<!-- 商品详情页 -->
+<view class="product-detail">
+  <view class="product-header">
+    <view class="product-title">商品详情</view>
+  </view>
+  <view class="product-content">
+    <!-- 商品基本信息 -->
+    <view class="product-info">
+      <text>商品信息加载中...</text>
+    </view>
+    
+    <!-- 商品价格信息 -->
+    <view class="price-info">
+      <text class="price-label">价格：</text>
+      <text class="price">￥--</text>
+    </view>
+    
+    <!-- 购买按钮 -->
+    <view class="action-buttons">
+      <button class="buy-btn" type="primary">立即购买</button>
+    </view>
+  </view>
+</view> 

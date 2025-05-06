@@ -1,0 +1,65 @@
+<!--myBooking.wxml 我的预约页面-->
+<view class="my-booking-container">
+  <!-- 顶部选项卡 -->
+  <view class="tab-header">
+    <view class="tab-item {{activeTab === 'upcoming' ? 'active' : ''}}" bindtap="switchTab" data-tab="upcoming">
+      <text>即将到来</text>
+    </view>
+    <view class="tab-item {{activeTab === 'completed' ? 'active' : ''}}" bindtap="switchTab" data-tab="completed">
+      <text>已完成</text>
+    </view>
+    <view class="tab-item {{activeTab === 'cancelled' ? 'active' : ''}}" bindtap="switchTab" data-tab="cancelled">
+      <text>已取消</text>
+    </view>
+  </view>
+  
+  <!-- 预约列表 -->
+  <view class="booking-list">
+    <view wx:for="{{filteredBookings}}" wx:key="id" class="booking-card">
+      <view class="booking-header">
+        <view class="venue-name">{{item.venueName}}</view>
+        <view class="booking-status {{item.status}}">{{item.statusText}}</view>
+      </view>
+      
+      <view class="booking-info">
+        <view class="info-item">
+          <image src="/assets/icons/calendar.png" mode="aspectFit"></image>
+          <text>{{item.date}}</text>
+        </view>
+        <view class="info-item">
+          <image src="/assets/icons/time.png" mode="aspectFit"></image>
+          <text>{{item.timeSlot}}</text>
+        </view>
+        <view class="info-item">
+          <image src="/assets/icons/court.png" mode="aspectFit"></image>
+          <text>{{item.courtType}}</text>
+        </view>
+        <view class="info-item">
+          <image src="/assets/icons/points.png" mode="aspectFit"></image>
+          <text>{{item.price}} 积分</text>
+        </view>
+      </view>
+      
+      <view class="booking-actions">
+        <block wx:if="{{item.status === 'upcoming'}}">
+          <button class="action-btn cancel-btn" bindtap="cancelBooking" data-id="{{item.id}}">取消预约</button>
+          <button class="action-btn" bindtap="viewBookingDetail" data-id="{{item.id}}">查看详情</button>
+        </block>
+        <block wx:if="{{item.status === 'completed'}}">
+          <button class="action-btn review-btn" bindtap="writeReview" data-id="{{item.id}}">评价</button>
+          <button class="action-btn" bindtap="rebookCourt" data-id="{{item.id}}">再次预订</button>
+        </block>
+        <block wx:if="{{item.status === 'cancelled'}}">
+          <button class="action-btn" bindtap="rebookCourt" data-id="{{item.id}}">重新预订</button>
+        </block>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 无数据提示 -->
+  <view class="empty-tip" wx:if="{{filteredBookings.length === 0}}">
+    <image src="/assets/icons/empty.png" mode="aspectFit"></image>
+    <text>暂无预约记录</text>
+    <button class="book-now-btn" bindtap="goToBooking">立即预约</button>
+  </view>
+</view> 

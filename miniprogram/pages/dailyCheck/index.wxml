@@ -1,0 +1,80 @@
+<view class="daily-check-container">
+  <!-- 头部信息区域 -->
+  <view class="check-header">
+    <view class="header-content">
+      <view class="greeting">
+        <view class="greeting-text">嗨，{{userInfo.nickName}}</view>
+        <view class="greeting-sub">今日已打卡</view>
+      </view>
+      <view class="calendar-info">
+        <view class="calendar-day">{{today}}</view>
+        <view class="calendar-weekday">星期{{weekday}}</view>
+      </view>
+    </view>
+    <view class="sign-info">
+      <view class="continuous-days">已连续签到 <text class="day-count">{{continuousDays}}</text> 天</view>
+      <view class="rewards-info">连续签到7天可额外获得30积分哦！</view>
+    </view>
+  </view>
+  
+  <!-- 日历区域 -->
+  <view class="calendar-section">
+    <view class="calendar-title">{{currentMonth}}</view>
+    <view class="weekdays">
+      <view class="weekday" wx:for="{{['日', '一', '二', '三', '四', '五', '六']}}" wx:key="*this">{{item}}</view>
+    </view>
+    
+    <view class="calendar-days">
+      <view class="day {{signDays.includes(item) ? 'signed' : ''}} {{item === today && !signedToday ? 'today' : ''}} {{item === today && signedToday ? 'today-signed' : ''}}" 
+        wx:for="{{daysInMonth}}" 
+        wx:key="*this">
+        {{item}}
+      </view>
+    </view>
+  </view>
+  
+  <!-- 签到按钮 -->
+  <view class="sign-button-section">
+    <button class="sign-button {{signedToday ? 'signed' : ''}}" bindtap="handleSignIn">
+      {{signedToday ? '今日已签到' : '立即签到 +5积分'}}
+    </button>
+  </view>
+  
+  <!-- 任务列表 -->
+  <view class="tasks-section">
+    <view class="section-title">每日任务</view>
+    
+    <view class="task-list">
+      <view class="task-item" wx:for="{{tasks}}" wx:key="id" bindtap="handleTaskClick" data-id="{{item.id}}">
+        <view class="task-info">
+          <view class="task-icon">
+            <image src="/assets/icons/{{item.icon}}.svg" mode="aspectFit"></image>
+          </view>
+          <view class="task-details">
+            <view class="task-name">{{item.name}}</view>
+            <view class="task-desc">{{item.desc}}</view>
+          </view>
+        </view>
+        <view class="task-status {{item.status === 1 ? 'completed' : ''}}">
+          {{item.status === 1 ? '已完成' : '去完成'}}
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 积分记录 -->
+  <view class="points-section">
+    <view class="section-title">积分记录</view>
+    
+    <view class="points-info">
+      <view class="current-points">当前积分：{{userInfo.pointsBalance}}</view>
+      <view class="points-link" bindtap="navigateTo" data-url="/pages/myPoints/myPoints">查看详情 ></view>
+    </view>
+  </view>
+  
+  <!-- 加载提示 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">加载中...</view>
+  </view>
+</view> 

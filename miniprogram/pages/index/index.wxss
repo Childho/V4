@@ -1,0 +1,257 @@
+/**index.wxss**/
+page {
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.index-container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.content-area {
+  padding: 0 0 30rpx;
+}
+
+/* 搜索栏和会员等级样式 */
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 30rpx;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.search-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 36rpx;
+  padding: 12rpx 20rpx;
+  height: 60rpx;
+}
+
+.search-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #999;
+  margin-left: 10rpx;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-left: 15rpx;
+}
+
+.notification-icon {
+  width: 50rpx;
+  height: 50rpx;
+  margin-right: 15rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-icon image {
+  width: 45rpx;
+  height: 45rpx;
+}
+
+.member-badge {
+  background-color: #67c23a;
+  color: white;
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 24rpx;
+}
+
+/* 轮播图样式 */
+.banner-container {
+  padding: 20rpx 30rpx;
+  margin-top: 110rpx; /* 为固定定位的搜索栏留出空间 */
+}
+
+.banner-swiper {
+  width: 100%;
+  height: 300rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 功能导航样式 */
+.nav-container {
+  margin: 20rpx 30rpx;
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.nav-grid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.nav-item text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 内容区块公共样式 */
+.section-container {
+  margin: 20rpx 30rpx;
+}
+
+.section {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
+}
+
+.more-btn {
+  font-size: 28rpx;
+  color: #3e7fff;
+}
+
+/* 活动列表样式 */
+.activity-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-item {
+  display: flex;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #eee;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-image {
+  width: 220rpx;
+  height: 160rpx;
+  border-radius: 10rpx;
+  margin-right: 20rpx;
+}
+
+.activity-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.activity-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.activity-desc {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.activity-time {
+  display: flex;
+  align-items: center;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.time-icon, .location-icon {
+  margin-right: 6rpx;
+}
+
+.location-icon {
+  margin-left: 20rpx;
+}
+
+/* 商品网格样式 */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.product-item {
+  background-color: #fff;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.product-image {
+  width: 100%;
+  height: 240rpx;
+}
+
+.product-info {
+  padding: 16rpx;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-price {
+  font-size: 28rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+} 

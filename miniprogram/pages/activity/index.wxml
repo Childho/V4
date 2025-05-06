@@ -1,0 +1,82 @@
+<view class="activity-container">
+  <nav-bar title="活动中心" showBack="{{false}}" />
+  
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <icon type="search" size="16" color="#999" class="search-icon"></icon>
+      <input class="search-input" placeholder="搜索活动" confirm-type="search" bindconfirm="onSearch" value="{{searchKeyword}}"/>
+    </view>
+    <view class="filter-icon" bindtap="showFilter">
+      <icon type="filter" size="20" color="#333"></icon>
+    </view>
+  </view>
+  
+  <!-- 功能导航 -->
+  <view class="feature-nav">
+    <view class="feature-item" bindtap="navigateTo" data-url="/pages/activityCenter/index">
+      <view class="feature-icon activity-center">
+        <image src="/assets/images/activity-center-icon.png" mode="aspectFit"></image>
+      </view>
+      <view class="feature-name">活动中心</view>
+    </view>
+    <view class="feature-item" bindtap="navigateTo" data-url="/pages/competition/index">
+      <view class="feature-icon competition">
+        <image src="/assets/images/competition-icon.png" mode="aspectFit"></image>
+      </view>
+      <view class="feature-name">比赛报名</view>
+    </view>
+    <view class="feature-item" bindtap="navigateTo" data-url="/pages/pointsExchange/index">
+      <view class="feature-icon points-exchange">
+        <image src="/assets/images/points-exchange-icon.png" mode="aspectFit"></image>
+      </view>
+      <view class="feature-name">积分兑换</view>
+    </view>
+  </view>
+  
+  <!-- 顶部筛选栏 -->
+  <view class="filter-tabs">
+    <view class="{{status === 'all' ? 'active' : ''}}" bindtap="changeStatus" data-status="all">全部</view>
+    <view class="{{status === 'ongoing' ? 'active' : ''}}" bindtap="changeStatus" data-status="ongoing">进行中</view>
+    <view class="{{status === 'finished' ? 'active' : ''}}" bindtap="changeStatus" data-status="finished">即将开始</view>
+  </view>
+  
+  <!-- 活动列表 -->
+  <scroll-view class="activity-list" scroll-y="true" bindscrolltolower="loadMore">
+    <block wx:if="{{activities.length > 0}}">
+      <view class="activity-item" wx:for="{{activities}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
+        <view class="activity-info">
+          <view class="activity-title">{{item.title}}</view>
+          <view class="activity-desc">{{item.description}}</view>
+          <view class="activity-bottom">
+            <view class="activity-time">{{item.startTime}} - {{item.endTime}}</view>
+            <view class="activity-location" wx:if="{{item.location}}">
+              <text class="location-icon"></text>{{item.location}}
+            </view>
+            <view class="activity-status {{item.status === 'ongoing' ? 'ongoing' : 'finished'}}">
+              {{item.status === 'ongoing' ? '进行中' : (item.status === 'coming' ? '即将开始' : '已结束')}}
+            </view>
+          </view>
+          <view class="activity-btn-row" wx:if="{{item.status !== 'finished'}}">
+            <button class="activity-btn {{item.isFull ? 'disabled' : ''}}" catchtap="signup" data-id="{{item.id}}">
+              {{item.isFull ? '已满员' : '立即预约'}}
+            </button>
+          </view>
+        </view>
+      </view>
+    </block>
+    
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{activities.length === 0 && !loading}}">
+      <image class="empty-icon" src="/assets/images/empty.png" mode="aspectFit" />
+      <view class="empty-text">暂无活动</view>
+    </view>
+    
+    <!-- 加载状态 -->
+    <view class="loading-state" wx:if="{{loading}}">
+      <view class="loading-icon"></view>
+      <view class="loading-text">加载中...</view>
+    </view>
+  </scroll-view>
+</view> 

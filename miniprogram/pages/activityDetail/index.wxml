@@ -1,0 +1,60 @@
+<view class="activity-detail-container">
+  <nav-bar title="活动详情" showBack="{{true}}" />
+  
+  <!-- 活动封面 -->
+  <image class="activity-cover" src="{{activity.coverUrl}}" mode="aspectFill" />
+  
+  <!-- 活动信息 -->
+  <view class="activity-info">
+    <view class="activity-title">{{activity.title}}</view>
+    <view class="activity-time">
+      <image class="icon" src="/assets/icons/time.png" mode="aspectFit" />
+      <text>{{activity.startTime}} - {{activity.endTime}}</text>
+    </view>
+    <view class="activity-location">
+      <image class="icon" src="/assets/icons/location.png" mode="aspectFit" />
+      <text>{{activity.location}}</text>
+    </view>
+    <view class="activity-organizer">
+      <image class="icon" src="/assets/icons/organizer.png" mode="aspectFit" />
+      <text>{{activity.organizer}}</text>
+    </view>
+  </view>
+  
+  <!-- 活动详情 -->
+  <view class="detail-section">
+    <view class="section-title">活动详情</view>
+    <view class="activity-description">{{activity.description}}</view>
+    
+    <view class="activity-content">
+      <rich-text nodes="{{activity.content}}"></rich-text>
+    </view>
+    
+    <view class="activity-rules" wx:if="{{activity.rules}}">
+      <view class="rules-title">活动规则</view>
+      <view class="rules-content">{{activity.rules}}</view>
+    </view>
+  </view>
+  
+  <!-- 已报名用户 -->
+  <view class="participants-section" wx:if="{{activity.participants && activity.participants.length > 0}}">
+    <view class="section-title">已报名 ({{activity.participantsCount || activity.participants.length}})</view>
+    <view class="participants-list">
+      <view class="participant" wx:for="{{activity.participants}}" wx:key="id">
+        <image class="participant-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
+        <text class="participant-name">{{item.nickName}}</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="share-btn" bindtap="handleShare">
+      <image src="/assets/icons/share.png" mode="aspectFit" />
+      <text>分享</text>
+    </view>
+    <button class="join-btn {{activity.isJoined ? 'joined' : ''}}" bindtap="handleJoin">
+      {{activity.isJoined ? '已报名' : '立即报名'}}
+    </button>
+  </view>
+</view> 

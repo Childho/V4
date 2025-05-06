@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 穿线服务</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部标签页 -->
+      <div class="flex" style="background-color: white; padding: 15px 0 10px;">
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="booking.html" style="text-decoration: none; color: inherit;">
+            <span>球馆预约</span>
+          </a>
+        </div>
+        <div class="tab-item active" style="border-bottom: 3px solid #4F7FF3; color: #4F7FF3; font-weight: 600;">
+          <span>穿线服务</span>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="service_history.html" style="text-decoration: none; color: inherit;">
+            <span>我的服务</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- 穿线表单 -->
+      <div class="card">
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">球拍信息</div>
+        
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-size: 14px; color: #666; margin-bottom: 5px;">球拍品牌型号</label>
+          <input type="text" placeholder="请填写您的球拍品牌和型号" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-size: 14px; color: #666; margin-bottom: 5px;">磅数要求</label>
+          <div class="flex" style="justify-content: space-between; margin-bottom: 10px;">
+            <span style="font-size: 14px;">主线：<span id="main-weight">24</span> 磅</span>
+            <div class="flex">
+              <button onclick="changeWeight('main', -0.5)" style="width: 30px; height: 30px; border-radius: 15px; background-color: #f0f5ff; border: 1px solid #4F7FF3; color: #4F7FF3; font-size: 16px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">-</button>
+              <button onclick="changeWeight('main', 0.5)" style="width: 30px; height: 30px; border-radius: 15px; background-color: #f0f5ff; border: 1px solid #4F7FF3; color: #4F7FF3; font-size: 16px; display: flex; align-items: center; justify-content: center;">+</button>
+            </div>
+          </div>
+          <div class="flex" style="justify-content: space-between;">
+            <span style="font-size: 14px;">横线：<span id="cross-weight">23</span> 磅</span>
+            <div class="flex">
+              <button onclick="changeWeight('cross', -0.5)" style="width: 30px; height: 30px; border-radius: 15px; background-color: #f0f5ff; border: 1px solid #4F7FF3; color: #4F7FF3; font-size: 16px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">-</button>
+              <button onclick="changeWeight('cross', 0.5)" style="width: 30px; height: 30px; border-radius: 15px; background-color: #f0f5ff; border: 1px solid #4F7FF3; color: #4F7FF3; font-size: 16px; display: flex; align-items: center; justify-content: center;">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 线材选择 -->
+      <div class="card">
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">线材选择</div>
+        
+        <!-- 线材分类 -->
+        <div class="flex" style="margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;">
+          <div onclick="filterStrings('all')" style="min-width: auto; padding: 8px 15px; background-color: #4F7FF3; color: white; border-radius: 20px; margin-right: 10px; font-size: 14px;">全部</div>
+          <div onclick="filterStrings('yonex')" style="min-width: auto; padding: 8px 15px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 10px; font-size: 14px;">YONEX</div>
+          <div onclick="filterStrings('lining')" style="min-width: auto; padding: 8px 15px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 10px; font-size: 14px;">李宁</div>
+          <div onclick="filterStrings('victor')" style="min-width: auto; padding: 8px 15px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 10px; font-size: 14px;">VICTOR</div>
+          <div onclick="filterStrings('other')" style="min-width: auto; padding: 8px 15px; background-color: #f6f6f6; color: #666; border-radius: 20px; font-size: 14px;">其他</div>
+        </div>
+        
+        <!-- 线材列表 -->
+        <div id="string-list">
+          <div class="string-item" data-brand="yonex" data-price="55" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <div class="flex items-center">
+              <div onclick="selectString(this, 'YONEX BG-65', 55)" style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid #4F7FF3; margin-right: 15px; position: relative;">
+                <div style="width: 14px; height: 14px; background-color: #4F7FF3; border-radius: 7px; position: absolute; top: 3px; left: 3px;"></div>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-size: 15px; font-weight: 600;">YONEX BG-65</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">耐打型，适合业余选手</div>
+              </div>
+              <div style="color: #F56C6C; font-size: 16px; font-weight: bold;">¥55</div>
+            </div>
+          </div>
+          
+          <div class="string-item" data-brand="yonex" data-price="65" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <div class="flex items-center">
+              <div onclick="selectString(this, 'YONEX BG-80', 65)" style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid #ddd; margin-right: 15px;"></div>
+              <div style="flex: 1;">
+                <div style="font-size: 15px; font-weight: 600;">YONEX BG-80</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">耐久性好，控制性佳</div>
+              </div>
+              <div style="color: #F56C6C; font-size: 16px; font-weight: bold;">¥65</div>
+            </div>
+          </div>
+          
+          <div class="string-item" data-brand="victor" data-price="70" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <div class="flex items-center">
+              <div onclick="selectString(this, 'VICTOR VS-850', 70)" style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid #ddd; margin-right: 15px;"></div>
+              <div style="flex: 1;">
+                <div style="font-size: 15px; font-weight: 600;">VICTOR VS-850</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">高性能，反弹力强</div>
+              </div>
+              <div style="color: #F56C6C; font-size: 16px; font-weight: bold;">¥70</div>
+            </div>
+          </div>
+          
+          <div class="string-item" data-brand="lining" data-price="60" style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <div class="flex items-center">
+              <div onclick="selectString(this, '李宁 NO.1', 60)" style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid #ddd; margin-right: 15px;"></div>
+              <div style="flex: 1;">
+                <div style="font-size: 15px; font-weight: 600;">李宁 NO.1</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">国产高性价比线材</div>
+              </div>
+              <div style="color: #F56C6C; font-size: 16px; font-weight: bold;">¥60</div>
+            </div>
+          </div>
+          
+          <div class="string-item" data-brand="other" data-price="80" style="margin-bottom: 15px;">
+            <div class="flex items-center">
+              <div onclick="selectString(this, 'GOSEN G-TONE 9', 80)" style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid #ddd; margin-right: 15px;"></div>
+              <div style="flex: 1;">
+                <div style="font-size: 15px; font-weight: 600;">GOSEN G-TONE 9</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">日本进口专业线材</div>
+              </div>
+              <div style="color: #F56C6C; font-size: 16px; font-weight: bold;">¥80</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 备注 -->
+      <div class="card">
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">备注信息</div>
+        
+        <div style="margin-bottom: 15px;">
+          <textarea id="remark" placeholder="填写备注信息，如特殊穿线要求等" style="width: 100%; height: 80px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; resize: none;"></textarea>
+        </div>
+      </div>
+      
+      <!-- 门店选择 -->
+      <div class="card">
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">门店选择</div>
+        
+        <div style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div onclick="selectStore(this, '羽你同行旗舰店', '南山大道1105号海润工业区西区3楼', '0755-12345678')" style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid #4F7FF3; margin-right: 15px; position: relative;">
+                <div style="width: 14px; height: 14px; background-color: #4F7FF3; border-radius: 7px; position: absolute; top: 3px; left: 3px;"></div>
+              </div>
+              <div>
+                <div style="font-size: 15px; font-weight: 600;">倍特爱特装店</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">深圳南山区白石路3818号阳光粤海花园2C栋115号</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">电话：0755-86285897</div>
+              </div>
+            </div>
+            <div style="font-size: 13px; color: #4F7FF3;">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>1.2km</span>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <div onclick="selectStore(this, '羽你同行东区店', '龙华新区梅龙大道1088号', '0755-87654321')" style="width: 24px; height: 24px; border-radius: 12px; border: 2px solid #ddd; margin-right: 15px;"></div>
+              <div>
+                <div style="font-size: 15px; font-weight: 600;">羽你同行东区店</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">龙华新区梅龙大道1088号</div>
+                <div style="font-size: 13px; color: #999; margin-top: 3px;">电话：0755-87654321</div>
+              </div>
+            </div>
+            <div style="font-size: 13px; color: #4F7FF3;">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>3.5km</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 价格及下单 -->
+      <div style="position: fixed; bottom: 70px; left: 0; right: 0; background-color: white; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 14px; color: #666;">总价</div>
+          <div style="font-size: 18px; font-weight: bold; color: #F56C6C;">¥<span id="total-price">55</span></div>
+        </div>
+        <button onclick="submitOrder()" class="btn" style="width: auto; padding: 12px 25px;">立即下单</button>
+      </div>
+      
+      <!-- 底部空间 -->
+      <div style="height: 100px;"></div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 全局变量存储当前选择
+    let currentString = { name: 'YONEX BG-65', price: 55 };
+    let currentStore = { name: '羽你同行旗舰店', address: '南山大道1105号海润工业区西区3楼', phone: '0755-12345678' };
+    
+    // 改变磅数
+    function changeWeight(type, delta) {
+      const element = document.getElementById(type + '-weight');
+      let currentWeight = parseFloat(element.innerText);
+      currentWeight += delta;
+      
+      // 限制范围在18-30磅之间
+      if (currentWeight < 18) currentWeight = 18;
+      if (currentWeight > 30) currentWeight = 30;
+      
+      element.innerText = currentWeight.toFixed(1);
+    }
+    
+    // 选择线材
+    function selectString(element, name, price) {
+      // 取消所有选中状态
+      const allStringSelectors = document.querySelectorAll('#string-list .flex > div:first-child');
+      allStringSelectors.forEach(selector => {
+        selector.style.border = '2px solid #ddd';
+        selector.innerHTML = '';
+      });
+      
+      // 标记当前选中
+      element.style.border = '2px solid #4F7FF3';
+      element.innerHTML = '<div style="width: 14px; height: 14px; background-color: #4F7FF3; border-radius: 7px; position: absolute; top: 3px; left: 3px;"></div>';
+      
+      // 更新当前选择和总价
+      currentString = { name, price };
+      updateTotalPrice();
+    }
+    
+    // 选择门店
+    function selectStore(element, name, address, phone) {
+      // 取消所有选中状态
+      const allStoreSelectors = document.querySelectorAll('.card:nth-of-type(4) .flex > div:first-child');
+      allStoreSelectors.forEach(selector => {
+        selector.style.border = '2px solid #ddd';
+        selector.innerHTML = '';
+      });
+      
+      // 标记当前选中
+      element.style.border = '2px solid #4F7FF3';
+      element.innerHTML = '<div style="width: 14px; height: 14px; background-color: #4F7FF3; border-radius: 7px; position: absolute; top: 3px; left: 3px;"></div>';
+      
+      // 更新当前选择
+      currentStore = { name, address, phone };
+    }
+    
+    // 过滤线材品牌
+    function filterStrings(brand) {
+      // 更新分类按钮样式
+      const allFilterButtons = document.querySelectorAll('.flex > div[onclick^="filterStrings"]');
+      allFilterButtons.forEach(button => {
+        button.style.backgroundColor = '#f6f6f6';
+        button.style.color = '#666';
+      });
+      
+      const currentButton = event.currentTarget;
+      currentButton.style.backgroundColor = '#4F7FF3';
+      currentButton.style.color = 'white';
+      
+      // 显示/隐藏相应品牌的线材
+      const allStringItems = document.querySelectorAll('.string-item');
+      allStringItems.forEach(item => {
+        if (brand === 'all' || item.dataset.brand === brand) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+    
+    // 更新总价
+    function updateTotalPrice() {
+      document.getElementById('total-price').innerText = currentString.price;
+    }
+    
+    // 提交订单
+    function submitOrder() {
+      const mainWeight = document.getElementById('main-weight').innerText;
+      const crossWeight = document.getElementById('cross-weight').innerText;
+      const remark = document.getElementById('remark').value;
+      const racketInfo = document.querySelector('input[placeholder="请填写您的球拍品牌和型号"]').value;
+      
+      // 创建订单对象
+      const order = {
+        racketInfo: racketInfo,
+        mainWeight: mainWeight,
+        crossWeight: crossWeight,
+        stringName: currentString.name,
+        stringPrice: currentString.price,
+        store: currentStore,
+        remark: remark,
+        totalPrice: currentString.price,
+        orderTime: new Date().toLocaleString()
+      };
+      
+      // 将订单信息存储到本地存储中
+      if (!localStorage.getItem('stringServiceOrders')) {
+        localStorage.setItem('stringServiceOrders', JSON.stringify([]));
+      }
+      
+      const orders = JSON.parse(localStorage.getItem('stringServiceOrders'));
+      orders.push(order);
+      localStorage.setItem('stringServiceOrders', JSON.stringify(orders));
+      
+      // 提示成功并跳转到订单详情页
+      alert('下单成功！您可以在"我的服务"中查看订单状态。');
+      // 实际项目中应该是跳转到订单详情页
+      // window.location.href = 'service_history.html';
+    }
+  </script>
+</body>
+</html> 

@@ -1,0 +1,43 @@
+.login-container {
+  min-height: 100vh;
+  background: #fff;
+}
+
+.content {
+  padding: 120rpx 48rpx;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 80rpx;
+}
+
+.logo image {
+  width: 200rpx;
+  height: 200rpx;
+}
+
+.login-box {
+  padding: 48rpx;
+}
+
+.login-btn {
+  width: 100% !important;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
+  border-radius: 44rpx;
+  background: #3e7fff !important;
+}
+
+.tips {
+  margin-top: 32rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.link {
+  color: #3e7fff;
+} 

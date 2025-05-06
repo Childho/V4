@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行小程序原型</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f6f6f6;
+      padding: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    
+    .prototype-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    
+    .prototype-item {
+      width: 420px;
+      margin-bottom: 50px;
+    }
+    
+    .prototype-title {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .prototype-desc {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    iframe {
+      border: none;
+      width: 100%;
+      height: 860px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>倍特爱小程序原型设计</h1>
+  
+  <div class="prototype-container">
+    <div class="prototype-item">
+      <div class="prototype-title">首页</div>
+      <div class="prototype-desc">展示活动推荐和功能入口</div>
+      <iframe src="home.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">会员中心</div>
+      <div class="prototype-desc">个人信息、会员等级和积分信息</div>
+      <iframe src="profile.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">活动中心</div>
+      <div class="prototype-desc">展示实体店活动和赛事</div>
+      <iframe src="activity.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">商城</div>
+      <div class="prototype-desc">商品分类展示和购物功能</div>
+      <iframe src="shop.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">球馆预约</div>
+      <div class="prototype-desc">球馆场地预约服务</div>
+      <iframe src="booking.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">穿线服务</div>
+      <div class="prototype-desc">羽毛球拍穿线服务预约</div>
+      <iframe src="string_service.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">我的服务</div>
+      <div class="prototype-desc">球馆预约和穿线服务状态查询</div>
+      <iframe src="service_history.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">每日打卡</div>
+      <div class="prototype-desc">展示连续签到和任务状态</div>
+      <iframe src="checkin.html"></iframe>
+    </div>
+    
+    <div class="prototype-item">
+      <div class="prototype-title">积分兑换</div>
+      <div class="prototype-desc">积分余额查询和积分兑换商品</div>
+      <iframe src="points.html"></iframe>
+    </div>
+  </div>
+</body>
+</html> 

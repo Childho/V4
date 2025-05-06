@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 活动中心</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部搜索栏 -->
+      <div class="card" style="margin-top: 0; border-radius: 0 0 16px 16px;">
+        <div class="flex items-center gap-2">
+          <div style="flex: 1; position: relative;">
+            <input type="text" placeholder="搜索活动" style="width: 100%; padding: 10px 10px 10px 35px; border-radius: 20px; border: none; background-color: #f5f5f5; font-size: 14px;">
+            <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999;"></i>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fas fa-filter" style="font-size: 20px; color: #333;"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 活动分类 -->
+      <div class="card">
+        <div class="grid">
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-calendar-alt" style="color: #F56C6C;"></i>
+            </div>
+            <div class="grid-text">活动中心</div>
+          </div>
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-trophy" style="color: #E6A23C;"></i>
+            </div>
+            <div class="grid-text">比赛报名</div>
+          </div>
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-exchange-alt" style="color: #4F7FF3;"></i>
+            </div>
+            <div class="grid-text">积分兑换</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 热门活动 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">活动</span>
+          <div class="flex">
+            <span class="text-sm" style="padding: 4px 10px; background-color: #f0f5ff; color: #4F7FF3; border-radius: 15px; margin-right: 8px;">全部</span>
+            <span class="text-sm" style="padding: 4px 10px; background-color: #f6f6f6; color: #666; border-radius: 15px; margin-right: 8px;">进行中</span>
+            <span class="text-sm" style="padding: 4px 10px; background-color: #f6f6f6; color: #666; border-radius: 15px;">即将开始</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 主推活动 -->
+      <div class="card" style="padding: 0; overflow: hidden;">
+        <img src="https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="活动海报" style="width: 100%; height: 180px; object-fit: cover;">
+        <div style="padding: 15px;">
+          <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">门店周年庆活动</h3>
+          <p style="font-size: 14px; color: #666; margin-bottom: 15px;">羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！</p>
+          
+          <div class="flex justify-between" style="margin-bottom: 15px;">
+            <div class="flex items-center">
+              <i class="fas fa-calendar" style="color: #4F7FF3; margin-right: 5px;"></i>
+              <span style="font-size: 14px;">6月18日-6月24日</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-map-marker-alt" style="color: #F56C6C; margin-right: 5px;"></i>
+              <span style="font-size: 14px;">羽你同行旗舰店</span>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="member-level basic">所有会员</span>
+              <span style="font-size: 14px; margin-left: 5px;">可参与</span>
+            </div>
+            <button class="btn" style="width: auto; padding: 8px 20px;">立即预约</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 活动列表 -->
+      <div class="activity-card">
+        <img src="https://images.unsplash.com/photo-1580086230554-618f2c0e1b96?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="加价拿羽球服" class="activity-image">
+        <div class="activity-info">
+          <div class="activity-title">每周日BUFF</div>
+          <div class="activity-desc">每周日购买制定型号,加价19可带走BUFF战衣...</div>
+          <div class="activity-meta">
+            <span><i class="fas fa-calendar"></i> 每周日</span>
+            <span><i class="fas fa-map-marker-alt"></i> 倍特爱特装店</span>
+          </div>
+          <button class="btn" style="margin-top: 10px; width: auto; padding: 5px 15px; float: right;">预约</button>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <img src="https://images.unsplash.com/photo-1623553430800-5c790fe41aad?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="超低价秒杀" class="activity-image">
+        <div class="activity-info">
+          <div class="activity-title">每日秒杀</div>
+          <div class="activity-desc">每日超低价秒杀羽毛球拍、羽毛球鞋...</div>
+          <div class="activity-meta">
+            <span><i class="fas fa-calendar"></i> 每天</span>
+            <span><i class="fas fa-map-marker-alt"></i> 倍特爱特装店</span>
+          </div>
+          <button class="btn" style="margin-top: 10px; width: auto; padding: 5px 15px; float: right;">预约</button>
+        </div>
+      </div>
+
+      <div class="activity-card">
+        <img src="https://images.unsplash.com/photo-1617522947419-aec09781868a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="球馆比赛" class="activity-image">
+        <div class="activity-info">
+          <div class="activity-title">润羽友谊赛</div>
+          <div class="activity-desc">每月一次球馆友谊赛，结交球友，赢取精美礼品...</div>
+          <div class="activity-meta">
+            <span><i class="fas fa-calendar"></i> 6月25日 09:00</span>
+            <span><i class="fas fa-map-marker-alt"></i> 润羽赛事羽毛球馆</span>
+          </div>
+          <button class="btn" style="margin-top: 10px; width: auto; padding: 5px 15px; float: right;">报名</button>
+        </div>
+      </div>
+
+      <!-- 会员专属活动 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">会员专属活动</span>
+          <span class="text-sm text-primary">查看全部 <i class="fas fa-angle-right"></i></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="flex items-center" style="margin-bottom: 15px;">
+          <div style="width: 80px; height: 80px; border-radius: 10px; overflow: hidden; margin-right: 15px;">
+            <img src="https://images.unsplash.com/photo-1612887726773-e64e20cf8ba1?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="会员活动" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div style="flex: 1;">
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 5px;">积分兑换专区</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 5px;">使用积分兑换各种优惠券和精美礼品</p>
+            <div style="font-size: 12px; color: #999;">
+              <i class="fas fa-calendar"></i> 6月25日-7月10日
+              <span class="member-level basic" style="margin-left: 10px; font-size: 11px;">所有会员可参与</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center">
+          <div style="width: 80px; height: 80px; border-radius: 10px; overflow: hidden; margin-right: 15px;">
+            <img src="https://images.unsplash.com/photo-1485527691629-8be8d5983529?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="会员活动" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          <div style="flex: 1;">
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 5px;">会员专享购物日</h3>
+            <p style="font-size: 13px; color: #666; margin-bottom: 5px;">到店购物享受额外折扣，现场专业指导</p>
+            <div style="font-size: 12px; color: #999;">
+              <i class="fas fa-calendar"></i> 6月30日 全天
+              <span class="member-level basic" style="margin-left: 10px; font-size: 11px;">所有会员可参与</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

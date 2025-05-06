@@ -1,0 +1,12 @@
+<view class="mall-container">
+  <!-- 导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-title">优选商城</view>
+  </view>
+  
+  <!-- 开发中提示 -->
+  <view class="developing-container">
+    <text class="developing-icon">🚀</text>
+    <text class="developing-text">努力开发中，敬请期待(✧∀✧)</text>
+  </view>
+</view> 

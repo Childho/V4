@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 商城</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 品牌筛选样式 */
+    .brand-filter {
+      padding: 15px;
+      background-color: white;
+      border-radius: 12px;
+      margin: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .brand-filter-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .brand-tag {
+      padding: 6px 12px;
+      border-radius: 15px;
+      background-color: #f6f6f6;
+      font-size: 13px;
+      color: #666;
+    }
+    .brand-tag.active {
+      background-color: #4F7FF3;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部搜索栏 -->
+      <div class="card" style="margin-top: 0; border-radius: 0 0 16px 16px;">
+        <div class="flex items-center gap-2">
+          <div style="flex: 1; position: relative;">
+            <input type="text" placeholder="搜索商品" style="width: 100%; padding: 10px 10px 10px 35px; border-radius: 20px; border: none; background-color: #f5f5f5; font-size: 14px;">
+            <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999;"></i>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="fas fa-filter" style="font-size: 20px; color: #333;"></i>
+            <i class="fas fa-shopping-cart" style="font-size: 20px; color: #333; position: relative;">
+              <span style="position: absolute; top: -5px; right: -5px; background-color: #F56C6C; color: white; font-size: 10px; border-radius: 50%; width: 15px; height: 15px; display: flex; align-items: center; justify-content: center;">3</span>
+            </i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 品牌筛选 -->
+      <div class="brand-filter">
+        <div class="brand-filter-title">
+          <span>品牌筛选</span>
+          <span style="font-size: 13px; color: #999;">全部 <i class="fas fa-angle-down"></i></span>
+        </div>
+        <div class="brand-tags">
+          <span class="brand-tag active">全部</span>
+          <span class="brand-tag">李宁</span>
+          <span class="brand-tag">VICTOR</span>
+          <span class="brand-tag">倍特爱</span>
+          <span class="brand-tag">超牌</span>
+          <span class="brand-tag">翎美</span>
+          <span class="brand-tag">亚狮龙</span>
+          <span class="brand-tag">威肯</span>
+          <span class="brand-tag">泰昂</span>
+        </div>
+      </div>
+
+      <!-- 商品分类 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">商品分类</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="grid">
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-table-tennis-paddle-ball" style="color: #F56C6C;"></i>
+            </div>
+            <div class="grid-text">羽毛球拍</div>
+          </div>
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-shoe-prints" style="color: #E6A23C;"></i>
+            </div>
+            <div class="grid-text">羽毛球鞋</div>
+          </div>
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-volleyball-ball" style="color: #4F7FF3;"></i>
+            </div>
+            <div class="grid-text">羽毛球</div>
+          </div>
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-tshirt" style="color: #67C23A;"></i>
+            </div>
+            <div class="grid-text">运动服装</div>
+          </div>
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-tools" style="color: #909399;"></i>
+            </div>
+            <div class="grid-text">球拍配件</div>
+          </div>
+          <div class="grid-item">
+            <div class="grid-icon">
+              <i class="fas fa-percentage" style="color: #F56C6C;"></i>
+            </div>
+            <div class="grid-text">折扣专区</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 羽毛球拍栏 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">羽毛球拍</span>
+          <span class="text-sm text-primary">查看全部 <i class="fas fa-angle-right"></i></span>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <div class="flex" style="overflow-x: auto; padding: 15px;">
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球拍" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">YONEX天斧88D</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥1280.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 128</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球拍" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">LI-NING 风刃900</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥899.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 89</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球拍" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">VICTOR 胜利JS-10</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥780.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 76</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 羽毛球鞋栏 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">羽毛球鞋</span>
+          <span class="text-sm text-primary">查看全部 <i class="fas fa-angle-right"></i></span>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <div class="flex" style="overflow-x: auto; padding: 15px;">
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球鞋" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">YONEX SHB-65Z2</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥698.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 92</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球鞋" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">LI-NING AYTQ003</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥499.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 108</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球鞋" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">VICTOR A922</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥558.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 64</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 羽毛球栏 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">羽毛球</span>
+          <span class="text-sm text-primary">查看全部 <i class="fas fa-angle-right"></i></span>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <div class="flex" style="overflow-x: auto; padding: 15px;">
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">YONEX AS-50(12只装)</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥128.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 156</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">RSL NO.4(12只装)</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥156.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 78</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">LI-NING A+600(6只装)</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥78.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 124</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 运动服装栏 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">运动服装</span>
+          <span class="text-sm text-primary">查看全部 <i class="fas fa-angle-right"></i></span>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <div class="flex" style="overflow-x: auto; padding: 15px;">
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="运动服装" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">男款速干T恤</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥159.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 87</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="运动服装" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">女款运动短裤</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥129.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 93</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="运动服装" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">专业运动袜(3双装)</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥59.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 215</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 羽毛球配件栏 -->
+      <div style="padding: 0 15px;">
+        <div class="flex justify-between items-center mt-3 mb-3">
+          <span class="text-lg font-bold">羽毛球配件</span>
+          <span class="text-sm text-primary">查看全部 <i class="fas fa-angle-right"></i></span>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 0;">
+        <div class="flex" style="overflow-x: auto; padding: 15px;">
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1607522370275-f14206abe5d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球配件" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">防滑吸汗手胶(3条装)</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥49.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 176</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; margin-right: 15px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1607522370275-f14206abe5d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球配件" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">YONEX BG65 羽线</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥68.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 152</div>
+            </div>
+          </div>
+          <div style="min-width: 150px; background: white; border-radius: 12px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1607522370275-f14206abe5d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球配件" style="width: 150px; height: 150px; object-fit: cover;">
+            <div style="padding: 10px;">
+              <div style="font-size: 14px; font-weight: 600;">专业运动护腕</div>
+              <div style="color: #F56C6C; font-size: 14px; margin-top: 5px;">¥39.00</div>
+              <div style="font-size: 12px; color: #999; margin-top: 3px;">已售 208</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 购物车悬浮按钮 -->
+    <div style="position: fixed; right: 20px; bottom: 80px; width: 50px; height: 50px; background-color: #4F7FF3; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+      <i class="fas fa-shopping-cart" style="font-size: 20px; color: white;"></i>
+      <span style="position: absolute; top: -5px; right: -5px; background-color: #F56C6C; color: white; font-size: 12px; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">3</span>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 

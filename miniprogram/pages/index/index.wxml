@@ -1,28 +1,95 @@
 <!--index.wxml-->
-<navigation-bar title="Weixin" back="{{false}}" color="black" background="#FFF"></navigation-bar>
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
-        </view>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
+<view class="index-container">
+  <!-- 由于设置了navigationStyle: "custom"，不需要显示导航栏组件 -->
+  
+  <!-- 搜索栏和会员等级 -->
+  <view class="search-container">
+    <view class="search-bar" bindtap="onSearchTap">
+      <icon type="search" size="14" color="#999"></icon>
+      <view class="search-text">搜索商品、活动</view>
     </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
+    <view class="user-info">
+      <view class="notification-icon" bindtap="onNotificationTap">
+        <image src="/assets/icons/notification.svg" mode="aspectFit"></image>
+      </view>
+      <view class="member-badge">初级会员</view>
     </view>
   </view>
-</scroll-view>
+  
+  <!-- 轮播图 -->
+  <view class="banner-container">
+    <swiper class="banner-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="{{3000}}" duration="{{500}}" circular="{{true}}">
+      <swiper-item wx:for="{{banners}}" wx:key="id">
+        <image src="{{item.imageUrl}}" class="banner-image" mode="aspectFill" bindtap="handleBannerClick" data-id="{{item.id}}" data-type="{{item.type}}" />
+      </swiper-item>
+    </swiper>
+  </view>
+  
+  <!-- 功能导航 -->
+  <view class="nav-container">
+    <view class="nav-grid">
+      <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
+        <image class="nav-icon" src="/assets/icons/booking.png" mode="aspectFit" />
+        <text>球馆预约</text>
+      </view>
+      <view class="nav-item" bindtap="navigateTo" data-url="/pages/activity/index">
+        <image class="nav-icon" src="/assets/icons/activity.png" mode="aspectFit" />
+        <text>活动中心</text>
+      </view>
+      <view class="nav-item" bindtap="navigateTo" data-url="/pages/pointsExchange/index">
+        <image class="nav-icon" src="/assets/icons/mall.png" mode="aspectFit" />
+        <text>积分兑换</text>
+      </view>
+      <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
+        <image class="nav-icon" src="/assets/icons/booking_active.png" mode="aspectFit" />
+        <text>客服服务</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 热门活动 -->
+  <view class="section-container">
+    <view class="section">
+      <view class="section-header">
+        <view class="section-title">活动</view>
+        <view class="more-btn" bindtap="navigateTo" data-url="/pages/activity/index">查看全部 ></view>
+      </view>
+      <view class="activity-list">
+        <view class="activity-item" wx:for="{{activities}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="activity">
+          <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
+          <view class="activity-info">
+            <view class="activity-title">{{item.title}}</view>
+            <view class="activity-desc">{{item.description}}</view>
+            <view class="activity-time">
+              <text class="time-icon">📅</text>
+              <text>{{item.timeRange}}</text>
+              <text class="location-icon">📍</text>
+              <text>{{item.location}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 热门商品 -->
+  <view class="section-container">
+    <view class="section">
+      <view class="section-header">
+        <view class="section-title">热门商品</view>
+        <view class="more-btn" bindtap="navigateTo" data-url="/pages/mall/index">查看全部 ></view>
+      </view>
+      <view class="product-grid">
+        <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="product">
+          <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill" />
+          <view class="product-info">
+            <view class="product-name">{{item.name}}</view>
+            <view class="product-price">¥{{item.price}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 底部导航栏由全局配置的tabBar提供 -->

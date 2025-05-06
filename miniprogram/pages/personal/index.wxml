@@ -1,0 +1,73 @@
+<view class="personal-container">
+  <!-- 用户信息区域 -->
+  <view class="user-info-section">
+    <view class="user-header">
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/icons/default-avatar.png'}}" />
+      <view class="user-name-info">
+        <view class="user-name">{{userInfo.nickName || '张小燕'}}</view>
+        <view class="user-level-id">{{userInfo.level || '初级会员'}}  ID: {{userInfo.id || '10086'}}</view>
+      </view>
+      <view class="settings-btn" bindtap="handleSetting">
+        <text class="iconfont icon-settings">设置</text>
+      </view>
+    </view>
+    
+    <view class="user-points-info">
+      <view class="current-points">当前积分: {{userInfo.pointsBalance || 280}}</view>
+      <view class="next-level">距离进阶会员还差320分</view>
+    </view>
+    
+    <!-- 快捷服务卡片 -->
+    <view class="quick-service-card">
+      <view class="service-item" bindtap="navigateTo" data-url="/pages/myPoints/myPoints">
+        <view class="service-icon gift-icon">
+          <text class="iconfont icon-points-gift"></text>
+        </view>
+        <view class="service-name">我的积分</view>
+        <view class="service-value">{{userInfo.pointsBalance || 280}}</view>
+      </view>
+      <view class="service-item" bindtap="navigateTo" data-url="/pages/coupon/index">
+        <view class="service-icon coupon-icon">
+          <text class="iconfont icon-coupon"></text>
+        </view>
+        <view class="service-name">优惠券</view>
+        <view class="service-value">{{coupons || 3}}</view>
+      </view>
+      <view class="service-item" bindtap="navigateTo" data-url="/pages/myService/index">
+        <view class="service-icon service-icon-img">
+          <text class="iconfont icon-service"></text>
+        </view>
+        <view class="service-name">我的服务</view>
+        <view class="service-value">{{services || 1}}</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 每日任务区域 -->
+  <view class="daily-tasks-section">
+    <view class="section-header">
+      <view class="section-title">每日任务</view>
+      <view class="more-btn" bindtap="navigateTo" data-url="/pages/tasks/index">
+        赚取更多积分 >
+      </view>
+    </view>
+    
+    <view class="task-item" bindtap="handleTaskClick" data-id="1">
+      <view class="task-left">
+        <view class="task-icon check-in">
+          <text class="iconfont icon-check-in"></text>
+        </view>
+        <view class="task-info">
+          <view class="task-name">每日签到</view>
+          <view class="task-desc">连续签到7天额外奖励30积分</view>
+        </view>
+      </view>
+      <view class="task-btn {{tasks[0].status === 1 ? 'checked' : ''}}">{{tasks[0].status === 1 ? '已签到' : '去签到'}}</view>
+    </view>
+  </view>
+  
+  <!-- 底部文本 -->
+  <view style="text-align:center; margin:30rpx; color:#999;">
+    如果页面显示正常，说明问题已解决
+  </view>
+</view> 

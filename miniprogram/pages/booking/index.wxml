@@ -1,0 +1,100 @@
+<view class="booking-container">
+  <nav-bar title="预约服务" showBack="{{false}}" />
+  
+  <!-- 日期选择 -->
+  <view class="date-selector">
+    <view class="date-header">
+      <text class="date-title">选择日期</text>
+      <view class="month-display">2023年6月</view>
+    </view>
+    <scroll-view class="date-scroll" scroll-x="true">
+      <view class="date-items">
+        <view class="date-item {{index === 2 ? 'active' : ''}}" wx:for="{{[10, 11, 12, 13, 14]}}" wx:key="index">
+          <view class="day-number">{{item}}</view>
+          <view class="day-name">周{{['一', '二', '三', '四', '五'][index]}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 时间段选择 -->
+  <view class="time-selector">
+    <view class="time-header">
+      <text class="time-title">选择时间段</text>
+    </view>
+    <view class="time-slots">
+      <view class="time-slot {{index === 2 ? 'active' : index > 4 ? 'disabled' : ''}}" 
+            wx:for="{{['09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00']}}" 
+            wx:key="index">
+        {{item}}
+      </view>
+    </view>
+  </view>
+  
+  <!-- 场馆预约 -->
+  <view class="venue-section">
+    <view class="section-header">
+      <text class="section-title">推荐场馆</text>
+      <view class="more-link">查看全部 ></view>
+    </view>
+    <view class="venue-list">
+      <view class="venue-item" wx:for="{{courts || [{id: 1, name: '网球俱乐部龙湖店', address: '深圳市南山区XX路100号', rating: 4.9, bookingCount: 1293}]}}" wx:key="id">
+        <image class="venue-image" src="{{item.image || '/assets/images/court.jpg'}}" mode="aspectFill" />
+        <view class="venue-info">
+          <view class="venue-name">{{item.name}}</view>
+          <view class="venue-address">{{item.address}}</view>
+          <view class="venue-rating">
+            <view class="stars">
+              <image wx:for="{{5}}" wx:key="index" src="/assets/icons/{{index < Math.floor(item.rating || 4.9) ? 'star-filled.png' : 'star-empty.png'}}" class="star-icon" />
+            </view>
+            <text class="rating-text">{{item.rating || 4.9}}</text>
+            <text class="booking-count">({{item.bookingCount || 1293}}人已预约)</text>
+          </view>
+        </view>
+        <view class="book-button">立即预约</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 教练预约 -->
+  <view class="coach-section">
+    <view class="section-header">
+      <text class="section-title">推荐教练</text>
+      <view class="more-link">查看全部 ></view>
+    </view>
+    <view class="coach-list">
+      <scroll-view scroll-x="true" class="coach-scroll">
+        <view class="coach-items">
+          <view class="coach-item" wx:for="{{coaches || [{id: 1, name: 'YONEX教练', level: '专业级', avatar: '/assets/images/coach1.jpg'}, {id: 2, name: 'LINING教练', level: '国家级', avatar: '/assets/images/coach2.jpg'}]}}" wx:key="id">
+            <image class="coach-avatar" src="{{item.avatar}}" mode="aspectFill" />
+            <view class="coach-info">
+              <view class="coach-name">{{item.name}}</view>
+              <view class="coach-level">{{item.level}}</view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+  
+  <!-- 我的预约 -->
+  <view class="my-booking-section">
+    <view class="section-header">
+      <text class="section-title">我的预约</text>
+      <view class="more-link" bindtap="navigateToMyBooking">查看全部 ></view>
+    </view>
+    <view class="booking-list" wx:if="{{currentBooking}}">
+      <view class="booking-item">
+        <view class="booking-info">
+          <view class="booking-title">{{currentBooking.title || '网球场地预约'}}</view>
+          <view class="booking-place">{{currentBooking.place || '网球俱乐部龙湖店'}}</view>
+          <view class="booking-time">{{currentBooking.date || '2023-06-11'}} {{currentBooking.time || '14:00-15:00'}}</view>
+        </view>
+        <view class="booking-status {{currentBooking.status === 'confirmed' ? 'confirmed' : 'pending'}}">
+          {{currentBooking.status === 'confirmed' ? '已确认' : '待确认'}}
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:else>暂无预约</view>
+  </view>
+</view> 

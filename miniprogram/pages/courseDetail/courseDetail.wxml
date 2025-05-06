@@ -1,0 +1,12 @@
+<!-- 课程详情页 -->
+<view class="course-detail">
+  <view class="course-header">
+    <view class="course-title">课程详情</view>
+  </view>
+  <view class="course-content">
+    <!-- 这里添加课程详细内容 -->
+    <view class="course-info">
+      <text>课程信息加载中...</text>
+    </view>
+  </view>
+</view> 
