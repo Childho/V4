@@ -67,5 +67,5 @@
   "requiredPrivateInfos": [
     "getLocation"
   ],
-  "style": "v2",
+  "style": "v2"
 }

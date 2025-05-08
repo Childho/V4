@@ -29,7 +29,14 @@ Page({
       { id: 3, name: '邀请好友', desc: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
     ],
     coupons: 3,
-    services: 1
+    services: 1,
+    // 添加订单红点数据
+    paymentCount: 2,
+    deliveryCount: 1,
+    receiptCount: 0,
+    commentCount: 3,
+    refundCount: 0,
+    isRefreshing: false
   },
 
   onLoad() {
@@ -40,32 +47,83 @@ Page({
   onShow() {
     console.log('个人页面显示')
     // 每次页面显示都获取最新的用户信息
-    this.getUserInfo()
-    this.getPointsInfo()
-    
-    // 添加调试信息
-    wx.showToast({
-      title: '页面已显示',
-      icon: 'none',
-      duration: 2000
-    })
+    this.refreshPageData()
+  },
 
-    // 调试信息 - 检查元素是否正常渲染
-    console.log('当前页面数据:', this.data)
+  // 下拉刷新处理函数
+  onPullDownRefresh() {
+    this.setData({
+      isRefreshing: true
+    })
     
-    // 确保DOM元素已渲染，给一些时间让视图更新
-    setTimeout(() => {
-      wx.createSelectorQuery()
-        .select('.personal-container')
-        .boundingClientRect(function(rect) {
-          if (rect) {
-            console.log('个人页面容器尺寸:', rect.width, rect.height)
-          } else {
-            console.error('未找到个人页面容器元素')
-          }
+    // 刷新页面数据
+    this.refreshPageData(() => {
+      // 刷新完成后停止下拉刷新动画
+      setTimeout(() => {
+        wx.stopPullDownRefresh()
+        this.setData({
+          isRefreshing: false
         })
-        .exec()
-    }, 500);
+        
+        // 显示轻提示
+        wx.showToast({
+          title: '刷新成功',
+          icon: 'success',
+          duration: 800
+        })
+      }, 800) // 延迟一段时间，让用户体验下拉刷新的感觉
+    })
+  },
+  
+  // 刷新页面所有数据
+  refreshPageData(callback) {
+    Promise.all([
+      this.getUserInfo(),
+      this.getPointsInfo(),
+      this.getOrderBadgeCounts() // 获取订单红点数量
+    ]).then(() => {
+      if (typeof callback === 'function') {
+        callback()
+      }
+    }).catch(error => {
+      console.error('刷新数据失败:', error)
+      if (typeof callback === 'function') {
+        callback()
+      }
+    })
+  },
+
+  // 获取订单红点数量
+  async getOrderBadgeCounts() {
+    try {
+      const token = wx.getStorageSync('token')
+      if (!token) return
+      
+      // 这里应该是实际的API调用，为了演示使用模拟数据
+      /* 实际代码应该类似:
+      const result = await api.get('/orders/badge-counts')
+      if (result) {
+        this.setData({
+          paymentCount: result.paymentCount || 0,
+          deliveryCount: result.deliveryCount || 0,
+          receiptCount: result.receiptCount || 0,
+          commentCount: result.commentCount || 0,
+          refundCount: result.refundCount || 0
+        })
+      }
+      */
+      
+      // 模拟随机数据
+      this.setData({
+        paymentCount: Math.floor(Math.random() * 5),
+        deliveryCount: Math.floor(Math.random() * 3),
+        receiptCount: Math.floor(Math.random() * 2),
+        commentCount: Math.floor(Math.random() * 5),
+        refundCount: Math.floor(Math.random() * 2)
+      })
+    } catch (error) {
+      console.error('[获取订单红点数量失败]', error)
+    }
   },
 
   // 获取用户信息
@@ -152,8 +210,16 @@ Page({
         return
       }
       
+      // 显示加载中
+      wx.showLoading({
+        title: '签到中...',
+        mask: true
+      })
+      
       // 调用签到API
       const result = await signIn()
+      wx.hideLoading()
+      
       if (result && result.success) {
         // 更新签到状态
         this.setData({
@@ -165,14 +231,28 @@ Page({
         const today = new Date().toDateString()
         wx.setStorageSync('lastSignIn', today)
         
-        wx.showToast({
-          title: `签到成功 +${result.points || 5}积分`,
-          icon: 'success'
-        })
+        // 显示签到成功动画
+        this.showPointsAnimation(result.points || 5)
       }
     } catch (error) {
+      wx.hideLoading()
       console.error('[签到失败]', error)
+      wx.showToast({
+        title: '签到失败，请重试',
+        icon: 'none'
+      })
     }
+  },
+  
+  // 显示积分动画
+  showPointsAnimation(points) {
+    wx.showToast({
+      title: `签到成功 +${points}积分`,
+      icon: 'success',
+      duration: 1500
+    })
+    
+    // 这里可以添加更复杂的积分动画效果
   },
 
   // 分享小程序
@@ -191,6 +271,13 @@ Page({
       title: '感谢分享',
       icon: 'success'
     })
+    
+    // 模拟分享后增加积分
+    this.setData({
+      'userInfo.pointsBalance': this.data.userInfo.pointsBalance + 5
+    })
+    
+    this.showPointsAnimation(5)
   },
 
   // 邀请好友
@@ -203,51 +290,35 @@ Page({
 
   // 页面跳转
   navigateTo(e) {
-    let url = e
-    // 如果是event对象，则从dataset中获取url
-    if (typeof e === 'object' && e.currentTarget) {
-      url = e.currentTarget.dataset.url
-    }
-    
-    // 如果不是字符串，直接返回
-    if (typeof url !== 'string') {
-      console.error('无效的URL:', url)
-      return
-    }
-    
-    // 跳转到指定页面
+    const url = e.currentTarget.dataset.url || e
     wx.navigateTo({
-      url: url,
-      fail: (error) => {
-        console.error('页面跳转失败:', error)
-      }
+      url
     })
   },
 
-  // 设置
+  // 处理设置
   handleSetting() {
-    wx.openSetting({
-      success: (res) => {
-        console.log('设置页面打开成功:', res)
-      }
-    })
+    this.navigateTo('/pages/setting/index')
   },
 
-  // 任务点击处理
+  // 处理登录按钮点击
+  handleLogin() {
+    this.navigateTo('/pages/login/index')
+  },
+
+  // 处理任务点击
   handleTaskClick(e) {
     const taskId = e.currentTarget.dataset.id
     
     switch (taskId) {
-      case 1: // 签到
+      case 1: // 每日签到
         this.handleSignIn()
         break
-      case 2: // 分享
+      case 2: // 分享小程序
         this.handleShare()
         break
-      case 3: // 邀请
+      case 3: // 邀请好友
         this.handleInvite()
-        break
-      default:
         break
     }
   },
@@ -255,20 +326,19 @@ Page({
   // 查看隐私政策
   handleViewPrivacy() {
     wx.navigateTo({
-      url: '/pages/webview/index?url=https://example.com/privacy&title=隐私政策'
+      url: '/pages/webview/index?type=privacy'
     })
   },
 
   // 查看用户协议
   handleViewTerms() {
     wx.navigateTo({
-      url: '/pages/webview/index?url=https://example.com/terms&title=用户协议'
+      url: '/pages/webview/index?type=terms'
     })
   },
 
   // 联系客服
   handleContact() {
-    // 微信小程序的客服功能，通过button的open-type="contact"实现
-    console.log('联系客服')
+    // 微信开放能力
   }
 }) 

@@ -74,6 +74,12 @@ export async function apiRequest<T>(
   }
 }
 
+// 导出API对象，提供get和post方法
+export const api = {
+  get: <T>(url: string, data: object = {}) => apiRequest<T>(url, data, 'GET'),
+  post: <T>(url: string, data: object = {}) => apiRequest<T>(url, data, 'POST')
+};
+
 // 模拟数据，用于开发测试
 const mockData: Record<string, any> = {
   '/api/user/login': {

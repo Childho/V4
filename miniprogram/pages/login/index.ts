@@ -1,4 +1,5 @@
-import { request } from '../../utils/request'
+import { apiRequest } from '../../api/utils/request'
+import { LoginResult } from '../../api/types'
 
 Page({
   data: {
@@ -14,7 +15,7 @@ Page({
       const { code } = await wx.login()
       
       // 调用登录接口
-      const res = await request('/api/user/login', { code })
+      const res = await apiRequest<LoginResult>('/api/user/login', { code })
       
       // 保存token
       wx.setStorageSync('token', res.token)

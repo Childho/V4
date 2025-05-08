@@ -1,7 +1,7 @@
 // 通用API请求处理函数
 
 // API配置从配置文件获取
-import { config } from '../../config/index';
+const config = require('../../config/index').config;
 const BASE_URL = config.apiBaseUrl;
 
 /**
@@ -105,7 +105,7 @@ const mockData = {
  * @param {Object} options - 请求配置
  * @returns {Promise<any>} 响应结果
  */
-export const request = async (options) => {
+const request = async (options) => {
   try {
     // 开发环境使用mock数据
     if (config.env === 'development' && mockData[options.url]) {
@@ -155,10 +155,15 @@ export const request = async (options) => {
 /**
  * API工具对象，提供常用的请求方法
  */
-export const api = {
+const api = {
   // 默认都使用POST方法，除非明确要求使用其他方法
   post: (url, data = {}) => request({ url, data }),
   get: (url, data = {}) => request({ url, method: 'GET', data }),
   put: (url, data = {}) => request({ url, method: 'PUT', data }),
   delete: (url, data = {}) => request({ url, method: 'DELETE', data })
+};
+
+module.exports = {
+  request,
+  api
 }; 

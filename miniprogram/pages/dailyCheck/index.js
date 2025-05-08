@@ -1,5 +1,5 @@
 // 引入API接口
-const userApi = require('../../api/userApi.ts')
+const userApi = require('../../api/userApi')
 const { api } = require('../../api/utils/request')
 
 // 获取积分信息

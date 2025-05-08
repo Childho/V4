@@ -1,73 +1,161 @@
-<view class="personal-container">
-  <!-- 用户信息区域 -->
-  <view class="user-info-section">
-    <view class="user-header">
-      <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/icons/default-avatar.png'}}" />
-      <view class="user-name-info">
+<view class="page-container">
+  <!-- 头部区域（紫色背景） -->
+  <view class="header-wrapper">
+    <!-- 设置图标 -->
+    <view class="settings-icon" bindtap="handleSetting">
+      <image class="icon-image" src="/assets/icons/settings.svg"></image>
+    </view>
+
+    <!-- 用户信息卡片 -->
+    <view class="profile-card">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/assets/icons/default-avatar.png'}}" />
+      <view class="user-info">
         <view class="user-name">{{userInfo.nickName || '张小燕'}}</view>
-        <view class="user-level-id">{{userInfo.level || '初级会员'}}  ID: {{userInfo.id || '10086'}}</view>
-      </view>
-      <view class="settings-btn" bindtap="handleSetting">
-        <text class="iconfont icon-settings">设置</text>
+        <view class="member-info">
+          <text class="user-level">{{userInfo.level || '初级会员'}}</text>
+          <text class="user-id">ID: <text class="id-number">{{userInfo.id || '10086'}}</text></text>
+        </view>
+        <view class="points-info">
+          <view class="points-progress-info">
+            <view class="user-points">当前积分: {{userInfo.pointsBalance || 280}}</view>
+            <view class="next-level">距离进阶会员还差320分</view>
+          </view>
+          <view class="points-progress-bar">
+            <view class="points-progress-filled" style="width: {{userInfo.pointsBalance/600*100 || 280/600*100}}%;"></view>
+          </view>
+          <view class="points-progress-text">{{userInfo.pointsBalance || 280}}/600积分</view>
+        </view>
       </view>
     </view>
     
-    <view class="user-points-info">
-      <view class="current-points">当前积分: {{userInfo.pointsBalance || 280}}</view>
-      <view class="next-level">距离进阶会员还差320分</view>
+    <!-- 渐变过渡遮罩 -->
+    <view class="header-fade"></view>
+  </view>
+
+  <!-- 积分/优惠券/服务悬浮卡片 -->
+  <view class="stats-panel">
+    <view class="stats-item" bindtap="navigateTo" data-url="/pages/myPoints/myPoints">
+      <view class="stats-icon gift-bg">
+        <image class="icon-image" src="/assets/icons/gift.svg"></image>
+      </view>
+      <view class="stats-value">{{userInfo.pointsBalance || 280}}</view>
+      <view class="stats-label">我的积分</view>
     </view>
-    
-    <!-- 快捷服务卡片 -->
-    <view class="quick-service-card">
-      <view class="service-item" bindtap="navigateTo" data-url="/pages/myPoints/myPoints">
-        <view class="service-icon gift-icon">
-          <text class="iconfont icon-points-gift"></text>
-        </view>
-        <view class="service-name">我的积分</view>
-        <view class="service-value">{{userInfo.pointsBalance || 280}}</view>
+    <view class="stats-item" bindtap="navigateTo" data-url="/pages/coupon/index">
+      <view class="stats-icon coupon-bg">
+        <image class="icon-image" src="/assets/icons/ticket.svg"></image>
       </view>
-      <view class="service-item" bindtap="navigateTo" data-url="/pages/coupon/index">
-        <view class="service-icon coupon-icon">
-          <text class="iconfont icon-coupon"></text>
-        </view>
-        <view class="service-name">优惠券</view>
-        <view class="service-value">{{coupons || 3}}</view>
+      <view class="stats-value">{{coupons || 3}}</view>
+      <view class="stats-label">优惠券</view>
+    </view>
+    <view class="stats-item" bindtap="navigateTo" data-url="/pages/myService/index">
+      <view class="stats-icon service-bg">
+        <image class="icon-image" src="/assets/icons/service.svg"></image>
       </view>
-      <view class="service-item" bindtap="navigateTo" data-url="/pages/myService/index">
-        <view class="service-icon service-icon-img">
-          <text class="iconfont icon-service"></text>
-        </view>
-        <view class="service-name">我的服务</view>
-        <view class="service-value">{{services || 1}}</view>
-      </view>
+      <view class="stats-value">{{services || 1}}</view>
+      <view class="stats-label">我的服务</view>
     </view>
   </view>
-  
-  <!-- 每日任务区域 -->
-  <view class="daily-tasks-section">
-    <view class="section-header">
-      <view class="section-title">每日任务</view>
-      <view class="more-btn" bindtap="navigateTo" data-url="/pages/tasks/index">
-        赚取更多积分 >
+
+  <!-- 内容主体区域（灰色背景） -->
+  <view class="content-wrapper">
+    <!-- 订单状态面板 -->
+    <view class="order-status-panel">
+      <view class="order-header">
+        <view class="order-title">我的订单</view>
+        <view class="order-all" bindtap="navigateTo" data-url="/pages/orders/index">
+          全部订单<text class="arrow-right">></text>
+        </view>
+      </view>
+      <view class="order-items">
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/payment/index">
+          <view class="order-icon">
+            <text class="iconfont icon-payment"></text>
+            <view class="badge" wx:if="{{paymentCount > 0}}">{{paymentCount}}</view>
+          </view>
+          <view class="order-label">待付款</view>
+        </view>
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/delivery/index">
+          <view class="order-icon">
+            <text class="iconfont icon-delivery"></text>
+            <view class="badge" wx:if="{{deliveryCount > 0}}">{{deliveryCount}}</view>
+          </view>
+          <view class="order-label">待发货</view>
+        </view>
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/receipt/index">
+          <view class="order-icon">
+            <text class="iconfont icon-receipt"></text>
+            <view class="badge" wx:if="{{receiptCount > 0}}">{{receiptCount}}</view>
+          </view>
+          <view class="order-label">待收货</view>
+        </view>
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/comment/index">
+          <view class="order-icon">
+            <text class="iconfont icon-comment"></text>
+            <view class="badge" wx:if="{{commentCount > 0}}">{{commentCount}}</view>
+          </view>
+          <view class="order-label">待评价</view>
+        </view>
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/refund/index">
+          <view class="order-icon">
+            <text class="iconfont icon-refund"></text>
+            <view class="badge" wx:if="{{refundCount > 0}}">{{refundCount}}</view>
+          </view>
+          <view class="order-label">退款/售后</view>
+        </view>
       </view>
     </view>
     
-    <view class="task-item" bindtap="handleTaskClick" data-id="1">
-      <view class="task-left">
-        <view class="task-icon check-in">
-          <text class="iconfont icon-check-in"></text>
-        </view>
-        <view class="task-info">
-          <view class="task-name">每日签到</view>
-          <view class="task-desc">连续签到7天额外奖励30积分</view>
+    <!-- 每日任务区域 -->
+    <view class="daily-tasks-section">
+      <view class="section-header">
+        <view class="section-title">每日任务</view>
+        <view class="more-btn" bindtap="navigateTo" data-url="/pages/tasks/index">
+          赚取更多积分
         </view>
       </view>
-      <view class="task-btn {{tasks[0].status === 1 ? 'checked' : ''}}">{{tasks[0].status === 1 ? '已签到' : '去签到'}}</view>
+      
+      <view class="task-item" bindtap="handleTaskClick" data-id="1">
+        <view class="task-left">
+          <view class="task-icon check-in">
+            <text class="iconfont icon-check-in"></text>
+          </view>
+          <view class="task-info">
+            <view class="task-name">每日签到</view>
+            <view class="task-desc">连续签到7天额外奖励30积分</view>
+          </view>
+        </view>
+        <view class="task-btn {{tasks[0].status === 1 ? 'checked' : ''}}">
+          <text wx:if="{{tasks[0].status === 1}}">已签到</text>
+          <text wx:else>去签到</text>
+        </view>
+      </view>
+      
+      <view class="task-item" bindtap="handleTaskClick" data-id="2">
+        <view class="task-left">
+          <view class="task-icon share-icon">
+            <text class="iconfont icon-share"></text>
+          </view>
+          <view class="task-info">
+            <view class="task-name">分享小程序</view>
+            <view class="task-desc">分享给好友获得5积分</view>
+          </view>
+        </view>
+        <view class="task-btn">去分享</view>
+      </view>
+      
+      <view class="task-item" bindtap="handleTaskClick" data-id="3">
+        <view class="task-left">
+          <view class="task-icon invite-icon">
+            <text class="iconfont icon-invite"></text>
+          </view>
+          <view class="task-info">
+            <view class="task-name">邀请好友</view>
+            <view class="task-desc">成功邀请1位好友获得30积分</view>
+          </view>
+        </view>
+        <view class="task-btn">去邀请</view>
+      </view>
     </view>
-  </view>
-  
-  <!-- 底部文本 -->
-  <view style="text-align:center; margin:30rpx; color:#999;">
-    如果页面显示正常，说明问题已解决
   </view>
 </view> 

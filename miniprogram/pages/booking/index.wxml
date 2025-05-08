@@ -1,100 +1,308 @@
 <view class="booking-container">
-  <nav-bar title="预约服务" showBack="{{false}}" />
-  
-  <!-- 日期选择 -->
-  <view class="date-selector">
-    <view class="date-header">
-      <text class="date-title">选择日期</text>
-      <view class="month-display">2023年6月</view>
-    </view>
-    <scroll-view class="date-scroll" scroll-x="true">
-      <view class="date-items">
-        <view class="date-item {{index === 2 ? 'active' : ''}}" wx:for="{{[10, 11, 12, 13, 14]}}" wx:key="index">
-          <view class="day-number">{{item}}</view>
-          <view class="day-name">周{{['一', '二', '三', '四', '五'][index]}}</view>
-        </view>
-      </view>
-    </scroll-view>
+  <!-- 顶部标签页导航 -->
+  <view class="tab-nav">
+    <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">球馆预约</view>
+    <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">穿线服务</view>
+    <view class="tab-item {{currentTab === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2">我的服务</view>
   </view>
   
-  <!-- 时间段选择 -->
-  <view class="time-selector">
-    <view class="time-header">
-      <text class="time-title">选择时间段</text>
-    </view>
-    <view class="time-slots">
-      <view class="time-slot {{index === 2 ? 'active' : index > 4 ? 'disabled' : ''}}" 
-            wx:for="{{['09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00']}}" 
-            wx:key="index">
-        {{item}}
+  <!-- 球馆预约内容 -->
+  <view class="content-view" hidden="{{currentTab !== 0}}">
+    <!-- 日期选择区域 -->
+    <view class="date-selector">
+      <view class="date-header">
+        <text>选择日期</text>
+        <text class="date-month">2023年6月</text>
       </view>
-    </view>
-  </view>
-  
-  <!-- 场馆预约 -->
-  <view class="venue-section">
-    <view class="section-header">
-      <text class="section-title">推荐场馆</text>
-      <view class="more-link">查看全部 ></view>
-    </view>
-    <view class="venue-list">
-      <view class="venue-item" wx:for="{{courts || [{id: 1, name: '网球俱乐部龙湖店', address: '深圳市南山区XX路100号', rating: 4.9, bookingCount: 1293}]}}" wx:key="id">
-        <image class="venue-image" src="{{item.image || '/assets/images/court.jpg'}}" mode="aspectFill" />
-        <view class="venue-info">
-          <view class="venue-name">{{item.name}}</view>
-          <view class="venue-address">{{item.address}}</view>
-          <view class="venue-rating">
-            <view class="stars">
-              <image wx:for="{{5}}" wx:key="index" src="/assets/icons/{{index < Math.floor(item.rating || 4.9) ? 'star-filled.png' : 'star-empty.png'}}" class="star-icon" />
-            </view>
-            <text class="rating-text">{{item.rating || 4.9}}</text>
-            <text class="booking-count">({{item.bookingCount || 1293}}人已预约)</text>
-          </view>
-        </view>
-        <view class="book-button">立即预约</view>
-      </view>
-    </view>
-  </view>
-  
-  <!-- 教练预约 -->
-  <view class="coach-section">
-    <view class="section-header">
-      <text class="section-title">推荐教练</text>
-      <view class="more-link">查看全部 ></view>
-    </view>
-    <view class="coach-list">
-      <scroll-view scroll-x="true" class="coach-scroll">
-        <view class="coach-items">
-          <view class="coach-item" wx:for="{{coaches || [{id: 1, name: 'YONEX教练', level: '专业级', avatar: '/assets/images/coach1.jpg'}, {id: 2, name: 'LINING教练', level: '国家级', avatar: '/assets/images/coach2.jpg'}]}}" wx:key="id">
-            <image class="coach-avatar" src="{{item.avatar}}" mode="aspectFill" />
-            <view class="coach-info">
-              <view class="coach-name">{{item.name}}</view>
-              <view class="coach-level">{{item.level}}</view>
-            </view>
-          </view>
+      <scroll-view scroll-x enable-flex class="date-scroll">
+        <view class="date-item {{index === activeDate ? 'active' : ''}}" 
+              wx:for="{{dates}}" 
+              wx:key="day"
+              bindtap="selectDate"
+              data-index="{{index}}">
+          <text class="date-day">{{item.day}}</text>
+          <text class="date-weekday">{{item.weekday}}</text>
         </view>
       </scroll-view>
     </view>
-  </view>
-  
-  <!-- 我的预约 -->
-  <view class="my-booking-section">
-    <view class="section-header">
-      <text class="section-title">我的预约</text>
-      <view class="more-link" bindtap="navigateToMyBooking">查看全部 ></view>
-    </view>
-    <view class="booking-list" wx:if="{{currentBooking}}">
-      <view class="booking-item">
-        <view class="booking-info">
-          <view class="booking-title">{{currentBooking.title || '网球场地预约'}}</view>
-          <view class="booking-place">{{currentBooking.place || '网球俱乐部龙湖店'}}</view>
-          <view class="booking-time">{{currentBooking.date || '2023-06-11'}} {{currentBooking.time || '14:00-15:00'}}</view>
+    
+    <!-- 羽毛球馆列表 -->
+    <view class="venues-section">
+      <view class="venue-header">
+        <text>羽毛球馆</text>
+        <view class="sort-btn">
+          <icon class="sort-icon"></icon>
+          <text>按距离排序</text>
         </view>
-        <view class="booking-status {{currentBooking.status === 'confirmed' ? 'confirmed' : 'pending'}}">
-          {{currentBooking.status === 'confirmed' ? '已确认' : '待确认'}}
+      </view>
+      
+      <!-- 场馆项目 -->
+      <view class="venue-list">
+        <!-- 场馆循环 -->
+        <block wx:for="{{venues}}" wx:key="id">
+          <!-- 羽毛球场馆 -->
+          <view class="venue-item" bindtap="selectVenue" data-id="{{item.id}}">
+            <image class="venue-img" src="{{item.image}}" mode="aspectFill"></image>
+            <view class="venue-info">
+              <view class="venue-name">{{item.name}}</view>
+              <view class="venue-rating">
+                <view class="rating-stars">
+                  <image class="star" src="/assets/icons/star-filled.png" wx:for="{{5}}" wx:for-item="star" wx:key="star"></image>
+                </view>
+                <text class="rating-score">{{item.rating}} ({{item.reviewCount}}条评价)</text>
+              </view>
+              <view class="venue-address">
+                <icon class="location-icon"></icon>
+                <text>{{item.address}}</text>
+              </view>
+              <view class="venue-distance">{{item.distance}}km</view>
+              <view class="venue-discount">{{item.discount}}</view>
+            </view>
+          </view>
+          
+          <!-- 时间段选择 -->
+          <view class="time-slots">
+            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[0] && activeVenue === item.id ? 'active' : ''}}" 
+                  bindtap="selectTimeSlot" 
+                  data-time="{{item.availableTimeSlots[0]}}">
+              {{item.availableTimeSlots[0]}}
+            </view>
+            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[1] && activeVenue === item.id ? 'active' : ''}}" 
+                  bindtap="selectTimeSlot" 
+                  data-time="{{item.availableTimeSlots[1]}}">
+              {{item.availableTimeSlots[1]}}
+            </view>
+            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[2] && activeVenue === item.id ? 'active' : ''}}" 
+                  bindtap="selectTimeSlot" 
+                  data-time="{{item.availableTimeSlots[2]}}">
+              {{item.availableTimeSlots[2]}}
+            </view>
+          </view>
+          <view class="time-slots">
+            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[3] && activeVenue === item.id ? 'active' : ''}}" 
+                  bindtap="selectTimeSlot" 
+                  data-time="{{item.availableTimeSlots[3]}}">
+              {{item.availableTimeSlots[3]}}
+            </view>
+            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[4] && activeVenue === item.id ? 'active' : ''}}" 
+                  bindtap="selectTimeSlot" 
+                  data-time="{{item.availableTimeSlots[4]}}">
+              {{item.availableTimeSlots[4]}}
+            </view>
+            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[5] && activeVenue === item.id ? 'active' : ''}}" 
+                  bindtap="selectTimeSlot" 
+                  data-time="{{item.availableTimeSlots[5]}}">
+              {{item.availableTimeSlots[5]}}
+            </view>
+          </view>
+          
+          <!-- 预约按钮 -->
+          <view class="book-now-btn" bindtap="bookNow" data-id="{{item.id}}">立即预约</view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 穿线服务内容 -->
+  <view class="content-view" hidden="{{currentTab !== 1}}">
+    <!-- 球拍信息 -->
+    <view class="string-card">
+      <view class="string-card-title">球拍信息</view>
+      
+      <view class="racket-info">
+        <view class="input-item">
+          <view class="input-label">球拍品牌型号</view>
+          <input class="input-field" placeholder="请填写您的球拍品牌和型号" value="{{racketInfo.brand}}" bindinput="inputRacketBrand" />
+        </view>
+        
+        <view class="pounds-requirement">
+          <text>磅数要求</text>
+          <view class="pounds-selector">
+            <view class="pounds-item">
+              <text>主线：</text>
+              <view class="pounds-control">
+                <view class="pounds-btn" bindtap="decreasePounds" data-type="main">-</view>
+                <text class="pounds-value">{{racketInfo.mainPounds}}</text>
+                <view class="pounds-btn" bindtap="increasePounds" data-type="main">+</view>
+              </view>
+              <text>磅</text>
+            </view>
+            
+            <view class="pounds-item">
+              <text>横线：</text>
+              <view class="pounds-control">
+                <view class="pounds-btn" bindtap="decreasePounds" data-type="cross">-</view>
+                <text class="pounds-value">{{racketInfo.crossPounds}}</text>
+                <view class="pounds-btn" bindtap="increasePounds" data-type="cross">+</view>
+              </view>
+              <text>磅</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
-    <view class="empty-tip" wx:else>暂无预约</view>
+    
+    <!-- 线材选择 -->
+    <view class="string-card">
+      <view class="string-card-title">线材选择</view>
+      
+      <view class="string-filter">
+        <view class="filter-tag {{stringFilter === 'all' ? 'active' : ''}}" 
+              bindtap="filterString" data-filter="all">全部</view>
+        <view class="filter-tag {{stringFilter === 'yonex' ? 'active' : ''}}" 
+              bindtap="filterString" data-filter="yonex">YONEX</view>
+        <view class="filter-tag {{stringFilter === 'lining' ? 'active' : ''}}" 
+              bindtap="filterString" data-filter="lining">李宁</view>
+        <view class="filter-tag {{stringFilter === 'victor' ? 'active' : ''}}" 
+              bindtap="filterString" data-filter="victor">VICTOR</view>
+        <view class="filter-tag {{stringFilter === 'other' ? 'active' : ''}}" 
+              bindtap="filterString" data-filter="other">其他</view>
+      </view>
+      
+      <!-- 线材列表 -->
+      <view class="string-list">
+        <view class="string-item {{selectedString === 'YONEX BG-65' ? 'selected' : ''}}" 
+              bindtap="selectString" data-string="YONEX BG-65" data-price="55">
+          <view class="string-select-dot {{selectedString === 'YONEX BG-65' ? 'active' : ''}}"></view>
+          <view class="string-info">
+            <view class="string-name">YONEX BG-65</view>
+            <view class="string-desc">耐打型，适合业余选手</view>
+          </view>
+          <view class="string-price">¥55</view>
+        </view>
+        
+        <view class="string-item {{selectedString === 'YONEX BG-80' ? 'selected' : ''}}" 
+              bindtap="selectString" data-string="YONEX BG-80" data-price="65">
+          <view class="string-select-dot {{selectedString === 'YONEX BG-80' ? 'active' : ''}}"></view>
+          <view class="string-info">
+            <view class="string-name">YONEX BG-80</view>
+            <view class="string-desc">耐久性好，控制性佳</view>
+          </view>
+          <view class="string-price">¥65</view>
+        </view>
+        
+        <view class="string-item {{selectedString === 'VICTOR VS-850' ? 'selected' : ''}}" 
+              bindtap="selectString" data-string="VICTOR VS-850" data-price="70">
+          <view class="string-select-dot {{selectedString === 'VICTOR VS-850' ? 'active' : ''}}"></view>
+          <view class="string-info">
+            <view class="string-name">VICTOR VS-850</view>
+            <view class="string-desc">高性能，反弹力强</view>
+          </view>
+          <view class="string-price">¥70</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 底部价格和下单按钮 -->
+    <view class="string-footer">
+      <view class="total-price">
+        <text>总价</text>
+        <text class="price">¥{{totalPrice}}</text>
+      </view>
+      <view class="order-btn" bindtap="placeStringOrder">立即下单</view>
+    </view>
+  </view>
+
+  <!-- 我的服务内容 -->
+  <view class="content-view" hidden="{{currentTab !== 2}}">
+    <view class="my-service-header">
+      <view class="service-filter-tab {{myServiceFilter === 'all' ? 'active' : ''}}" 
+            bindtap="filterMyService" data-filter="all">全部</view>
+      <view class="service-filter-tab {{myServiceFilter === 'court' ? 'active' : ''}}" 
+            bindtap="filterMyService" data-filter="court">球馆预约</view>
+      <view class="service-filter-tab {{myServiceFilter === 'string' ? 'active' : ''}}" 
+            bindtap="filterMyService" data-filter="string">穿线服务</view>
+    </view>
+    
+    <!-- 我的预约列表 -->
+    <view class="my-service-list">
+      <!-- 球馆预约项 -->
+      <view class="service-card" wx:if="{{myServiceFilter === 'all' || myServiceFilter === 'court'}}">
+        <view class="service-card-header">
+          <view class="service-card-title">球馆预约</view>
+          <view class="service-card-status confirmed">已确认</view>
+        </view>
+        
+        <view class="service-card-info">
+          <view class="info-item">
+            <icon class="info-icon location"></icon>
+            <text>南山大道1105号海润工业区西区3楼</text>
+          </view>
+          <view class="info-item">
+            <icon class="info-icon time"></icon>
+            <text>2023-06-10 | 14:00-16:00</text>
+          </view>
+          <view class="info-item">
+            <icon class="info-icon price"></icon>
+            <text>¥60 (会员9折优惠已应用)</text>
+          </view>
+        </view>
+        
+        <view class="service-card-actions">
+          <view class="action-btn cancel">取消预约</view>
+          <view class="action-btn details">查看详情</view>
+        </view>
+      </view>
+      
+      <!-- 穿线服务项1 -->
+      <view class="service-card" wx:if="{{myServiceFilter === 'all' || myServiceFilter === 'string'}}">
+        <view class="service-card-header">
+          <view class="service-card-title">穿线服务</view>
+          <view class="service-card-status processing">穿线中</view>
+        </view>
+        
+        <view class="service-card-info">
+          <view class="info-item">
+            <icon class="info-icon string"></icon>
+            <text>YONEX BG-65 羽毛线</text>
+          </view>
+          <view class="info-item">
+            <icon class="info-icon racket"></icon>
+            <text>YONEX天斧88D | 主线24磅 | 横线23磅</text>
+          </view>
+          <view class="info-item">
+            <icon class="info-icon shop"></icon>
+            <text>悦特爱特装店</text>
+          </view>
+          <view class="info-item">
+            <icon class="info-icon time"></icon>
+            <text>2023-06-10 | 预计取件时间: 2023-06-11</text>
+          </view>
+        </view>
+        
+        <view class="service-card-actions">
+          <view class="action-btn contact">联系店铺</view>
+          <view class="action-btn details">查看详情</view>
+        </view>
+      </view>
+      
+      <!-- 穿线服务项2 -->
+      <view class="service-card" wx:if="{{myServiceFilter === 'all' || myServiceFilter === 'string'}}">
+        <view class="service-card-header">
+          <view class="service-card-title">穿线服务</view>
+          <view class="service-card-status pending">未开始</view>
+        </view>
+        
+        <view class="service-card-info">
+          <view class="info-item">
+            <icon class="info-icon string"></icon>
+            <text>VICTOR VS-850 羽毛线</text>
+          </view>
+          <view class="info-item">
+            <icon class="info-icon racket"></icon>
+            <text>VICTOR SJ-6000 | 主线25磅 | 横线24磅</text>
+          </view>
+          <view class="info-item">
+            <icon class="info-icon shop"></icon>
+            <text>羽你同行东区店</text>
+          </view>
+        </view>
+        
+        <view class="service-card-actions">
+          <view class="action-btn contact">联系店铺</view>
+          <view class="action-btn details">查看详情</view>
+        </view>
+      </view>
+    </view>
   </view>
 </view> 

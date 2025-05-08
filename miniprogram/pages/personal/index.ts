@@ -1,5 +1,5 @@
 // 引入API接口
-import { getUserInfo } from '../../api/userApi'
+import { getUserInfo, UserInfo as ApiUserInfo } from '../../api/userApi'
 import { api } from '../../api/utils/request'
 
 const app = getApp()
@@ -9,10 +9,12 @@ interface UserInfo {
   avatarUrl?: string;
   nickName?: string;
   pointsTotal?: number;
-  userId?: string;
+  userId?: number;
   pointsBalance?: number;
   coupons?: number;
   services?: number;
+  level?: string;
+  id?: string;
 }
 
 interface PointsInfo {
@@ -27,12 +29,12 @@ interface SignInResult {
 
 // 定义获取积分的函数
 const getPoints = () => {
-  return api.post('/points/info', {});
+  return api.post('/api/points/info', {});
 };
 
 // 定义签到的函数
 const signIn = () => {
-  return api.post('/points/signIn', {});
+  return api.post('/api/points/signIn', {});
 };
 
 Page({
@@ -99,7 +101,7 @@ Page({
       }
       
       // 调用API获取用户信息
-      const userInfo = await getUserInfo() as UserInfo
+      const userInfo = await getUserInfo() as ApiUserInfo
       if (userInfo) {
         // 更新页面数据
         this.setData({ 
@@ -107,7 +109,7 @@ Page({
             avatarUrl: userInfo.avatarUrl || '/assets/icons/default-avatar.png',
             nickName: userInfo.nickName || '微信用户',
             level: this.getUserLevel(userInfo.pointsTotal || 0),
-            id: userInfo.userId || '10086',
+            id: String(userInfo.userId) || '10086',
             pointsBalance: userInfo.pointsBalance || 280
           },
           coupons: userInfo.coupons || 3,

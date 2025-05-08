@@ -1,7 +1,11 @@
 {
-  "navigationBarTitleText": "我的",
-  "navigationBarBackgroundColor": "#4169e1",
+  "navigationStyle": "custom",
+  "navigationBarBackgroundColor": "#4F6AED",
   "navigationBarTextStyle": "white",
+  "disableScroll": false,
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "light",
+  "backgroundColor": "#4F6AED",
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"
   }
