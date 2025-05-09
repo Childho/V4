@@ -79,7 +79,7 @@ Page({
     // 确保DOM元素已渲染，给一些时间让视图更新
     setTimeout(() => {
       wx.createSelectorQuery()
-        .select('.personal-container')
+        .select('.page-container')
         .boundingClientRect(function(rect) {
           if (rect) {
             console.log('个人页面容器尺寸:', rect.width, rect.height)
