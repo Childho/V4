@@ -1,11 +1,6 @@
 <view class="page-container">
   <!-- 头部区域（蓝色背景） -->
   <view class="header-wrapper">
-    <!-- 设置图标 -->
-    <view class="settings-icon" bindtap="handleSetting">
-      <image class="icon-image" src="/assets/icons/settings.svg"></image>
-    </view>
-
     <!-- 用户信息卡片 -->
     <view class="profile-card">
       <image class="avatar" src="{{userInfo.avatarUrl || '/assets/icons/default-avatar.png'}}" />
@@ -148,6 +143,22 @@
           </view>
         </view>
         <view class="task-btn">去邀请</view>
+      </view>
+    </view>
+    
+    <!-- 常用工具栏 -->
+    <view class="common-tools-section">
+      <view class="section-header">
+        <view class="section-title">常用工具</view>
+      </view>
+      
+      <view class="tools-grid">
+        <view class="tool-item" wx:for="{{tools}}" wx:key="id" bindtap="navigateTo" data-url="{{item.url}}">
+          <view class="tool-icon">
+            <image src="{{item.icon}}"></image>
+          </view>
+          <view class="tool-name">{{item.name}}</view>
+        </view>
       </view>
     </view>
   </view>

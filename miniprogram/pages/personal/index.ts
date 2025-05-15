@@ -52,7 +52,13 @@ Page({
       { id: 3, name: '邀请好友', desc: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
     ],
     coupons: 3,
-    services: 1
+    services: 1,
+    // 定义常用工具数据
+    tools: [
+      { id: 1, name: '地址管理', icon: '/assets/icons/address.svg', url: '/pages/address/index' },
+      { id: 2, name: '我的收藏', icon: '/assets/icons/heart.svg', url: '/pages/favorite/index' },
+      { id: 3, name: '浏览历史', icon: '/assets/icons/history.svg', url: '/pages/history/index' }
+    ]
   },
 
   onLoad() {
@@ -225,11 +231,22 @@ Page({
 
   // 页面跳转
   navigateTo(e: any) {
-    const url = e.currentTarget.dataset.url;
+    // 处理直接传递URL字符串的情况
+    let url;
+    if (typeof e === 'string') {
+      url = e;
+    } else if (e && e.currentTarget && e.currentTarget.dataset) {
+      url = e.currentTarget.dataset.url;
+    } else {
+      console.error('跳转参数无效', e);
+      return;
+    }
+
     if (!url) {
       console.error('跳转链接不存在');
       return;
     }
+    
     wx.navigateTo({
       url,
       fail: (err) => {
@@ -240,11 +257,6 @@ Page({
         });
       }
     });
-  },
-  
-  // 设置
-  handleSetting() {
-    this.navigateTo('/pages/setting/index')
   },
   
   // 处理任务点击

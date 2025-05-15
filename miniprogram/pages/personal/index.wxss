@@ -632,4 +632,51 @@
   40% {
     transform: scale(1);
   }
+}
+
+/* 常用工具区域 */
+.common-tools-section {
+  margin: 30rpx 20rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+.tools-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 20rpx;
+}
+
+.tool-item {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30rpx;
+  box-sizing: border-box;
+}
+
+.tool-icon {
+  width: 80rpx;
+  height: 80rpx;
+  background-color: #F7F8FD;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.tool-icon image {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.tool-name {
+  font-size: 24rpx;
+  color: #333;
+  text-align: center;
 } 
