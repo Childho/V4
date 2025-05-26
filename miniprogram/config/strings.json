@@ -1,0 +1,83 @@
+{
+  "zh_CN": {
+    "home.category_title.badminton_racket": "羽毛球拍",
+    "home.category_title.badminton_shoes": "羽毛球鞋",
+    "home.category_title.badminton": "羽毛球",
+    "home.category_title.sportswear": "运动服装",
+    "home.category_title.accessories": "羽毛球配件",
+    "home.category_title.discount": "折扣专区",
+    
+    "home.button.view_all": "查看全部",
+    
+    "home.item.sold": "已售 {{count}}",
+    "home.item.price": "¥{{price}}",
+    
+    "mall.title": "商城",
+    "mall.subtitle": "商品分类展示和购物功能",
+    "mall.search.placeholder": "搜索商品",
+    
+    "mall.filter.title": "品牌筛选",
+    "mall.filter.all": "全部",
+    "mall.filter.lining": "李宁",
+    "mall.filter.victor": "VICTOR",
+    "mall.filter.yonex": "尤尼克斯",
+    "mall.filter.kawasaki": "川崎",
+    "mall.filter.asta": "亚狮龙",
+    "mall.filter.weiqiu": "威球",
+    "mall.filter.thai": "泰昂"
+  },
+  "en": {
+    "home.category_title.badminton_racket": "Badminton Rackets",
+    "home.category_title.badminton_shoes": "Badminton Shoes",
+    "home.category_title.badminton": "Shuttlecocks",
+    "home.category_title.sportswear": "Sportswear",
+    "home.category_title.accessories": "Accessories",
+    "home.category_title.discount": "Discounts",
+    
+    "home.button.view_all": "View All",
+    
+    "home.item.sold": "Sold {{count}}",
+    "home.item.price": "¥{{price}}",
+    
+    "mall.title": "Store",
+    "mall.subtitle": "Browse and shop products",
+    "mall.search.placeholder": "Search products",
+    
+    "mall.filter.title": "Brand Filter",
+    "mall.filter.all": "All",
+    "mall.filter.lining": "Li-Ning",
+    "mall.filter.victor": "VICTOR",
+    "mall.filter.yonex": "YONEX",
+    "mall.filter.kawasaki": "Kawasaki",
+    "mall.filter.asta": "Asta",
+    "mall.filter.weiqiu": "Weiqiu",
+    "mall.filter.thai": "Thai"
+  },
+  "ja": {
+    "home.category_title.badminton_racket": "バドミントンラケット",
+    "home.category_title.badminton_shoes": "バドミントンシューズ",
+    "home.category_title.badminton": "シャトルコック",
+    "home.category_title.sportswear": "スポーツウェア",
+    "home.category_title.accessories": "アクセサリー",
+    "home.category_title.discount": "割引",
+    
+    "home.button.view_all": "すべて見る",
+    
+    "home.item.sold": "販売済み {{count}}",
+    "home.item.price": "¥{{price}}",
+    
+    "mall.title": "ショップ",
+    "mall.subtitle": "商品を閲覧して購入",
+    "mall.search.placeholder": "商品を検索",
+    
+    "mall.filter.title": "ブランドフィルター",
+    "mall.filter.all": "すべて",
+    "mall.filter.lining": "李寧",
+    "mall.filter.victor": "VICTOR",
+    "mall.filter.yonex": "YONEX",
+    "mall.filter.kawasaki": "川崎",
+    "mall.filter.asta": "アスタ",
+    "mall.filter.weiqiu": "威球",
+    "mall.filter.thai": "泰昂"
+  }
+} 

@@ -5,7 +5,7 @@
     <view class="profile-card">
       <image class="avatar" src="{{userInfo.avatarUrl || '/assets/icons/default-avatar.png'}}" />
       <view class="user-info">
-        <view class="user-name">{{userInfo.nickName || '张小燕'}}</view>
+        <view class="user-name">{{userInfo.nickName || '汪汪汪'}}</view>
         <view class="member-info">
           <text class="user-level">{{userInfo.level || '初级会员'}}</text>
           <text class="user-id">ID: <text class="id-number">{{userInfo.id || '10086'}}</text></text>

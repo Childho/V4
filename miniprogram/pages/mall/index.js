@@ -55,6 +55,99 @@ Page({
         soldCount: 68,
         imageUrl: 'https://img.alicdn.com/imgextra/i3/2201499189850/O1CN014UXxaF1PbkptHDnj8_!!2201499189850.jpg_400x400.jpg'
       }
+    ],
+    // 羽毛球数据
+    shuttlecocks: [
+      {
+        id: 201,
+        name: 'YONEX AS-50(12只装)',
+        price: '128.00',
+        soldCount: 156,
+        imageUrl: '/assets/images/shuttlecock1.jpg'
+      },
+      {
+        id: 202,
+        name: 'RSL NO.4(12只装)',
+        price: '156.00',
+        soldCount: 78,
+        imageUrl: '/assets/images/shuttlecock2.jpg'
+      },
+      {
+        id: 203,
+        name: 'VICTOR 胜利1号球',
+        price: '168.00',
+        soldCount: 92,
+        imageUrl: '/assets/images/shuttlecock3.jpg'
+      },
+      {
+        id: 204,
+        name: '川崎进口羽毛球耐打型',
+        price: '98.00',
+        soldCount: 189,
+        imageUrl: '/assets/images/shuttlecock4.jpg'
+      }
+    ],
+    // 运动服装数据
+    sportswear: [
+      {
+        id: 301,
+        name: '男款运动T恤',
+        price: '159.00',
+        soldCount: 87,
+        imageUrl: '/assets/images/sportswear1.jpg'
+      },
+      {
+        id: 302,
+        name: '女款运动短裤',
+        price: '129.00',
+        soldCount: 93,
+        imageUrl: '/assets/images/sportswear2.jpg'
+      },
+      {
+        id: 303,
+        name: 'LINING李宁短袖男装',
+        price: '189.00',
+        soldCount: 67,
+        imageUrl: '/assets/images/sportswear3.jpg'
+      },
+      {
+        id: 304,
+        name: 'YONEX尤尼克斯羽毛球服',
+        price: '259.00',
+        soldCount: 42,
+        imageUrl: '/assets/images/sportswear4.jpg'
+      }
+    ],
+    // 羽毛球配件数据
+    accessories: [
+      {
+        id: 401,
+        name: 'YONEX羽毛球拍手胶',
+        price: '35.00',
+        soldCount: 325,
+        imageUrl: '/assets/images/accessory1.jpg'
+      },
+      {
+        id: 402,
+        name: '李宁羽毛球拍线',
+        price: '68.00',
+        soldCount: 156,
+        imageUrl: '/assets/images/accessory2.jpg'
+      },
+      {
+        id: 403,
+        name: '胜利羽毛球包双肩',
+        price: '239.00',
+        soldCount: 78,
+        imageUrl: '/assets/images/accessory3.jpg'
+      },
+      {
+        id: 404,
+        name: '专业羽毛球护腕',
+        price: '29.00',
+        soldCount: 246,
+        imageUrl: '/assets/images/accessory4.jpg'
+      }
     ]
   },
 
