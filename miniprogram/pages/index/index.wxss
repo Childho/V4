@@ -43,6 +43,7 @@ page {
   justify-content: space-between;
   align-items: center;
   padding: 16rpx 30rpx 24rpx;
+  padding-right: 120rpx;
   background-color: #ffffff;
   position: relative;
   left: 0;
@@ -60,6 +61,7 @@ page {
   padding: 0 24rpx;
   height: 72rpx;
   margin-top: 0;
+  max-width: 320rpx;
 }
 
 .search-text {
@@ -69,6 +71,20 @@ page {
   margin-left: 10rpx;
 }
 
+/* 右侧容器：包含铃铛和会员等级 */
+.header-right-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 150rpx;
+  margin-left: 15rpx;
+  position: absolute;
+  right: 200rpx;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 保持原有的user-info样式，用于向后兼容 */
 .user-info {
   display: flex;
   align-items: center;
@@ -95,6 +111,7 @@ page {
   font-size: 24rpx;
   padding: 6rpx 16rpx;
   border-radius: 24rpx;
+  white-space: nowrap;
 }
 
 /* 轮播图样式 */

@@ -7,4 +7,26 @@
   justify-content: space-between;
   padding: 200rpx 0;
   box-sizing: border-box;
+}
+
+/* 全局隐藏微信开发者工具的调试信息 */
+.vconsole-panel,
+.vconsole-switch,
+.vconsole-mask,
+[class*="vconsole"],
+[id*="vconsole"],
+[class*="debug"],
+[id*="debug"],
+[data-v-*][class*="size"],
+[class*="simulator"],
+[id*="simulator"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  z-index: -999999 !important;
 } 

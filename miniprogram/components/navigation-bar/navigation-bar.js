@@ -55,7 +55,13 @@ Component({
    * 组件的初始数据
    */
   data: {
-    displayStyle: ''
+    displayStyle: '',
+    // 添加初始化状态，防止尺寸计算值暂时显示
+    isReady: false,
+    innerPaddingRight: '',
+    leftWidth: '',
+    safeAreaTop: '',
+    ios: false
   },
   lifetimes: {
     attached() {
@@ -64,11 +70,18 @@ Component({
         success: (res) => {
           const isAndroid = res.platform === 'android'
           const isDevtools = res.platform === 'devtools'
+          // 计算布局数据
+          const innerPaddingRight = `padding-right: ${res.windowWidth - rect.left}px`
+          const leftWidth = `width: ${res.windowWidth - rect.left }px`
+          const safeAreaTop = isDevtools || isAndroid ? `height: calc(var(--height) + ${res.safeArea.top}px); padding-top: ${res.safeArea.top}px` : ``
+          
+          // 一次性设置所有数据，并标记为准备就绪
           this.setData({
             ios: !isAndroid,
-            innerPaddingRight: `padding-right: ${res.windowWidth - rect.left}px`,
-            leftWidth: `width: ${res.windowWidth - rect.left }px`,
-            safeAreaTop: isDevtools || isAndroid ? `height: calc(var(--height) + ${res.safeArea.top}px); padding-top: ${res.safeArea.top}px` : ``
+            innerPaddingRight,
+            leftWidth,
+            safeAreaTop,
+            isReady: true  // 标记初始化完成，防止计算值暂时显示
           })
         }
       })

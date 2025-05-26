@@ -4,6 +4,24 @@
   padding-bottom: 30rpx;
 }
 
+/* 隐藏微信开发者工具的调试信息显示 */
+.vconsole-panel,
+.vconsole-switch,
+.vconsole-mask,
+[class*="vconsole"],
+[id*="vconsole"],
+[class*="debug"],
+[id*="debug"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 /* 搜索栏样式 */
 .search-bar {
   display: flex;

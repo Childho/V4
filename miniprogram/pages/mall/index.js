@@ -2,7 +2,12 @@
 Page({
   data: {
     cartItemCount: 3, // 购物车中商品数量
-    selectedBrand: 'all', // 当前选中的品牌
+    // 品牌筛选相关数据
+    brandOptions: ['全部', '李宁', 'VICTOR', '倍特爱', '超牌', '翎美', '亚狮龙', '威肯', '泰昂'],
+    selectedBrand: '全部', // 当前选中的品牌
+    // 品牌筛选折叠状态
+    brandFilterExpanded: false, // 是否展开品牌筛选
+    defaultBrands: ['全部', '李宁', 'VICTOR', '倍特爱'], // 默认显示的品牌
     rackets: [
       {
         id: 1,
@@ -184,6 +189,22 @@ Page({
     this.setData({
       selectedBrand: brand
     });
+    console.log('选中品牌:', brand); // 添加日志便于调试
+  },
+
+  // 切换全部品牌按钮 - 修改为切换展开/折叠状态
+  toggleAllBrands: function() {
+    const currentExpanded = this.data.brandFilterExpanded;
+    this.setData({
+      brandFilterExpanded: !currentExpanded
+    });
+    console.log('品牌筛选展开状态:', !currentExpanded); // 添加日志便于调试
+  },
+
+  // 获取当前显示的品牌列表
+  getDisplayBrands: function() {
+    const { brandOptions, defaultBrands, brandFilterExpanded } = this.data;
+    return brandFilterExpanded ? brandOptions : defaultBrands;
   },
 
   // 导航到分类页面

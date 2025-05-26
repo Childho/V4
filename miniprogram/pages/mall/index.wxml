@@ -1,10 +1,4 @@
 <view class="mall-container">
-  <!-- 顶部标题 -->
-  <view class="mall-header">
-    <text class="mall-title">商城</text>
-    <text class="mall-subtitle">商品分类展示和购物功能</text>
-  </view>
-
   <!-- 搜索栏 -->
   <view class="search-bar">
     <view class="search-input">
@@ -22,18 +16,35 @@
 
   <!-- 品牌筛选 -->
   <view class="brand-filter">
-    <view class="brand-title">品牌筛选</view>
+    <view class="brand-filter-header">
+      <text class="brand-filter-title">品牌筛选</text>
+      <view class="btn-all" bindtap="toggleAllBrands">
+        <text>{{brandFilterExpanded ? '收起' : '全部'}}</text>
+        <image class="arrow-icon {{brandFilterExpanded ? 'expanded' : ''}}" src="/assets/icons/arrow-down.svg" mode="aspectFit"></image>
+      </view>
+    </view>
     <view class="brand-list-container">
-      <scroll-view scroll-x class="brand-list" enhanced show-scrollbar="{{false}}">
-        <view class="brand-item {{selectedBrand === 'all' ? 'active' : ''}}" bindtap="selectBrand" data-brand="all">全部</view>
-        <view class="brand-item {{selectedBrand === 'lining' ? 'active' : ''}}" bindtap="selectBrand" data-brand="lining">李宁</view>
-        <view class="brand-item {{selectedBrand === 'victor' ? 'active' : ''}}" bindtap="selectBrand" data-brand="victor">VICTOR</view>
-        <view class="brand-item {{selectedBrand === 'yonex' ? 'active' : ''}}" bindtap="selectBrand" data-brand="yonex">尤尼克斯</view>
-        <view class="brand-item {{selectedBrand === 'kawasaki' ? 'active' : ''}}" bindtap="selectBrand" data-brand="kawasaki">川崎</view>
-        <view class="brand-item {{selectedBrand === 'asta' ? 'active' : ''}}" bindtap="selectBrand" data-brand="asta">亚狮龙</view>
-        <view class="brand-item {{selectedBrand === 'weiqiu' ? 'active' : ''}}" bindtap="selectBrand" data-brand="weiqiu">威球</view>
-        <view class="brand-item {{selectedBrand === 'thai' ? 'active' : ''}}" bindtap="selectBrand" data-brand="thai">泰昂</view>
-      </scroll-view>
+      <!-- 默认显示的品牌 -->
+      <view class="brand-list default-brands" wx:if="{{!brandFilterExpanded}}">
+        <view class="brand-item {{selectedBrand === item ? 'active' : ''}}" 
+              wx:for="{{defaultBrands}}" 
+              wx:key="*this"
+              bindtap="selectBrand" 
+              data-brand="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      
+      <!-- 展开状态下显示所有品牌 -->
+      <view class="brand-list all-brands" wx:if="{{brandFilterExpanded}}">
+        <view class="brand-item {{selectedBrand === item ? 'active' : ''}}" 
+              wx:for="{{brandOptions}}" 
+              wx:key="*this"
+              bindtap="selectBrand" 
+              data-brand="{{item}}">
+          {{item}}
+        </view>
+      </view>
     </view>
   </view>
 

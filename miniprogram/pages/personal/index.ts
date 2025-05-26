@@ -71,13 +71,6 @@ Page({
     // 每次页面显示都获取最新的用户信息
     this.getUserInfo()
     this.getPointsInfo()
-    
-    // 添加调试信息
-    wx.showToast({
-      title: '页面已显示',
-      icon: 'none',
-      duration: 2000
-    })
 
     // 调试信息 - 检查元素是否正常渲染
     console.log('当前页面数据:', this.data)

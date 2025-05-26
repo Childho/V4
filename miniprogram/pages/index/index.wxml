@@ -8,7 +8,8 @@
         <icon type="search" size="14" color="#999"></icon>
         <view class="search-text">搜索商品、活动</view>
       </view>
-      <view class="user-info">
+      <!-- 将铃铛和会员等级包裹到右侧容器中 -->
+      <view class="header-right-container">
         <view class="notification-icon" bindtap="onNotificationTap">
           <image src="/assets/icons/notification.svg" mode="aspectFit"></image>
         </view>
