@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 积分兑换</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部标签页 -->
+      <div class="flex" style="background-color: white; padding: 15px 0 10px;">
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="string_service.html" style="text-decoration: none; color: inherit;">
+            <span>穿线服务</span>
+          </a>
+        </div>
+        <div class="tab-item active" style="border-bottom: 3px solid #4F7FF3; color: #4F7FF3; font-weight: 600;">
+          <span>积分兑换</span>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="referral.html" style="text-decoration: none; color: inherit;">
+            <span>推广返佣</span>
+          </a>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="service_history.html" style="text-decoration: none; color: inherit;">
+            <span>我的服务</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 积分余额卡片 -->
+      <div class="card" style="background: linear-gradient(135deg, #4F7FF3, #357ABD); color: white; margin: 15px; padding: 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(79, 127, 243, 0.3);">
+        <div class="flex items-center justify-between" style="margin-bottom: 15px;">
+          <div style="font-size: 16px; font-weight: 600; opacity: 0.9;">我的积分</div>
+          <i class="fas fa-coins" style="font-size: 24px; opacity: 0.8;"></i>
+        </div>
+        <div style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">2,580</div>
+        <div style="font-size: 14px; opacity: 0.8;">可兑换多种精美奖品</div>
+      </div>
+
+      <!-- 奖品分类筛选 -->
+      <div class="card">
+        <div class="flex" style="overflow-x: auto; padding: 5px 0;">
+          <div id="filter-all" onclick="filterRewards('all')" style="min-width: auto; padding: 8px 20px; background-color: #4F7FF3; color: white; border-radius: 20px; margin-right: 15px; font-size: 14px;">全部</div>
+          <div id="filter-equipment" onclick="filterRewards('equipment')" style="min-width: auto; padding: 8px 20px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 15px; font-size: 14px;">装备</div>
+          <div id="filter-gift" onclick="filterRewards('gift')" style="min-width: auto; padding: 8px 20px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 15px; font-size: 14px;">礼品</div>
+          <div id="filter-coupon" onclick="filterRewards('coupon')" style="min-width: auto; padding: 8px 20px; background-color: #f6f6f6; color: #666; border-radius: 20px; font-size: 14px;">优惠券</div>
+        </div>
+      </div>
+
+      <!-- 奖品列表 -->
+      <!-- 羽毛球拍 -->
+      <div class="card reward-item" data-category="equipment">
+        <div class="flex items-center" style="gap: 15px;">
+          <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球拍" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #333; margin-bottom: 5px;">YONEX天斧88D羽毛球拍</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">专业级比赛用拍，4U重量适合进攻型打法</div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center" style="gap: 5px; color: #FF8B47; font-weight: 600;">
+                <i class="fas fa-coins"></i>
+                <span>2,200积分</span>
+              </div>
+              <div style="font-size: 11px; color: #666;">库存：5件</div>
+            </div>
+          </div>
+          <button onclick="exchangeReward('羽毛球拍', 2200)" style="background: linear-gradient(135deg, #FF8B47, #FFB47A); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">兑换</button>
+        </div>
+      </div>
+
+      <!-- 羽毛球鞋 -->
+      <div class="card reward-item" data-category="equipment">
+        <div class="flex items-center" style="gap: 15px;">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球鞋" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #333; margin-bottom: 5px;">LI-NING专业羽毛球鞋</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">防滑透气，专为羽毛球运动设计</div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center" style="gap: 5px; color: #FF8B47; font-weight: 600;">
+                <i class="fas fa-coins"></i>
+                <span>1,800积分</span>
+              </div>
+              <div style="font-size: 11px; color: #666;">库存：12件</div>
+            </div>
+          </div>
+          <button onclick="exchangeReward('羽毛球鞋', 1800)" style="background: linear-gradient(135deg, #FF8B47, #FFB47A); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">兑换</button>
+        </div>
+      </div>
+
+      <!-- 运动套装 -->
+      <div class="card reward-item" data-category="gift">
+        <div class="flex items-center" style="gap: 15px;">
+          <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="运动套装" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #333; margin-bottom: 5px;">倍特爱运动套装</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">透气速干面料，多色可选</div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center" style="gap: 5px; color: #FF8B47; font-weight: 600;">
+                <i class="fas fa-coins"></i>
+                <span>1,200积分</span>
+              </div>
+              <div style="font-size: 11px; color: #666;">库存：8件</div>
+            </div>
+          </div>
+          <button onclick="exchangeReward('运动套装', 1200)" style="background: linear-gradient(135deg, #FF8B47, #FFB47A); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">兑换</button>
+        </div>
+      </div>
+
+      <!-- 手胶套装 -->
+      <div class="card reward-item" data-category="gift">
+        <div class="flex items-center" style="gap: 15px;">
+          <img src="https://images.unsplash.com/photo-1585571822451-6b98bab3c7e8?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="手胶套装" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover;">
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #333; margin-bottom: 5px;">专业手胶套装</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">吸汗防滑，多款颜色组合装</div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center" style="gap: 5px; color: #FF8B47; font-weight: 600;">
+                <i class="fas fa-coins"></i>
+                <span>500积分</span>
+              </div>
+              <div style="font-size: 11px; color: #666;">库存：20件</div>
+            </div>
+          </div>
+          <button onclick="exchangeReward('手胶套装', 500)" style="background: linear-gradient(135deg, #FF8B47, #FFB47A); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">兑换</button>
+        </div>
+      </div>
+
+      <!-- 优惠券 -->
+      <div class="card reward-item" data-category="coupon">
+        <div class="flex items-center" style="gap: 15px;">
+          <div style="width: 80px; height: 80px; border-radius: 10px; background: linear-gradient(135deg, #4F7FF3, #357ABD); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: 600;">券</div>
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #333; margin-bottom: 5px;">商城20元优惠券</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">全场通用，满100元可用</div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center" style="gap: 5px; color: #FF8B47; font-weight: 600;">
+                <i class="fas fa-coins"></i>
+                <span>200积分</span>
+              </div>
+              <div style="font-size: 11px; color: #666;">库存：100张</div>
+            </div>
+          </div>
+          <button onclick="exchangeReward('优惠券', 200)" style="background: linear-gradient(135deg, #FF8B47, #FFB47A); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">兑换</button>
+        </div>
+      </div>
+
+      <!-- 穿线券 -->
+      <div class="card reward-item" data-category="coupon">
+        <div class="flex items-center" style="gap: 15px;">
+          <div style="width: 80px; height: 80px; border-radius: 10px; background: linear-gradient(135deg, #FF8B47, #FFB47A); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; font-weight: 600;">券</div>
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #333; margin-bottom: 5px;">免费穿线服务券</div>
+            <div style="font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.4;">免费穿线一次，含基础线材</div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center" style="gap: 5px; color: #FF8B47; font-weight: 600;">
+                <i class="fas fa-coins"></i>
+                <span>800积分</span>
+              </div>
+              <div style="font-size: 11px; color: #666;">库存：15张</div>
+            </div>
+          </div>
+          <button onclick="exchangeReward('穿线券', 800)" style="background: linear-gradient(135deg, #FF8B47, #FFB47A); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">兑换</button>
+        </div>
+      </div>
+
+      <!-- 兑换记录 -->
+      <div class="card">
+        <div class="flex items-center justify-between" style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
+          <div style="font-size: 16px; font-weight: 600; color: #333;">最近兑换</div>
+          <div style="font-size: 12px; color: #4F7FF3;">查看全部 ></div>
+        </div>
+        
+        <div class="flex items-center justify-between" style="padding: 10px 0; border-bottom: 1px solid #f8f8f8;">
+          <div>
+            <div style="font-size: 14px; font-weight: 500; color: #333; margin-bottom: 3px;">专业手胶套装</div>
+            <div style="font-size: 12px; color: #666;">2024-01-15 14:30</div>
+          </div>
+          <div class="flex items-center" style="gap: 8px;">
+            <span style="font-size: 14px; font-weight: 600; color: #FF8B47;">-500</span>
+            <span style="font-size: 12px; padding: 2px 8px; border-radius: 10px; background: rgba(126, 211, 33, 0.1); color: #7ED321;">已完成</span>
+          </div>
+        </div>
+        
+        <div class="flex items-center justify-between" style="padding: 10px 0;">
+          <div>
+            <div style="font-size: 14px; font-weight: 500; color: #333; margin-bottom: 3px;">商城20元优惠券</div>
+            <div style="font-size: 12px; color: #666;">2024-01-12 09:15</div>
+          </div>
+          <div class="flex items-center" style="gap: 8px;">
+            <span style="font-size: 14px; font-weight: 600; color: #FF8B47;">-200</span>
+            <span style="font-size: 12px; padding: 2px 8px; border-radius: 10px; background: rgba(126, 211, 33, 0.1); color: #7ED321;">已完成</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 奖品分类筛选功能
+    function filterRewards(category) {
+      // 更新筛选按钮样式
+      document.getElementById('filter-all').style.backgroundColor = category === 'all' ? '#4F7FF3' : '#f6f6f6';
+      document.getElementById('filter-all').style.color = category === 'all' ? 'white' : '#666';
+      
+      document.getElementById('filter-equipment').style.backgroundColor = category === 'equipment' ? '#4F7FF3' : '#f6f6f6';
+      document.getElementById('filter-equipment').style.color = category === 'equipment' ? 'white' : '#666';
+      
+      document.getElementById('filter-gift').style.backgroundColor = category === 'gift' ? '#4F7FF3' : '#f6f6f6';
+      document.getElementById('filter-gift').style.color = category === 'gift' ? 'white' : '#666';
+      
+      document.getElementById('filter-coupon').style.backgroundColor = category === 'coupon' ? '#4F7FF3' : '#f6f6f6';
+      document.getElementById('filter-coupon').style.color = category === 'coupon' ? 'white' : '#666';
+      
+      // 筛选奖品
+      const rewardItems = document.querySelectorAll('.reward-item');
+      rewardItems.forEach(item => {
+        const itemCategory = item.dataset.category;
+        if (category === 'all' || itemCategory === category) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    // 兑换奖品功能
+    function exchangeReward(rewardName, points) {
+      const currentPoints = 2580; // 当前积分
+      
+      if (currentPoints >= points) {
+        if (confirm(`确认要兑换"${rewardName}"吗？\n将消耗 ${points} 积分`)) {
+          alert('兑换成功！奖品将在3-5个工作日内发货');
+        }
+      } else {
+        alert(`积分不足！还需要 ${points - currentPoints} 积分`);
+      }
+    }
+  </script>
+</body>
+</html> 

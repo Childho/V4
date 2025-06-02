@@ -24,13 +24,18 @@
       <!-- 顶部标签页 -->
       <div class="flex" style="background-color: white; padding: 15px 0 10px;">
         <div class="tab-item" style="border-bottom: 3px solid transparent;">
-          <a href="booking.html" style="text-decoration: none; color: inherit;">
-            <span>球馆预约</span>
+          <a href="string_service.html" style="text-decoration: none; color: inherit;">
+            <span>穿线服务</span>
           </a>
         </div>
         <div class="tab-item" style="border-bottom: 3px solid transparent;">
-          <a href="string_service.html" style="text-decoration: none; color: inherit;">
-            <span>穿线服务</span>
+          <a href="points_exchange.html" style="text-decoration: none; color: inherit;">
+            <span>积分兑换</span>
+          </a>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="referral.html" style="text-decoration: none; color: inherit;">
+            <span>推广返佣</span>
           </a>
         </div>
         <div class="tab-item active" style="border-bottom: 3px solid #4F7FF3; color: #4F7FF3; font-weight: 600;">
@@ -41,47 +46,39 @@
       <!-- 服务类型切换 -->
       <div class="card">
         <div class="flex" style="overflow-x: auto; padding: 5px 0;">
-          <div id="filter-all" onclick="filterServices('all')" style="min-width: auto; padding: 8px 20px; background-color: #4F7FF3; color: white; border-radius: 20px; margin-right: 15px; font-size: 14px;">全部</div>
-          <div id="filter-booking" onclick="filterServices('booking')" style="min-width: auto; padding: 8px 20px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 15px; font-size: 14px;">球馆预约</div>
-          <div id="filter-string" onclick="filterServices('string')" style="min-width: auto; padding: 8px 20px; background-color: #f6f6f6; color: #666; border-radius: 20px; font-size: 14px;">穿线服务</div>
+          <div id="filter-all" onclick="filterServices('all')" style="min-width: auto; padding: 8px 18px; background-color: #4F7FF3; color: white; border-radius: 20px; margin-right: 12px; font-size: 14px; cursor: pointer;">全部</div>
+          <div id="filter-string" onclick="filterServices('string')" style="min-width: auto; padding: 8px 18px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 12px; font-size: 14px; cursor: pointer;">穿线进度</div>
+          <div id="filter-reward" onclick="filterServices('reward')" style="min-width: auto; padding: 8px 18px; background-color: #f6f6f6; color: #666; border-radius: 20px; margin-right: 12px; font-size: 14px; cursor: pointer;">奖品物流</div>
+          <div id="filter-commission" onclick="filterServices('commission')" style="min-width: auto; padding: 8px 18px; background-color: #f6f6f6; color: #666; border-radius: 20px; font-size: 14px; cursor: pointer;">返佣记录</div>
         </div>
       </div>
       
-      <!-- 服务记录列表 -->
-      <!-- 球馆预约记录 -->
-      <div class="card service-item" data-type="booking">
-        <div style="border-left: 4px solid #4F7FF3; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">球馆预约</div>
-        
-        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
-          <div style="font-size: 15px; font-weight: 600; color: #333;">润羽赛事羽毛球馆</div>
-          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">已确认</div>
-        </div>
-        
-        <div style="margin-bottom: 15px;">
-          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> 南山大道1105号海润工业区西区3楼</div>
-          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-clock" style="margin-right: 5px;"></i> 2023-06-10 | 14:00-16:00</div>
-          <div style="font-size: 14px; color: #666;"><i class="fas fa-tag" style="margin-right: 5px;"></i> ¥60 (会员9折优惠已应用)</div>
-        </div>
-        
-        <div class="flex" style="gap: 10px;">
-          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">取消预约</button>
-          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">查看详情</button>
-        </div>
-      </div>
-      
-      <!-- 穿线服务 - 穿线中状态 -->
+      <!-- 穿线服务进度 -->
       <div class="card service-item" data-type="string">
-        <div style="border-left: 4px solid #F56C6C; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务</div>
+        <div style="border-left: 4px solid #F56C6C; padding-left: 15px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务进度</div>
         
         <div class="flex items-center justify-between" style="margin-bottom: 10px;">
           <div style="font-size: 15px; font-weight: 600; color: #333;">YONEX BG-65 羽毛线</div>
           <div style="font-size: 14px; color: #E6A23C; font-weight: 600;">穿线中</div>
         </div>
         
+        <!-- 进度条 -->
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 12px; color: #666; margin-bottom: 8px;">服务进度</div>
+          <div style="width: 100%; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+            <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #E6A23C, #F7BA2A); border-radius: 4px; transition: width 0.3s ease;"></div>
+          </div>
+          <div class="flex items-center justify-between" style="margin-top: 5px; font-size: 11px; color: #666;">
+            <span>已收拍</span>
+            <span>穿线中</span>
+            <span>待取拍</span>
+          </div>
+        </div>
+        
         <div style="margin-bottom: 15px;">
           <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-info-circle" style="margin-right: 5px;"></i> YONEX天斧88D | 主线24磅 | 横线23磅</div>
           <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-store" style="margin-right: 5px;"></i> 倍特爱特装店</div>
-          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 2023-06-10 | 预计取拍时间：2023-06-11</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 预计完成：2024-01-16 15:00</div>
         </div>
         
         <div class="flex" style="gap: 10px;">
@@ -90,36 +87,106 @@
         </div>
       </div>
       
-      <!-- 穿线服务 - 未开始状态 -->
-      <div class="card service-item" data-type="string">
-        <div style="border-left: 4px solid #F56C6C; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务</div>
+      <!-- 奖品物流信息 -->
+      <div class="card service-item" data-type="reward">
+        <div style="border-left: 4px solid #FF8B47; padding-left: 15px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">奖品物流信息</div>
         
         <div class="flex items-center justify-between" style="margin-bottom: 10px;">
-          <div style="font-size: 15px; font-weight: 600; color: #333;">VICTOR VS-850 羽毛线</div>
-          <div style="font-size: 14px; color: #909399; font-weight: 600;">未开始</div>
+          <div style="font-size: 15px; font-weight: 600; color: #333;">专业手胶套装</div>
+          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">运输中</div>
+        </div>
+        
+        <!-- 物流时间线 -->
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 12px; color: #666; margin-bottom: 10px;">物流轨迹</div>
+          <div style="position: relative; padding-left: 20px;">
+            <!-- 时间线线条 -->
+            <div style="position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: #e5e5e5;"></div>
+            
+            <!-- 时间线节点 -->
+            <div style="position: relative; margin-bottom: 12px;">
+              <div style="position: absolute; left: -16px; top: 2px; width: 8px; height: 8px; border-radius: 50%; background: #67C23A;"></div>
+              <div style="font-size: 13px; color: #333; font-weight: 500;">已发货</div>
+              <div style="font-size: 11px; color: #666;">2024-01-15 14:30</div>
+            </div>
+            
+            <div style="position: relative; margin-bottom: 12px;">
+              <div style="position: absolute; left: -16px; top: 2px; width: 8px; height: 8px; border-radius: 50%; background: #67C23A;"></div>
+              <div style="font-size: 13px; color: #333; font-weight: 500;">运输中</div>
+              <div style="font-size: 11px; color: #666;">深圳分拨中心</div>
+            </div>
+            
+            <div style="position: relative;">
+              <div style="position: absolute; left: -16px; top: 2px; width: 8px; height: 8px; border-radius: 50%; background: #e5e5e5;"></div>
+              <div style="font-size: 13px; color: #999;">待签收</div>
+              <div style="font-size: 11px; color: #999;">预计明日送达</div>
+            </div>
+          </div>
         </div>
         
         <div style="margin-bottom: 15px;">
-          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-info-circle" style="margin-right: 5px;"></i> VICTOR SJ-6000 | 主线25磅 | 横线24磅</div>
-          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-store" style="margin-right: 5px;"></i> 羽你同行东区店</div>
-          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 2023-06-11 | 请尽快送拍</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-truck" style="margin-right: 5px;"></i> 快递单号：SF1234567890</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> 收货地址：深圳市南山区**路**号</div>
         </div>
         
         <div class="flex" style="gap: 10px;">
-          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">取消订单</button>
-          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">查看详情</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">物流详情</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">联系客服</button>
         </div>
       </div>
       
-      <!-- 历史记录 -->
+      <!-- 返佣记录进度 -->
+      <div class="card service-item" data-type="commission">
+        <div style="border-left: 4px solid #67C23A; padding-left: 15px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">返佣进度</div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #333;">本月返佣结算</div>
+          <div style="font-size: 14px; color: #E6A23C; font-weight: 600;">结算中</div>
+        </div>
+        
+        <!-- 返佣进度条 -->
+        <div style="margin-bottom: 15px;">
+          <div style="font-size: 12px; color: #666; margin-bottom: 8px;">结算进度 (预计每月5号结算)</div>
+          <div style="width: 100%; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+            <div style="width: 80%; height: 100%; background: linear-gradient(90deg, #67C23A, #85CE61); border-radius: 4px; transition: width 0.3s ease;"></div>
+          </div>
+          <div class="flex items-center justify-between" style="margin-top: 5px; font-size: 11px; color: #666;">
+            <span>统计完成</span>
+            <span>审核中</span>
+            <span>待发放</span>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div class="flex items-center justify-between" style="margin-bottom: 8px;">
+            <div style="font-size: 14px; color: #666;">本月预计返佣</div>
+            <div style="font-size: 16px; font-weight: 600; color: #67C23A;">¥186.50</div>
+          </div>
+          <div class="flex items-center justify-between" style="margin-bottom: 8px;">
+            <div style="font-size: 14px; color: #666;">推广订单数</div>
+            <div style="font-size: 14px; color: #333;">8单</div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div style="font-size: 14px; color: #666;">新增好友</div>
+            <div style="font-size: 14px; color: #333;">3人</div>
+          </div>
+        </div>
+        
+        <div class="flex" style="gap: 10px;">
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">查看明细</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">推广中心</button>
+        </div>
+      </div>
+      
+      <!-- 历史记录分割线 -->
       <div style="padding: 15px; font-size: 14px; color: #999; position: relative; text-align: center;">
         <span style="display: inline-block; padding: 0 10px; background-color: #f6f6f6; position: relative; z-index: 1;">历史记录</span>
         <div style="height: 1px; background-color: #eee; position: absolute; top: 50%; left: 0; right: 0; z-index: 0;"></div>
       </div>
       
-      <!-- 穿线服务 - 已完成状态 -->
+      <!-- 已完成的穿线服务 -->
       <div class="card service-item" data-type="string">
-        <div style="border-left: 4px solid #F56C6C; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务</div>
+        <div style="border-left: 4px solid #F56C6C; padding-left: 15px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">穿线服务</div>
         
         <div class="flex items-center justify-between" style="margin-bottom: 10px;">
           <div style="font-size: 15px; font-weight: 600; color: #333;">李宁 NO.1 羽毛线</div>
@@ -129,7 +196,7 @@
         <div style="margin-bottom: 15px;">
           <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-info-circle" style="margin-right: 5px;"></i> 李宁N7II | 主线26磅 | 横线25磅</div>
           <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-store" style="margin-right: 5px;"></i> 倍特爱特装店</div>
-          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 2023-06-05 | 已于2023-06-06取拍</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 2024-01-05 | 已于2024-01-06取拍</div>
         </div>
         
         <div class="flex" style="gap: 10px;">
@@ -138,24 +205,54 @@
         </div>
       </div>
       
-      <!-- 球馆预约历史 -->
-      <div class="card service-item" data-type="booking">
-        <div style="border-left: 4px solid #4F7FF3; padding-left: 10px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">球馆预约</div>
+      <!-- 已收货的奖品 -->
+      <div class="card service-item" data-type="reward">
+        <div style="border-left: 4px solid #FF8B47; padding-left: 15px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">奖品物流</div>
         
         <div class="flex items-center justify-between" style="margin-bottom: 10px;">
-          <div style="font-size: 15px; font-weight: 600; color: #333;">星悦羽毛球馆</div>
-          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">已完成</div>
+          <div style="font-size: 15px; font-weight: 600; color: #333;">商城20元优惠券</div>
+          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">已发放</div>
         </div>
         
         <div style="margin-bottom: 15px;">
-          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-map-marker-alt" style="margin-right: 5px;"></i> 南山大道1105号海润工业区西区3楼</div>
-          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-clock" style="margin-right: 5px;"></i> 2023-06-03 | 10:00-12:00</div>
-          <div style="font-size: 14px; color: #666;"><i class="fas fa-tag" style="margin-right: 5px;"></i> ¥50 (会员8.5折优惠已应用)</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-gift" style="margin-right: 5px;"></i> 已自动发放到账户</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 5px;"><i class="fas fa-calendar-alt" style="margin-right: 5px;"></i> 兑换时间：2024-01-12 09:15</div>
+          <div style="font-size: 14px; color: #666;"><i class="fas fa-check-circle" style="margin-right: 5px;"></i> 使用状态：未使用</div>
         </div>
         
         <div class="flex" style="gap: 10px;">
-          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">再次预约</button>
-          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">评价场馆</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">查看券包</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">立即使用</button>
+        </div>
+      </div>
+      
+      <!-- 已结算的返佣 -->
+      <div class="card service-item" data-type="commission">
+        <div style="border-left: 4px solid #67C23A; padding-left: 15px; font-size: 16px; font-weight: 600; margin-bottom: 15px;">返佣记录</div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #333;">2023年12月返佣</div>
+          <div style="font-size: 14px; color: #67C23A; font-weight: 600;">已结算</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <div class="flex items-center justify-between" style="margin-bottom: 5px;">
+            <div style="font-size: 14px; color: #666;">返佣金额</div>
+            <div style="font-size: 16px; font-weight: 600; color: #67C23A;">¥182.00</div>
+          </div>
+          <div class="flex items-center justify-between" style="margin-bottom: 5px;">
+            <div style="font-size: 14px; color: #666;">结算时间</div>
+            <div style="font-size: 14px; color: #333;">2024-01-05</div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div style="font-size: 14px; color: #666;">推广订单</div>
+            <div style="font-size: 14px; color: #333;">12单</div>
+          </div>
+        </div>
+        
+        <div class="flex" style="gap: 10px;">
+          <button style="flex: 1; padding: 8px 0; background-color: #f6f6f6; border: none; border-radius: 4px; color: #666; font-size: 14px;">查看明细</button>
+          <button style="flex: 1; padding: 8px 0; background-color: #4F7FF3; border: none; border-radius: 4px; color: white; font-size: 14px;">申请提现</button>
         </div>
       </div>
       
@@ -189,22 +286,28 @@
   </div>
 
   <script>
-    // 服务过滤功能
+    // 服务类型筛选功能
     function filterServices(type) {
       // 更新筛选按钮样式
-      document.getElementById('filter-all').style.backgroundColor = type === 'all' ? '#4F7FF3' : '#f6f6f6';
-      document.getElementById('filter-all').style.color = type === 'all' ? 'white' : '#666';
+      const filters = ['all', 'string', 'reward', 'commission'];
+      filters.forEach(filter => {
+        const element = document.getElementById(`filter-${filter}`);
+        if (element) {
+          if (filter === type) {
+            element.style.backgroundColor = '#4F7FF3';
+            element.style.color = 'white';
+          } else {
+            element.style.backgroundColor = '#f6f6f6';
+            element.style.color = '#666';
+          }
+        }
+      });
       
-      document.getElementById('filter-booking').style.backgroundColor = type === 'booking' ? '#4F7FF3' : '#f6f6f6';
-      document.getElementById('filter-booking').style.color = type === 'booking' ? 'white' : '#666';
-      
-      document.getElementById('filter-string').style.backgroundColor = type === 'string' ? '#4F7FF3' : '#f6f6f6';
-      document.getElementById('filter-string').style.color = type === 'string' ? 'white' : '#666';
-      
-      // 过滤服务项目
+      // 筛选服务项目
       const serviceItems = document.querySelectorAll('.service-item');
       serviceItems.forEach(item => {
-        if (type === 'all' || item.dataset.type === type) {
+        const itemType = item.dataset.type;
+        if (type === 'all' || itemType === type) {
           item.style.display = 'block';
         } else {
           item.style.display = 'none';

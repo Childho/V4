@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 推广返佣</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部标签页 -->
+      <div class="flex" style="background-color: white; padding: 15px 0 10px;">
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="string_service.html" style="text-decoration: none; color: inherit;">
+            <span>穿线服务</span>
+          </a>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="points_exchange.html" style="text-decoration: none; color: inherit;">
+            <span>积分兑换</span>
+          </a>
+        </div>
+        <div class="tab-item active" style="border-bottom: 3px solid #4F7FF3; color: #4F7FF3; font-weight: 600;">
+          <span>推广返佣</span>
+        </div>
+        <div class="tab-item" style="border-bottom: 3px solid transparent;">
+          <a href="service_history.html" style="text-decoration: none; color: inherit;">
+            <span>我的服务</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 返佣统计卡片 -->
+      <div class="card" style="background: linear-gradient(135deg, #67C23A, #5CB132); color: white; margin: 15px; padding: 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(103, 194, 58, 0.3);">
+        <div class="flex items-center justify-between" style="margin-bottom: 20px;">
+          <div style="font-size: 16px; font-weight: 600; opacity: 0.9;">我的推广收益</div>
+          <i class="fas fa-hand-holding-usd" style="font-size: 24px; opacity: 0.8;"></i>
+        </div>
+        
+        <div class="flex items-center justify-between" style="margin-bottom: 15px;">
+          <div>
+            <div style="font-size: 14px; opacity: 0.8;">累计返佣</div>
+            <div style="font-size: 28px; font-weight: 700; margin-top: 5px;">¥368.50</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 14px; opacity: 0.8;">邀请好友</div>
+            <div style="font-size: 28px; font-weight: 700; margin-top: 5px;">15人</div>
+          </div>
+        </div>
+        
+        <div class="flex items-center" style="gap: 15px;">
+          <div style="flex: 1; text-align: center; padding: 8px 0; background: rgba(255,255,255,0.15); border-radius: 8px;">
+            <div style="font-size: 12px; opacity: 0.8;">本月返佣</div>
+            <div style="font-size: 16px; font-weight: 600; margin-top: 2px;">¥186.50</div>
+          </div>
+          <div style="flex: 1; text-align: center; padding: 8px 0; background: rgba(255,255,255,0.15); border-radius: 8px;">
+            <div style="font-size: 12px; opacity: 0.8;">可提现金额</div>
+            <div style="font-size: 16px; font-weight: 600; margin-top: 2px;">¥186.50</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 推广二维码 -->
+      <div class="card">
+        <div style="text-align: center; padding: 20px 0;">
+          <div style="font-size: 18px; font-weight: 600; color: #333; margin-bottom: 15px;">分享二维码</div>
+          <div style="font-size: 14px; color: #666; margin-bottom: 20px;">邀请好友注册，享受返佣奖励</div>
+          
+          <!-- 二维码区域 -->
+          <div style="width: 200px; height: 200px; margin: 0 auto 20px; background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNFNUU1RTUiLz4KPHN2ZyB4PSIyMCIgeT0iMjAiIHdpZHRoPSIxNjAiIGhlaWdodD0iMTYwIj4KPHN2ZyB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCIgdmlld0JveD0iMCAwIDE2MCAxNjAiPgo8IS0tIFNpbXBsZSBRUiBjb2RlIGxvb2stYWxpa2UgcGF0dGVybiAtLT4KPHN2ZyB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCIgdmlld0JveD0iMCAwIDIxIDIxIj4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAiIGhlaWdodD0iMTYwIiB2aWV3Qm94PSIwIDAgMjEgMjEiPgo8cmVjdCB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIGZpbGw9IiNmZmZmZmYiLz4KPHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSI+CjxnIGZpbGw9IiMwMDAwMDAiPgo8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iNyIgaGVpZ2h0PSI3Ii8+CjxyZWN0IHg9IjIiIHk9IjIiIHdpZHRoPSIzIiBoZWlnaHQ9IjMiIGZpbGw9IiNmZmZmZmYiLz4KPHN2ZyB4PSIxNCIgeT0iMCIgd2lkdGg9IjciIGhlaWdodD0iNyI+CjxyZWN0IHdpZHRoPSI3IiBoZWlnaHQ9IjciIGZpbGw9IiMwMDAwMDAiLz4KPHN2ZyB4PSIyIiB5PSIyIiB3aWR0aD0iMyIgaGVpZ2h0PSIzIj4KPHN2ZyB3aWR0aD0iMyIgaGVpZ2h0PSIzIiBmaWxsPSIjZmZmZmZmIi8+CjxyZWN0IHg9IjAiIHk9IjE0IiB3aWR0aD0iNyIgaGVpZ2h0PSI3IiBmaWxsPSIjMDAwMDAwIi8+CjxyZWN0IHg9IjIiIHk9IjE2IiB3aWR0aD0iMyIgaGVpZ2h0PSIzIiBmaWxsPSIjZmZmZmZmIi8+CjxyZWN0IHg9IjEwIiB5PSIxMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIvPgo8cmVjdCB4PSIxMiIgeT0iMTAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiLz4KPC9nPgo8L3N2Zz4KPC9zdmc+CjxyZWN0IHg9IjE0IiB5PSIwIiB3aWR0aD0iNyIgaGVpZ2h0PSI3IiBmaWxsPSIjMDAwMDAwIi8+CjxyZWN0IHg9IjE2IiB5PSIyIiB3aWR0aD0iMyIgaGVpZ2h0PSIzIiBmaWxsPSIjZmZmZmZmIi8+CjwvZz4KPC9zdmc+CjwvZz4KPC9zdmc+Cjwvc3ZnPgo=') center/contain no-repeat; border: 2px solid #e5e5e5; border-radius: 12px; position: relative;">
+            <!-- QR code placeholder with some pattern -->
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; color: #999; text-align: center;">
+              <i class="fas fa-qrcode" style="font-size: 48px; margin-bottom: 10px; display: block;"></i>
+              <div>推广二维码</div>
+            </div>
+          </div>
+          
+          <!-- 分享按钮 -->
+          <div class="flex" style="gap: 10px; justify-content: center;">
+            <button onclick="shareToWechat()" style="background: #1AAD19; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+              <i class="fab fa-weixin" style="margin-right: 5px;"></i>微信分享
+            </button>
+            <button onclick="copyLink()" style="background: #4F7FF3; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+              <i class="fas fa-copy" style="margin-right: 5px;"></i>复制链接
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 提现申请 -->
+      <div class="card">
+        <div style="border-left: 4px solid #67C23A; padding-left: 15px; margin-bottom: 20px;">
+          <div style="font-size: 16px; font-weight: 600; color: #333; margin-bottom: 5px;">提现申请</div>
+          <div style="font-size: 12px; color: #666;">可提现金额：¥186.50</div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 14px; color: #333; margin-bottom: 8px;">提现金额</div>
+          <input type="number" placeholder="输入提现金额" style="width: 100%; padding: 12px; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 14px;" max="186.5">
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 14px; color: #333; margin-bottom: 8px;">提现方式</div>
+          <div class="flex" style="gap: 10px;">
+            <label style="flex: 1; padding: 10px; border: 1px solid #e5e5e5; border-radius: 8px; text-align: center; cursor: pointer; position: relative;">
+              <input type="radio" name="withdraw_method" value="wechat" checked style="position: absolute; opacity: 0;">
+              <i class="fab fa-weixin" style="color: #1AAD19; margin-right: 5px;"></i>微信
+            </label>
+            <label style="flex: 1; padding: 10px; border: 1px solid #e5e5e5; border-radius: 8px; text-align: center; cursor: pointer; position: relative;">
+              <input type="radio" name="withdraw_method" value="alipay" style="position: absolute; opacity: 0;">
+              <i class="fab fa-alipay" style="color: #1677FF; margin-right: 5px;"></i>支付宝
+            </label>
+          </div>
+        </div>
+        
+        <button onclick="submitWithdraw()" style="width: 100%; background: linear-gradient(135deg, #67C23A, #5CB132); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600;">申请提现</button>
+        
+        <div style="font-size: 12px; color: #999; text-align: center; margin-top: 10px; line-height: 1.4;">
+          提现时间：工作日当天处理，节假日顺延<br>
+          最低提现金额：10元
+        </div>
+      </div>
+
+      <!-- 返佣记录 -->
+      <div class="card">
+        <div class="flex items-center justify-between" style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
+          <div style="font-size: 16px; font-weight: 600; color: #333;">返佣记录</div>
+          <div style="font-size: 12px; color: #4F7FF3;">查看全部 ></div>
+        </div>
+        
+        <!-- 返佣记录项 -->
+        <div style="padding: 12px 0; border-bottom: 1px solid #f8f8f8;">
+          <div class="flex items-center justify-between" style="margin-bottom: 5px;">
+            <div style="font-size: 14px; font-weight: 500; color: #333;">好友购买YONEX球拍</div>
+            <div style="font-size: 14px; font-weight: 600; color: #67C23A;">+¥18.50</div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div style="font-size: 12px; color: #666;">2024-01-15 14:30</div>
+            <div style="font-size: 12px; padding: 2px 6px; border-radius: 8px; background: rgba(103, 194, 58, 0.1); color: #67C23A;">已到账</div>
+          </div>
+        </div>
+        
+        <div style="padding: 12px 0; border-bottom: 1px solid #f8f8f8;">
+          <div class="flex items-center justify-between" style="margin-bottom: 5px;">
+            <div style="font-size: 14px; font-weight: 500; color: #333;">好友注册奖励</div>
+            <div style="font-size: 14px; font-weight: 600; color: #67C23A;">+¥10.00</div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div style="font-size: 12px; color: #666;">2024-01-12 16:20</div>
+            <div style="font-size: 12px; padding: 2px 6px; border-radius: 8px; background: rgba(103, 194, 58, 0.1); color: #67C23A;">已到账</div>
+          </div>
+        </div>
+        
+        <div style="padding: 12px 0;">
+          <div class="flex items-center justify-between" style="margin-bottom: 5px;">
+            <div style="font-size: 14px; font-weight: 500; color: #333;">好友穿线服务</div>
+            <div style="font-size: 14px; font-weight: 600; color: #E6A23C;">+¥8.00</div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div style="font-size: 12px; color: #666;">2024-01-10 11:45</div>
+            <div style="font-size: 12px; padding: 2px 6px; border-radius: 8px; background: rgba(230, 162, 60, 0.1); color: #E6A23C;">结算中</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 邀请好友列表 -->
+      <div class="card">
+        <div class="flex items-center justify-between" style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0;">
+          <div style="font-size: 16px; font-weight: 600; color: #333;">我的好友 (15人)</div>
+          <div style="font-size: 12px; color: #4F7FF3;">查看全部 ></div>
+        </div>
+        
+        <!-- 好友列表项 -->
+        <div style="padding: 10px 0; border-bottom: 1px solid #f8f8f8;">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center" style="gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #4F7FF3, #357ABD); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600;">张</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500; color: #333;">张**</div>
+                <div style="font-size: 12px; color: #666;">2024-01-15 注册</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 14px; font-weight: 600; color: #67C23A;">¥28.50</div>
+              <div style="font-size: 12px; color: #666;">累计返佣</div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="padding: 10px 0; border-bottom: 1px solid #f8f8f8;">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center" style="gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #67C23A, #5CB132); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600;">李</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500; color: #333;">李**</div>
+                <div style="font-size: 12px; color: #666;">2024-01-12 注册</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 14px; font-weight: 600; color: #67C23A;">¥18.00</div>
+              <div style="font-size: 12px; color: #666;">累计返佣</div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="padding: 10px 0;">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center" style="gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #FF8B47, #FFB47A); display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600;">王</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500; color: #333;">王**</div>
+                <div style="font-size: 12px; color: #666;">2024-01-10 注册</div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 14px; font-weight: 600; color: #67C23A;">¥10.00</div>
+              <div style="font-size: 12px; color: #666;">累计返佣</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 微信分享功能
+    function shareToWechat() {
+      alert('正在生成微信分享链接...\n请稍候');
+    }
+
+    // 复制链接功能
+    function copyLink() {
+      const link = 'https://app.betterlovebadminton.com/register?ref=user123';
+      navigator.clipboard.writeText(link).then(() => {
+        alert('推广链接已复制到剪贴板！');
+      }).catch(() => {
+        alert('复制失败，请手动复制：' + link);
+      });
+    }
+
+    // 提现申请
+    function submitWithdraw() {
+      const amount = document.querySelector('input[type="number"]').value;
+      const method = document.querySelector('input[name="withdraw_method"]:checked').value;
+      
+      if (!amount || amount < 10) {
+        alert('最低提现金额为10元');
+        return;
+      }
+      
+      if (amount > 186.5) {
+        alert('提现金额不能超过可提现余额');
+        return;
+      }
+      
+      const methodText = method === 'wechat' ? '微信' : '支付宝';
+      if (confirm(`确认申请提现 ¥${amount} 到${methodText}？`)) {
+        alert('提现申请已提交！\n预计3-5个工作日到账');
+      }
+    }
+
+    // 提现方式选择样式
+    document.addEventListener('DOMContentLoaded', function() {
+      const radioButtons = document.querySelectorAll('input[name="withdraw_method"]');
+      radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+          // 重置所有样式
+          radioButtons.forEach(r => {
+            r.parentElement.style.borderColor = '#e5e5e5';
+            r.parentElement.style.background = 'white';
+          });
+          
+          // 高亮选中项
+          if (this.checked) {
+            this.parentElement.style.borderColor = '#4F7FF3';
+            this.parentElement.style.background = 'rgba(79, 127, 243, 0.05)';
+          }
+        });
+      });
+      
+      // 初始化选中状态
+      const checkedRadio = document.querySelector('input[name="withdraw_method"]:checked');
+      if (checkedRadio) {
+        checkedRadio.parentElement.style.borderColor = '#4F7FF3';
+        checkedRadio.parentElement.style.background = 'rgba(79, 127, 243, 0.05)';
+      }
+    });
+  </script>
+</body>
+</html> 

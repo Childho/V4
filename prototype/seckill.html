@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 秒杀页面</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 继承商城页面的配色方案 */
+    :root {
+      --primary-blue: #4A90E2;
+      --primary-blue-dark: #357ABD;
+      --accent-orange: #FF8B47;
+      --accent-orange-light: #FFB47A;
+      --success-green: #7ED321;
+      --seckill-red: #FF4757;
+      --bg-light: #FAFBFC;
+      --bg-white: #FFFFFF;
+      --text-dark: #2C3E50;
+      --text-medium: #7F8C8D;
+      --text-light: #BDC3C7;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+      --shadow-heavy: rgba(0, 0, 0, 0.16);
+    }
+
+    /* 页面基础样式 */
+    .content {
+      background: var(--bg-light);
+    }
+
+    /* 搜索栏样式 */
+    .search-container {
+      background: linear-gradient(135deg, var(--seckill-red) 0%, #FF6B6B 100%);
+      padding: 16px 15px;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 3px 12px rgba(255, 71, 87, 0.25);
+    }
+    .search-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-input-container {
+      flex: 1;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border-radius: 20px;
+      border: none;
+      background-color: var(--bg-white);
+      font-size: 14px;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      transition: all 0.3s ease;
+    }
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 3px 15px var(--shadow-medium);
+      transform: translateY(-1px);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--seckill-red);
+      font-size: 14px;
+    }
+    .search-btn {
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-light));
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(255, 139, 71, 0.3);
+      transition: all 0.3s ease;
+    }
+    .search-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(255, 139, 71, 0.4);
+    }
+
+    /* 品牌筛选区域 - 缩小版本 */
+    .brand-filter-container {
+      background: var(--bg-white);
+      margin: 8px 15px 0;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 2px 8px var(--shadow-light);
+    }
+    .brand-filter-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .brand-filter-title i {
+      margin-right: 6px;
+      color: var(--seckill-red);
+      font-size: 12px;
+    }
+    .brand-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .brand-tag {
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid var(--text-light);
+      background: var(--bg-light);
+      color: var(--text-medium);
+    }
+    .brand-tag.active {
+      background: var(--seckill-red);
+      color: white;
+      border-color: var(--seckill-red);
+    }
+    .brand-tag:hover:not(.active) {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+    }
+    .show-more-btn {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .show-more-btn:hover {
+      background: var(--primary-blue-dark);
+    }
+    .hidden-brands {
+      display: none;
+    }
+    .hidden-brands.show {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    /* 秒杀商品列表 - 新设计 */
+    .seckill-list {
+      padding: 8px 15px 0;
+    }
+    .seckill-item {
+      background: var(--bg-white);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      position: relative;
+    }
+    .seckill-item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--shadow-medium);
+    }
+    .seckill-item::before {
+      content: "限时";
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--seckill-red);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 9px;
+      font-weight: 700;
+      z-index: 10;
+    }
+    .seckill-content {
+      display: flex;
+      padding: 12px;
+      align-items: center;
+      gap: 12px;
+    }
+    .seckill-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .seckill-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .seckill-brand {
+      color: var(--text-medium);
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+    .seckill-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .seckill-tags {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .seckill-tag {
+      background: var(--seckill-red);
+      color: white;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 600;
+    }
+    .seckill-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .seckill-current-price {
+      color: var(--seckill-red);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .seckill-original-price {
+      color: var(--text-medium);
+      font-size: 12px;
+      text-decoration: line-through;
+    }
+    .seckill-progress-mini {
+      font-size: 11px;
+      color: var(--text-medium);
+    }
+    .seckill-action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .grab-btn {
+      background: var(--seckill-red);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 60px;
+    }
+    .grab-btn:hover {
+      background: #E04047;
+      transform: scale(1.05);
+    }
+    .countdown-timer {
+      font-size: 10px;
+      color: var(--seckill-red);
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* 悬浮购物车 */
+    .floating-cart {
+      position: fixed;
+      right: 16px;
+      bottom: 80px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(74, 144, 226, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .floating-cart:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+    .floating-cart i {
+      font-size: 20px;
+      color: white;
+    }
+    .cart-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: linear-gradient(135deg, var(--seckill-red), var(--accent-orange));
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+      animation: pulse 2.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    /* 整体视觉优化 */
+    .phone-container {
+      background: linear-gradient(to bottom, #F7F9FC, #E8EDF5);
+    }
+
+    /* 动画效果 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .seckill-item {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+    .seckill-item:nth-child(1) { animation-delay: 0.05s; }
+    .seckill-item:nth-child(2) { animation-delay: 0.1s; }
+    .seckill-item:nth-child(3) { animation-delay: 0.15s; }
+    .seckill-item:nth-child(4) { animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 搜索栏 -->
+      <div class="search-container">
+        <div class="search-box">
+          <div class="search-input-container">
+            <input type="text" placeholder="搜索秒杀商品..." class="search-input">
+            <i class="fas fa-search search-icon"></i>
+          </div>
+          <button class="search-btn">
+            <i class="fas fa-search" style="margin-right: 4px;"></i>搜索
+          </button>
+        </div>
+      </div>
+
+      <!-- 品牌筛选区域 -->
+      <div class="brand-filter-container">
+        <div class="brand-filter-title">
+          <i class="fas fa-tags"></i>品牌筛选
+        </div>
+        <div class="brand-tags">
+          <span class="brand-tag active">全部</span>
+          <span class="brand-tag">倍特爱</span>
+          <span class="brand-tag">李宁</span>
+          <span class="brand-tag">威克多</span>
+          <span class="brand-tag">超牌</span>
+        </div>
+        <div class="hidden-brands" id="hiddenBrands">
+          <span class="brand-tag">翎美</span>
+          <span class="brand-tag">亚狮龙</span>
+          <span class="brand-tag">威肯</span>
+          <span class="brand-tag">泰昂</span>
+        </div>
+        <button class="show-more-btn" id="showMoreBtn">
+          <span>更多品牌</span>
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+
+      <!-- 秒杀商品列表 -->
+      <div class="seckill-list">
+        <div class="seckill-item">
+          <div class="seckill-content">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球拍" class="seckill-image">
+            <div class="seckill-info">
+              <div class="seckill-brand">YONEX</div>
+              <div class="seckill-title">天斧88D专业羽毛球拍 4U进攻型</div>
+              <div class="seckill-tags">
+                <span class="seckill-tag">包邮</span>
+                <span class="seckill-tag">6期免息</span>
+              </div>
+              <div class="seckill-price-row">
+                <span class="seckill-current-price">¥99</span>
+                <span class="seckill-original-price">¥1280</span>
+              </div>
+              <div class="seckill-progress-mini">已售128件</div>
+            </div>
+            <div class="seckill-action">
+              <button class="grab-btn">抢</button>
+              <div class="countdown-timer">02:35:42</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seckill-item">
+          <div class="seckill-content">
+            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球鞋" class="seckill-image">
+            <div class="seckill-info">
+              <div class="seckill-brand">LI-NING</div>
+              <div class="seckill-title">专业防滑羽毛球鞋 超轻透气款</div>
+              <div class="seckill-tags">
+                <span class="seckill-tag">送运费险</span>
+                <span class="seckill-tag">正品保证</span>
+              </div>
+              <div class="seckill-price-row">
+                <span class="seckill-current-price">¥158</span>
+                <span class="seckill-original-price">¥698</span>
+              </div>
+              <div class="seckill-progress-mini">已售92件</div>
+            </div>
+            <div class="seckill-action">
+              <button class="grab-btn">抢</button>
+              <div class="countdown-timer">02:35:42</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seckill-item">
+          <div class="seckill-content">
+            <img src="https://images.unsplash.com/photo-1485727749690-d091e8284ef3?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球" class="seckill-image">
+            <div class="seckill-info">
+              <div class="seckill-brand">VICTOR</div>
+              <div class="seckill-title">比赛级羽毛球(12只装) 超耐打</div>
+              <div class="seckill-tags">
+                <span class="seckill-tag">限量版</span>
+                <span class="seckill-tag">官方直营</span>
+              </div>
+              <div class="seckill-price-row">
+                <span class="seckill-current-price">¥39</span>
+                <span class="seckill-original-price">¥128</span>
+              </div>
+              <div class="seckill-progress-mini">已售256件</div>
+            </div>
+            <div class="seckill-action">
+              <button class="grab-btn">抢</button>
+              <div class="countdown-timer">02:35:42</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seckill-item">
+          <div class="seckill-content">
+            <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="运动服装" class="seckill-image">
+            <div class="seckill-info">
+              <div class="seckill-brand">倍特爱</div>
+              <div class="seckill-title">透气速干羽毛球服套装 夏季款</div>
+              <div class="seckill-tags">
+                <span class="seckill-tag">新品</span>
+                <span class="seckill-tag">买2免1</span>
+              </div>
+              <div class="seckill-price-row">
+                <span class="seckill-current-price">¥69</span>
+                <span class="seckill-original-price">¥259</span>
+              </div>
+              <div class="seckill-progress-mini">已售89件</div>
+            </div>
+            <div class="seckill-action">
+              <button class="grab-btn">抢</button>
+              <div class="countdown-timer">02:35:42</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seckill-item">
+          <div class="seckill-content">
+            <img src="https://images.unsplash.com/photo-1585571822451-6b98bab3c7e8?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="球拍配件" class="seckill-image">
+            <div class="seckill-info">
+              <div class="seckill-brand">超牌</div>
+              <div class="seckill-title">高弹性羽毛球拍线 专业级BG65</div>
+              <div class="seckill-tags">
+                <span class="seckill-tag">热销</span>
+                <span class="seckill-tag">满减</span>
+              </div>
+              <div class="seckill-price-row">
+                <span class="seckill-current-price">¥19</span>
+                <span class="seckill-original-price">¥68</span>
+              </div>
+              <div class="seckill-progress-mini">已售198件</div>
+            </div>
+            <div class="seckill-action">
+              <button class="grab-btn">抢</button>
+              <div class="countdown-timer">02:35:42</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="seckill-item">
+          <div class="seckill-content">
+            <img src="https://images.unsplash.com/photo-1626923525252-3c355d2271a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" alt="羽毛球拍" class="seckill-image">
+            <div class="seckill-info">
+              <div class="seckill-brand">VICTOR</div>
+              <div class="seckill-title">胜利JS-10进攻型球拍 碳纤维材质</div>
+              <div class="seckill-tags">
+                <span class="seckill-tag">专业级</span>
+                <span class="seckill-tag">顺丰包邮</span>
+              </div>
+              <div class="seckill-price-row">
+                <span class="seckill-current-price">¥199</span>
+                <span class="seckill-original-price">¥780</span>
+              </div>
+              <div class="seckill-progress-mini">已售76件</div>
+            </div>
+            <div class="seckill-action">
+              <button class="grab-btn">抢</button>
+              <div class="countdown-timer">02:35:42</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部空间 -->
+      <div style="height: 20px;"></div>
+    </div>
+
+    <!-- 悬浮购物车 -->
+    <div class="floating-cart">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-badge">3</span>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 品牌筛选功能
+    const showMoreBtn = document.getElementById('showMoreBtn');
+    const hiddenBrands = document.getElementById('hiddenBrands');
+    let isExpanded = false;
+
+    showMoreBtn.addEventListener('click', function() {
+      isExpanded = !isExpanded;
+      
+      if (isExpanded) {
+        hiddenBrands.classList.add('show');
+        showMoreBtn.innerHTML = '<span>收起品牌</span><i class="fas fa-chevron-up"></i>';
+      } else {
+        hiddenBrands.classList.remove('show');
+        showMoreBtn.innerHTML = '<span>更多品牌</span><i class="fas fa-chevron-down"></i>';
+      }
+    });
+
+    // 品牌标签切换
+    document.querySelectorAll('.brand-tag').forEach(tag => {
+      tag.addEventListener('click', function() {
+        document.querySelectorAll('.brand-tag').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 倒计时功能
+    function updateCountdown() {
+      const timers = document.querySelectorAll('.countdown-timer');
+      timers.forEach(timer => {
+        const timeText = timer.textContent;
+        const [hours, minutes, seconds] = timeText.split(':').map(Number);
+        
+        let totalSeconds = hours * 3600 + minutes * 60 + seconds;
+        if (totalSeconds > 0) {
+          totalSeconds--;
+          
+          const newHours = Math.floor(totalSeconds / 3600);
+          const newMinutes = Math.floor((totalSeconds % 3600) / 60);
+          const newSeconds = totalSeconds % 60;
+          
+          timer.textContent = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}:${String(newSeconds).padStart(2, '0')}`;
+        }
+      });
+    }
+
+    // 每秒更新倒计时
+    setInterval(updateCountdown, 1000);
+
+    // 立即抢购按钮点击效果
+    document.querySelectorAll('.grab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = '';
+        }, 150);
+      });
+    });
+  </script>
+</body>
+</html> 
