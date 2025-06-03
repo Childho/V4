@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>购物车</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    body {
+      background-color: #f5f5f5;
+      padding-bottom: 80px; /* 为底部操作栏留空间 */
+    }
+    
+    /* 顶部区域 */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    
+    .cart-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .cart-count {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+    
+    .manage-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 15px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .manage-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* 搜索栏 */
+    .search-container {
+      position: relative;
+    }
+    
+    .search-bar {
+      width: 100%;
+      padding: 10px 40px 10px 15px;
+      border: none;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+    
+    /* 购物车内容区域 */
+    .cart-content {
+      padding: 10px 15px;
+      margin-bottom: 80px;
+    }
+    
+    /* 商品组 */
+    .shop-group {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    
+    .shop-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f8f8f8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .shop-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ddd;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .shop-checkbox.checked {
+      background: #667eea;
+      border-color: #667eea;
+      position: relative;
+    }
+    
+    .shop-checkbox.checked::after {
+      content: '✓';
+      position: absolute;
+      top: -2px;
+      left: 2px;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .shop-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+    }
+    
+    .shop-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .shop-tag {
+      background: #ff4757;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+    }
+    
+    /* 商品项 */
+    .product-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f8f8f8;
+      display: flex;
+      gap: 15px;
+    }
+    
+    .product-item:last-child {
+      border-bottom: none;
+    }
+    
+    .product-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ddd;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 30px;
+    }
+    
+    .product-checkbox.checked {
+      background: #667eea;
+      border-color: #667eea;
+      position: relative;
+    }
+    
+    .product-checkbox.checked::after {
+      content: '✓';
+      position: absolute;
+      top: -2px;
+      left: 2px;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .product-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid #f0f0f0;
+      flex-shrink: 0;
+    }
+    
+    .product-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .product-title {
+      font-size: 14px;
+      color: #333;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .product-spec {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+    
+    .activity-tag {
+      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    
+    .service-tags {
+      display: flex;
+      gap: 5px;
+      margin-top: 6px;
+    }
+    
+    .service-tag {
+      background: #f0f0f0;
+      color: #666;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+    }
+    
+    .product-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .price-section {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .current-price {
+      font-size: 16px;
+      color: #ff4757;
+      font-weight: 600;
+    }
+    
+    .original-price {
+      font-size: 12px;
+      color: #999;
+      text-decoration: line-through;
+    }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 15px;
+      padding: 5px;
+    }
+    
+    .quantity-btn {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: #f5f5f5;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: #666;
+      transition: all 0.3s;
+    }
+    
+    .quantity-btn:hover {
+      background: #e0e0e0;
+    }
+    
+    .quantity-btn.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    
+    .quantity-input {
+      width: 40px;
+      text-align: center;
+      border: none;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    /* 优惠券区域 */
+    .coupon-section {
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+    
+    .coupon-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .coupon-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .get-coupon-btn {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    
+    .coupon-info {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .discount-amount {
+      color: #ff4757;
+      font-weight: 600;
+    }
+    
+    /* 底部操作栏 */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 15px 20px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 1000;
+    }
+    
+    .select-all {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    
+    .select-all-checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ddd;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .select-all-checkbox.checked {
+      background: #667eea;
+      border-color: #667eea;
+      position: relative;
+    }
+    
+    .select-all-checkbox.checked::after {
+      content: '✓';
+      position: absolute;
+      top: -2px;
+      left: 3px;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .select-all-text {
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .price-summary {
+      flex: 1;
+      text-align: right;
+    }
+    
+    .total-label {
+      font-size: 14px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .total-price {
+      font-size: 18px;
+      color: #ff4757;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+    
+    .action-button {
+      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .action-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    }
+    
+    .action-button.disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .delete-button {
+      background: #999;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    /* 空购物车状态 */
+    .empty-cart {
+      text-align: center;
+      padding: 80px 20px;
+      color: #999;
+    }
+    
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.3;
+    }
+    
+    .empty-text {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .go-shopping-btn {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    /* 管理模式样式 */
+    .manage-mode .shop-header,
+    .manage-mode .product-item {
+      background: #fafafa;
+    }
+    
+    /* 响应式设计 */
+    @media (max-width: 480px) {
+      .cart-content {
+        padding: 10px;
+      }
+      
+      .product-item {
+        padding: 12px 15px;
+      }
+      
+      .shop-header {
+        padding: 12px 15px;
+      }
+      
+      .bottom-bar {
+        padding: 12px 15px;
+      }
+      
+      .product-image {
+        width: 70px;
+        height: 70px;
+      }
+    }
+    
+    /* 管理模式下的删除按钮 */
+    .manage-mode .product-item {
+      position: relative;
+    }
+    
+    .delete-item-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      color: #ccc;
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .delete-item-btn:hover {
+      color: #ff4757;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部区域 -->
+  <div class="header">
+    <div class="header-top">
+      <div class="header-left">
+        <button class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 class="cart-title">购物车</h1>
+        <span class="cart-count">3件</span>
+      </div>
+      <button class="manage-btn" id="manageBtn">管理</button>
+    </div>
+    
+    <div class="search-container">
+      <input type="text" class="search-bar" placeholder="搜索购物车内商品">
+      <i class="fas fa-search search-icon"></i>
+    </div>
+  </div>
+
+  <!-- 购物车内容 -->
+  <div class="cart-content">
+    <!-- 商品列表区 -->
+    <div class="shop-group">
+      <!-- 商品1 -->
+      <div class="product-item">
+        <div class="product-checkbox"></div>
+        <img src="https://via.placeholder.com/80x80/667eea/ffffff?text=球拍" alt="商品图片" class="product-image">
+        <div class="product-info">
+          <div class="product-title">威克多胜利羽毛球拍单拍 TK-RYUGA II 龙牙之刃二代 4U</div>
+          <div class="product-spec">规格：4U 蓝色</div>
+          <div class="product-bottom">
+            <div class="price-section">
+              <span class="current-price">¥1,428.00</span>
+              <span class="original-price">¥1,680.00</span>
+            </div>
+            <div class="quantity-control">
+              <button class="quantity-btn">-</button>
+              <input type="text" class="quantity-input" value="1" readonly>
+              <button class="quantity-btn">+</button>
+            </div>
+          </div>
+          <div class="service-tags">
+            <span class="service-tag">假一赔四</span>
+            <span class="service-tag">极速退款</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 商品2 -->
+      <div class="product-item">
+        <div class="product-checkbox"></div>
+        <img src="https://via.placeholder.com/80x80/764ba2/ffffff?text=球线" alt="商品图片" class="product-image">
+        <div class="product-info">
+          <div class="product-title">威克多羽毛球线 VBS-66N 弹性好耐打专业比赛训练用线</div>
+          <div class="product-spec">规格：0.66mm 白色</div>
+          <div class="product-bottom">
+            <div class="price-section">
+              <span class="current-price">¥68.00</span>
+              <span class="original-price">¥85.00</span>
+            </div>
+            <div class="quantity-control">
+              <button class="quantity-btn">-</button>
+              <input type="text" class="quantity-input" value="2" readonly>
+              <button class="quantity-btn">+</button>
+            </div>
+          </div>
+          <div class="service-tags">
+            <span class="service-tag">假一赔四</span>
+            <span class="service-tag">7天退换</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 商品3 -->
+      <div class="product-item">
+        <div class="product-checkbox"></div>
+        <img src="https://via.placeholder.com/80x80/ff6b6b/ffffff?text=球鞋" alt="商品图片" class="product-image">
+        <div class="product-info">
+          <div class="product-title">李宁羽毛球鞋男鞋专业训练鞋防滑透气运动鞋 AYTN081</div>
+          <div class="product-spec">规格：42码 黑白配色</div>
+          <div class="product-bottom">
+            <div class="price-section">
+              <span class="current-price">¥398.00</span>
+              <span class="original-price">¥499.00</span>
+            </div>
+            <div class="quantity-control">
+              <button class="quantity-btn disabled">-</button>
+              <input type="text" class="quantity-input" value="1" readonly>
+              <button class="quantity-btn">+</button>
+            </div>
+          </div>
+          <div class="service-tags">
+            <span class="service-tag">正品保障</span>
+            <span class="service-tag">极速发货</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部操作栏 -->
+  <div class="bottom-bar">
+    <div class="select-all">
+      <div class="select-all-checkbox"></div>
+      <span class="select-all-text">全选</span>
+    </div>
+    
+    <div class="price-summary">
+      <span class="total-label">合计：</span>
+      <span class="total-price">¥1,894.00</span>
+    </div>
+    
+    <div class="action-buttons" id="actionButtons">
+      <button class="action-button" id="checkoutBtn">结算(3)</button>
+    </div>
+  </div>
+
+  <script>
+    // 管理模式切换
+    const manageBtn = document.getElementById('manageBtn');
+    const actionButtons = document.getElementById('actionButtons');
+    let isManageMode = false;
+    
+    manageBtn.addEventListener('click', () => {
+      isManageMode = !isManageMode;
+      if (isManageMode) {
+        document.body.classList.add('manage-mode');
+        manageBtn.textContent = '完成';
+        actionButtons.innerHTML = '<button class="delete-button" id="deleteBtn">删除</button><button class="action-button" id="checkoutBtn">结算(3)</button>';
+        document.getElementById('deleteBtn').addEventListener('click', () => {
+          alert('删除选中商品');
+        });
+        
+        // 添加单个商品删除按钮
+        document.querySelectorAll('.product-item').forEach(item => {
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-item-btn';
+          deleteBtn.innerHTML = '<i class="fas fa-times-circle"></i>';
+          deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            alert('删除该商品');
+          });
+          item.appendChild(deleteBtn);
+        });
+      } else {
+        document.body.classList.remove('manage-mode');
+        manageBtn.textContent = '管理';
+        actionButtons.innerHTML = '<button class="action-button" id="checkoutBtn">结算(3)</button>';
+        
+        // 移除单个商品删除按钮
+        document.querySelectorAll('.delete-item-btn').forEach(btn => {
+          btn.remove();
+        });
+      }
+      
+      // 重新添加结算按钮事件
+      document.getElementById('checkoutBtn').addEventListener('click', () => {
+        alert('去结算');
+      });
+    });
+    
+    // 复选框功能
+    const productCheckboxes = document.querySelectorAll('.product-checkbox');
+    const selectAllCheckbox = document.querySelector('.select-all-checkbox');
+    
+    // 商品复选框点击
+    productCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('click', () => {
+        checkbox.classList.toggle('checked');
+        updateTotal();
+      });
+    });
+    
+    // 全选复选框点击
+    selectAllCheckbox.addEventListener('click', () => {
+      const isChecked = selectAllCheckbox.classList.contains('checked');
+      if (isChecked) {
+        selectAllCheckbox.classList.remove('checked');
+        productCheckboxes.forEach(cb => cb.classList.remove('checked'));
+      } else {
+        selectAllCheckbox.classList.add('checked');
+        productCheckboxes.forEach(cb => cb.classList.add('checked'));
+      }
+      updateTotal();
+    });
+    
+    // 数量调整按钮
+    document.querySelectorAll('.quantity-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('disabled')) return;
+        
+        const input = btn.parentNode.querySelector('.quantity-input');
+        let quantity = parseInt(input.value);
+        
+        if (btn.textContent === '+') {
+          quantity++;
+        } else if (btn.textContent === '-' && quantity > 1) {
+          quantity--;
+        }
+        
+        input.value = quantity;
+        updateTotal();
+      });
+    });
+    
+    // 更新总价
+    function updateTotal() {
+      const checkedProducts = document.querySelectorAll('.product-checkbox.checked');
+      let total = 0;
+      let count = 0;
+      
+      checkedProducts.forEach(checkbox => {
+        const productItem = checkbox.closest('.product-item');
+        const price = parseFloat(productItem.querySelector('.current-price').textContent.replace('¥', '').replace(',', ''));
+        const quantity = parseInt(productItem.querySelector('.quantity-input').value);
+        total += price * quantity;
+        count += quantity;
+      });
+      
+      document.querySelector('.total-price').textContent = `¥${total.toLocaleString()}.00`;
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      if (checkoutBtn) {
+        checkoutBtn.textContent = `结算(${count})`;
+      }
+    }
+    
+    // 搜索功能
+    document.querySelector('.search-bar').addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      // 搜索购物车内商品逻辑
+      document.querySelectorAll('.product-item').forEach(item => {
+        const title = item.querySelector('.product-title').textContent.toLowerCase();
+        if (title.includes(searchTerm)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+    
+    // 返回按钮
+    document.querySelector('.back-btn').addEventListener('click', () => {
+      alert('返回上一页');
+    });
+    
+    // 领取优惠券
+    document.querySelector('.get-coupon-btn')?.addEventListener('click', () => {
+      alert('优惠券领取成功！');
+    });
+    
+    // 初始化
+    updateTotal();
+  </script>
+</body>
+</html> 

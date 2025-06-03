@@ -395,22 +395,18 @@
           <i class="fas fa-tags"></i>品牌筛选
         </div>
         <div class="brand-tags">
-          <span class="brand-tag active">全部</span>
-          <span class="brand-tag">倍特爱</span>
+          <span class="brand-tag" id="all-brands-toggle" onclick="toggleAllBrands()">全部</span>
+          <span class="brand-tag active">倍特爱</span>
           <span class="brand-tag">李宁</span>
           <span class="brand-tag">威克多</span>
           <span class="brand-tag">超牌</span>
         </div>
-        <div class="hidden-brands" id="hiddenBrands">
+        <div class="brand-tags hidden-brands" id="hiddenBrands">
           <span class="brand-tag">翎美</span>
           <span class="brand-tag">亚狮龙</span>
           <span class="brand-tag">威肯</span>
           <span class="brand-tag">泰昂</span>
         </div>
-        <button class="show-more-btn" id="showMoreBtn">
-          <span>更多品牌</span>
-          <i class="fas fa-chevron-down"></i>
-        </button>
       </div>
 
       <!-- 秒杀商品列表 -->
@@ -591,30 +587,23 @@
 
   <script>
     // 品牌筛选功能
-    const showMoreBtn = document.getElementById('showMoreBtn');
-    const hiddenBrands = document.getElementById('hiddenBrands');
-    let isExpanded = false;
-
-    showMoreBtn.addEventListener('click', function() {
-      isExpanded = !isExpanded;
-      
-      if (isExpanded) {
-        hiddenBrands.classList.add('show');
-        showMoreBtn.innerHTML = '<span>收起品牌</span><i class="fas fa-chevron-up"></i>';
-      } else {
-        hiddenBrands.classList.remove('show');
-        showMoreBtn.innerHTML = '<span>更多品牌</span><i class="fas fa-chevron-down"></i>';
-      }
-    });
-
-    // 品牌标签切换
     document.querySelectorAll('.brand-tag').forEach(tag => {
       tag.addEventListener('click', function() {
         document.querySelectorAll('.brand-tag').forEach(t => t.classList.remove('active'));
         this.classList.add('active');
       });
     });
-
+    
+    // 全部品牌切换显示隐藏
+    function toggleAllBrands() {
+      const hiddenBrands = document.getElementById('hiddenBrands');
+      if (hiddenBrands.classList.contains('show')) {
+        hiddenBrands.classList.remove('show');
+      } else {
+        hiddenBrands.classList.add('show');
+      }
+    }
+    
     // 倒计时功能
     function updateCountdown() {
       const timers = document.querySelectorAll('.countdown-timer');

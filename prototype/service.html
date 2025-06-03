@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 服务中心</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .service-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .service-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      padding: 20px 15px;
+      text-align: center;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    }
+    
+    .service-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+    
+    .service-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .service-desc {
+      font-size: 12px;
+      color: #666;
+    }
+    
+    .service-string .service-icon {
+      background-color: rgba(79, 127, 243, 0.15);
+      color: #4F7FF3;
+    }
+    
+    .service-points .service-icon {
+      background-color: rgba(245, 108, 108, 0.15);
+      color: #F56C6C;
+    }
+    
+    .service-referral .service-icon {
+      background-color: rgba(103, 194, 58, 0.15);
+      color: #67C23A;
+    }
+    
+    .service-history .service-icon {
+      background-color: rgba(255, 139, 71, 0.15);
+      color: #FF8B47;
+    }
+    
+    .page-title {
+      padding: 15px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">12:30</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 页面标题 -->
+      <div class="page-title">服务中心</div>
+      
+      <!-- 服务卡片网格 -->
+      <div style="padding: 0 15px;">
+        <div class="service-grid">
+          <!-- 穿线服务 -->
+          <a href="string_service.html" style="text-decoration: none; color: inherit;">
+            <div class="service-card service-string">
+              <div class="service-icon">
+                <i class="fas fa-sync-alt"></i>
+              </div>
+              <div class="service-title">穿线服务</div>
+              <div class="service-desc">专业羽毛球拍穿线服务</div>
+            </div>
+          </a>
+          
+          <!-- 积分兑换 -->
+          <a href="points_exchange.html" style="text-decoration: none; color: inherit;">
+            <div class="service-card service-points">
+              <div class="service-icon">
+                <i class="fas fa-gift"></i>
+              </div>
+              <div class="service-title">积分兑换</div>
+              <div class="service-desc">积分兑好礼，福利多多</div>
+            </div>
+          </a>
+          
+          <!-- 推广返佣 -->
+          <a href="referral.html" style="text-decoration: none; color: inherit;">
+            <div class="service-card service-referral">
+              <div class="service-icon">
+                <i class="fas fa-share-alt"></i>
+              </div>
+              <div class="service-title">推广返佣</div>
+              <div class="service-desc">分享赚佣金，邀请享福利</div>
+            </div>
+          </a>
+          
+          <!-- 我的服务 -->
+          <a href="service_history.html" style="text-decoration: none; color: inherit;">
+            <div class="service-card service-history">
+              <div class="service-icon">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <div class="service-title">我的服务</div>
+              <div class="service-desc">查看穿线、物流和返佣记录</div>
+            </div>
+          </a>
+        </div>
+      </div>
+      
+      <!-- 服务热线 -->
+      <div style="margin: 30px 15px 0; background-color: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-size: 15px; font-weight: 600; margin-bottom: 5px;">客服热线</div>
+            <div style="font-size: 12px; color: #666;">工作时间 9:00-18:00</div>
+          </div>
+          <div style="background-color: #4F7FF3; color: white; padding: 8px 15px; border-radius: 20px; font-size: 14px;">
+            <i class="fas fa-phone-alt" style="margin-right: 5px;"></i>
+            <span>联系客服</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 底部空间 -->
+      <div style="height: 30px;"></div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html> 
