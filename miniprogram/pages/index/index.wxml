@@ -27,21 +27,25 @@
     </swiper>
   </view>
   
-  <!-- 功能导航 - 更新为SVG图标 -->
+  <!-- 功能导航 - 更新为推广返佣和穿线服务 -->
   <view class="nav-container">
     <view class="nav-grid">
-      <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
-        <image class="nav-icon" src="/assets/icons/reserve.svg" mode="aspectFit" />
-        <text>球馆预约</text>
+      <!-- 推广返佣功能 -->
+      <view class="nav-item" bindtap="navigateTo" data-url="/pages/promotion/index">
+        <image class="nav-icon" src="/assets/icons/promotion.svg" mode="aspectFit" />
+        <text>推广返佣</text>
       </view>
-      <view class="nav-item" bindtap="navigateTo" data-url="/pages/activity/index">
-        <image class="nav-icon" src="/assets/icons/event.svg" mode="aspectFit" />
-        <text>活动中心</text>
+      <!-- 穿线服务功能 -->
+      <view class="nav-item" bindtap="navigateTo" data-url="/pages/stringing/index">
+        <image class="nav-icon" src="/assets/icons/stringing.svg" mode="aspectFit" />
+        <text>穿线服务</text>
       </view>
+      <!-- 保留积分兑换 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/pointsExchange/index">
         <image class="nav-icon" src="/assets/icons/points.svg" mode="aspectFit" />
         <text>积分兑换</text>
       </view>
+      <!-- 保留客服服务 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
         <image class="nav-icon" src="/assets/icons/service.svg" mode="aspectFit" />
         <text>客服服务</text>
@@ -78,6 +82,35 @@
           </view>
         </view>
       </view>
+    </view>
+  </view>
+  
+  <!-- 精选装备模块 - 新增模块 -->
+  <view class="section-container">
+    <view class="section-header">
+      <view class="section-title">精选装备</view>
+      <view class="more-btn" bindtap="navigateTo" data-url="/pages/mall/index?category=featured">查看全部 ></view>
+    </view>
+    
+    <!-- 精选装备列表，采用横向滚动布局 -->
+    <scroll-view class="equipment-scroll" scroll-x="true" show-scrollbar="false">
+      <view class="equipment-list">
+        <view class="equipment-item" wx:for="{{featuredEquipment}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="product">
+          <image class="equipment-image" src="{{item.imageUrl}}" mode="aspectFill" />
+          <view class="equipment-info">
+            <view class="equipment-name">{{item.name}}</view>
+            <view class="equipment-brand">{{item.brand}}</view>
+            <view class="equipment-price">¥{{item.price}}</view>
+            <!-- 精选标签 -->
+            <view class="featured-tag">精选</view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    
+    <!-- 测试按钮 - 调试用 -->
+    <view style="text-align: center; padding: 20rpx;">
+      <button size="mini" bindtap="testRefreshEquipment">刷新装备数据</button>
     </view>
   </view>
   

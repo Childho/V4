@@ -1,197 +1,128 @@
+<!-- 商城页面主容器 -->
 <view class="mall-container">
-  <!-- 搜索栏 -->
-  <view class="search-bar">
-    <view class="search-input">
-      <image class="search-icon" src="/assets/icons/search.svg" mode="aspectFit"></image>
-      <input type="text" placeholder="搜索商品" bindinput="onSearchInput" />
-    </view>
-    <view class="filter-icon" bindtap="showFilter">
-      <image src="/assets/icons/filter.svg" mode="aspectFit"></image>
-    </view>
-    <view class="cart-icon" bindtap="goToCart">
-      <image src="/assets/icons/cart.svg" mode="aspectFit"></image>
-      <view class="badge" wx:if="{{cartItemCount > 0}}">{{cartItemCount}}</view>
+  
+  <!-- 1. 顶部搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <view class="search-input-wrapper">
+        <image class="search-icon" src="/assets/icons/search.svg" mode="aspectFit"></image>
+        <input 
+          class="search-input" 
+          type="text" 
+          placeholder="搜索商品关键词" 
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearchConfirm"
+        />
+      </view>
+      <button class="search-btn" bindtap="onSearchConfirm">搜索</button>
     </view>
   </view>
 
-  <!-- 品牌筛选 -->
-  <view class="brand-filter">
-    <view class="brand-filter-header">
-      <text class="brand-filter-title">品牌筛选</text>
-      <view class="btn-all" bindtap="toggleAllBrands">
-        <text>{{brandFilterExpanded ? '收起' : '全部'}}</text>
-        <image class="arrow-icon {{brandFilterExpanded ? 'expanded' : ''}}" src="/assets/icons/arrow-down.svg" mode="aspectFit"></image>
+  <!-- 2. 限时秒杀模块 -->
+  <view class="seckill-section">
+    <view class="seckill-header">
+      <view class="seckill-title">
+        <image class="seckill-icon" src="/assets/icons/flash.svg" mode="aspectFit"></image>
+        <text class="seckill-text">限时秒杀</text>
+      </view>
+      <view class="seckill-countdown">
+        <text class="countdown-text">距离结束</text>
+        <view class="countdown-time">
+          <text class="time-unit">{{countdown.hours}}</text>
+          <text class="time-colon">:</text>
+          <text class="time-unit">{{countdown.minutes}}</text>
+          <text class="time-colon">:</text>
+          <text class="time-unit">{{countdown.seconds}}</text>
+        </view>
       </view>
     </view>
-    <view class="brand-list-container">
-      <!-- 默认显示的品牌 -->
-      <view class="brand-list default-brands" wx:if="{{!brandFilterExpanded}}">
-        <view class="brand-item {{selectedBrand === item ? 'active' : ''}}" 
-              wx:for="{{defaultBrands}}" 
-              wx:key="*this"
-              bindtap="selectBrand" 
-              data-brand="{{item}}">
-          {{item}}
+    
+    <!-- 秒杀商品横向滑动列表 -->
+    <scroll-view scroll-x class="seckill-products" show-scrollbar="{{false}}">
+      <view class="seckill-product-item" wx:for="{{seckillProducts}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
+        <view class="product-image-wrapper">
+          <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
+          <view class="seckill-badge">秒杀</view>
+        </view>
+        <view class="product-info">
+          <text class="product-title">{{item.title}}</text>
+          <view class="price-row">
+            <text class="current-price">¥{{item.seckillPrice}}</text>
+            <text class="original-price">¥{{item.originalPrice}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 3. 轮播Banner区域 -->
+  <view class="banner-section">
+    <swiper class="banner-swiper" autoplay indicator-dots circular>
+      <swiper-item wx:for="{{bannerList}}" wx:key="id">
+        <image 
+          class="banner-image" 
+          src="{{item.imageUrl}}" 
+          mode="aspectFill"
+          bindtap="onBannerTap"
+          data-id="{{item.id}}"
+          data-link="{{item.link}}"
+        ></image>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 4. 商品分组区域 -->
+  <view class="product-groups">
+    <!-- 动态渲染商品分组 -->
+    <view class="product-group" wx:for="{{productGroups}}" wx:key="groupId">
+      <view class="group-header">
+        <view class="group-title">
+          <text class="title-text">{{item.groupName}}</text>
+          <text class="title-desc" wx:if="{{item.groupDesc}}">{{item.groupDesc}}</text>
+        </view>
+        <view class="more-btn" bindtap="viewAllProducts" data-group-id="{{item.groupId}}">
+          <text class="more-text">查看更多</text>
+          <image class="more-icon" src="/assets/icons/arrow-right.svg" mode="aspectFit"></image>
         </view>
       </view>
       
-      <!-- 展开状态下显示所有品牌 -->
-      <view class="brand-list all-brands" wx:if="{{brandFilterExpanded}}">
-        <view class="brand-item {{selectedBrand === item ? 'active' : ''}}" 
-              wx:for="{{brandOptions}}" 
-              wx:key="*this"
-              bindtap="selectBrand" 
-              data-brand="{{item}}">
-          {{item}}
+      <!-- 两列商品卡片布局 -->
+      <view class="product-grid">
+        <view 
+          class="product-card" 
+          wx:for="{{item.products}}" 
+          wx:for-item="product" 
+          wx:key="id"
+          bindtap="goToProductDetail" 
+          data-id="{{product.id}}"
+        >
+          <view class="card-image-wrapper">
+            <image class="card-image" src="{{product.imageUrl}}" mode="aspectFill"></image>
+            <!-- 商品标签（如新品、热销等） -->
+            <view class="product-tag" wx:if="{{product.tag}}">{{product.tag}}</view>
+          </view>
+          <view class="card-content">
+            <text class="product-name">{{product.name}}</text>
+            <view class="product-price-row">
+              <text class="product-price">¥{{product.price}}</text>
+              <text class="product-sales">销量{{product.salesCount}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
   </view>
 
-  <!-- 商品分类 -->
-  <view class="category-section">
-    <view class="section-title">商品分类</view>
-    <view class="category-grid">
-      <view class="category-item" bindtap="navigateToCategory" data-category="racket">
-        <image class="category-icon" src="/assets/icons/badminton-racket.svg" mode="aspectFit"></image>
-        <text class="category-name">羽毛球拍</text>
-      </view>
-      <view class="category-item" bindtap="navigateToCategory" data-category="shoes">
-        <image class="category-icon" src="/assets/icons/badminton-shoes.svg" mode="aspectFit"></image>
-        <text class="category-name">羽毛球鞋</text>
-      </view>
-      <view class="category-item" bindtap="navigateToCategory" data-category="ball">
-        <image class="category-icon" src="/assets/icons/badminton.svg" mode="aspectFit"></image>
-        <text class="category-name">羽毛球</text>
-      </view>
-      <view class="category-item" bindtap="navigateToCategory" data-category="sportswear">
-        <image class="category-icon" src="/assets/icons/sportswear.svg" mode="aspectFit"></image>
-        <text class="category-name">运动服装</text>
-      </view>
-      <view class="category-item" bindtap="navigateToCategory" data-category="accessories">
-        <image class="category-icon" src="/assets/icons/accessories.svg" mode="aspectFit"></image>
-        <text class="category-name">球拍配件</text>
-      </view>
-      <view class="category-item" bindtap="navigateToCategory" data-category="discount">
-        <image class="category-icon" src="/assets/icons/discount.svg" mode="aspectFit"></image>
-        <text class="category-name">折扣专区</text>
-      </view>
-    </view>
-  </view>
+  <!-- 5. 页面底部占位，防止被悬浮按钮遮挡 -->
+  <view class="bottom-placeholder"></view>
+</view>
 
-  <!-- 羽毛球拍产品列表 -->
-  <view class="product-section">
-    <view class="section-header">
-      <text class="section-title">羽毛球拍</text>
-      <view class="view-all" bindtap="viewAllProducts" data-category="racket">
-        <text>查看全部</text>
-        <text class="arrow">></text>
-      </view>
-    </view>
-    
-    <scroll-view scroll-x class="product-list" enhanced show-scrollbar="{{false}}">
-      <view class="product-card" wx:for="{{rackets}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
-        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-        <view class="product-info">
-          <view class="product-name">{{item.name}}</view>
-          <view class="product-price">¥{{item.price}}</view>
-          <view class="product-sold">已售 {{item.soldCount}}</view>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <!-- 羽毛球鞋产品列表 -->
-  <view class="product-section">
-    <view class="section-header">
-      <text class="section-title">羽毛球鞋</text>
-      <view class="view-all" bindtap="viewAllProducts" data-category="shoes">
-        <text>查看全部</text>
-        <text class="arrow">></text>
-      </view>
-    </view>
-    
-    <scroll-view scroll-x class="product-list" enhanced show-scrollbar="{{false}}">
-      <view class="product-card" wx:for="{{shoes}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
-        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-        <view class="product-info">
-          <view class="product-name">{{item.name}}</view>
-          <view class="product-price">¥{{item.price}}</view>
-          <view class="product-sold">已售 {{item.soldCount}}</view>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <!-- 羽毛球产品列表 -->
-  <view class="product-section">
-    <view class="section-header">
-      <text class="section-title">羽毛球</text>
-      <view class="view-all" bindtap="viewAllProducts" data-category="ball">
-        <text>查看全部</text>
-        <text class="arrow">></text>
-      </view>
-    </view>
-    
-    <scroll-view scroll-x class="product-list" enhanced show-scrollbar="{{false}}">
-      <view class="product-card" wx:for="{{shuttlecocks}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
-        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-        <view class="product-info">
-          <view class="product-name">{{item.name}}</view>
-          <view class="product-price">¥{{item.price}}</view>
-          <view class="product-sold">已售 {{item.soldCount}}</view>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <!-- 运动服装产品列表 -->
-  <view class="product-section">
-    <view class="section-header">
-      <text class="section-title">运动服装</text>
-      <view class="view-all" bindtap="viewAllProducts" data-category="sportswear">
-        <text>查看全部</text>
-        <text class="arrow">></text>
-      </view>
-    </view>
-    
-    <scroll-view scroll-x class="product-list" enhanced show-scrollbar="{{false}}">
-      <view class="product-card" wx:for="{{sportswear}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
-        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-        <view class="product-info">
-          <view class="product-name">{{item.name}}</view>
-          <view class="product-price">¥{{item.price}}</view>
-          <view class="product-sold">已售 {{item.soldCount}}</view>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <!-- 羽毛球配件产品列表 -->
-  <view class="product-section">
-    <view class="section-header">
-      <text class="section-title">羽毛球配件</text>
-      <view class="view-all" bindtap="viewAllProducts" data-category="accessories">
-        <text>查看全部</text>
-        <text class="arrow">></text>
-      </view>
-    </view>
-    
-    <scroll-view scroll-x class="product-list" enhanced show-scrollbar="{{false}}">
-      <view class="product-card" wx:for="{{accessories}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
-        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-        <view class="product-info">
-          <view class="product-name">{{item.name}}</view>
-          <view class="product-price">¥{{item.price}}</view>
-          <view class="product-sold">已售 {{item.soldCount}}</view>
-        </view>
-      </view>
-    </scroll-view>
-  </view>
-
-  <!-- 浮动购物车按钮 -->
-  <view class="floating-cart-btn" bindtap="goToCart">
-    <image src="/assets/icons/cart-white.svg" mode="aspectFit"></image>
-    <view class="cart-badge" wx:if="{{cartItemCount > 0}}">{{cartItemCount}}</view>
+<!-- 6. 右下角悬浮购物车按钮 -->
+<view class="floating-cart" bindtap="goToCart">
+  <image class="cart-icon" src="/assets/icons/cart-white.svg" mode="aspectFit"></image>
+  <!-- 购物车数量角标 -->
+  <view class="cart-badge" wx:if="{{cartCount > 0}}">
+    <text class="badge-text">{{cartCount > 99 ? '99+' : cartCount}}</text>
   </view>
 </view> 

@@ -7,7 +7,8 @@ Page({
     hasMore: true, // 是否有更多数据
     loading: false, // 加载状态
     searchKeyword: '', // 搜索关键词
-    showFilterPanel: false // 是否显示筛选面板
+    showFilterPanel: false, // 是否显示筛选面板
+    searchFocused: false // 搜索框是否聚焦
   },
   
   onLoad: function (options) {
@@ -153,7 +154,7 @@ Page({
     });
   },
   
-  // 搜索活动
+  // 搜索活动 - 输入框确认搜索
   onSearch: function(e) {
     const searchKeyword = e.detail.value || '';
     this.setData({
@@ -163,6 +164,96 @@ Page({
       hasMore: true
     });
     this.getActivities();
+  },
+  
+  // 搜索框聚焦时添加高亮样式 - 产品级交互优化
+  onSearchFocus: function() {
+    this.setData({
+      searchFocused: true
+    });
+    
+    // 产品级细节：聚焦时轻微震动反馈（可选）
+    wx.vibrateShort({
+      type: 'light'
+    });
+  },
+
+  // 搜索框失焦时移除高亮样式 - 产品级交互优化
+  onSearchBlur: function() {
+    this.setData({
+      searchFocused: false
+    });
+  },
+  
+  // 优化搜索按钮点击事件 - 产品级用户体验
+  handleSearch: function() {
+    const searchKeyword = this.data.searchKeyword.trim();
+    
+    // 产品级验证：空搜索提示
+    if (!searchKeyword) {
+      wx.showToast({
+        title: '请输入搜索内容',
+        icon: 'none',
+        duration: 1500
+      });
+      return;
+    }
+    
+    // 产品级反馈：搜索开始提示
+    wx.showLoading({
+      title: '搜索中...',
+      mask: true
+    });
+    
+    // 重置搜索结果
+    this.setData({
+      page: 1,
+      activities: [],
+      hasMore: true
+    });
+    
+    // 延迟执行搜索，模拟真实搜索体验
+    setTimeout(() => {
+      this.getActivities();
+      wx.hideLoading();
+      
+      // 产品级反馈：搜索完成提示
+      wx.showToast({
+        title: `找到相关活动`,
+        icon: 'success',
+        duration: 1000
+      });
+      
+      // 轻微震动反馈
+      wx.vibrateShort({
+        type: 'light'
+      });
+    }, 500);
+  },
+
+  // 优化实时搜索输入 - 产品级防抖处理
+  onSearchInput: function(e) {
+    const value = e.detail.value;
+    this.setData({
+      searchKeyword: value
+    });
+    
+    // 清除之前的定时器
+    if (this.searchTimer) {
+      clearTimeout(this.searchTimer);
+    }
+    
+    // 产品级优化：防抖搜索，500ms后自动搜索
+    if (value.trim()) {
+      this.searchTimer = setTimeout(() => {
+        this.setData({
+          page: 1,
+          activities: [],
+          hasMore: true
+        });
+        this.getActivities();
+      }, 500);
+    }
   },
   
   // 显示筛选面板
@@ -188,14 +279,6 @@ Page({
           });
         }
       }
-    });
-  },
-  
-  // 页面跳转
-  navigateTo: function(e) {
-    const url = e.currentTarget.dataset.url;
-    wx.navigateTo({
-      url: url
     });
   }
 }) 

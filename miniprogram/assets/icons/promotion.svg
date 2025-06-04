@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <!-- 金币/奖励图标，表示返佣 -->
+  <circle cx="24" cy="20" r="12" stroke="#4A90E2" stroke-width="2" fill="none"/>
+  <text x="24" y="25" text-anchor="middle" fill="#4A90E2" font-size="8" font-weight="bold">¥</text>
+  
+  <!-- 分享/推广箭头，表示推广 -->
+  <path d="M24 32 L30 38 L24 44" stroke="#4A90E2" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18 32 L24 38 L18 44" stroke="#4A90E2" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- 装饰性元素 -->
+  <circle cx="36" cy="12" r="2" fill="#FFA500" opacity="0.8"/>
+  <circle cx="12" cy="36" r="1.5" fill="#FFA500" opacity="0.6"/>
+</svg> 

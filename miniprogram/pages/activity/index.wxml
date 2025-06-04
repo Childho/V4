@@ -1,36 +1,12 @@
 <view class="activity-container">
   <nav-bar title="活动中心" showBack="{{false}}" />
   
-  <!-- 搜索栏 -->
+  <!-- 搜索栏 - 一体化胶囊形设计 -->
   <view class="search-bar">
-    <view class="search-input-wrap">
-      <icon type="search" size="16" color="#999" class="search-icon"></icon>
-      <input class="search-input" placeholder="搜索活动" confirm-type="search" bindconfirm="onSearch" value="{{searchKeyword}}"/>
-    </view>
-    <view class="filter-icon" bindtap="showFilter">
-      <icon type="filter" size="20" color="#333"></icon>
-    </view>
-  </view>
-  
-  <!-- 功能导航 -->
-  <view class="feature-nav">
-    <view class="feature-item" bindtap="navigateTo" data-url="/pages/activityCenter/index">
-      <view class="feature-icon activity-center">
-        <image src="/assets/images/activity-center-icon.png" mode="aspectFit"></image>
-      </view>
-      <view class="feature-name">活动中心</view>
-    </view>
-    <view class="feature-item" bindtap="navigateTo" data-url="/pages/competition/index">
-      <view class="feature-icon competition">
-        <image src="/assets/images/competition-icon.png" mode="aspectFit"></image>
-      </view>
-      <view class="feature-name">比赛报名</view>
-    </view>
-    <view class="feature-item" bindtap="navigateTo" data-url="/pages/pointsExchange/index">
-      <view class="feature-icon points-exchange">
-        <image src="/assets/images/points-exchange-icon.png" mode="aspectFit"></image>
-      </view>
-      <view class="feature-name">积分兑换</view>
+    <view class="search-input-wrap {{searchFocused ? 'focus' : ''}}">
+      <icon type="search" size="18" color="#999" class="search-icon"></icon>
+      <input class="search-input" placeholder="运动让爱更近" confirm-type="search" bindconfirm="onSearch" bindinput="onSearchInput" value="{{searchKeyword}}" bindfocus="onSearchFocus" bindblur="onSearchBlur"/>
+      <button class="search-btn" bindtap="handleSearch">搜索</button>
     </view>
   </view>
   

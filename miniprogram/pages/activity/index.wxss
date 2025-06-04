@@ -22,90 +22,212 @@
   height: 0 !important;
 }
 
-/* 搜索栏样式 */
+/* 搜索栏样式 - 产品级一体化胶囊形设计 */
 .search-bar {
   display: flex;
   align-items: center;
-  padding: 20rpx 30rpx;
-  background-color: #fff;
+  padding: 24rpx 30rpx 20rpx; /* 顶部稍大，底部稍小，视觉更平衡 */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* 保持紫色渐变背景 */
+  position: relative;
+  overflow: hidden; /* 为动画效果做准备 */
 }
 
+/* 添加搜索栏背景动效元素 */
+.search-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.8s ease;
+  z-index: 0;
+}
+
+.search-bar:hover::before {
+  left: 100%; /* 悬停时的光效扫过动画 */
+}
+
+/* 一体化搜索容器 - 产品级胶囊形设计 */
 .search-input-wrap {
   flex: 1;
   display: flex;
   align-items: center;
-  height: 72rpx;
-  background-color: #f2f2f2;
-  border-radius: 36rpx;
-  padding: 0 24rpx;
+  height: 74rpx; /* 从52rpx提高到64rpx，增加高度 */
+  background-color: #fff;
+  border-radius: 32rpx; /* 圆角调整为高度的一半，保持完美胶囊形 */
+  padding: 0 20rpx 0 2rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
+  margin-right: 0;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  backdrop-filter: blur(10rpx);
+  z-index: 1; /* 确保在背景动效之上 */
 }
 
+/* 悬停/聚焦时的高亮效果 - 产品级视觉反馈 */
+.search-input-wrap:hover,
+.search-input-wrap.focus {
+  border-color: rgba(102, 126, 234, 0.6); /* 更明显的品牌色边框 */
+  box-shadow: 0 6rpx 24rpx rgba(102, 126, 234, 0.25), 0 0 0 4rpx rgba(102, 126, 234, 0.1); /* 双重阴影 + 光晕效果 */
+  transform: translateY(-2rpx); /* 轻微上浮，增强互动感 */
+  background-color: #fefefe; /* 聚焦时背景更亮 */
+}
+
+/* 搜索图标增强效果 */
 .search-icon {
-  margin-right: 12rpx;
+  margin-right: 16rpx; /* 与输入框保持合适间距 */
+  color: #8b5fbf; /* 使用品牌色调，与紫色背景呼应 */
+  font-size: 28rpx; /* 适度调大图标，提升视觉重量 */
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.search-input {
-  flex: 1;
-  height: 72rpx;
-  font-size: 28rpx;
-  color: #333;
+/* 聚焦时图标增强动画 */
+.search-input-wrap.focus .search-icon {
+  color: #667eea;
+  opacity: 1;
+  transform: scale(1.1); /* 轻微放大 */
 }
 
-.filter-icon {
-  margin-left: 20rpx;
+/* 为搜索图标添加呼吸效果 */
+.search-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(102, 126, 234, 0.3), transparent);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.search-input-wrap.focus .search-icon::after {
   width: 40rpx;
   height: 40rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-/* 功能导航样式 */
-.feature-nav {
-  display: flex;
-  justify-content: space-around;
-  padding: 30rpx;
-  background-color: #fff;
-  margin-bottom: 20rpx;
+/* 输入框增强 */
+.search-input {
+  flex: 1;
+  height: 64rpx; /* 高度同步调整 */
+  font-size: 28rpx;
+  color: #333;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding-right: 80rpx;
+  transition: all 0.3s ease;
 }
 
-.feature-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* 占位符增强效果 */
+.search-input::placeholder {
+  color: #bbb; /* 保持淡灰色 */
+  font-size: 26rpx; /* 与输入文字大小更接近 */
+  transition: all 0.3s ease;
 }
 
-.feature-icon {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  margin-bottom: 16rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* 聚焦时占位符变化 */
+.search-input-wrap.focus .search-input::placeholder {
+  color: #ddd; /* 聚焦时占位符更淡 */
+  transform: translateX(4rpx); /* 聚焦时轻微右移 */
+}
+
+/* 产品级搜索按钮 - 终极版本 */
+.search-btn {
+  background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 600;
+  height: 64rpx; /* 按钮高度从36rpx提高到44rpx */
+  line-height: 44rpx;
+  padding: 0 24rpx; /* 稍微增加按钮宽度 */
+  border: none;
+  border-radius: 22rpx; /* 圆角调整为按钮高度的一半 */
+  box-shadow: 0 2rpx 8rpx rgba(90, 103, 216, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: absolute;
+  right: 10rpx; /* 稍微调整右边距 */
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
   overflow: hidden;
 }
 
-.feature-icon.activity-center {
-  background-color: #e6f7ff;
+/* 为按钮添加光泽效果 */
+.search-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
 }
 
-.feature-icon.competition {
-  background-color: #fff7e6;
+.search-btn:hover::before {
+  left: 100%;
 }
 
-.feature-icon.points-exchange {
-  background-color: #f6ffed;
+/* 产品级按钮悬停效果 */
+.search-btn:hover,
+.search-input-wrap:hover .search-btn {
+  background: linear-gradient(135deg, #5a67d8 0%, #4c51bf 100%); /* 更深的渐变 */
+  box-shadow: 0 4rpx 12rpx rgba(90, 103, 216, 0.4);
+  transform: translateY(-50%) translateY(-1rpx); /* 轻微上浮 */
 }
 
-.feature-icon image {
-  width: 60rpx;
-  height: 60rpx;
+/* 产品级按钮按下效果 */
+.search-btn:active {
+  transform: translateY(-50%) translateY(1rpx) scale(0.98); /* 按下回弹 */
+  box-shadow: 0 1rpx 4rpx rgba(90, 103, 216, 0.5);
+  background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
 }
 
-.feature-name {
-  font-size: 26rpx;
-  color: #333;
+/* 输入状态指示器 - 产品级细节 */
+.search-input-wrap::before {
+  content: '';
+  position: absolute;
+  bottom: -2rpx;
+  left: 50%;
+  width: 0;
+  height: 3rpx;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2rpx;
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+  z-index: 2;
+}
+
+.search-input-wrap.focus::before {
+  width: 80%; /* 聚焦时显示底部指示器 */
+}
+
+/* 搜索栏数据加载状态 */
+.search-input-wrap.loading {
+  pointer-events: none;
+}
+
+.search-input-wrap.loading .search-btn {
+  background: #ccc;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* 脉冲动画 */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* 移除原有的filter-icon样式 */
+.filter-icon {
+  display: none;
 }
 
 /* 筛选标签样式 */
@@ -115,6 +237,8 @@
   padding: 0 30rpx;
   border-bottom: 1rpx solid #f0f0f0;
   margin-bottom: 20rpx;
+  margin-top: 0; /* 移除上边距，与紫色搜索栏紧密衔接 */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05); /* 添加轻微阴影 */
 }
 
 .filter-tabs view {
@@ -145,7 +269,7 @@
 /* 活动列表样式 */
 .activity-list {
   padding: 0 30rpx;
-  height: calc(100vh - 300rpx);
+  height: calc(100vh - 210rpx); /* 微调高度，适配新的搜索栏设计 */
 }
 
 .activity-item {

@@ -315,4 +315,80 @@ page {
   font-size: 28rpx;
   color: #ff6b6b;
   font-weight: bold;
+}
+
+/* 精选装备模块样式 - 新增样式 */
+.equipment-scroll {
+  width: 100%;
+  white-space: nowrap;
+  height: 320rpx; /* 确保有足够的高度 */
+}
+
+.equipment-list {
+  display: flex;
+  gap: 16rpx;
+  padding-bottom: 10rpx;
+  height: 100%; /* 确保占满容器高度 */
+}
+
+.equipment-item {
+  width: 280rpx;
+  background-color: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  flex-shrink: 0; /* 防止压缩 */
+  position: relative;
+  height: 300rpx; /* 设置固定高度 */
+}
+
+.equipment-image {
+  width: 100%;
+  height: 180rpx; /* 调整图片高度 */
+  object-fit: cover;
+}
+
+.equipment-info {
+  padding: 16rpx; /* 减少内边距 */
+  position: relative;
+  height: 120rpx; /* 设置信息区域高度 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.equipment-name {
+  font-size: 28rpx; /* 调整字体大小 */
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 4rpx; /* 减少间距 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.equipment-brand {
+  font-size: 22rpx; /* 调整字体大小 */
+  color: #666;
+  margin-bottom: 8rpx; /* 减少间距 */
+}
+
+.equipment-price {
+  font-size: 30rpx; /* 调整字体大小 */
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+/* 精选标签样式 */
+.featured-tag {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  background: linear-gradient(135deg, #ff6b6b, #ffa500);
+  color: white;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  font-weight: 500;
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 107, 0.3);
 } 

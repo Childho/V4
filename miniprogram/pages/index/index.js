@@ -38,6 +38,37 @@ Page({
         location: '中心店'
       }
     ],
+    // 新增精选装备数据
+    featuredEquipment: [
+      {
+        id: 'equipment_1',
+        name: 'Wilson Pro Staff 97',
+        brand: 'Wilson',
+        price: '1299.00',
+        imageUrl: '/assets/icons/mall.png'
+      },
+      {
+        id: 'equipment_2',
+        name: 'Babolat Pure Drive',
+        brand: 'Babolat',
+        price: '1199.00',
+        imageUrl: '/assets/icons/mall_active.png'
+      },
+      {
+        id: 'equipment_3',
+        name: 'HEAD Speed MP',
+        brand: 'HEAD',
+        price: '1099.00',
+        imageUrl: '/assets/icons/activity.png'
+      },
+      {
+        id: 'equipment_4',
+        name: 'Yonex EZONE 98',
+        brand: 'Yonex',
+        price: '1399.00',
+        imageUrl: '/assets/icons/activity_active.png'
+      }
+    ],
     products: [
       {
         id: 'product_1',
@@ -83,10 +114,24 @@ Page({
       console.error('获取系统信息失败', e)
     }
     
+    // 打印初始数据状态
+    console.log('页面onLoad - 初始精选装备数据:', this.data.featuredEquipment)
+    
     // 页面加载时获取数据
     this.fetchBanners()
     this.fetchActivities()
+    this.fetchFeaturedEquipment() // 获取精选装备数据
     this.checkLoginStatus()
+  },
+
+  // 页面显示时也检查数据
+  onShow() {
+    console.log('页面onShow - 当前精选装备数据:', this.data.featuredEquipment)
+    // 如果数据为空，重新设置
+    if (!this.data.featuredEquipment || this.data.featuredEquipment.length === 0) {
+      console.log('数据为空，重新初始化')
+      this.testRefreshEquipment()
+    }
   },
 
   // 检查登录状态并获取会员信息
@@ -102,10 +147,33 @@ Page({
     }
   },
 
-  // 导航到指定页面
+  // 导航到指定页面 - 增强版本，支持更多页面跳转
   navigateTo(e) {
     const { url } = e.currentTarget.dataset
-    wx.navigateTo({ url })
+    
+    // 处理新增功能页面的跳转
+    if (url === '/pages/promotion/index') {
+      // 推广返佣页面，如果页面不存在，先显示提示
+      wx.showToast({
+        title: '推广返佣功能即将上线',
+        icon: 'none',
+        duration: 2000
+      })
+      // 实际开发中取消注释下面的代码
+      // wx.navigateTo({ url })
+    } else if (url === '/pages/stringing/index') {
+      // 穿线服务页面
+      wx.showToast({
+        title: '穿线服务功能即将上线',
+        icon: 'none',
+        duration: 2000
+      })
+      // 实际开发中取消注释下面的代码
+      // wx.navigateTo({ url })
+    } else {
+      // 其他已存在的页面正常跳转
+      wx.navigateTo({ url })
+    }
   },
 
   // 获取轮播图数据
@@ -136,6 +204,33 @@ Page({
       success: (res) => {
         this.setData({
           activities: res.data.activities
+        })
+      }
+    })
+    */
+  },
+
+  // 获取精选装备数据 - 新增方法
+  fetchFeaturedEquipment() {
+    // 实际开发中这里应该调用API获取数据
+    console.log('获取精选装备数据')
+    
+    // 当前使用本地数据，确保数据正确设置
+    // 重新设置精选装备数据，确保渲染
+    this.setData({
+      featuredEquipment: this.data.featuredEquipment
+    }, () => {
+      console.log('精选装备数据设置完成:', this.data.featuredEquipment)
+      console.log('精选装备数量:', this.data.featuredEquipment ? this.data.featuredEquipment.length : 0)
+    })
+    
+    // 模拟API请求
+    /*
+    wx.request({
+      url: 'https://api.example.com/featured-equipment',
+      success: (res) => {
+        this.setData({
+          featuredEquipment: res.data.equipment
         })
       }
     })
@@ -215,5 +310,50 @@ Page({
       title: '倍特爱小程序',
       path: '/pages/index/index'
     }
+  },
+
+  // 测试方法：手动刷新精选装备数据
+  testRefreshEquipment() {
+    console.log('手动刷新精选装备数据')
+    const equipmentData = [
+      {
+        id: 'equipment_1',
+        name: 'Wilson Pro Staff 97',
+        brand: 'Wilson',
+        price: '1299.00',
+        imageUrl: '/assets/icons/mall.png'
+      },
+      {
+        id: 'equipment_2',
+        name: 'Babolat Pure Drive', 
+        brand: 'Babolat',
+        price: '1199.00',
+        imageUrl: '/assets/icons/mall_active.png'
+      },
+      {
+        id: 'equipment_3',
+        name: 'HEAD Speed MP',
+        brand: 'HEAD', 
+        price: '1099.00',
+        imageUrl: '/assets/icons/activity.png'
+      },
+      {
+        id: 'equipment_4',
+        name: 'Yonex EZONE 98',
+        brand: 'Yonex',
+        price: '1399.00',
+        imageUrl: '/assets/icons/activity_active.png'
+      }
+    ]
+    
+    this.setData({
+      featuredEquipment: equipmentData
+    }, () => {
+      console.log('数据刷新完成:', this.data.featuredEquipment)
+      wx.showToast({
+        title: '数据已刷新',
+        icon: 'success'
+      })
+    })
   }
 }) 

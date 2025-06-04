@@ -1,395 +1,419 @@
-/* 商城页面样式 */
-page {
-  background-color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFangSC', 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
+/* 商城页面主容器样式 */
 .mall-container {
-  padding-bottom: 120rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 120rpx; /* 为底部导航栏和悬浮按钮留出空间 */
 }
 
-/* 顶部标题 */
-.mall-header {
-  padding: 30rpx 30rpx 10rpx;
-  background-color: white;
-  text-align: center;
+/* 1. 顶部搜索栏样式 */
+.search-section {
+  background-color: #ffffff;
+  padding: 20rpx 24rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
-.mall-title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333;
-  display: block;
-}
-
-.mall-subtitle {
-  font-size: 26rpx;
-  color: #999;
-  margin-top: 8rpx;
-  display: block;
-}
-
-/* 搜索栏 */
 .search-bar {
   display: flex;
   align-items: center;
-  padding: 20rpx 30rpx;
-  background-color: white;
+  gap: 20rpx;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: #f8f8f8;
+  border-radius: 24rpx;
+  padding: 16rpx 20rpx;
+  border: 2rpx solid #e5e5e5;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #4169e1; /* 聚焦时的边框颜色 */
+  background-color: #ffffff;
+}
+
+.search-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+  opacity: 0.6;
 }
 
 .search-input {
   flex: 1;
-  height: 70rpx;
-  background-color: #f5f5f5;
-  border-radius: 35rpx;
-  display: flex;
-  align-items: center;
-  padding: 0 20rpx;
-}
-
-.search-icon {
-  width: 40rpx;
-  height: 40rpx;
-  margin-right: 10rpx;
-}
-
-.search-input input {
-  flex: 1;
-  height: 70rpx;
   font-size: 28rpx;
+  color: #333333;
+  background-color: transparent;
 }
 
-.filter-icon,
-.cart-icon {
-  width: 70rpx;
-  height: 70rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 20rpx;
-  position: relative;
+.search-input::placeholder {
+  color: #999999;
 }
 
-.filter-icon image,
-.cart-icon image {
-  width: 44rpx;
-  height: 44rpx;
+.search-btn {
+  background-color: #4169e1;
+  color: #ffffff;
+  border-radius: 24rpx;
+  padding: 16rpx 32rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  min-width: 120rpx;
 }
 
-.badge {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #ff4d4f;
-  color: white;
-  font-size: 20rpx;
-  width: 32rpx;
-  height: 32rpx;
-  border-radius: 16rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.search-btn:active {
+  background-color: #3654c4;
 }
 
-/* 品牌筛选 */
-.brand-filter {
-  background-color: white;
-  border-radius: 16rpx;
-  padding: 32rpx;
-  margin: 20rpx 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+/* 2. 限时秒杀模块样式 */
+.seckill-section {
+  background-color: #ffffff;
+  margin-top: 20rpx;
+  padding: 32rpx 24rpx;
 }
 
-.brand-filter-header {
+.seckill-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24rpx;
 }
 
-.brand-filter-title {
-  font-size: 30rpx;
-  font-weight: 500;
-  color: #333;
-}
-
-.btn-all {
+.seckill-title {
   display: flex;
   align-items: center;
-  font-size: 28rpx;
-  color: #999;
-  cursor: pointer;
-  transition: color 0.3s ease;
+  gap: 12rpx;
 }
 
-.btn-all:active {
-  color: #4169e1;
-}
-
-.arrow-icon {
+.seckill-icon {
   width: 32rpx;
   height: 32rpx;
-  margin-left: 8rpx;
-  transition: transform 0.3s ease;
 }
 
-.arrow-icon.expanded {
-  transform: rotate(180deg);
-}
-
-.brand-list-container {
-  overflow: hidden;
-}
-
-.brand-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-}
-
-.brand-list.default-brands {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.brand-list.all-brands {
-  animation: slideDown 0.3s ease-in-out;
-}
-
-.brand-item {
-  padding: 16rpx 32rpx;
-  font-size: 28rpx;
-  color: #666;
-  background-color: #f5f5f5;
-  border-radius: 32rpx;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-.brand-item.active {
-  color: white;
-  background-color: #4169e1;
-  transform: scale(1.05);
-}
-
-/* 动画效果 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10rpx);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-    transform: translateY(-20rpx);
-  }
-  to {
-    opacity: 1;
-    max-height: 500rpx;
-    transform: translateY(0);
-  }
-}
-
-/* 商品分类 */
-.category-section {
-  background-color: white;
-  padding: 30rpx;
-  margin-top: 20rpx;
-}
-
-.section-title {
-  font-size: 30rpx;
-  font-weight: 500;
-  margin-bottom: 30rpx;
-}
-
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30rpx;
-}
-
-.category-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.category-icon {
-  width: 80rpx;
-  height: 80rpx;
-  margin-bottom: 16rpx;
-}
-
-.category-name {
-  font-size: 26rpx;
-  color: #333;
-}
-
-/* 产品部分 */
-.product-section {
-  background-color: white;
-  padding: 30rpx;
-  margin-top: 48rpx;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20rpx;
-  height: 88rpx;
-  padding: 0 32rpx 0 32rpx;
-}
-
-.section-title {
+.seckill-text {
   font-size: 32rpx;
-  font-weight: 500;
-  color: #333333;
-  line-height: 44rpx;
-  font-family: 'PingFangSC-Medium';
+  font-weight: 600;
+  color: #ff4444;
 }
 
-.view-all {
-  font-size: 28rpx;
-  color: #999999;
+.seckill-countdown {
   display: flex;
   align-items: center;
-  line-height: 40rpx;
-  font-family: 'PingFangSC-Regular';
+  gap: 12rpx;
 }
 
-.arrow {
-  margin-left: 8rpx;
-  width: 24rpx;
-  height: 24rpx;
+.countdown-text {
+  font-size: 24rpx;
+  color: #666666;
 }
 
-.product-list {
+.countdown-time {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+}
+
+.time-unit {
+  background-color: #333333;
+  color: #ffffff;
+  padding: 4rpx 8rpx;
+  border-radius: 4rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  min-width: 40rpx;
+  text-align: center;
+}
+
+.time-colon {
+  color: #333333;
+  font-weight: 600;
+  font-size: 24rpx;
+}
+
+/* 秒杀商品横向滑动列表 */
+.seckill-products {
   white-space: nowrap;
-  padding: 0 32rpx;
-  position: relative;
-  margin-left: -32rpx;
-  width: calc(100% + 64rpx);
+  padding: 0 0 20rpx 0;
 }
 
-.product-list::before,
-.product-list::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 32rpx;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.product-list::before {
-  left: 0;
-  background: linear-gradient(to right, rgba(245,245,245,0), rgba(0,0,0,0.1));
-}
-
-.product-list::after {
-  right: 0;
-  background: linear-gradient(to left, rgba(245,245,245,0), rgba(0,0,0,0.1));
-}
-
-.product-card {
+.seckill-product-item {
   display: inline-block;
-  width: 240rpx;
+  width: 200rpx;
   margin-right: 24rpx;
   vertical-align: top;
-  background-color: #FFFFFF;
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.1);
-  padding: 24rpx 16rpx;
-  overflow: hidden;
+}
+
+.seckill-product-item:last-child {
+  margin-right: 0;
+}
+
+.product-image-wrapper {
+  position: relative;
+  margin-bottom: 16rpx;
 }
 
 .product-image {
   width: 200rpx;
   height: 200rpx;
+  border-radius: 12rpx;
+  background-color: #f0f0f0;
+}
+
+.seckill-badge {
+  position: absolute;
+  top: 8rpx;
+  left: 8rpx;
+  background-color: #ff4444;
+  color: #ffffff;
+  font-size: 20rpx;
+  padding: 4rpx 8rpx;
   border-radius: 8rpx;
-  background-color: #EFEFEF;
-  display: block;
-  margin: 0 auto;
-  object-fit: cover;
+  font-weight: 500;
 }
 
 .product-info {
-  padding: 16rpx 0;
-  margin-top: 8rpx;
+  text-align: left;
 }
 
-.product-name {
-  font-size: 28rpx;
+.product-title {
+  font-size: 24rpx;
   color: #333333;
-  white-space: normal;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  height: 80rpx;
-  line-height: 40rpx;
-  font-family: 'PingFangSC-Regular';
+  overflow: hidden;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+}
+
+.price-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.current-price {
+  font-size: 28rpx;
+  color: #ff4444;
+  font-weight: 600;
+}
+
+.original-price {
+  font-size: 24rpx;
+  color: #999999;
+  text-decoration: line-through;
+}
+
+/* 3. 轮播Banner区域样式 */
+.banner-section {
+  margin-top: 20rpx;
+  padding: 0 24rpx;
+}
+
+.banner-swiper {
+  height: 320rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background-color: #f0f0f0;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* 4. 商品分组区域样式 */
+.product-groups {
+  margin-top: 20rpx;
+}
+
+.product-group {
+  background-color: #ffffff;
+  margin-bottom: 20rpx;
+  padding: 32rpx 24rpx;
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.group-title {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.title-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.title-desc {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.more-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.more-text {
+  font-size: 24rpx;
+  color: #4169e1;
+}
+
+.more-icon {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+/* 两列商品卡片布局 */
+.product-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24rpx;
+}
+
+.product-card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.product-card:active {
+  transform: scale(0.98);
+}
+
+.card-image-wrapper {
+  position: relative;
+  margin-bottom: 16rpx;
+}
+
+.card-image {
+  width: 100%;
+  height: 260rpx;
+  border-radius: 12rpx;
+  background-color: #f0f0f0;
+}
+
+.product-tag {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  background-color: #ff6b35;
+  color: #ffffff;
+  font-size: 20rpx;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  font-weight: 500;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.product-name {
+  font-size: 26rpx;
+  color: #333333;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.product-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .product-price {
-  font-size: 32rpx;
-  color: #FF4A4A;
-  font-weight: 500;
-  margin-top: 8rpx;
-  font-family: 'PingFangSC-Medium';
+  font-size: 28rpx;
+  color: #ff4444;
+  font-weight: 600;
 }
 
-.product-sold {
-  font-size: 24rpx;
+.product-sales {
+  font-size: 22rpx;
   color: #999999;
-  margin-top: 8rpx;
-  font-family: 'PingFangSC-Regular';
 }
 
-/* 浮动购物车按钮 */
-.floating-cart-btn {
+/* 5. 页面底部占位 */
+.bottom-placeholder {
+  height: 40rpx;
+}
+
+/* 6. 右下角悬浮购物车按钮样式 */
+.floating-cart {
   position: fixed;
-  right: 32rpx;
-  bottom: calc(34pt + env(safe-area-inset-bottom));
-  width: 112rpx;
-  height: 112rpx;
-  border-radius: 56rpx;
-  background-color: #387EF5;
+  right: 40rpx;
+  bottom: 160rpx; /* 距离底部导航栏的距离 */
+  width: 100rpx;
+  height: 100rpx;
+  background-color: #4169e1;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 16rpx rgba(0,0,0,0.2);
-  z-index: 100;
+  box-shadow: 0 8rpx 24rpx rgba(65, 105, 225, 0.4);
+  z-index: 1000;
+  transition: transform 0.2s ease;
 }
 
-.floating-cart-btn image {
+.floating-cart:active {
+  transform: scale(0.9);
+}
+
+.cart-icon {
   width: 48rpx;
   height: 48rpx;
 }
 
 .cart-badge {
   position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #FF4A4A;
-  color: white;
-  font-size: 24rpx;
-  min-width: 32rpx;
-  height: 32rpx;
-  border-radius: 16rpx;
-  padding: 0 6rpx;
+  top: -8rpx;
+  right: -8rpx;
+  min-width: 36rpx;
+  height: 36rpx;
+  background-color: #ff4444;
+  border-radius: 18rpx;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 3rpx solid #ffffff;
+}
+
+.badge-text {
+  font-size: 20rpx;
+  color: #ffffff;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .product-grid {
+    gap: 16rpx;
+  }
+  
+  .product-card {
+    padding: 16rpx;
+  }
+  
+  .card-image {
+    height: 220rpx;
+  }
 } 
