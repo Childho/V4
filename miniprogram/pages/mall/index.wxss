@@ -3,8 +3,46 @@
   background-color: #f5f5f5;
   min-height: 100vh;
   padding-bottom: 120rpx; /* 为底部导航栏和悬浮按钮留出空间 */
-  /* 添加状态栏+导航栏高度适配，因为使用了自定义导航栏 */
-  padding-top: calc(env(safe-area-inset-top) + 138rpx);
+  /* 参考服务页面，只使用安全区域适配 */
+  padding-top: env(safe-area-inset-top);
+  box-sizing: border-box;
+}
+
+/* 自定义顶部导航栏样式 */
+.custom-nav-bar {
+  background-color: #ffffff;
+  padding: 80rpx 0 18rpx 0; /* 减少底部padding，让标题和搜索栏更紧凑 */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  border-bottom-left-radius: 20rpx;
+  border-bottom-right-radius: 20rpx;
+}
+
+.nav-title {
+  text-align: center; /* 标题居中 */
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333333;
+  padding: 24rpx 0 14rpx 0; /* 增加顶部内边距，让标题下移一点 */
+  line-height: 1.2;
+}
+
+.nav-actions {
+  position: absolute;
+  right: 30rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  /* 预留右侧功能按钮区域 */
+}
+
+/* 固定搜索栏样式 */
+.fixed-search-section {
+  background-color: #ffffff;
+  padding: 16rpx 24rpx; /* 搜索栏内边距 */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.content-scroll {
+  height: calc(100vh - env(safe-area-inset-top) - 140rpx); /* 动态计算高度 */
   box-sizing: border-box;
 }
 
