@@ -1,408 +1,208 @@
-/* 整体容器样式 */
-.booking-container {
-  background-color: #F5F5F5;
-  min-height: 100vh;
-  box-sizing: border-box;
-  position: relative;
-  padding-bottom: 40rpx; /* 移除为底部导航栏预留的空间 */
+/* 服务页面主容器样式 */
+.service-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f5f5;
 }
 
-/* 顶部标签页导航 */
-.tab-nav {
+/* Tab切换栏样式 */
+.tab-bar {
   display: flex;
-  background-color: #FFF;
-  padding: 20rpx 30rpx;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  border-bottom: 1rpx solid #EFEFEF;
+  background: #ffffff;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+  z-index: 100;
 }
 
 .tab-item {
   flex: 1;
   text-align: center;
+  padding: 30rpx 0;
   font-size: 28rpx;
-  color: #666;
+  color: #666666;
   position: relative;
-  padding: 20rpx 0;
+  transition: all 0.3s ease;
 }
 
 .tab-item.active {
-  color: #4169E1;
-  font-weight: 500;
+  color: #4169e1;
+  font-weight: bold;
 }
 
 .tab-item.active::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 40rpx;
+  width: 60rpx;
   height: 4rpx;
-  background-color: #4169E1;
+  background: #4169e1;
   border-radius: 2rpx;
 }
 
-/* 内容视图 */
-.content-view {
-  padding-bottom: 30rpx;
+/* Tab内容区域 */
+.tab-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
 }
 
-/* 日期选择器样式 */
-.date-selector {
-  background: #FFFFFF;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-}
-
-.date-header {
+.content-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 30rpx;
-  font-size: 28rpx;
-  color: #333;
-}
-
-.date-month {
-  color: #999;
-}
-
-.date-scroll {
-  display: flex;
-  white-space: nowrap;
-}
-
-.date-item {
-  display: inline-flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 120rpx;
-  height: 120rpx;
-  margin-right: 20rpx;
-  border: 1px solid #EEEEEE;
-  border-radius: 8rpx;
+  transition: opacity 0.3s ease;
 }
 
-.date-item.active {
-  background-color: #4169E1;
-  border-color: #4169E1;
+.content-panel.show {
+  opacity: 1;
+  z-index: 1;
 }
 
-.date-day {
-  font-size: 36rpx;
-  font-weight: 500;
-  color: #333;
+.content-panel.hide {
+  opacity: 0;
+  z-index: 0;
 }
 
-.date-weekday {
-  font-size: 24rpx;
-  color: #666;
-  margin-top: 10rpx;
-}
-
-.date-item.active .date-day,
-.date-item.active .date-weekday {
-  color: #FFFFFF;
-}
-
-/* 羽毛球馆列表区域 */
-.venues-section {
-  background: #FFFFFF;
-  padding: 30rpx;
-}
-
-.venue-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30rpx;
-  font-size: 28rpx;
-  color: #333;
-}
-
-.sort-btn {
-  display: flex;
-  align-items: center;
-  color: #999;
-  font-size: 24rpx;
-}
-
-.sort-icon {
-  width: 28rpx;
-  height: 28rpx;
-  margin-right: 8rpx;
-  background-image: url('/assets/icons/sort.png');
-  background-size: contain;
-}
-
-/* 场馆列表项 */
-.venue-list {
-  border-radius: 8rpx;
-}
-
-.venue-item {
-  display: flex;
-  padding: 30rpx 0;
-  border-bottom: 1rpx solid #EEEEEE;
-}
-
-.venue-img {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 8rpx;
-  margin-right: 20rpx;
-}
-
-.venue-info {
+.scroll-content {
   flex: 1;
+  padding: 20rpx;
 }
 
-.venue-name {
-  font-size: 30rpx;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-
-.venue-rating {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10rpx;
-}
-
-.rating-stars {
-  display: flex;
-  margin-right: 10rpx;
-}
-
-.star {
-  width: 24rpx;
-  height: 24rpx;
-  margin-right: 4rpx;
-}
-
-.rating-score {
-  font-size: 24rpx;
-  color: #FF9500;
-}
-
-.venue-address {
-  display: flex;
-  align-items: center;
-  font-size: 24rpx;
-  color: #999;
-  margin-bottom: 10rpx;
-}
-
-.location-icon {
-  width: 24rpx;
-  height: 24rpx;
-  margin-right: 8rpx;
-  background-image: url('/assets/icons/location.png');
-  background-size: contain;
-}
-
-.venue-distance {
-  font-size: 24rpx;
-  color: #999;
-  margin-bottom: 10rpx;
-}
-
-.venue-discount {
-  font-size: 24rpx;
-  color: #4169E1;
-}
-
-/* 时间段选择 */
-.time-slots {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20rpx;
-}
-
-.time-slot {
-  flex: 1;
-  text-align: center;
-  padding: 16rpx 0;
-  margin: 0 10rpx;
-  background: #F5F5F5;
-  border-radius: 8rpx;
-  font-size: 24rpx;
-  color: #333;
-}
-
-.time-slot:first-child {
-  margin-left: 0;
-}
-
-.time-slot:last-child {
-  margin-right: 0;
-}
-
-.time-slot.active {
-  background: #4169E1;
-  color: #FFFFFF;
-}
-
-/* 预约按钮 */
-.book-now-btn {
-  width: 100%;
-  height: 88rpx;
-  line-height: 88rpx;
-  background: #4169E1;
-  text-align: center;
-  color: #FFFFFF;
-  font-size: 30rpx;
-  border-radius: 44rpx;
-  margin-top: 30rpx;
-  margin-bottom: 40rpx;
-}
-
-/* 穿线服务样式 */
-.string-card {
-  background: #FFFFFF;
-  border-radius: 8rpx;
-  margin: 20rpx;
-  padding: 30rpx;
-}
-
-.string-card-title {
-  font-size: 30rpx;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 30rpx;
-}
-
-.racket-info {
-  width: 100%;
-}
-
-.input-item {
-  margin-bottom: 30rpx;
-}
-
-.input-label {
-  font-size: 28rpx;
-  color: #333;
+/* 通用区块样式 */
+.section {
+  background: #ffffff;
+  border-radius: 20rpx;
   margin-bottom: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
 }
 
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 24rpx;
+}
+
+/* === Tab1: 穿线服务样式 === */
+
+/* 输入框样式 */
 .input-field {
   width: 100%;
   height: 80rpx;
-  border: 1rpx solid #EEEEEE;
-  border-radius: 8rpx;
-  padding: 0 20rpx;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
   font-size: 28rpx;
-  box-sizing: border-box;
+  background: #fafafa;
 }
 
-.pounds-requirement {
-  margin-top: 30rpx;
+.input-field:focus {
+  border-color: #4169e1;
+  background: #ffffff;
 }
 
-.pounds-selector {
-  margin-top: 20rpx;
+/* 磅数控制样式 */
+.pounds-container {
+  display: flex;
+  gap: 40rpx;
 }
 
 .pounds-item {
+  flex: 1;
   display: flex;
   align-items: center;
-  margin-bottom: 20rpx;
+  justify-content: space-between;
+}
+
+.pounds-label {
   font-size: 28rpx;
-  color: #333;
+  color: #333333;
+  font-weight: 500;
 }
 
 .pounds-control {
   display: flex;
   align-items: center;
-  margin: 0 20rpx;
+  background: #f8f8f8;
+  border-radius: 24rpx;
+  overflow: hidden;
 }
 
-.pounds-btn {
+.btn-control {
   width: 60rpx;
-  height: 60rpx;
-  background: #F5F5F5;
-  border-radius: 30rpx;
+  height: 48rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 36rpx;
-  color: #4169E1;
+  background: #4169e1;
+  color: #ffffff;
+  font-size: 32rpx;
+  border: none;
+  line-height: 1;
+}
+
+.btn-control::after {
+  border: none;
 }
 
 .pounds-value {
-  margin: 0 30rpx;
-  font-size: 32rpx;
-  font-weight: 500;
   min-width: 60rpx;
   text-align: center;
+  font-size: 28rpx;
+  color: #333333;
+  background: #ffffff;
+  padding: 12rpx 16rpx;
 }
 
-/* 线材筛选 */
-.string-filter {
+/* 品牌选择样式 */
+.brand-tabs {
   display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 30rpx;
-}
-
-.filter-tag {
-  height: 60rpx;
-  padding: 0 30rpx;
-  background: #F5F5F5;
-  border-radius: 30rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  color: #666;
-  margin-right: 20rpx;
+  gap: 16rpx;
   margin-bottom: 20rpx;
+  flex-wrap: wrap;
 }
 
-.filter-tag.active {
-  background: #4169E1;
-  color: #FFFFFF;
+.brand-tab {
+  padding: 16rpx 24rpx;
+  background: #f5f5f5;
+  border-radius: 20rpx;
+  font-size: 26rpx;
+  color: #666666;
+  transition: all 0.3s ease;
 }
 
-/* 线材列表 */
-.string-list {
-  border-top: 1rpx solid #EEEEEE;
-  padding-top: 30rpx;
+.brand-tab.active {
+  background: #4169e1;
+  color: #ffffff;
+}
+
+/* 线材列表样式 */
+.strings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
 }
 
 .string-item {
   display: flex;
   align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #EEEEEE;
+  padding: 24rpx;
+  background: #f8f8f8;
+  border-radius: 16rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.3s ease;
 }
 
-.string-select-dot {
-  width: 40rpx;
-  height: 40rpx;
-  border: 2rpx solid #CCCCCC;
-  border-radius: 50%;
-  margin-right: 20rpx;
-  position: relative;
-}
-
-.string-select-dot.active {
-  border-color: #4169E1;
-}
-
-.string-select-dot.active::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20rpx;
-  height: 20rpx;
-  background: #4169E1;
-  border-radius: 50%;
+.string-item:active {
+  border-color: #4169e1;
+  background: #f0f4ff;
 }
 
 .string-info {
@@ -411,515 +211,781 @@
 
 .string-name {
   font-size: 28rpx;
+  color: #333333;
   font-weight: 500;
-  color: #333;
-  margin-bottom: 10rpx;
+  margin-bottom: 8rpx;
 }
 
 .string-desc {
   font-size: 24rpx;
-  color: #999;
+  color: #666666;
+  margin-bottom: 8rpx;
 }
 
 .string-price {
-  font-size: 30rpx;
-  color: #FF5000;
-  font-weight: 500;
+  font-size: 26rpx;
+  color: #ff4757;
+  font-weight: bold;
 }
 
-/* 底部价格和下单按钮 */
-.string-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100rpx;
-  background: #FFFFFF;
+.radio {
+  width: 36rpx;
+  height: 36rpx;
+  border: 3rpx solid #cccccc;
+  border-radius: 50%;
+  margin-left: 20rpx;
+  position: relative;
+}
+
+.radio.selected {
+  border-color: #4169e1;
+}
+
+.radio.selected::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18rpx;
+  height: 18rpx;
+  background: #4169e1;
+  border-radius: 50%;
+}
+
+/* 备注输入框样式 */
+.textarea-field {
+  width: 100%;
+  min-height: 120rpx;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  background: #fafafa;
+  resize: none;
+}
+
+.textarea-field:focus {
+  border-color: #4169e1;
+  background: #ffffff;
+}
+
+/* 底部结算栏样式 */
+.bottom-bar {
   display: flex;
   align-items: center;
-  padding: 0 30rpx;
-  z-index: 100;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  padding: 30rpx;
+  background: #ffffff;
+  border-top: 1rpx solid #f0f0f0;
+  gap: 30rpx;
 }
 
 .total-price {
   flex: 1;
-  display: flex;
-  align-items: center;
-  font-size: 28rpx;
-  color: #333;
 }
 
-.price {
+.price-label {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.price-value {
   font-size: 36rpx;
-  color: #FF5000;
-  font-weight: 500;
-  margin-left: 20rpx;
+  color: #ff4757;
+  font-weight: bold;
 }
 
-.order-btn {
-  width: 200rpx;
+.btn-order {
+  flex-shrink: 0;
+  width: 240rpx;
   height: 80rpx;
-  background: #4169E1;
   border-radius: 40rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 28rpx;
-  color: #FFFFFF;
+  font-weight: bold;
+  border: none;
+  transition: all 0.3s ease;
 }
 
-/* 我的服务页样式 */
-.my-service-header {
-  display: flex;
-  background: #FFFFFF;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
+.btn-order::after {
+  border: none;
 }
 
-.service-filter-tab {
-  flex: 1;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28rpx;
-  color: #666;
-  position: relative;
+.btn-order.active {
+  background: linear-gradient(135deg, #4169e1, #667eea);
+  color: #ffffff;
 }
 
-.service-filter-tab.active {
-  color: #4169E1;
-  font-weight: 500;
+.btn-order.disabled {
+  background: #cccccc;
+  color: #ffffff;
 }
 
-.service-filter-tab.active::after {
-  content: "";
-  position: absolute;
-  bottom: -10rpx;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40rpx;
-  height: 4rpx;
-  background: #4169E1;
-  border-radius: 2rpx;
-}
+/* === Tab2: 积分兑换样式 === */
 
-.my-service-list {
-  padding: 0 20rpx;
-}
-
-.service-card {
-  background: #FFFFFF;
-  border-radius: 8rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-}
-
-.service-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20rpx;
-  padding-bottom: 20rpx;
-  border-bottom: 1rpx solid #EEEEEE;
-}
-
-.service-card-title {
-  font-size: 30rpx;
-  font-weight: 500;
-  color: #333;
-}
-
-.service-card-status {
-  font-size: 24rpx;
-  padding: 6rpx 20rpx;
+/* 积分头部样式 */
+.points-header {
+  background: linear-gradient(135deg, #4169e1, #667eea);
   border-radius: 20rpx;
+  padding: 40rpx;
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 20rpx;
 }
 
-.service-card-status.confirmed {
-  background: #E6F7FF;
-  color: #1890FF;
+.points-title {
+  font-size: 28rpx;
+  margin-bottom: 16rpx;
+  opacity: 0.9;
 }
 
-.service-card-status.processing {
-  background: #FFF7E6;
-  color: #FF9500;
+.points-value {
+  font-size: 56rpx;
+  font-weight: bold;
 }
 
-.service-card-status.pending {
-  background: #F5F5F5;
-  color: #999999;
-}
-
-.service-card-info {
-  margin-bottom: 30rpx;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15rpx;
-  font-size: 26rpx;
-  color: #666;
-}
-
-.info-icon {
-  width: 32rpx;
-  height: 32rpx;
-  margin-right: 10rpx;
-}
-
-.info-icon.location {
-  background-image: url('/assets/icons/location.png');
-  background-size: contain;
-}
-
-.info-icon.time {
-  background-image: url('/assets/icons/time.png');
-  background-size: contain;
-}
-
-.info-icon.price {
-  background-image: url('/assets/icons/price.png');
-  background-size: contain;
-}
-
-.info-icon.string {
-  background-image: url('/assets/icons/string.png');
-  background-size: contain;
-}
-
-.info-icon.racket {
-  background-image: url('/assets/icons/racket.png');
-  background-size: contain;
-}
-
-.info-icon.shop {
-  background-image: url('/assets/icons/shop.png');
-  background-size: contain;
-}
-
-.service-card-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.action-btn {
-  height: 60rpx;
-  padding: 0 30rpx;
-  border-radius: 30rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  margin-left: 20rpx;
-}
-
-.action-btn.cancel {
-  background: #F5F5F5;
-  color: #666;
-}
-
-.action-btn.details {
-  background: #4169E1;
-  color: #FFFFFF;
-}
-
-.action-btn.contact {
-  background: #F5F5F5;
-  color: #666;
-}
-
-/* 底部导航栏 */
-.tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100rpx;
-  display: flex;
-  padding: 10rpx 0;
-  background: #FFFFFF;
-  border-top: 1rpx solid #F0F0F0;
-}
-
-.tab-bar-item {
-  flex: 1;
+/* 商品网格样式 */
+.goods-grid {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 20rpx;
-  color: #999999;
+  gap: 20rpx;
 }
 
-.tab-bar-item.active {
-  color: #4169E1;
-}
-
-.tab-icon {
-  width: 48rpx;
-  height: 48rpx;
-  margin-bottom: 6rpx;
-}
-
-.content-area {
-  padding: 0 0 30rpx;
-}
-
-/* 时间段选择样式 */
-.time-selector {
-  background-color: #ffffff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-}
-
-.time-header {
-  margin-bottom: 30rpx;
-}
-
-.time-title {
-  font-size: 32rpx;
-  font-weight: 500;
-  color: #333;
-}
-
-.time-slots {
+.goods-item {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.time-slot {
-  width: 31%;
-  text-align: center;
-  padding: 20rpx 0;
-  margin-bottom: 20rpx;
-  background-color: #f5f7fa;
-  border-radius: 8rpx;
-  font-size: 28rpx;
-  color: #333;
-}
-
-.time-slot.active {
-  background-color: #1296db;
-  color: #fff;
-}
-
-.time-slot.disabled {
-  background-color: #f0f0f0;
-  color: #999;
-}
-
-/* 场馆预约样式 */
-.venue-section {
-  background-color: #ffffff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30rpx;
-}
-
-.section-title {
-  font-size: 32rpx;
-  font-weight: 500;
-  color: #333;
-}
-
-.more-link {
-  font-size: 26rpx;
-  color: #999;
-}
-
-.venue-list {
-  background-color: #f5f7fa;
-  border-radius: 12rpx;
+  background: #f8f8f8;
+  border-radius: 16rpx;
   padding: 20rpx;
+  transition: all 0.3s ease;
 }
 
-.venue-item {
-  display: flex;
-  align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #eee;
+.goods-item:active {
+  background: #f0f4ff;
 }
 
-.venue-item:last-child {
-  border-bottom: none;
-}
-
-.venue-image {
-  width: 140rpx;
-  height: 140rpx;
-  border-radius: 8rpx;
+.goods-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
   margin-right: 20rpx;
 }
 
-.venue-info {
+.goods-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.goods-name {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+.goods-points {
+  font-size: 26rpx;
+  color: #4169e1;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.goods-stock {
+  font-size: 24rpx;
+  color: #666666;
+  margin-bottom: 16rpx;
+}
+
+.btn-exchange {
+  align-self: flex-start;
+  padding: 12rpx 32rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-exchange::after {
+  border: none;
+}
+
+.btn-exchange.active {
+  background: #4169e1;
+  color: #ffffff;
+}
+
+.btn-exchange.disabled {
+  background: #cccccc;
+  color: #ffffff;
+}
+
+/* 兑换记录样式 */
+.exchange-records {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.record-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+}
+
+.record-info {
   flex: 1;
 }
 
-.venue-name {
-  font-size: 30rpx;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 15rpx;
+.record-goods {
+  font-size: 28rpx;
+  color: #333333;
+  margin-bottom: 8rpx;
 }
 
-.venue-address {
+.record-time {
   font-size: 24rpx;
-  color: #999;
-  margin-bottom: 15rpx;
+  color: #666666;
 }
 
-.venue-rating {
-  display: flex;
-  align-items: center;
-}
-
-.stars {
-  display: flex;
-  margin-right: 10rpx;
-}
-
-.star-icon {
-  width: 28rpx;
-  height: 28rpx;
-  margin-right: 4rpx;
-}
-
-.rating-text {
-  font-size: 24rpx;
-  color: #ff6b00;
-  margin-right: 10rpx;
-}
-
-.booking-count {
-  font-size: 22rpx;
-  color: #999;
-}
-
-.book-button {
-  padding: 15rpx 30rpx;
-  background-color: #1296db;
-  color: #fff;
+.record-points {
   font-size: 26rpx;
-  border-radius: 30rpx;
+  color: #ff4757;
+  font-weight: bold;
 }
 
-/* 教练预约样式 */
-.coach-section {
-  background-color: #ffffff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
-}
+/* === Tab3: 推广返佣样式 === */
 
-.coach-scroll {
-  width: 100%;
-}
-
-.coach-items {
-  display: inline-flex;
-  padding: 20rpx 0;
-}
-
-.coach-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 40rpx;
-  width: 200rpx;
-}
-
-.coach-avatar {
-  width: 140rpx;
-  height: 140rpx;
-  border-radius: 50%;
-  margin-bottom: 15rpx;
-}
-
-.coach-info {
+/* 二维码容器样式 */
+.qrcode-container {
   text-align: center;
 }
 
-.coach-name {
-  font-size: 28rpx;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-
-.coach-level {
-  font-size: 24rpx;
-  color: #999;
-}
-
-/* 我的预约样式 */
-.my-booking-section {
-  background-color: #ffffff;
-  padding: 30rpx;
+.qrcode-image {
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 16rpx;
   margin-bottom: 20rpx;
 }
 
-.booking-list {
-  background-color: #f5f7fa;
-  border-radius: 12rpx;
-  padding: 20rpx;
+.invite-url {
+  font-size: 24rpx;
+  color: #666666;
+  margin-bottom: 30rpx;
+  padding: 0 20rpx;
+  word-break: break-all;
 }
 
-.booking-item {
+.qrcode-actions {
+  display: flex;
+  gap: 20rpx;
+  justify-content: center;
+}
+
+.btn-action {
+  padding: 20rpx 40rpx;
+  background: #4169e1;
+  color: #ffffff;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  border: none;
+}
+
+.btn-action::after {
+  border: none;
+}
+
+/* 统计数据样式 */
+.stats-container {
+  display: flex;
+  gap: 20rpx;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+  padding: 30rpx 20rpx;
+  background: #f8f8f8;
+  border-radius: 16rpx;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #4169e1;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+/* 佣金明细样式 */
+.commission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.commission-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+}
+
+.commission-info {
+  flex: 1;
+}
+
+.commission-type {
+  font-size: 28rpx;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.commission-time {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.commission-amount {
+  font-size: 28rpx;
+  color: #52c41a;
+  font-weight: bold;
+  margin-right: 20rpx;
+}
+
+.commission-status {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+/* 提现区域样式 */
+.withdraw-container {
+  text-align: center;
+}
+
+.withdraw-balance {
+  font-size: 28rpx;
+  color: #333333;
+  margin-bottom: 30rpx;
+}
+
+.withdraw-input {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  background: #fafafa;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.withdraw-input:focus {
+  border-color: #4169e1;
+  background: #ffffff;
+}
+
+.btn-withdraw {
+  width: 100%;
+  height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+}
+
+.btn-withdraw::after {
+  border: none;
+}
+
+.btn-withdraw.active {
+  background: linear-gradient(135deg, #52c41a, #73d13d);
+  color: #ffffff;
+}
+
+.btn-withdraw.disabled {
+  background: #cccccc;
+  color: #ffffff;
+}
+
+/* 提现记录样式 */
+.withdraw-records {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.withdraw-record {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: #f8f8f8;
+  border-radius: 12rpx;
+}
+
+.record-info {
+  flex: 1;
+}
+
+.record-amount {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.record-time {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.record-status {
+  font-size: 24rpx;
+  color: #52c41a;
+}
+
+/* === Tab4: 我的服务样式 === */
+
+/* 二级tab栏样式 */
+.sub-tab-bar {
+  display: flex;
+  background: #ffffff;
+  padding: 0 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.sub-tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 26rpx;
+  color: #666666;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.sub-tab-item.active {
+  color: #4169e1;
+  font-weight: bold;
+}
+
+.sub-tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 3rpx;
+  background: #4169e1;
+  border-radius: 2rpx;
+}
+
+/* 服务记录样式 */
+.service-records {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.service-record {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
+}
+
+/* 穿线记录样式 */
+.string-record .record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.racket-name {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: bold;
+}
+
+.service-status {
+  font-size: 24rpx;
+  color: #4169e1;
+  background: #f0f4ff;
+  padding: 8rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  gap: 20rpx;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8rpx;
+  background: #f0f0f0;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4169e1, #667eea);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 24rpx;
+  color: #4169e1;
+  font-weight: bold;
+}
+
+.service-detail {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.5;
+}
+
+/* 物流记录样式 */
+.logistics-record .record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24rpx;
+}
+
+.goods-name {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: bold;
+}
+
+.express-number {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.logistics-timeline {
+  position: relative;
+  padding-left: 40rpx;
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 24rpx;
+}
+
+.timeline-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: -32rpx;
+  top: 24rpx;
+  width: 2rpx;
+  height: calc(100% - 12rpx);
+  background: #e5e5e5;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -40rpx;
+  top: 8rpx;
+  width: 16rpx;
+  height: 16rpx;
+  background: #4169e1;
+  border-radius: 50%;
+}
+
+.timeline-content {
+  padding-left: 16rpx;
+}
+
+.timeline-desc {
+  font-size: 26rpx;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.timeline-time {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+/* 返佣记录样式 */
+.commission-record .record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16rpx;
+}
+
+.commission-desc {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+.commission-amount {
+  font-size: 28rpx;
+  color: #52c41a;
+  font-weight: bold;
+}
+
+.record-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.booking-info {
-  flex: 1;
-}
-
-.booking-title {
-  font-size: 30rpx;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 15rpx;
-}
-
-.booking-place {
-  font-size: 26rpx;
-  color: #666;
-  margin-bottom: 10rpx;
-}
-
-.booking-time {
+.record-time {
   font-size: 24rpx;
-  color: #999;
+  color: #666666;
 }
 
-.booking-status {
-  padding: 10rpx 20rpx;
-  border-radius: 30rpx;
+.record-status {
   font-size: 24rpx;
+  color: #52c41a;
 }
 
-.booking-status.confirmed {
-  background-color: #e6f7ff;
-  color: #1296db;
-}
-
-.booking-status.pending {
-  background-color: #fff7e6;
-  color: #ff9500;
-}
-
-.empty-tip {
+/* 空状态样式 */
+.empty-state {
   text-align: center;
-  padding: 60rpx 0;
-  color: #999;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
   font-size: 28rpx;
+  color: #999999;
+}
+
+/* 弹窗样式 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  width: 600rpx;
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 60rpx 40rpx 40rpx;
+  text-align: center;
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 24rpx;
+}
+
+.modal-message {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.5;
+  margin-bottom: 40rpx;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+
+.btn-cancel, .btn-confirm {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.btn-cancel::after, .btn-confirm::after {
+  border: none;
+}
+
+.btn-cancel {
+  background: #f5f5f5;
+  color: #666666;
+}
+
+.btn-confirm {
+  background: #4169e1;
+  color: #ffffff;
+}
+
+/* 加载中样式 */
+.loading-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+}
+
+.loading-container {
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 4rpx solid #f0f0f0;
+  border-top: 4rpx solid #4169e1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: #666666;
 } 

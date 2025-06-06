@@ -1,308 +1,406 @@
-<view class="booking-container">
-  <!-- 顶部标签页导航 -->
-  <view class="tab-nav">
-    <view class="tab-item {{currentTab === 0 ? 'active' : ''}}" bindtap="switchTab" data-index="0">球馆预约</view>
-    <view class="tab-item {{currentTab === 1 ? 'active' : ''}}" bindtap="switchTab" data-index="1">穿线服务</view>
-    <view class="tab-item {{currentTab === 2 ? 'active' : ''}}" bindtap="switchTab" data-index="2">我的服务</view>
+<!--服务页面主容器-->
+<view class="service-container">
+  <!-- Tab切换栏 -->
+  <view class="tab-bar">
+    <view 
+      class="tab-item {{currentTab === 0 ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-index="0"
+    >
+      穿线服务
+    </view>
+    <view 
+      class="tab-item {{currentTab === 1 ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-index="1"
+    >
+      积分兑换
+    </view>
+    <view 
+      class="tab-item {{currentTab === 2 ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-index="2"
+    >
+      推广返佣
+    </view>
+    <view 
+      class="tab-item {{currentTab === 3 ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-index="3"
+    >
+      我的服务
+    </view>
   </view>
-  
-  <!-- 球馆预约内容 -->
-  <view class="content-view" hidden="{{currentTab !== 0}}">
-    <!-- 日期选择区域 -->
-    <view class="date-selector">
-      <view class="date-header">
-        <text>选择日期</text>
-        <text class="date-month">2023年6月</text>
-      </view>
-      <scroll-view scroll-x enable-flex class="date-scroll">
-        <view class="date-item {{index === activeDate ? 'active' : ''}}" 
-              wx:for="{{dates}}" 
-              wx:key="day"
-              bindtap="selectDate"
-              data-index="{{index}}">
-          <text class="date-day">{{item.day}}</text>
-          <text class="date-weekday">{{item.weekday}}</text>
+
+  <!-- Tab内容区域 -->
+  <view class="tab-content">
+    
+    <!-- Tab1: 穿线服务 -->
+    <view class="content-panel {{currentTab === 0 ? 'show' : 'hide'}}">
+      <scroll-view scroll-y class="scroll-content">
+        
+        <!-- 球拍信息输入 -->
+        <view class="section">
+          <view class="section-title">球拍信息</view>
+          <input 
+            class="input-field"
+            placeholder="请输入球拍品牌与型号"
+            value="{{stringService.racket_brand}}"
+            bindinput="onRacketInput"
+          />
         </view>
+
+        <!-- 磅数要求 -->
+        <view class="section">
+          <view class="section-title">磅数要求</view>
+          <view class="pounds-container">
+            <view class="pounds-item">
+              <text class="pounds-label">主线</text>
+              <view class="pounds-control">
+                <button class="btn-control" bindtap="changePounds" data-type="main" data-action="minus">-</button>
+                <text class="pounds-value">{{stringService.main_pounds}}</text>
+                <button class="btn-control" bindtap="changePounds" data-type="main" data-action="plus">+</button>
+              </view>
+            </view>
+            <view class="pounds-item">
+              <text class="pounds-label">横线</text>
+              <view class="pounds-control">
+                <button class="btn-control" bindtap="changePounds" data-type="cross" data-action="minus">-</button>
+                <text class="pounds-value">{{stringService.cross_pounds}}</text>
+                <button class="btn-control" bindtap="changePounds" data-type="cross" data-action="plus">+</button>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 线材选择 -->
+        <view class="section">
+          <view class="section-title">线材选择</view>
+          <!-- 品牌筛选 -->
+          <view class="brand-tabs">
+            <view 
+              wx:for="{{stringBrands}}" 
+              wx:key="id"
+              class="brand-tab {{selectedBrand === item.id ? 'active' : ''}}"
+              bindtap="selectBrand"
+              data-brand="{{item.id}}"
+            >
+              {{item.name}}
+            </view>
+          </view>
+          <!-- 线材列表 -->
+          <view class="strings-list">
+            <view 
+              wx:for="{{filteredStrings}}" 
+              wx:key="id"
+              class="string-item"
+              bindtap="selectString"
+              data-string="{{item.id}}"
+            >
+              <view class="string-info">
+                <view class="string-name">{{item.name}}</view>
+                <view class="string-desc">{{item.description}}</view>
+                <view class="string-price">¥{{item.price}}</view>
+              </view>
+              <view class="radio {{stringService.string_id === item.id ? 'selected' : ''}}"></view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 备注信息 -->
+        <view class="section">
+          <view class="section-title">备注信息</view>
+          <textarea 
+            class="textarea-field"
+            placeholder="有特殊要求请填写"
+            value="{{stringService.remark}}"
+            bindinput="onRemarkInput"
+            maxlength="200"
+          ></textarea>
+        </view>
+
+      </scroll-view>
+
+      <!-- 底部结算区 -->
+      <view class="bottom-bar">
+        <view class="total-price">
+          <text class="price-label">总价：</text>
+          <text class="price-value">¥{{stringService.total_price}}</text>
+        </view>
+        <button 
+          class="btn-order {{canSubmitOrder ? 'active' : 'disabled'}}"
+          disabled="{{!canSubmitOrder}}"
+          bindtap="submitOrder"
+        >
+          立即下单
+        </button>
+      </view>
+    </view>
+
+    <!-- Tab2: 积分兑换 -->
+    <view class="content-panel {{currentTab === 1 ? 'show' : 'hide'}}">
+      <scroll-view scroll-y class="scroll-content">
+        
+        <!-- 我的积分 -->
+        <view class="points-header">
+          <view class="points-title">我的积分</view>
+          <view class="points-value">{{pointsData.user_points}}</view>
+        </view>
+
+        <!-- 可兑换商品 -->
+        <view class="section">
+          <view class="section-title">可兑换商品</view>
+          <view class="goods-grid">
+            <view 
+              wx:for="{{pointsData.goods}}" 
+              wx:key="id"
+              class="goods-item"
+            >
+              <image class="goods-image" src="{{item.img}}" mode="aspectFill"></image>
+              <view class="goods-info">
+                <view class="goods-name">{{item.name}}</view>
+                <view class="goods-points">{{item.points}}积分</view>
+                <view class="goods-stock">库存：{{item.stock}}</view>
+                <button 
+                  class="btn-exchange {{pointsData.user_points >= item.points && item.stock > 0 ? 'active' : 'disabled'}}"
+                  disabled="{{pointsData.user_points < item.points || item.stock <= 0}}"
+                  bindtap="exchangeGoods"
+                  data-goods="{{item}}"
+                >
+                  兑换
+                </button>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 最近兑换记录 -->
+        <view class="section">
+          <view class="section-title">最近兑换记录</view>
+          <view class="exchange-records">
+            <view 
+              wx:for="{{pointsData.recent_exchanges}}" 
+              wx:key="index"
+              class="record-item"
+            >
+              <view class="record-info">
+                <view class="record-goods">{{item.goods_name}}</view>
+                <view class="record-time">{{item.date}}</view>
+              </view>
+              <view class="record-points">-{{item.points}}积分</view>
+            </view>
+          </view>
+        </view>
+
       </scroll-view>
     </view>
-    
-    <!-- 羽毛球馆列表 -->
-    <view class="venues-section">
-      <view class="venue-header">
-        <text>羽毛球馆</text>
-        <view class="sort-btn">
-          <icon class="sort-icon"></icon>
-          <text>按距离排序</text>
-        </view>
-      </view>
-      
-      <!-- 场馆项目 -->
-      <view class="venue-list">
-        <!-- 场馆循环 -->
-        <block wx:for="{{venues}}" wx:key="id">
-          <!-- 羽毛球场馆 -->
-          <view class="venue-item" bindtap="selectVenue" data-id="{{item.id}}">
-            <image class="venue-img" src="{{item.image}}" mode="aspectFill"></image>
-            <view class="venue-info">
-              <view class="venue-name">{{item.name}}</view>
-              <view class="venue-rating">
-                <view class="rating-stars">
-                  <image class="star" src="/assets/icons/star-filled.png" wx:for="{{5}}" wx:for-item="star" wx:key="star"></image>
-                </view>
-                <text class="rating-score">{{item.rating}} ({{item.reviewCount}}条评价)</text>
-              </view>
-              <view class="venue-address">
-                <icon class="location-icon"></icon>
-                <text>{{item.address}}</text>
-              </view>
-              <view class="venue-distance">{{item.distance}}km</view>
-              <view class="venue-discount">{{item.discount}}</view>
-            </view>
-          </view>
-          
-          <!-- 时间段选择 -->
-          <view class="time-slots">
-            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[0] && activeVenue === item.id ? 'active' : ''}}" 
-                  bindtap="selectTimeSlot" 
-                  data-time="{{item.availableTimeSlots[0]}}">
-              {{item.availableTimeSlots[0]}}
-            </view>
-            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[1] && activeVenue === item.id ? 'active' : ''}}" 
-                  bindtap="selectTimeSlot" 
-                  data-time="{{item.availableTimeSlots[1]}}">
-              {{item.availableTimeSlots[1]}}
-            </view>
-            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[2] && activeVenue === item.id ? 'active' : ''}}" 
-                  bindtap="selectTimeSlot" 
-                  data-time="{{item.availableTimeSlots[2]}}">
-              {{item.availableTimeSlots[2]}}
-            </view>
-          </view>
-          <view class="time-slots">
-            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[3] && activeVenue === item.id ? 'active' : ''}}" 
-                  bindtap="selectTimeSlot" 
-                  data-time="{{item.availableTimeSlots[3]}}">
-              {{item.availableTimeSlots[3]}}
-            </view>
-            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[4] && activeVenue === item.id ? 'active' : ''}}" 
-                  bindtap="selectTimeSlot" 
-                  data-time="{{item.availableTimeSlots[4]}}">
-              {{item.availableTimeSlots[4]}}
-            </view>
-            <view class="time-slot {{activeTimeSlot === item.availableTimeSlots[5] && activeVenue === item.id ? 'active' : ''}}" 
-                  bindtap="selectTimeSlot" 
-                  data-time="{{item.availableTimeSlots[5]}}">
-              {{item.availableTimeSlots[5]}}
-            </view>
-          </view>
-          
-          <!-- 预约按钮 -->
-          <view class="book-now-btn" bindtap="bookNow" data-id="{{item.id}}">立即预约</view>
-        </block>
-      </view>
-    </view>
-  </view>
 
-  <!-- 穿线服务内容 -->
-  <view class="content-view" hidden="{{currentTab !== 1}}">
-    <!-- 球拍信息 -->
-    <view class="string-card">
-      <view class="string-card-title">球拍信息</view>
-      
-      <view class="racket-info">
-        <view class="input-item">
-          <view class="input-label">球拍品牌型号</view>
-          <input class="input-field" placeholder="请填写您的球拍品牌和型号" value="{{racketInfo.brand}}" bindinput="inputRacketBrand" />
-        </view>
+    <!-- Tab3: 推广返佣 -->
+    <view class="content-panel {{currentTab === 2 ? 'show' : 'hide'}}">
+      <scroll-view scroll-y class="scroll-content">
         
-        <view class="pounds-requirement">
-          <text>磅数要求</text>
-          <view class="pounds-selector">
-            <view class="pounds-item">
-              <text>主线：</text>
-              <view class="pounds-control">
-                <view class="pounds-btn" bindtap="decreasePounds" data-type="main">-</view>
-                <text class="pounds-value">{{racketInfo.mainPounds}}</text>
-                <view class="pounds-btn" bindtap="increasePounds" data-type="main">+</view>
-              </view>
-              <text>磅</text>
+        <!-- 推广二维码区 -->
+        <view class="section">
+          <view class="section-title">推广二维码</view>
+          <view class="qrcode-container">
+            <image class="qrcode-image" src="{{promotionData.qrcode_url}}" mode="aspectFit"></image>
+            <view class="invite-url">{{promotionData.invite_url}}</view>
+            <view class="qrcode-actions">
+              <button class="btn-action" bindtap="saveQrcode">保存二维码</button>
+              <button class="btn-action" bindtap="copyUrl">复制链接</button>
             </view>
+          </view>
+        </view>
+
+        <!-- 数据统计区 -->
+        <view class="section">
+          <view class="section-title">数据统计</view>
+          <view class="stats-container">
+            <view class="stat-item">
+              <view class="stat-value">{{promotionData.invite_count}}</view>
+              <view class="stat-label">累计邀请人数</view>
+            </view>
+            <view class="stat-item">
+              <view class="stat-value">¥{{promotionData.total_commission}}</view>
+              <view class="stat-label">累计返佣</view>
+            </view>
+            <view class="stat-item">
+              <view class="stat-value">¥{{promotionData.pending_commission}}</view>
+              <view class="stat-label">今日收益</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 佣金明细区 -->
+        <view class="section">
+          <view class="section-title">佣金明细</view>
+          <view class="commission-list">
+            <view 
+              wx:for="{{promotionData.commission_history}}" 
+              wx:key="index"
+              class="commission-item"
+            >
+              <view class="commission-info">
+                <view class="commission-type">{{item.type}}</view>
+                <view class="commission-time">{{item.date}}</view>
+              </view>
+              <view class="commission-amount">+¥{{item.amount}}</view>
+              <view class="commission-status">{{item.status}}</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 提现区 -->
+        <view class="section">
+          <view class="section-title">余额提现</view>
+          <view class="withdraw-container">
+            <view class="withdraw-balance">
+              <text>可提现余额：¥{{promotionData.withdrawable_amount}}</text>
+            </view>
+            <input 
+              class="withdraw-input"
+              placeholder="请输入提现金额"
+              type="digit"
+              value="{{withdrawAmount}}"
+              bindinput="onWithdrawInput"
+            />
+            <button 
+              class="btn-withdraw {{canWithdraw ? 'active' : 'disabled'}}"
+              disabled="{{!canWithdraw}}"
+              bindtap="submitWithdraw"
+            >
+              提现到微信
+            </button>
+          </view>
+        </view>
+
+        <!-- 历史提现记录 -->
+        <view class="section">
+          <view class="section-title">提现记录</view>
+          <view class="withdraw-records">
+            <view 
+              wx:for="{{promotionData.withdraw_history}}" 
+              wx:key="index"
+              class="withdraw-record"
+            >
+              <view class="record-info">
+                <view class="record-amount">¥{{item.amount}}</view>
+                <view class="record-time">{{item.date}}</view>
+              </view>
+              <view class="record-status">{{item.status}}</view>
+            </view>
+          </view>
+        </view>
+
+      </scroll-view>
+    </view>
+
+    <!-- Tab4: 我的服务 -->
+    <view class="content-panel {{currentTab === 3 ? 'show' : 'hide'}}">
+      
+      <!-- 二级tab栏 -->
+      <view class="sub-tab-bar">
+        <view 
+          wx:for="{{subTabs}}" 
+          wx:key="id"
+          class="sub-tab-item {{currentSubTab === item.id ? 'active' : ''}}"
+          bindtap="switchSubTab"
+          data-tab="{{item.id}}"
+        >
+          {{item.name}}
+        </view>
+      </view>
+
+      <scroll-view scroll-y class="scroll-content">
+        
+        <!-- 服务记录列表 -->
+        <view class="service-records">
+          <view 
+            wx:for="{{filteredServiceList}}" 
+            wx:key="index"
+            class="service-record"
+          >
             
-            <view class="pounds-item">
-              <text>横线：</text>
-              <view class="pounds-control">
-                <view class="pounds-btn" bindtap="decreasePounds" data-type="cross">-</view>
-                <text class="pounds-value">{{racketInfo.crossPounds}}</text>
-                <view class="pounds-btn" bindtap="increasePounds" data-type="cross">+</view>
+            <!-- 穿线进度类型 -->
+            <view wx:if="{{item.service_type === '穿线进度'}}" class="string-record">
+              <view class="record-header">
+                <view class="racket-name">{{item.racket}}</view>
+                <view class="service-status">{{item.status}}</view>
               </view>
-              <text>磅</text>
+              <view class="progress-container">
+                <view class="progress-bar">
+                  <view class="progress-fill" style="width: {{item.progress}}%"></view>
+                </view>
+                <view class="progress-text">{{item.progress}}%</view>
+              </view>
+              <view class="service-detail">{{item.detail}}</view>
             </view>
+
+            <!-- 奖品物流类型 -->
+            <view wx:if="{{item.service_type === '奖品物流'}}" class="logistics-record">
+              <view class="record-header">
+                <view class="goods-name">{{item.goods}}</view>
+                <view class="express-number">{{item.express_number}}</view>
+              </view>
+              <view class="logistics-timeline">
+                <view 
+                  wx:for="{{item.logistics}}" 
+                  wx:for-item="logItem"
+                  wx:key="time"
+                  class="timeline-item"
+                >
+                  <view class="timeline-dot"></view>
+                  <view class="timeline-content">
+                    <view class="timeline-desc">{{logItem.desc}}</view>
+                    <view class="timeline-time">{{logItem.time}}</view>
+                  </view>
+                </view>
+              </view>
+            </view>
+
+            <!-- 返佣记录类型 -->
+            <view wx:if="{{item.service_type === '返佣记录'}}" class="commission-record">
+              <view class="record-header">
+                <view class="commission-desc">{{item.desc}}</view>
+                <view class="commission-amount">+¥{{item.amount}}</view>
+              </view>
+              <view class="record-footer">
+                <view class="record-time">{{item.date}}</view>
+                <view class="record-status">{{item.status}}</view>
+              </view>
+            </view>
+
           </view>
         </view>
-      </view>
+
+        <!-- 空状态提示 -->
+        <view wx:if="{{filteredServiceList.length === 0}}" class="empty-state">
+          <image class="empty-icon" src="/assets/icons/empty.png"></image>
+          <view class="empty-text">暂无相关记录</view>
+        </view>
+
+      </scroll-view>
     </view>
-    
-    <!-- 线材选择 -->
-    <view class="string-card">
-      <view class="string-card-title">线材选择</view>
-      
-      <view class="string-filter">
-        <view class="filter-tag {{stringFilter === 'all' ? 'active' : ''}}" 
-              bindtap="filterString" data-filter="all">全部</view>
-        <view class="filter-tag {{stringFilter === 'yonex' ? 'active' : ''}}" 
-              bindtap="filterString" data-filter="yonex">YONEX</view>
-        <view class="filter-tag {{stringFilter === 'lining' ? 'active' : ''}}" 
-              bindtap="filterString" data-filter="lining">李宁</view>
-        <view class="filter-tag {{stringFilter === 'victor' ? 'active' : ''}}" 
-              bindtap="filterString" data-filter="victor">VICTOR</view>
-        <view class="filter-tag {{stringFilter === 'other' ? 'active' : ''}}" 
-              bindtap="filterString" data-filter="other">其他</view>
-      </view>
-      
-      <!-- 线材列表 -->
-      <view class="string-list">
-        <view class="string-item {{selectedString === 'YONEX BG-65' ? 'selected' : ''}}" 
-              bindtap="selectString" data-string="YONEX BG-65" data-price="55">
-          <view class="string-select-dot {{selectedString === 'YONEX BG-65' ? 'active' : ''}}"></view>
-          <view class="string-info">
-            <view class="string-name">YONEX BG-65</view>
-            <view class="string-desc">耐打型，适合业余选手</view>
-          </view>
-          <view class="string-price">¥55</view>
-        </view>
-        
-        <view class="string-item {{selectedString === 'YONEX BG-80' ? 'selected' : ''}}" 
-              bindtap="selectString" data-string="YONEX BG-80" data-price="65">
-          <view class="string-select-dot {{selectedString === 'YONEX BG-80' ? 'active' : ''}}"></view>
-          <view class="string-info">
-            <view class="string-name">YONEX BG-80</view>
-            <view class="string-desc">耐久性好，控制性佳</view>
-          </view>
-          <view class="string-price">¥65</view>
-        </view>
-        
-        <view class="string-item {{selectedString === 'VICTOR VS-850' ? 'selected' : ''}}" 
-              bindtap="selectString" data-string="VICTOR VS-850" data-price="70">
-          <view class="string-select-dot {{selectedString === 'VICTOR VS-850' ? 'active' : ''}}"></view>
-          <view class="string-info">
-            <view class="string-name">VICTOR VS-850</view>
-            <view class="string-desc">高性能，反弹力强</view>
-          </view>
-          <view class="string-price">¥70</view>
-        </view>
-      </view>
-    </view>
-    
-    <!-- 底部价格和下单按钮 -->
-    <view class="string-footer">
-      <view class="total-price">
-        <text>总价</text>
-        <text class="price">¥{{totalPrice}}</text>
-      </view>
-      <view class="order-btn" bindtap="placeStringOrder">立即下单</view>
+
+  </view>
+</view>
+
+<!-- 下单成功弹窗 -->
+<view class="modal {{showOrderModal ? 'show' : ''}}" catchtap="hideOrderModal">
+  <view class="modal-content" catchtap="">
+    <view class="modal-title">下单成功</view>
+    <view class="modal-message">您的穿线订单已提交，请前往"我的服务-穿线进度"查看详情</view>
+    <view class="modal-buttons">
+      <button class="btn-cancel" bindtap="hideOrderModal">稍后查看</button>
+      <button class="btn-confirm" bindtap="goToMyService">立即查看</button>
     </view>
   </view>
+</view>
 
-  <!-- 我的服务内容 -->
-  <view class="content-view" hidden="{{currentTab !== 2}}">
-    <view class="my-service-header">
-      <view class="service-filter-tab {{myServiceFilter === 'all' ? 'active' : ''}}" 
-            bindtap="filterMyService" data-filter="all">全部</view>
-      <view class="service-filter-tab {{myServiceFilter === 'court' ? 'active' : ''}}" 
-            bindtap="filterMyService" data-filter="court">球馆预约</view>
-      <view class="service-filter-tab {{myServiceFilter === 'string' ? 'active' : ''}}" 
-            bindtap="filterMyService" data-filter="string">穿线服务</view>
-    </view>
-    
-    <!-- 我的预约列表 -->
-    <view class="my-service-list">
-      <!-- 球馆预约项 -->
-      <view class="service-card" wx:if="{{myServiceFilter === 'all' || myServiceFilter === 'court'}}">
-        <view class="service-card-header">
-          <view class="service-card-title">球馆预约</view>
-          <view class="service-card-status confirmed">已确认</view>
-        </view>
-        
-        <view class="service-card-info">
-          <view class="info-item">
-            <icon class="info-icon location"></icon>
-            <text>南山大道1105号海润工业区西区3楼</text>
-          </view>
-          <view class="info-item">
-            <icon class="info-icon time"></icon>
-            <text>2023-06-10 | 14:00-16:00</text>
-          </view>
-          <view class="info-item">
-            <icon class="info-icon price"></icon>
-            <text>¥60 (会员9折优惠已应用)</text>
-          </view>
-        </view>
-        
-        <view class="service-card-actions">
-          <view class="action-btn cancel">取消预约</view>
-          <view class="action-btn details">查看详情</view>
-        </view>
-      </view>
-      
-      <!-- 穿线服务项1 -->
-      <view class="service-card" wx:if="{{myServiceFilter === 'all' || myServiceFilter === 'string'}}">
-        <view class="service-card-header">
-          <view class="service-card-title">穿线服务</view>
-          <view class="service-card-status processing">穿线中</view>
-        </view>
-        
-        <view class="service-card-info">
-          <view class="info-item">
-            <icon class="info-icon string"></icon>
-            <text>YONEX BG-65 羽毛线</text>
-          </view>
-          <view class="info-item">
-            <icon class="info-icon racket"></icon>
-            <text>YONEX天斧88D | 主线24磅 | 横线23磅</text>
-          </view>
-          <view class="info-item">
-            <icon class="info-icon shop"></icon>
-            <text>悦特爱特装店</text>
-          </view>
-          <view class="info-item">
-            <icon class="info-icon time"></icon>
-            <text>2023-06-10 | 预计取件时间: 2023-06-11</text>
-          </view>
-        </view>
-        
-        <view class="service-card-actions">
-          <view class="action-btn contact">联系店铺</view>
-          <view class="action-btn details">查看详情</view>
-        </view>
-      </view>
-      
-      <!-- 穿线服务项2 -->
-      <view class="service-card" wx:if="{{myServiceFilter === 'all' || myServiceFilter === 'string'}}">
-        <view class="service-card-header">
-          <view class="service-card-title">穿线服务</view>
-          <view class="service-card-status pending">未开始</view>
-        </view>
-        
-        <view class="service-card-info">
-          <view class="info-item">
-            <icon class="info-icon string"></icon>
-            <text>VICTOR VS-850 羽毛线</text>
-          </view>
-          <view class="info-item">
-            <icon class="info-icon racket"></icon>
-            <text>VICTOR SJ-6000 | 主线25磅 | 横线24磅</text>
-          </view>
-          <view class="info-item">
-            <icon class="info-icon shop"></icon>
-            <text>羽你同行东区店</text>
-          </view>
-        </view>
-        
-        <view class="service-card-actions">
-          <view class="action-btn contact">联系店铺</view>
-          <view class="action-btn details">查看详情</view>
-        </view>
-      </view>
-    </view>
+<!-- 加载中提示 -->
+<view wx:if="{{loading}}" class="loading-mask">
+  <view class="loading-container">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">加载中...</view>
   </view>
 </view> 
