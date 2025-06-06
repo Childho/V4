@@ -1,27 +1,41 @@
+/* 全局样式重置 */
+* {
+  box-sizing: border-box;
+}
+
 /* 服务页面主容器样式 */
 .service-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 100%;
   background-color: #f5f5f5;
+  /* iOS安全区域适配 */
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Tab切换栏样式 */
 .tab-bar {
   display: flex;
+  width: 100%;
   background: #ffffff;
   box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
   z-index: 100;
+  flex-shrink: 0;
 }
 
 .tab-item {
   flex: 1;
   text-align: center;
-  padding: 30rpx 0;
+  padding: 30rpx 20rpx;
   font-size: 28rpx;
   color: #666666;
   position: relative;
   transition: all 0.3s ease;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .tab-item.active {
@@ -46,6 +60,8 @@
   flex: 1;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  min-height: 0; /* 确保flex子项能够缩小 */
 }
 
 .content-panel {
@@ -70,12 +86,14 @@
 }
 
 .scroll-content {
-  flex: 1;
-  padding: 20rpx;
+  width: 100%;
+  height: 100%;
+  padding: 20rpx 20rpx 120rpx 20rpx; /* 增加底部padding，防止被底部栏遮挡 */
 }
 
 /* 通用区块样式 */
 .section {
+  width: 100%;
   background: #ffffff;
   border-radius: 20rpx;
   margin-bottom: 20rpx;
@@ -111,7 +129,8 @@
 /* 磅数控制样式 */
 .pounds-container {
   display: flex;
-  gap: 40rpx;
+  gap: 20rpx;
+  width: 100%;
 }
 
 .pounds-item {
@@ -119,12 +138,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .pounds-label {
   font-size: 28rpx;
   color: #333333;
   font-weight: 500;
+  flex-shrink: 0;
 }
 
 .pounds-control {
@@ -133,6 +154,7 @@
   background: #f8f8f8;
   border-radius: 24rpx;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .btn-control {
@@ -146,6 +168,7 @@
   font-size: 32rpx;
   border: none;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .btn-control::after {
@@ -159,6 +182,7 @@
   color: #333333;
   background: #ffffff;
   padding: 12rpx 16rpx;
+  flex-shrink: 0;
 }
 
 /* 品牌选择样式 */
@@ -167,6 +191,7 @@
   gap: 16rpx;
   margin-bottom: 20rpx;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .brand-tab {
@@ -176,6 +201,7 @@
   font-size: 26rpx;
   color: #666666;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .brand-tab.active {
@@ -188,6 +214,7 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
 }
 
 .string-item {
@@ -198,6 +225,7 @@
   border-radius: 16rpx;
   border: 2rpx solid transparent;
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .string-item:active {
@@ -207,6 +235,7 @@
 
 .string-info {
   flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .string-name {
@@ -235,6 +264,7 @@
   border-radius: 50%;
   margin-left: 20rpx;
   position: relative;
+  flex-shrink: 0;
 }
 
 .radio.selected {
@@ -272,16 +302,26 @@
 
 /* 底部结算栏样式 */
 .bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   padding: 30rpx;
   background: #ffffff;
   border-top: 1rpx solid #f0f0f0;
   gap: 30rpx;
+  width: 100%;
+  z-index: 10;
+  /* iOS安全区域适配 */
+  padding-bottom: calc(30rpx + constant(safe-area-inset-bottom));
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
 }
 
 .total-price {
   flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .price-label {
@@ -330,6 +370,7 @@
   text-align: center;
   color: #ffffff;
   margin-bottom: 20rpx;
+  width: 100%;
 }
 
 .points-title {
@@ -348,6 +389,7 @@
   display: flex;
   flex-direction: column;
   gap: 20rpx;
+  width: 100%;
 }
 
 .goods-item {
@@ -356,6 +398,7 @@
   border-radius: 16rpx;
   padding: 20rpx;
   transition: all 0.3s ease;
+  width: 100%;
 }
 
 .goods-item:active {
@@ -367,6 +410,7 @@
   height: 120rpx;
   border-radius: 12rpx;
   margin-right: 20rpx;
+  flex-shrink: 0;
 }
 
 .goods-info {
@@ -374,6 +418,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .goods-name {
@@ -403,6 +448,7 @@
   font-size: 24rpx;
   border: none;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .btn-exchange::after {
@@ -424,6 +470,7 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
 }
 
 .record-item {
@@ -432,10 +479,12 @@
   padding: 20rpx;
   background: #f8f8f8;
   border-radius: 12rpx;
+  width: 100%;
 }
 
 .record-info {
   flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .record-goods {
@@ -453,6 +502,7 @@
   font-size: 26rpx;
   color: #ff4757;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 /* === Tab3: 推广返佣样式 === */
@@ -460,6 +510,7 @@
 /* 二维码容器样式 */
 .qrcode-container {
   text-align: center;
+  width: 100%;
 }
 
 .qrcode-image {
@@ -481,6 +532,7 @@
   display: flex;
   gap: 20rpx;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .btn-action {
@@ -490,6 +542,7 @@
   border-radius: 24rpx;
   font-size: 26rpx;
   border: none;
+  flex-shrink: 0;
 }
 
 .btn-action::after {
@@ -500,6 +553,8 @@
 .stats-container {
   display: flex;
   gap: 20rpx;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .stat-item {
@@ -508,6 +563,7 @@
   padding: 30rpx 20rpx;
   background: #f8f8f8;
   border-radius: 16rpx;
+  min-width: 200rpx; /* 最小宽度确保不会太窄 */
 }
 
 .stat-value {
@@ -527,6 +583,7 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
 }
 
 .commission-item {
@@ -535,10 +592,12 @@
   padding: 24rpx;
   background: #f8f8f8;
   border-radius: 12rpx;
+  width: 100%;
 }
 
 .commission-info {
   flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .commission-type {
@@ -557,16 +616,19 @@
   color: #52c41a;
   font-weight: bold;
   margin-right: 20rpx;
+  flex-shrink: 0;
 }
 
 .commission-status {
   font-size: 24rpx;
   color: #666666;
+  flex-shrink: 0;
 }
 
 /* 提现区域样式 */
 .withdraw-container {
   text-align: center;
+  width: 100%;
 }
 
 .withdraw-balance {
@@ -620,6 +682,7 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
 }
 
 .withdraw-record {
@@ -628,10 +691,12 @@
   padding: 24rpx;
   background: #f8f8f8;
   border-radius: 12rpx;
+  width: 100%;
 }
 
 .record-info {
   flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .record-amount {
@@ -649,6 +714,7 @@
 .record-status {
   font-size: 24rpx;
   color: #52c41a;
+  flex-shrink: 0;
 }
 
 /* === Tab4: 我的服务样式 === */
@@ -659,6 +725,8 @@
   background: #ffffff;
   padding: 0 20rpx;
   border-bottom: 1rpx solid #f0f0f0;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .sub-tab-item {
@@ -669,6 +737,7 @@
   color: #666666;
   position: relative;
   transition: all 0.3s ease;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .sub-tab-item.active {
@@ -693,6 +762,7 @@
   display: flex;
   flex-direction: column;
   gap: 20rpx;
+  width: 100%;
 }
 
 .service-record {
@@ -700,6 +770,7 @@
   border-radius: 16rpx;
   padding: 30rpx;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
+  width: 100%;
 }
 
 /* 穿线记录样式 */
@@ -714,6 +785,8 @@
   font-size: 28rpx;
   color: #333333;
   font-weight: bold;
+  flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .service-status {
@@ -722,6 +795,7 @@
   background: #f0f4ff;
   padding: 8rpx 16rpx;
   border-radius: 12rpx;
+  flex-shrink: 0;
 }
 
 .progress-container {
@@ -749,6 +823,7 @@
   font-size: 24rpx;
   color: #4169e1;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .service-detail {
@@ -769,11 +844,14 @@
   font-size: 28rpx;
   color: #333333;
   font-weight: bold;
+  flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .express-number {
   font-size: 24rpx;
   color: #666666;
+  flex-shrink: 0;
 }
 
 .logistics-timeline {
@@ -833,12 +911,15 @@
   font-size: 28rpx;
   color: #333333;
   font-weight: 500;
+  flex: 1;
+  min-width: 0; /* 防止flex元素溢出 */
 }
 
 .commission-amount {
   font-size: 28rpx;
   color: #52c41a;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
 .record-footer {
@@ -861,6 +942,7 @@
 .empty-state {
   text-align: center;
   padding: 120rpx 40rpx;
+  width: 100%;
 }
 
 .empty-icon {
@@ -899,6 +981,7 @@
 
 .modal-content {
   width: 600rpx;
+  max-width: 90%;
   background: #ffffff;
   border-radius: 24rpx;
   padding: 60rpx 40rpx 40rpx;

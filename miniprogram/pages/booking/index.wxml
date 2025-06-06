@@ -37,7 +37,7 @@
     
     <!-- Tab1: 穿线服务 -->
     <view class="content-panel {{currentTab === 0 ? 'show' : 'hide'}}">
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content">
         
         <!-- 球拍信息输入 -->
         <view class="section">
@@ -139,7 +139,7 @@
 
     <!-- Tab2: 积分兑换 -->
     <view class="content-panel {{currentTab === 1 ? 'show' : 'hide'}}">
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content">
         
         <!-- 我的积分 -->
         <view class="points-header">
@@ -197,7 +197,7 @@
 
     <!-- Tab3: 推广返佣 -->
     <view class="content-panel {{currentTab === 2 ? 'show' : 'hide'}}">
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content">
         
         <!-- 推广二维码区 -->
         <view class="section">
@@ -311,7 +311,7 @@
         </view>
       </view>
 
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content">
         
         <!-- 服务记录列表 -->
         <view class="service-records">
