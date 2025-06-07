@@ -19,8 +19,9 @@ Page({
     // === Tab1: 穿线服务数据 ===
     stringService: {
       racket_brand: '',       // 球拍品牌与型号
-      main_pounds: 24,        // 主线磅数
-      cross_pounds: 23,       // 横线磅数
+      main_pounds: 24,        // 主线磅数（保留用于兼容性）
+      cross_pounds: 23,       // 横线磅数（保留用于兼容性）
+      pounds: 24,             // 统一磅数（新增）
       string_id: '',          // 选中的线材ID
       remark: '',             // 备注信息
       total_price: 0          // 总价格
@@ -31,7 +32,8 @@ Page({
       { id: 'all', name: '全部' },
       { id: 'yonex', name: 'YONEX' },
       { id: 'victor', name: 'VICTOR' },
-      { id: 'li_ning', name: '李宁' }
+      { id: 'li_ning', name: '李宁' },
+      { id: 'gosen', name: 'GOSEN' }
     ],
     
     // 当前选中的品牌
@@ -66,6 +68,20 @@ Page({
         brand: 'li_ning',
         description: '均衡型线材，适合各类打法',
         price: 32 
+      },
+      { 
+        id: 'GOSEN_G_TONE', 
+        name: 'G-TONE 9', 
+        brand: 'gosen',
+        description: '日本进口专业线材，手感佳',
+        price: 48 
+      },
+      { 
+        id: 'GOSEN_PRO', 
+        name: 'Pro 88', 
+        brand: 'gosen',
+        description: '专业比赛级线材，控制精准',
+        price: 55 
       }
     ],
     
@@ -321,31 +337,31 @@ Page({
   },
 
   /**
-   * 磅数调整处理
+   * 磅数调整处理（新版统一磅数）
    * @param {Object} e 点击事件对象
    */
   changePounds: function(e) {
-    const { type, action } = e.currentTarget.dataset;
+    const { action } = e.currentTarget.dataset;
     const { stringService } = this.data;
     
     let newValue;
-    if (type === 'main') {
-      newValue = action === 'plus' ? stringService.main_pounds + 1 : stringService.main_pounds - 1;
-      // 限制磅数范围 18-30
-      newValue = Math.max(18, Math.min(30, newValue));
-      this.setData({
-        'stringService.main_pounds': newValue
-      });
+    if (action === 'plus') {
+      newValue = stringService.pounds + 1;
     } else {
-      newValue = action === 'plus' ? stringService.cross_pounds + 1 : stringService.cross_pounds - 1;
-      // 限制磅数范围 18-30
-      newValue = Math.max(18, Math.min(30, newValue));
-      this.setData({
-        'stringService.cross_pounds': newValue
-      });
+      newValue = stringService.pounds - 1;
     }
     
-    console.log('磅数调整:', type, action, newValue);
+    // 限制磅数范围 18-30
+    newValue = Math.max(18, Math.min(30, newValue));
+    
+    // 更新统一磅数，同时保持主线横线同步（用于后端兼容）
+    this.setData({
+      'stringService.pounds': newValue,
+      'stringService.main_pounds': newValue,
+      'stringService.cross_pounds': newValue
+    });
+    
+    console.log('磅数调整:', action, newValue);
   },
 
   /**
@@ -453,6 +469,9 @@ Page({
       // 重置表单数据
       this.setData({
         'stringService.racket_brand': '',
+        'stringService.pounds': 24,
+        'stringService.main_pounds': 24,
+        'stringService.cross_pounds': 24,
         'stringService.string_id': '',
         'stringService.remark': '',
         'stringService.total_price': 0

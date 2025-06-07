@@ -153,64 +153,77 @@
   background: #ffffff;
 }
 
-/* 磅数控制样式 */
-.pounds-container {
+/* 磅数控制样式 - 统一磅数选择器设计 */
+.pounds-unified-container {
   display: flex;
-  gap: 40rpx;
+  justify-content: center;
+  padding: 20rpx 0;
   width: 100%;
   box-sizing: border-box;
 }
 
-.pounds-item {
-  flex: 1;
+.pounds-selector {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
-
-.pounds-label {
-  font-size: 28rpx;
-  color: #333333;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.pounds-control {
-  display: flex;
-  align-items: center;
-  background: #f8f8f8;
+  background: #f8f9fa;
   border-radius: 24rpx;
-  overflow: hidden;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  gap: 32rpx;
+  width: 80%;
+  max-width: 400rpx;
+  justify-content: center;
   box-sizing: border-box;
 }
 
-.btn-control {
-  width: 60rpx;
+.pounds-control-btn {
+  width: 48rpx;
   height: 48rpx;
+  border-radius: 24rpx;
+  background: #4169e1;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: bold;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #4169e1;
-  color: #ffffff;
-  font-size: 32rpx;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pounds-control-btn:active {
+  background: #2c4fd6;
+  transform: scale(0.95);
+}
+
+.pounds-control-btn::after {
   border: none;
-  line-height: 1;
+}
+
+.pounds-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4rpx;
+  flex: 1;
+  min-width: 120rpx;
   box-sizing: border-box;
 }
 
-.btn-control::after {
-  border: none;
-}
-
-.pounds-value {
-  min-width: 60rpx;
-  text-align: center;
-  font-size: 28rpx;
+.pounds-number {
+  font-size: 40rpx;
   color: #333333;
-  background: #ffffff;
-  padding: 12rpx 16rpx;
-  box-sizing: border-box;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.pounds-unit {
+  font-size: 28rpx;
+  color: #666666;
+  font-weight: normal;
+  line-height: 1;
 }
 
 /* 品牌选择样式 */

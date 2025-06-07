@@ -58,22 +58,14 @@
         <!-- 磅数要求 -->
         <view class="section">
           <view class="section-title">磅数要求</view>
-          <view class="pounds-container">
-            <view class="pounds-item">
-              <text class="pounds-label">主线</text>
-              <view class="pounds-control">
-                <button class="btn-control" bindtap="changePounds" data-type="main" data-action="minus">-</button>
-                <text class="pounds-value">{{stringService.main_pounds}}</text>
-                <button class="btn-control" bindtap="changePounds" data-type="main" data-action="plus">+</button>
+          <view class="pounds-unified-container">
+            <view class="pounds-selector">
+              <button class="pounds-control-btn" bindtap="changePounds" data-action="minus">-</button>
+              <view class="pounds-display">
+                <text class="pounds-number">{{stringService.pounds}}</text>
+                <text class="pounds-unit">磅</text>
               </view>
-            </view>
-            <view class="pounds-item">
-              <text class="pounds-label">横线</text>
-              <view class="pounds-control">
-                <button class="btn-control" bindtap="changePounds" data-type="cross" data-action="minus">-</button>
-                <text class="pounds-value">{{stringService.cross_pounds}}</text>
-                <button class="btn-control" bindtap="changePounds" data-type="cross" data-action="plus">+</button>
-              </view>
+              <button class="pounds-control-btn" bindtap="changePounds" data-action="plus">+</button>
             </view>
           </view>
         </view>
