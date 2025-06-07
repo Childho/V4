@@ -1,58 +1,82 @@
 <view class="activity-container">
-  <nav-bar title="活动中心" showBack="{{false}}" />
-  
-  <!-- 搜索栏 - 一体化胶囊形设计 -->
-  <view class="search-bar">
-    <view class="search-input-wrap {{searchFocused ? 'focus' : ''}}">
-      <icon type="search" size="18" color="#999" class="search-icon"></icon>
-      <input class="search-input" placeholder="运动让爱更近" confirm-type="search" bindconfirm="onSearch" bindinput="onSearchInput" value="{{searchKeyword}}" bindfocus="onSearchFocus" bindblur="onSearchBlur"/>
-      <button class="search-btn" bindtap="handleSearch">搜索</button>
+  <!-- 自定义顶部标题栏 - 参考商场页面结构 -->
+  <view class="custom-nav-bar">
+    <view class="nav-title">活动</view>
+    <!-- 右侧功能按钮区域，可添加扫码、消息等功能 -->
+    <view class="nav-actions">
+      <!-- 预留位置 -->
+    </view>
+  </view>
+
+  <!-- 固定搜索栏 - 参考商场页面样式 -->
+  <view class="fixed-search-section">
+    <view class="search-bar">
+      <view class="search-input-wrapper">
+        <image class="search-icon" src="/assets/icons/search.svg" mode="aspectFit"></image>
+        <input 
+          class="search-input" 
+          type="text" 
+          placeholder="搜索活动关键词" 
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearchConfirm"
+          bindfocus="onSearchFocus" 
+          bindblur="onSearchBlur"
+        />
+      </view>
+      <button class="search-btn" bindtap="onSearchConfirm">搜索</button>
     </view>
   </view>
   
-  <!-- 顶部筛选栏 -->
-  <view class="filter-tabs">
+  <!-- 固定的筛选栏 - 始终固定在顶部 -->
+  <view class="fixed-filter-tabs">
     <view class="{{status === 'all' ? 'active' : ''}}" bindtap="changeStatus" data-status="all">全部</view>
     <view class="{{status === 'ongoing' ? 'active' : ''}}" bindtap="changeStatus" data-status="ongoing">进行中</view>
     <view class="{{status === 'finished' ? 'active' : ''}}" bindtap="changeStatus" data-status="finished">即将开始</view>
   </view>
   
-  <!-- 活动列表 -->
-  <scroll-view class="activity-list" scroll-y="true" bindscrolltolower="loadMore">
-    <block wx:if="{{activities.length > 0}}">
-      <view class="activity-item" wx:for="{{activities}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
-        <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
-        <view class="activity-info">
-          <view class="activity-title">{{item.title}}</view>
-          <view class="activity-desc">{{item.description}}</view>
-          <view class="activity-bottom">
-            <view class="activity-time">{{item.startTime}} - {{item.endTime}}</view>
-            <view class="activity-location" wx:if="{{item.location}}">
-              <text class="location-icon"></text>{{item.location}}
+  <!-- 可滚动内容区域 -->
+  <scroll-view scroll-y class="content-scroll" enable-flex="true">
+    <!-- 活动列表 -->
+    <view class="activity-list">
+      <block wx:if="{{activities.length > 0}}">
+        <view class="activity-item" wx:for="{{activities}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+          <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
+          <view class="activity-info">
+            <view class="activity-title">{{item.title}}</view>
+            <view class="activity-desc">{{item.description}}</view>
+            <view class="activity-bottom">
+              <view class="activity-time">{{item.startTime}} - {{item.endTime}}</view>
+              <view class="activity-location" wx:if="{{item.location}}">
+                <text class="location-icon"></text>{{item.location}}
+              </view>
+              <view class="activity-status {{item.status === 'ongoing' ? 'ongoing' : 'finished'}}">
+                {{item.status === 'ongoing' ? '进行中' : (item.status === 'coming' ? '即将开始' : '已结束')}}
+              </view>
             </view>
-            <view class="activity-status {{item.status === 'ongoing' ? 'ongoing' : 'finished'}}">
-              {{item.status === 'ongoing' ? '进行中' : (item.status === 'coming' ? '即将开始' : '已结束')}}
+            <view class="activity-btn-row" wx:if="{{item.status !== 'finished'}}">
+              <button class="activity-btn {{item.isFull ? 'disabled' : ''}}" catchtap="signup" data-id="{{item.id}}">
+                {{item.isFull ? '已满员' : '立即预约'}}
+              </button>
             </view>
-          </view>
-          <view class="activity-btn-row" wx:if="{{item.status !== 'finished'}}">
-            <button class="activity-btn {{item.isFull ? 'disabled' : ''}}" catchtap="signup" data-id="{{item.id}}">
-              {{item.isFull ? '已满员' : '立即预约'}}
-            </button>
           </view>
         </view>
+      </block>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{activities.length === 0 && !loading}}">
+        <image class="empty-icon" src="/assets/images/empty.png" mode="aspectFit" />
+        <view class="empty-text">暂无活动</view>
       </view>
-    </block>
-    
-    <!-- 空状态 -->
-    <view class="empty-state" wx:if="{{activities.length === 0 && !loading}}">
-      <image class="empty-icon" src="/assets/images/empty.png" mode="aspectFit" />
-      <view class="empty-text">暂无活动</view>
+      
+      <!-- 加载状态 -->
+      <view class="loading-state" wx:if="{{loading}}">
+        <view class="loading-icon"></view>
+        <view class="loading-text">加载中...</view>
+      </view>
     </view>
     
-    <!-- 加载状态 -->
-    <view class="loading-state" wx:if="{{loading}}">
-      <view class="loading-icon"></view>
-      <view class="loading-text">加载中...</view>
-    </view>
+    <!-- 页面底部占位，防止被悬浮按钮遮挡 -->
+    <view class="bottom-placeholder"></view>
   </scroll-view>
 </view> 

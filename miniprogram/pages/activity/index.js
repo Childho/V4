@@ -148,22 +148,80 @@ Page({
   
   // 跳转到活动详情页
   goDetail: function (e) {
+    console.log('goDetail被触发，事件对象：', e);
+    
     const id = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/activityDetail/index?id=${id}`
+    console.log('获取到的活动ID：', id);
+    
+    if (!id) {
+      console.error('活动ID为空，无法跳转');
+      wx.showToast({
+        title: '参数错误，无法跳转',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    
+    // 添加跳转前的提示（可选，用于调试）
+    console.log('准备跳转到活动详情页，ID：', id);
+    
+    // 使用try-catch捕获跳转错误
+    try {
+      wx.navigateTo({
+        url: `/pages/activityDetail/index?id=${id}`,
+        success: function(res) {
+          console.log('页面跳转成功', res);
+        },
+        fail: function(err) {
+          console.error('页面跳转失败', err);
+          wx.showToast({
+            title: '页面跳转失败，请重试',
+            icon: 'none',
+            duration: 2000
+          });
+        }
+      });
+    } catch (error) {
+      console.error('跳转过程中发生错误：', error);
+      wx.showToast({
+        title: '跳转失败，请重试',
+        icon: 'none',
+        duration: 2000
+      });
+    }
+  },
+  
+  // 搜索输入框内容变化 - 新增方法适配商场页面样式
+  onSearchInput: function(e) {
+    const searchKeyword = e.detail.value || '';
+    this.setData({
+      searchKeyword
     });
   },
   
-  // 搜索活动 - 输入框确认搜索
-  onSearch: function(e) {
-    const searchKeyword = e.detail.value || '';
+  // 搜索确认 - 新增方法适配商场页面样式  
+  onSearchConfirm: function() {
+    const searchKeyword = this.data.searchKeyword.trim();
+    
+    // 重置页面数据并重新搜索
     this.setData({
-      searchKeyword,
       page: 1,
       activities: [],
       hasMore: true
     });
+    
+    // 执行搜索
     this.getActivities();
+    
+    // 搜索反馈
+    if (searchKeyword) {
+      wx.showToast({
+        title: '搜索中...',
+        icon: 'loading',
+        duration: 800
+      });
+    }
   },
   
   // 搜索框聚焦时添加高亮样式 - 产品级交互优化
@@ -229,31 +287,6 @@ Page({
         type: 'light'
       });
     }, 500);
-  },
-
-  // 优化实时搜索输入 - 产品级防抖处理
-  onSearchInput: function(e) {
-    const value = e.detail.value;
-    this.setData({
-      searchKeyword: value
-    });
-    
-    // 清除之前的定时器
-    if (this.searchTimer) {
-      clearTimeout(this.searchTimer);
-    }
-    
-    // 产品级优化：防抖搜索，500ms后自动搜索
-    if (value.trim()) {
-      this.searchTimer = setTimeout(() => {
-        this.setData({
-          page: 1,
-          activities: [],
-          hasMore: true
-        });
-        this.getActivities();
-      }, 500);
-    }
   },
   
   // 显示筛选面板
