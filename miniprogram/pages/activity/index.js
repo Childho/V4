@@ -154,16 +154,36 @@ Page({
     });
   },
   
-  // 搜索活动 - 输入框确认搜索
-  onSearch: function(e) {
+  // 搜索输入框内容变化 - 新增方法适配商场页面样式
+  onSearchInput: function(e) {
     const searchKeyword = e.detail.value || '';
     this.setData({
-      searchKeyword,
+      searchKeyword
+    });
+  },
+  
+  // 搜索确认 - 新增方法适配商场页面样式  
+  onSearchConfirm: function() {
+    const searchKeyword = this.data.searchKeyword.trim();
+    
+    // 重置页面数据并重新搜索
+    this.setData({
       page: 1,
       activities: [],
       hasMore: true
     });
+    
+    // 执行搜索
     this.getActivities();
+    
+    // 搜索反馈
+    if (searchKeyword) {
+      wx.showToast({
+        title: '搜索中...',
+        icon: 'loading',
+        duration: 800
+      });
+    }
   },
   
   // 搜索框聚焦时添加高亮样式 - 产品级交互优化
@@ -229,31 +249,6 @@ Page({
         type: 'light'
       });
     }, 500);
-  },
-
-  // 优化实时搜索输入 - 产品级防抖处理
-  onSearchInput: function(e) {
-    const value = e.detail.value;
-    this.setData({
-      searchKeyword: value
-    });
-    
-    // 清除之前的定时器
-    if (this.searchTimer) {
-      clearTimeout(this.searchTimer);
-    }
-    
-    // 产品级优化：防抖搜索，500ms后自动搜索
-    if (value.trim()) {
-      this.searchTimer = setTimeout(() => {
-        this.setData({
-          page: 1,
-          activities: [],
-          hasMore: true
-        });
-        this.getActivities();
-      }, 500);
-    }
   },
   
   // 显示筛选面板
