@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "活动详情",
-  "usingComponents": {
-    "nav-bar": "/components/nav-bar/index"
-  }
+  "navigationBarBackgroundColor": "#4169e1",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": false
 } 
