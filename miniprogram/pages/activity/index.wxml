@@ -28,15 +28,15 @@
     </view>
   </view>
   
+  <!-- 固定的筛选栏 - 始终固定在顶部 -->
+  <view class="fixed-filter-tabs">
+    <view class="{{status === 'all' ? 'active' : ''}}" bindtap="changeStatus" data-status="all">全部</view>
+    <view class="{{status === 'ongoing' ? 'active' : ''}}" bindtap="changeStatus" data-status="ongoing">进行中</view>
+    <view class="{{status === 'finished' ? 'active' : ''}}" bindtap="changeStatus" data-status="finished">即将开始</view>
+  </view>
+  
   <!-- 可滚动内容区域 -->
   <scroll-view scroll-y class="content-scroll" enable-flex="true">
-    <!-- 顶部筛选栏 -->
-    <view class="filter-tabs">
-      <view class="{{status === 'all' ? 'active' : ''}}" bindtap="changeStatus" data-status="all">全部</view>
-      <view class="{{status === 'ongoing' ? 'active' : ''}}" bindtap="changeStatus" data-status="ongoing">进行中</view>
-      <view class="{{status === 'finished' ? 'active' : ''}}" bindtap="changeStatus" data-status="finished">即将开始</view>
-    </view>
-    
     <!-- 活动列表 -->
     <view class="activity-list">
       <block wx:if="{{activities.length > 0}}">

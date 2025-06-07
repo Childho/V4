@@ -25,10 +25,10 @@
   height: 0 !important;
 }
 
-/* 自定义顶部导航栏样式 - 参考商场页面 */
+/* 自定义顶部导航栏样式 - 参考服务页面紧凑设计 */
 .custom-nav-bar {
   background-color: #ffffff;
-  padding: 80rpx 0 18rpx 0; /* 减少底部padding，让标题和搜索栏更紧凑 */
+  padding: 20rpx 0 15rpx 0; /* 大幅减少内边距，让顶部更紧凑 */
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
   border-bottom-left-radius: 20rpx;
   border-bottom-right-radius: 20rpx;
@@ -39,7 +39,7 @@
   font-size: 36rpx;
   font-weight: 600;
   color: #333333;
-  padding: 24rpx 0 14rpx 0; /* 增加顶部内边距，让标题下移一点 */
+  padding: 15rpx 0 8rpx 0; /* 减少内边距，让标题和搜索栏更紧凑 */
   line-height: 1.2;
 }
 
@@ -51,15 +51,53 @@
   /* 预留右侧功能按钮区域 */
 }
 
-/* 固定搜索栏样式 - 参考商场页面 */
+/* 固定搜索栏样式 - 参考服务页面紧凑设计 */
 .fixed-search-section {
   background-color: #ffffff;
-  padding: 16rpx 24rpx; /* 搜索栏内边距 */
+  padding: 12rpx 24rpx 16rpx 24rpx; /* 减少上下内边距 */
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
+/* 固定的筛选栏样式 - 始终固定在顶部 */
+.fixed-filter-tabs {
+  position: sticky; /* 使用sticky定位实现吸顶效果 */
+  top: 0;
+  z-index: 100; /* 确保在其他内容之上 */
+  display: flex;
+  background-color: #fff;
+  padding: 0 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1); /* 增强阴影效果 */
+}
+
+.fixed-filter-tabs view {
+  padding: 24rpx 0;
+  margin-right: 40rpx;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+  transition: all 0.3s ease; /* 添加过渡动画 */
+}
+
+.fixed-filter-tabs view.active {
+  color: #4169e1;
+  font-weight: 500;
+}
+
+.fixed-filter-tabs view.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 6rpx;
+  background-color: #4169e1;
+  border-radius: 3rpx;
+}
+
 .content-scroll {
-  height: calc(100vh - env(safe-area-inset-top) - 140rpx); /* 动态计算高度 */
+  height: calc(100vh - env(safe-area-inset-top) - 180rpx); /* 重新计算高度，适配新的固定tab栏 */
   box-sizing: border-box;
 }
 
@@ -123,46 +161,14 @@
   display: none;
 }
 
-/* 筛选标签样式 */
+/* 移除原有的筛选标签样式 - 已替换为固定样式 */
 .filter-tabs {
-  display: flex;
-  background-color: #fff;
-  padding: 0 30rpx;
-  border-bottom: 1rpx solid #f0f0f0;
-  margin-bottom: 20rpx;
-  margin-top: 0; /* 移除上边距，与紫色搜索栏紧密衔接 */
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05); /* 添加轻微阴影 */
-}
-
-.filter-tabs view {
-  padding: 24rpx 0;
-  margin-right: 40rpx;
-  font-size: 28rpx;
-  color: #666;
-  position: relative;
-}
-
-.filter-tabs view.active {
-  color: #4169e1;
-  font-weight: 500;
-}
-
-.filter-tabs view.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40rpx;
-  height: 6rpx;
-  background-color: #4169e1;
-  border-radius: 3rpx;
+  display: none; /* 隐藏原有的tab栏，使用新的固定tab栏 */
 }
 
 /* 活动列表样式 */
 .activity-list {
-  padding: 0 30rpx;
-  height: calc(100vh - 210rpx); /* 微调高度，适配新的搜索栏设计 */
+  padding: 20rpx 30rpx 0 30rpx; /* 减少顶部内边距，因为tab栏已经固定 */
 }
 
 .activity-item {
