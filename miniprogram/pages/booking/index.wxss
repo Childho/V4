@@ -10,6 +10,29 @@
   box-sizing: border-box;
 }
 
+/* 自定义导航栏样式 */
+.custom-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  background: #ffffff;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: relative;
+  z-index: 200;
+  width: 100%;
+  box-sizing: border-box;
+  padding-top: 8rpx;
+  margin-top: 80rpx;
+}
+
+.nav-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  text-align: center;
+}
+
 /* Tab切换栏样式 */
 .tab-bar {
   display: flex;

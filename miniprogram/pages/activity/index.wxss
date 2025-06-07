@@ -1,7 +1,10 @@
 .activity-container {
   background-color: #f8f8f8;
   min-height: 100vh;
-  padding-bottom: 30rpx;
+  padding-bottom: 120rpx; /* 为底部导航栏和悬浮按钮留出空间 */
+  /* 参考商场页面：使用安全区域适配，不减少间距 */
+  padding-top: env(safe-area-inset-top); /* 参考商场页面，不使用负值 */
+  box-sizing: border-box;
 }
 
 /* 隐藏微信开发者工具的调试信息显示 */
@@ -22,239 +25,66 @@
   height: 0 !important;
 }
 
-/* 搜索栏样式 - 产品级一体化胶囊形设计 */
-.search-bar {
-  display: flex;
-  align-items: center;
-  padding: 24rpx 30rpx 20rpx; /* 顶部稍大，底部稍小，视觉更平衡 */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* 保持紫色渐变背景 */
-  position: relative;
-  overflow: hidden; /* 为动画效果做准备 */
+/* 自定义顶部导航栏样式 - 参考商场页面布局 */
+.custom-nav-bar {
+  background-color: #ffffff;
+  padding: 85rpx 0 16rpx 0; /* 从60rpx增加到70rpx，让页面向下移动10rpx */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  border-bottom-left-radius: 20rpx;
+  border-bottom-right-radius: 20rpx;
 }
 
-/* 添加搜索栏背景动效元素 */
-.search-bar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.8s ease;
-  z-index: 0;
-}
-
-.search-bar:hover::before {
-  left: 100%; /* 悬停时的光效扫过动画 */
-}
-
-/* 一体化搜索容器 - 产品级胶囊形设计 */
-.search-input-wrap {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  height: 74rpx; /* 从52rpx提高到64rpx，增加高度 */
-  background-color: #fff;
-  border-radius: 32rpx; /* 圆角调整为高度的一半，保持完美胶囊形 */
-  padding: 0 20rpx 0 2rpx;
-  border: 2rpx solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.12);
-  margin-right: 0;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
-  backdrop-filter: blur(10rpx);
-  z-index: 1; /* 确保在背景动效之上 */
-}
-
-/* 悬停/聚焦时的高亮效果 - 产品级视觉反馈 */
-.search-input-wrap:hover,
-.search-input-wrap.focus {
-  border-color: rgba(102, 126, 234, 0.6); /* 更明显的品牌色边框 */
-  box-shadow: 0 6rpx 24rpx rgba(102, 126, 234, 0.25), 0 0 0 4rpx rgba(102, 126, 234, 0.1); /* 双重阴影 + 光晕效果 */
-  transform: translateY(-2rpx); /* 轻微上浮，增强互动感 */
-  background-color: #fefefe; /* 聚焦时背景更亮 */
-}
-
-/* 搜索图标增强效果 */
-.search-icon {
-  margin-right: 16rpx; /* 与输入框保持合适间距 */
-  color: #8b5fbf; /* 使用品牌色调，与紫色背景呼应 */
-  font-size: 28rpx; /* 适度调大图标，提升视觉重量 */
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-/* 聚焦时图标增强动画 */
-.search-input-wrap.focus .search-icon {
-  color: #667eea;
-  opacity: 1;
-  transform: scale(1.1); /* 轻微放大 */
-}
-
-/* 为搜索图标添加呼吸效果 */
-.search-icon::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: radial-gradient(circle, rgba(102, 126, 234, 0.3), transparent);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-}
-
-.search-input-wrap.focus .search-icon::after {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-/* 输入框增强 */
-.search-input {
-  flex: 1;
-  height: 64rpx; /* 高度同步调整 */
-  font-size: 28rpx;
-  color: #333;
-  background: transparent;
-  border: none;
-  outline: none;
-  padding-right: 80rpx;
-  transition: all 0.3s ease;
-}
-
-/* 占位符增强效果 */
-.search-input::placeholder {
-  color: #bbb; /* 保持淡灰色 */
-  font-size: 26rpx; /* 与输入文字大小更接近 */
-  transition: all 0.3s ease;
-}
-
-/* 聚焦时占位符变化 */
-.search-input-wrap.focus .search-input::placeholder {
-  color: #ddd; /* 聚焦时占位符更淡 */
-  transform: translateX(4rpx); /* 聚焦时轻微右移 */
-}
-
-/* 产品级搜索按钮 - 终极版本 */
-.search-btn {
-  background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
-  color: #fff;
-  font-size: 24rpx;
+.nav-title {
+  text-align: center; /* 标题居中 */
+  font-size: 36rpx;
   font-weight: 600;
-  height: 64rpx; /* 按钮高度从36rpx提高到44rpx */
-  line-height: 44rpx;
-  padding: 0 24rpx; /* 稍微增加按钮宽度 */
-  border: none;
-  border-radius: 22rpx; /* 圆角调整为按钮高度的一半 */
-  box-shadow: 0 2rpx 8rpx rgba(90, 103, 216, 0.3);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  color: #333333;
+  padding: 20rpx 0 12rpx 0; /* 参考商场页面的24rpx 0 14rpx 0，稍微调整 */
+  line-height: 1.2;
+}
+
+.nav-actions {
   position: absolute;
-  right: 10rpx; /* 稍微调整右边距 */
+  right: 30rpx;
   top: 50%;
   transform: translateY(-50%);
-  cursor: pointer;
-  overflow: hidden;
+  /* 预留右侧功能按钮区域 */
 }
 
-/* 为按钮添加光泽效果 */
-.search-btn::before {
-  content: '';
-  position: absolute;
+/* 固定搜索栏样式 - 参考商场页面 */
+.fixed-search-section {
+  background-color: #ffffff;
+  padding: 16rpx 24rpx; /* 参考商场页面的搜索栏间距 */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 固定的筛选栏样式 - 始终固定在顶部 */
+.fixed-filter-tabs {
+  position: sticky; /* 使用sticky定位实现吸顶效果 */
   top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left 0.5s ease;
-}
-
-.search-btn:hover::before {
-  left: 100%;
-}
-
-/* 产品级按钮悬停效果 */
-.search-btn:hover,
-.search-input-wrap:hover .search-btn {
-  background: linear-gradient(135deg, #5a67d8 0%, #4c51bf 100%); /* 更深的渐变 */
-  box-shadow: 0 4rpx 12rpx rgba(90, 103, 216, 0.4);
-  transform: translateY(-50%) translateY(-1rpx); /* 轻微上浮 */
-}
-
-/* 产品级按钮按下效果 */
-.search-btn:active {
-  transform: translateY(-50%) translateY(1rpx) scale(0.98); /* 按下回弹 */
-  box-shadow: 0 1rpx 4rpx rgba(90, 103, 216, 0.5);
-  background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
-}
-
-/* 输入状态指示器 - 产品级细节 */
-.search-input-wrap::before {
-  content: '';
-  position: absolute;
-  bottom: -2rpx;
-  left: 50%;
-  width: 0;
-  height: 3rpx;
-  background: linear-gradient(90deg, #667eea, #764ba2);
-  border-radius: 2rpx;
-  transform: translateX(-50%);
-  transition: width 0.3s ease;
-  z-index: 2;
-}
-
-.search-input-wrap.focus::before {
-  width: 80%; /* 聚焦时显示底部指示器 */
-}
-
-/* 搜索栏数据加载状态 */
-.search-input-wrap.loading {
-  pointer-events: none;
-}
-
-.search-input-wrap.loading .search-btn {
-  background: #ccc;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-/* 脉冲动画 */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* 移除原有的filter-icon样式 */
-.filter-icon {
-  display: none;
-}
-
-/* 筛选标签样式 */
-.filter-tabs {
+  z-index: 100; /* 确保在其他内容之上 */
   display: flex;
   background-color: #fff;
   padding: 0 30rpx;
   border-bottom: 1rpx solid #f0f0f0;
-  margin-bottom: 20rpx;
-  margin-top: 0; /* 移除上边距，与紫色搜索栏紧密衔接 */
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05); /* 添加轻微阴影 */
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1); /* 增强阴影效果 */
 }
 
-.filter-tabs view {
-  padding: 24rpx 0;
+.fixed-filter-tabs view {
+  padding: 20rpx 0; /* 恢复正常内边距 */
   margin-right: 40rpx;
   font-size: 28rpx;
   color: #666;
   position: relative;
+  transition: all 0.3s ease; /* 添加过渡动画 */
 }
 
-.filter-tabs view.active {
+.fixed-filter-tabs view.active {
   color: #4169e1;
   font-weight: 500;
 }
 
-.filter-tabs view.active::after {
+.fixed-filter-tabs view.active::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -266,10 +96,79 @@
   border-radius: 3rpx;
 }
 
+.content-scroll {
+  height: calc(100vh - env(safe-area-inset-top) - 200rpx); /* 参考商场页面调整高度计算 */
+  box-sizing: border-box;
+}
+
+/* 搜索栏样式 - 与商场页面保持一致 */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: #f8f8f8;
+  border-radius: 24rpx;
+  padding: 16rpx 20rpx;
+  border: 2rpx solid #e5e5e5;
+}
+
+.search-input-wrapper:focus-within {
+  border-color: #4169e1; /* 聚焦时的边框颜色 */
+  background-color: #ffffff;
+}
+
+.search-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+  opacity: 0.6;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+  background-color: transparent;
+}
+
+.search-input::placeholder {
+  color: #999999;
+}
+
+.search-btn {
+  background-color: #4169e1;
+  color: #ffffff;
+  border-radius: 24rpx;
+  padding: 16rpx 32rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  min-width: 120rpx;
+}
+
+.search-btn:active {
+  background-color: #3654c4;
+}
+
+/* 移除原有的filter-icon样式 */
+.filter-icon {
+  display: none;
+}
+
+/* 移除原有的筛选标签样式 - 已替换为固定样式 */
+.filter-tabs {
+  display: none; /* 隐藏原有的tab栏，使用新的固定tab栏 */
+}
+
 /* 活动列表样式 */
 .activity-list {
-  padding: 0 30rpx;
-  height: calc(100vh - 210rpx); /* 微调高度，适配新的搜索栏设计 */
+  padding: 16rpx 30rpx 0 30rpx; /* 稍微增加顶部内边距 */
 }
 
 .activity-item {
@@ -424,4 +323,9 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* 页面底部占位，防止被悬浮按钮遮挡 */
+.bottom-placeholder {
+  height: 120rpx;
 } 
