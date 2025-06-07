@@ -2,8 +2,8 @@
   background-color: #f8f8f8;
   min-height: 100vh;
   padding-bottom: 120rpx; /* 为底部导航栏和悬浮按钮留出空间 */
-  /* 参考商场页面，只使用安全区域适配 */
-  padding-top: env(safe-area-inset-top);
+  /* 参考商场页面：使用安全区域适配，不减少间距 */
+  padding-top: env(safe-area-inset-top); /* 参考商场页面，不使用负值 */
   box-sizing: border-box;
 }
 
@@ -25,10 +25,10 @@
   height: 0 !important;
 }
 
-/* 自定义顶部导航栏样式 - 参考服务页面紧凑设计 */
+/* 自定义顶部导航栏样式 - 参考商场页面布局 */
 .custom-nav-bar {
   background-color: #ffffff;
-  padding: 20rpx 0 15rpx 0; /* 大幅减少内边距，让顶部更紧凑 */
+  padding: 85rpx 0 16rpx 0; /* 从60rpx增加到70rpx，让页面向下移动10rpx */
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
   border-bottom-left-radius: 20rpx;
   border-bottom-right-radius: 20rpx;
@@ -39,7 +39,7 @@
   font-size: 36rpx;
   font-weight: 600;
   color: #333333;
-  padding: 15rpx 0 8rpx 0; /* 减少内边距，让标题和搜索栏更紧凑 */
+  padding: 20rpx 0 12rpx 0; /* 参考商场页面的24rpx 0 14rpx 0，稍微调整 */
   line-height: 1.2;
 }
 
@@ -51,10 +51,10 @@
   /* 预留右侧功能按钮区域 */
 }
 
-/* 固定搜索栏样式 - 参考服务页面紧凑设计 */
+/* 固定搜索栏样式 - 参考商场页面 */
 .fixed-search-section {
   background-color: #ffffff;
-  padding: 12rpx 24rpx 16rpx 24rpx; /* 减少上下内边距 */
+  padding: 16rpx 24rpx; /* 参考商场页面的搜索栏间距 */
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
@@ -71,7 +71,7 @@
 }
 
 .fixed-filter-tabs view {
-  padding: 24rpx 0;
+  padding: 20rpx 0; /* 恢复正常内边距 */
   margin-right: 40rpx;
   font-size: 28rpx;
   color: #666;
@@ -97,7 +97,7 @@
 }
 
 .content-scroll {
-  height: calc(100vh - env(safe-area-inset-top) - 180rpx); /* 重新计算高度，适配新的固定tab栏 */
+  height: calc(100vh - env(safe-area-inset-top) - 200rpx); /* 参考商场页面调整高度计算 */
   box-sizing: border-box;
 }
 
@@ -168,7 +168,7 @@
 
 /* 活动列表样式 */
 .activity-list {
-  padding: 20rpx 30rpx 0 30rpx; /* 减少顶部内边距，因为tab栏已经固定 */
+  padding: 16rpx 30rpx 0 30rpx; /* 稍微增加顶部内边距 */
 }
 
 .activity-item {
