@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "限时秒杀",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
+  "backgroundTextStyle": "dark"
+} 

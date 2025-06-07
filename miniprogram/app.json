@@ -6,6 +6,7 @@
     "pages/activity/index",
     "pages/mall/index",
     "pages/booking/index",
+    "pages/seckill/index",
     "pages/activityDetail/index",
     "pages/productDetail/index",
     "pages/courseDetail/courseDetail",

@@ -449,5 +449,35 @@ Page({
         });
       }
     });
+  },
+
+  /**
+   * 跳转到限时秒杀页面
+   */
+  goToSeckillPage(event) {
+    console.log('用户点击秒杀模块');
+    
+    // 获取品牌参数（如果有的话）
+    const brand = event.currentTarget.dataset.brand;
+    
+    let url = '/pages/seckill/index';
+    if (brand) {
+      // 如果点击的是具体商品，传递品牌参数
+      url += `?brand=${encodeURIComponent(brand)}`;
+    }
+    
+    wx.navigateTo({
+      url: url,
+      success: () => {
+        console.log('成功跳转到秒杀页面');
+      },
+      fail: (error) => {
+        console.error('跳转秒杀页面失败:', error);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        });
+      }
+    });
   }
 }); 

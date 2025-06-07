@@ -38,21 +38,27 @@
           <image class="seckill-icon" src="/assets/icons/flash.svg" mode="aspectFit"></image>
           <text class="seckill-text">限时秒杀</text>
         </view>
-        <view class="seckill-countdown">
-          <text class="countdown-text">距离结束</text>
-          <view class="countdown-time">
-            <text class="time-unit">{{countdown.hours}}</text>
-            <text class="time-colon">:</text>
-            <text class="time-unit">{{countdown.minutes}}</text>
-            <text class="time-colon">:</text>
-            <text class="time-unit">{{countdown.seconds}}</text>
+        <view class="seckill-right">
+          <view class="seckill-countdown">
+            <text class="countdown-text">距离结束</text>
+            <view class="countdown-time">
+              <text class="time-unit">{{countdown.hours}}</text>
+              <text class="time-colon">:</text>
+              <text class="time-unit">{{countdown.minutes}}</text>
+              <text class="time-colon">:</text>
+              <text class="time-unit">{{countdown.seconds}}</text>
+            </view>
+          </view>
+          <view class="seckill-more" bindtap="goToSeckillPage">
+            <text class="more-text">更多</text>
+            <image class="more-icon" src="/assets/icons/arrow-right.svg" mode="aspectFit"></image>
           </view>
         </view>
       </view>
       
       <!-- 秒杀商品横向滑动列表 -->
       <scroll-view scroll-x class="seckill-products" show-scrollbar="{{false}}">
-        <view class="seckill-product-item" wx:for="{{seckillProducts}}" wx:key="id" bindtap="goToProductDetail" data-id="{{item.id}}">
+        <view class="seckill-product-item" wx:for="{{seckillProducts}}" wx:key="id" bindtap="goToSeckillPage" data-brand="{{item.brand}}">
           <view class="product-image-wrapper">
             <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
             <view class="seckill-badge">秒杀</view>
