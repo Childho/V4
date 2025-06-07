@@ -30,28 +30,57 @@
 
   <!-- 3. 品牌筛选区域 -->
   <view class="brand-filter-section">
-    <scroll-view scroll-x class="brand-scroll" show-scrollbar="{{false}}">
-      <view class="brand-list">
+    <!-- 品牌筛选标题区域 -->
+    <view class="brand-filter-header">
+      <view class="filter-title-wrapper">
+        <image class="filter-icon" src="/assets/icons/tag.svg" mode="aspectFit"></image>
+        <text class="filter-title">品牌筛选</text>
+      </view>
+    </view>
+    
+    <!-- 品牌筛选标签区域 -->
+    <view class="brand-tags-container">
+      <!-- 第一行：全部按钮和默认显示的品牌 -->
+      <view class="brand-row">
+        <!-- 全部按钮（具有展开功能） -->
         <view 
-          class="brand-item {{selectedBrand === item.key ? 'active' : ''}}" 
-          wx:for="{{displayBrands}}" 
-          wx:key="key"
-          bindtap="onBrandSelect" 
-          data-brand="{{item.key}}"
+          class="brand-item {{selectedBrand === 'all' ? 'active' : ''}} all-brand" 
+          bindtap="onAllBrandToggle"
         >
-          {{item.name}}
-        </view>
-        <!-- 展开/收起按钮 -->
-        <view class="brand-expand" bindtap="onToggleBrands">
-          <text class="expand-text">{{brandsExpanded ? '收起' : '全部'}}</text>
+          全部
           <image 
             class="expand-icon {{brandsExpanded ? 'expanded' : ''}}" 
             src="/assets/icons/arrow-down.svg" 
             mode="aspectFit"
           ></image>
         </view>
+        
+        <!-- 默认显示的品牌 -->
+        <view 
+          class="brand-item {{selectedBrand === item.key ? 'active' : ''}}" 
+          wx:for="{{defaultBrands}}" 
+          wx:key="key"
+          bindtap="onBrandSelect" 
+          data-brand="{{item.key}}"
+          wx:if="{{item.key !== 'all'}}"
+        >
+          {{item.name}}
+        </view>
       </view>
-    </scroll-view>
+      
+      <!-- 第二行：展开时显示的额外品牌 -->
+      <view class="brand-row extra-brands {{brandsExpanded ? 'show' : 'hide'}}" wx:if="{{extraBrands.length > 0}}">
+        <view 
+          class="brand-item {{selectedBrand === item.key ? 'active' : ''}}" 
+          wx:for="{{extraBrands}}" 
+          wx:key="key"
+          bindtap="onBrandSelect" 
+          data-brand="{{item.key}}"
+        >
+          {{item.name}}
+        </view>
+      </view>
+    </view>
   </view>
 
   <!-- 4. 秒杀商品列表 -->
@@ -69,7 +98,7 @@
           <!-- 商品图片区域 -->
           <view class="product-image-wrapper">
             <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
-            <view class="seckill-label">秒杀</view>
+            <view class="seckill-label">限时</view>
           </view>
           
           <!-- 商品信息区域 -->
@@ -80,26 +109,30 @@
               <text class="product-title">{{item.title}}</text>
             </view>
             
-            <!-- 价格区域 -->
-            <view class="price-section">
-              <text class="current-price">¥{{item.seckillPrice}}</text>
-              <text class="original-price">¥{{item.originalPrice}}</text>
-            </view>
-            
             <!-- 标签区域 -->
             <view class="tags-section">
               <view class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</view>
             </view>
             
-            <!-- 销量和倒计时区域 -->
-            <view class="bottom-info">
-              <text class="sales-count">已售{{item.soldCount}}件</text>
+            <!-- 价格和倒计时区域 -->
+            <view class="price-countdown-section">
+              <!-- 价格区域 -->
+              <view class="price-section">
+                <text class="current-price">¥{{item.seckillPrice}}</text>
+                <text class="original-price">¥{{item.originalPrice}}</text>
+              </view>
+              
+              <!-- 倒计时区域 -->
               <view class="countdown">
-                <text class="countdown-label">剩余</text>
                 <text class="countdown-time" data-end-time="{{item.endTime}}" data-id="{{item.id}}">
                   {{item.countdownText}}
                 </text>
               </view>
+            </view>
+            
+            <!-- 销量信息 -->
+            <view class="sales-info">
+              <text class="sales-count">已售{{item.soldCount}}件</text>
             </view>
           </view>
           

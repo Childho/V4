@@ -15,7 +15,6 @@ Page({
     
     // 品牌列表数据（默认显示的品牌）
     defaultBrands: [
-      { key: 'all', name: '全部' },
       { key: 'beta', name: '倍特爱' },
       { key: 'lining', name: '李宁' },
       { key: 'victor', name: '威克多' },
@@ -107,9 +106,8 @@ Page({
    * 初始化品牌列表
    */
   initBrandList() {
-    this.setData({
-      displayBrands: this.data.defaultBrands
-    });
+    // 品牌数据已在data中定义，无需额外初始化
+    console.log('品牌列表初始化完成');
   },
 
   /**
@@ -213,33 +211,44 @@ Page({
    */
   onBrandSelect(e) {
     const brand = e.currentTarget.dataset.brand;
-    console.log('选择品牌:', brand);
+    console.log('选择品牌：', brand);
     
     this.setData({
       selectedBrand: brand
     }, () => {
+      // 重新筛选商品
       this.filterProducts();
     });
   },
 
   /**
-   * 切换品牌列表展开/收起
+   * 点击"全部"按钮处理（展开/收起 + 选择全部品牌）
+   */
+  onAllBrandToggle() {
+    const { selectedBrand, brandsExpanded } = this.data;
+    
+    // 如果当前选中的不是"全部"，先选中"全部"
+    if (selectedBrand !== 'all') {
+      this.setData({
+        selectedBrand: 'all'
+      }, () => {
+        // 重新筛选商品
+        this.filterProducts();
+      });
+    } else {
+      // 如果已经选中"全部"，则切换展开/收起状态
+      this.setData({
+        brandsExpanded: !brandsExpanded
+      });
+    }
+  },
+
+  /**
+   * 展开/收起品牌列表（保留原方法，但现在由onAllBrandToggle替代）
    */
   onToggleBrands() {
-    const expanded = !this.data.brandsExpanded;
-    let displayBrands = [];
-    
-    if (expanded) {
-      // 展开：显示所有品牌
-      displayBrands = [...this.data.defaultBrands, ...this.data.extraBrands];
-    } else {
-      // 收起：只显示默认品牌
-      displayBrands = this.data.defaultBrands;
-    }
-    
     this.setData({
-      brandsExpanded: expanded,
-      displayBrands: displayBrands
+      brandsExpanded: !this.data.brandsExpanded
     });
   },
 
