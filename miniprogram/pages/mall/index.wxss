@@ -3,15 +3,15 @@
   background-color: #f5f5f5;
   min-height: 100vh;
   padding-bottom: 120rpx; /* 为底部导航栏和悬浮按钮留出空间 */
-  /* 参考服务页面，只使用安全区域适配 */
-  padding-top: env(safe-area-inset-top);
+  /* 移除多余的顶部间距，自定义导航栏会处理安全区域 */
   box-sizing: border-box;
 }
 
 /* 自定义顶部导航栏样式 */
 .custom-nav-bar {
   background-color: #ffffff;
-  padding: 80rpx 0 18rpx 0; /* 减少底部padding，让标题和搜索栏更紧凑 */
+  /* 使用安全区域适配，确保在状态栏下方正确显示 */
+  padding: calc(env(safe-area-inset-top) + 20rpx) 0 18rpx 0;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
   border-bottom-left-radius: 20rpx;
   border-bottom-right-radius: 20rpx;

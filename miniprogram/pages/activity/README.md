@@ -128,4 +128,31 @@
 - 间距规范：遵循 8rpx 基础网格系统
 - Tab栏固定：确保在所有机型上都能正常显示吸顶效果
 - **页面跳转**：使用`wx.navigateTo`进行标准页面跳转，避免局部渲染
-- **导航栏**：活动详情页使用原生导航栏，确保返回按钮正常工作 
+- **导航栏**：活动详情页使用原生导航栏，确保返回按钮正常工作
+
+## 最近修复记录
+
+### 2024-01-XX - 修复真机页面内容下移问题
+
+**问题描述：**
+在真机浏览时，活动页面内容整体下移过多，导致顶部有大量空白区域。
+
+**问题原因：**
+1. 页面使用了自定义导航栏（`navigationStyle: "custom"`）
+2. 但同时在 `.activity-container` 中设置了 `padding-top: env(safe-area-inset-top)`
+3. 自定义导航栏 `.custom-nav-bar` 又设置了过大的顶部间距 `padding: 85rpx 0 16rpx 0`
+4. 这导致了双重间距叠加，造成内容下移过多
+
+**解决方案：**
+1. 移除了 `.activity-container` 中的 `padding-top: env(safe-area-inset-top)`
+2. 调整 `.custom-nav-bar` 的 padding 为 `calc(env(safe-area-inset-top) + 20rpx) 0 16rpx 0`
+3. 优化 `.content-scroll` 的高度计算
+
+**同时修复的其他页面：**
+- 商城页面（mall/index.wxss）
+- 服务页面（booking/index.wxss）
+
+**技术要点：**
+- `env(safe-area-inset-top)` 用于适配各种机型的安全区域
+- 自定义导航栏需要合理处理顶部间距，避免重复设置
+- 使用 `calc()` 函数可以精确计算间距 

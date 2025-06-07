@@ -22,8 +22,9 @@
   z-index: 200;
   width: 100%;
   box-sizing: border-box;
+  /* 调整顶部间距，与安全区域适配相结合 */
   padding-top: 8rpx;
-  margin-top: 80rpx;
+  margin-top: 20rpx;
 }
 
 .nav-title {

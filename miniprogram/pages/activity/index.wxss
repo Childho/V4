@@ -2,8 +2,7 @@
   background-color: #f8f8f8;
   min-height: 100vh;
   padding-bottom: 120rpx; /* 为底部导航栏和悬浮按钮留出空间 */
-  /* 参考商场页面：使用安全区域适配，不减少间距 */
-  padding-top: env(safe-area-inset-top); /* 参考商场页面，不使用负值 */
+  /* 移除多余的顶部间距，因为已有自定义导航栏处理 */
   box-sizing: border-box;
 }
 
@@ -25,10 +24,11 @@
   height: 0 !important;
 }
 
-/* 自定义顶部导航栏样式 - 参考商场页面布局 */
+/* 自定义顶部导航栏样式 - 调整顶部间距 */
 .custom-nav-bar {
   background-color: #ffffff;
-  padding: 85rpx 0 16rpx 0; /* 从60rpx增加到70rpx，让页面向下移动10rpx */
+  /* 使用安全区域适配，确保在状态栏下方正确显示 */
+  padding: calc(env(safe-area-inset-top) + 20rpx) 0 16rpx 0;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
   border-bottom-left-radius: 20rpx;
   border-bottom-right-radius: 20rpx;
@@ -97,7 +97,8 @@
 }
 
 .content-scroll {
-  height: calc(100vh - env(safe-area-inset-top) - 200rpx); /* 参考商场页面调整高度计算 */
+  /* 调整高度计算，考虑自定义导航栏、搜索栏和筛选栏的实际高度 */
+  height: calc(100vh - env(safe-area-inset-top) - 180rpx);
   box-sizing: border-box;
 }
 
