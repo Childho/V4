@@ -1,6 +1,4 @@
 <view class="activity-detail-container">
-  <nav-bar title="活动详情" showBack="{{true}}" />
-  
   <!-- 活动封面 -->
   <image class="activity-cover" src="{{activity.coverUrl}}" mode="aspectFill" />
   
@@ -8,16 +6,22 @@
   <view class="activity-info">
     <view class="activity-title">{{activity.title}}</view>
     <view class="activity-time">
-      <image class="icon" src="/assets/icons/time.png" mode="aspectFit" />
-      <text>{{activity.startTime}} - {{activity.endTime}}</text>
+      <view class="info-item">
+        <text class="info-label">活动时间：</text>
+        <text class="info-value">{{activity.startTime}} - {{activity.endTime}}</text>
+      </view>
     </view>
     <view class="activity-location">
-      <image class="icon" src="/assets/icons/location.png" mode="aspectFit" />
-      <text>{{activity.location}}</text>
+      <view class="info-item">
+        <text class="info-label">活动地点：</text>
+        <text class="info-value">{{activity.location}}</text>
+      </view>
     </view>
     <view class="activity-organizer">
-      <image class="icon" src="/assets/icons/organizer.png" mode="aspectFit" />
-      <text>{{activity.organizer}}</text>
+      <view class="info-item">
+        <text class="info-label">主办方：</text>
+        <text class="info-value">{{activity.organizer}}</text>
+      </view>
     </view>
   </view>
   
@@ -50,11 +54,13 @@
   <!-- 底部操作栏 -->
   <view class="bottom-bar">
     <view class="share-btn" bindtap="handleShare">
-      <image src="/assets/icons/share.png" mode="aspectFit" />
-      <text>分享</text>
+      <text>分享活动</text>
     </view>
     <button class="join-btn {{activity.isJoined ? 'joined' : ''}}" bindtap="handleJoin">
       {{activity.isJoined ? '已报名' : '立即报名'}}
     </button>
   </view>
+  
+  <!-- 底部安全区域占位 -->
+  <view class="safe-area-bottom"></view>
 </view> 

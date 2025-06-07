@@ -4,6 +4,34 @@
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
+  /* 添加iOS全面屏适配 */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box;
+}
+
+/* 自定义导航栏样式 */
+.custom-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  background: #ffffff;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: relative;
+  z-index: 200;
+  width: 100%;
+  box-sizing: border-box;
+  /* 调整顶部间距，与安全区域适配相结合 */
+  padding-top: 8rpx;
+  margin-top: 20rpx;
+}
+
+.nav-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  text-align: center;
 }
 
 /* Tab切换栏样式 */
@@ -12,6 +40,8 @@
   background: #ffffff;
   box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
   z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tab-item {
@@ -22,6 +52,7 @@
   color: #666666;
   position: relative;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .tab-item.active {
@@ -46,6 +77,8 @@
   flex: 1;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .content-panel {
@@ -57,6 +90,7 @@
   display: flex;
   flex-direction: column;
   transition: opacity 0.3s ease;
+  box-sizing: border-box;
 }
 
 .content-panel.show {
@@ -70,8 +104,16 @@
 }
 
 .scroll-content {
-  flex: 1;
+  width: 100%;
+  height: 100%;
   padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* 底部空白区域，防止内容被底部结算区遮挡 */
+.scroll-bottom-padding {
+  height: 120rpx;
+  width: 100%;
 }
 
 /* 通用区块样式 */
@@ -81,6 +123,8 @@
   margin-bottom: 20rpx;
   padding: 30rpx;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .section-title {
@@ -101,6 +145,7 @@
   padding: 0 24rpx;
   font-size: 28rpx;
   background: #fafafa;
+  box-sizing: border-box;
 }
 
 .input-field:focus {
@@ -108,57 +153,77 @@
   background: #ffffff;
 }
 
-/* 磅数控制样式 */
-.pounds-container {
+/* 磅数控制样式 - 统一磅数选择器设计 */
+.pounds-unified-container {
   display: flex;
-  gap: 40rpx;
+  justify-content: center;
+  padding: 20rpx 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.pounds-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.pounds-label {
-  font-size: 28rpx;
-  color: #333333;
-  font-weight: 500;
-}
-
-.pounds-control {
+.pounds-selector {
   display: flex;
   align-items: center;
-  background: #f8f8f8;
+  background: #f8f9fa;
   border-radius: 24rpx;
-  overflow: hidden;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  gap: 32rpx;
+  width: 80%;
+  max-width: 400rpx;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
-.btn-control {
-  width: 60rpx;
+.pounds-control-btn {
+  width: 48rpx;
   height: 48rpx;
+  border-radius: 24rpx;
+  background: #4169e1;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: bold;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #4169e1;
-  color: #ffffff;
-  font-size: 32rpx;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pounds-control-btn:active {
+  background: #2c4fd6;
+  transform: scale(0.95);
+}
+
+.pounds-control-btn::after {
   border: none;
+}
+
+.pounds-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4rpx;
+  flex: 1;
+  min-width: 120rpx;
+  box-sizing: border-box;
+}
+
+.pounds-number {
+  font-size: 40rpx;
+  color: #333333;
+  font-weight: bold;
   line-height: 1;
 }
 
-.btn-control::after {
-  border: none;
-}
-
-.pounds-value {
-  min-width: 60rpx;
-  text-align: center;
+.pounds-unit {
   font-size: 28rpx;
-  color: #333333;
-  background: #ffffff;
-  padding: 12rpx 16rpx;
+  color: #666666;
+  font-weight: normal;
+  line-height: 1;
 }
 
 /* 品牌选择样式 */
@@ -167,6 +232,8 @@
   gap: 16rpx;
   margin-bottom: 20rpx;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .brand-tab {
@@ -176,6 +243,8 @@
   font-size: 26rpx;
   color: #666666;
   transition: all 0.3s ease;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .brand-tab.active {
@@ -188,6 +257,8 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .string-item {
@@ -198,6 +269,8 @@
   border-radius: 16rpx;
   border: 2rpx solid transparent;
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .string-item:active {
@@ -207,6 +280,7 @@
 
 .string-info {
   flex: 1;
+  box-sizing: border-box;
 }
 
 .string-name {
@@ -235,6 +309,8 @@
   border-radius: 50%;
   margin-left: 20rpx;
   position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .radio.selected {
@@ -263,6 +339,7 @@
   font-size: 28rpx;
   background: #fafafa;
   resize: none;
+  box-sizing: border-box;
 }
 
 .textarea-field:focus {
@@ -278,10 +355,18 @@
   background: #ffffff;
   border-top: 1rpx solid #f0f0f0;
   gap: 30rpx;
+  width: 100%;
+  box-sizing: border-box;
+  /* 固定在底部，为"穿线服务"tab独有 */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
 }
 
 .total-price {
   flex: 1;
+  box-sizing: border-box;
 }
 
 .price-label {
@@ -304,6 +389,7 @@
   font-weight: bold;
   border: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .btn-order::after {
@@ -330,6 +416,8 @@
   text-align: center;
   color: #ffffff;
   margin-bottom: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .points-title {
@@ -348,6 +436,8 @@
   display: flex;
   flex-direction: column;
   gap: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .goods-item {
@@ -356,6 +446,8 @@
   border-radius: 16rpx;
   padding: 20rpx;
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .goods-item:active {
@@ -367,6 +459,7 @@
   height: 120rpx;
   border-radius: 12rpx;
   margin-right: 20rpx;
+  flex-shrink: 0;
 }
 
 .goods-info {
@@ -374,6 +467,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  box-sizing: border-box;
 }
 
 .goods-name {
@@ -403,6 +497,8 @@
   font-size: 24rpx;
   border: none;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .btn-exchange::after {
@@ -424,6 +520,8 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .record-item {
@@ -432,10 +530,13 @@
   padding: 20rpx;
   background: #f8f8f8;
   border-radius: 12rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .record-info {
   flex: 1;
+  box-sizing: border-box;
 }
 
 .record-goods {
@@ -453,6 +554,7 @@
   font-size: 26rpx;
   color: #ff4757;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 /* === Tab3: 推广返佣样式 === */
@@ -460,6 +562,8 @@
 /* 二维码容器样式 */
 .qrcode-container {
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .qrcode-image {
@@ -475,12 +579,15 @@
   margin-bottom: 30rpx;
   padding: 0 20rpx;
   word-break: break-all;
+  box-sizing: border-box;
 }
 
 .qrcode-actions {
   display: flex;
   gap: 20rpx;
   justify-content: center;
+  flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .btn-action {
@@ -490,6 +597,8 @@
   border-radius: 24rpx;
   font-size: 26rpx;
   border: none;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .btn-action::after {
@@ -500,6 +609,8 @@
 .stats-container {
   display: flex;
   gap: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .stat-item {
@@ -508,6 +619,7 @@
   padding: 30rpx 20rpx;
   background: #f8f8f8;
   border-radius: 16rpx;
+  box-sizing: border-box;
 }
 
 .stat-value {
@@ -527,6 +639,8 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .commission-item {
@@ -535,10 +649,13 @@
   padding: 24rpx;
   background: #f8f8f8;
   border-radius: 12rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .commission-info {
   flex: 1;
+  box-sizing: border-box;
 }
 
 .commission-type {
@@ -557,16 +674,20 @@
   color: #52c41a;
   font-weight: bold;
   margin-right: 20rpx;
+  white-space: nowrap;
 }
 
 .commission-status {
   font-size: 24rpx;
   color: #666666;
+  white-space: nowrap;
 }
 
 /* 提现区域样式 */
 .withdraw-container {
   text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .withdraw-balance {
@@ -585,6 +706,7 @@
   background: #fafafa;
   margin-bottom: 30rpx;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .withdraw-input:focus {
@@ -599,6 +721,7 @@
   font-size: 28rpx;
   font-weight: bold;
   border: none;
+  box-sizing: border-box;
 }
 
 .btn-withdraw::after {
@@ -620,6 +743,8 @@
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .withdraw-record {
@@ -628,10 +753,13 @@
   padding: 24rpx;
   background: #f8f8f8;
   border-radius: 12rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .record-info {
   flex: 1;
+  box-sizing: border-box;
 }
 
 .record-amount {
@@ -649,6 +777,7 @@
 .record-status {
   font-size: 24rpx;
   color: #52c41a;
+  white-space: nowrap;
 }
 
 /* === Tab4: 我的服务样式 === */
@@ -659,6 +788,8 @@
   background: #ffffff;
   padding: 0 20rpx;
   border-bottom: 1rpx solid #f0f0f0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .sub-tab-item {
@@ -669,6 +800,8 @@
   color: #666666;
   position: relative;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .sub-tab-item.active {
@@ -693,6 +826,8 @@
   display: flex;
   flex-direction: column;
   gap: 20rpx;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .service-record {
@@ -700,6 +835,8 @@
   border-radius: 16rpx;
   padding: 30rpx;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.08);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 穿线记录样式 */
@@ -708,12 +845,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20rpx;
+  box-sizing: border-box;
 }
 
 .racket-name {
   font-size: 28rpx;
   color: #333333;
   font-weight: bold;
+  flex: 1;
 }
 
 .service-status {
@@ -722,6 +861,8 @@
   background: #f0f4ff;
   padding: 8rpx 16rpx;
   border-radius: 12rpx;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .progress-container {
@@ -729,6 +870,7 @@
   align-items: center;
   margin-bottom: 16rpx;
   gap: 20rpx;
+  box-sizing: border-box;
 }
 
 .progress-bar {
@@ -737,6 +879,7 @@
   background: #f0f0f0;
   border-radius: 4rpx;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .progress-fill {
@@ -749,6 +892,7 @@
   font-size: 24rpx;
   color: #4169e1;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .service-detail {
@@ -763,27 +907,32 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 24rpx;
+  box-sizing: border-box;
 }
 
 .goods-name {
   font-size: 28rpx;
   color: #333333;
   font-weight: bold;
+  flex: 1;
 }
 
 .express-number {
   font-size: 24rpx;
   color: #666666;
+  white-space: nowrap;
 }
 
 .logistics-timeline {
   position: relative;
   padding-left: 40rpx;
+  box-sizing: border-box;
 }
 
 .timeline-item {
   position: relative;
   padding-bottom: 24rpx;
+  box-sizing: border-box;
 }
 
 .timeline-item:not(:last-child)::before {
@@ -808,6 +957,7 @@
 
 .timeline-content {
   padding-left: 16rpx;
+  box-sizing: border-box;
 }
 
 .timeline-desc {
@@ -827,24 +977,28 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 16rpx;
+  box-sizing: border-box;
 }
 
 .commission-desc {
   font-size: 28rpx;
   color: #333333;
   font-weight: 500;
+  flex: 1;
 }
 
 .commission-amount {
   font-size: 28rpx;
   color: #52c41a;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .record-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .record-time {
@@ -855,12 +1009,14 @@
 .record-status {
   font-size: 24rpx;
   color: #52c41a;
+  white-space: nowrap;
 }
 
 /* 空状态样式 */
 .empty-state {
   text-align: center;
   padding: 120rpx 40rpx;
+  box-sizing: border-box;
 }
 
 .empty-icon {
@@ -890,6 +1046,7 @@
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .modal.show {
@@ -905,6 +1062,7 @@
   text-align: center;
   transform: scale(0.8);
   transition: transform 0.3s ease;
+  box-sizing: border-box;
 }
 
 .modal.show .modal-content {
@@ -928,6 +1086,7 @@
 .modal-buttons {
   display: flex;
   gap: 20rpx;
+  box-sizing: border-box;
 }
 
 .btn-cancel, .btn-confirm {
@@ -936,6 +1095,7 @@
   border-radius: 40rpx;
   font-size: 28rpx;
   border: none;
+  box-sizing: border-box;
 }
 
 .btn-cancel::after, .btn-confirm::after {
@@ -964,10 +1124,12 @@
   align-items: center;
   justify-content: center;
   z-index: 9998;
+  box-sizing: border-box;
 }
 
 .loading-container {
   text-align: center;
+  box-sizing: border-box;
 }
 
 .loading-spinner {

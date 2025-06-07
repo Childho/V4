@@ -1,5 +1,10 @@
 <!--服务页面主容器-->
 <view class="service-container">
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav-bar">
+    <view class="nav-title">服务</view>
+  </view>
+  
   <!-- Tab切换栏 -->
   <view class="tab-bar">
     <view 
@@ -37,7 +42,7 @@
     
     <!-- Tab1: 穿线服务 -->
     <view class="content-panel {{currentTab === 0 ? 'show' : 'hide'}}">
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content" enable-flex="true">
         
         <!-- 球拍信息输入 -->
         <view class="section">
@@ -53,22 +58,14 @@
         <!-- 磅数要求 -->
         <view class="section">
           <view class="section-title">磅数要求</view>
-          <view class="pounds-container">
-            <view class="pounds-item">
-              <text class="pounds-label">主线</text>
-              <view class="pounds-control">
-                <button class="btn-control" bindtap="changePounds" data-type="main" data-action="minus">-</button>
-                <text class="pounds-value">{{stringService.main_pounds}}</text>
-                <button class="btn-control" bindtap="changePounds" data-type="main" data-action="plus">+</button>
+          <view class="pounds-unified-container">
+            <view class="pounds-selector">
+              <button class="pounds-control-btn" bindtap="changePounds" data-action="minus">-</button>
+              <view class="pounds-display">
+                <text class="pounds-number">{{stringService.pounds}}</text>
+                <text class="pounds-unit">磅</text>
               </view>
-            </view>
-            <view class="pounds-item">
-              <text class="pounds-label">横线</text>
-              <view class="pounds-control">
-                <button class="btn-control" bindtap="changePounds" data-type="cross" data-action="minus">-</button>
-                <text class="pounds-value">{{stringService.cross_pounds}}</text>
-                <button class="btn-control" bindtap="changePounds" data-type="cross" data-action="plus">+</button>
-              </view>
+              <button class="pounds-control-btn" bindtap="changePounds" data-action="plus">+</button>
             </view>
           </view>
         </view>
@@ -119,6 +116,9 @@
           ></textarea>
         </view>
 
+        <!-- 底部空白区域，防止内容被底部结算区遮挡 -->
+        <view class="scroll-bottom-padding"></view>
+
       </scroll-view>
 
       <!-- 底部结算区 -->
@@ -139,7 +139,7 @@
 
     <!-- Tab2: 积分兑换 -->
     <view class="content-panel {{currentTab === 1 ? 'show' : 'hide'}}">
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content" enable-flex="true">
         
         <!-- 我的积分 -->
         <view class="points-header">
@@ -192,12 +192,15 @@
           </view>
         </view>
 
+        <!-- 底部空白区域 -->
+        <view class="scroll-bottom-padding"></view>
+
       </scroll-view>
     </view>
 
     <!-- Tab3: 推广返佣 -->
     <view class="content-panel {{currentTab === 2 ? 'show' : 'hide'}}">
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content" enable-flex="true">
         
         <!-- 推广二维码区 -->
         <view class="section">
@@ -292,6 +295,9 @@
           </view>
         </view>
 
+        <!-- 底部空白区域 -->
+        <view class="scroll-bottom-padding"></view>
+
       </scroll-view>
     </view>
 
@@ -311,7 +317,7 @@
         </view>
       </view>
 
-      <scroll-view scroll-y class="scroll-content">
+      <scroll-view scroll-y="true" class="scroll-content" enable-flex="true">
         
         <!-- 服务记录列表 -->
         <view class="service-records">
@@ -378,6 +384,9 @@
           <image class="empty-icon" src="/assets/icons/empty.png"></image>
           <view class="empty-text">暂无相关记录</view>
         </view>
+
+        <!-- 底部空白区域 -->
+        <view class="scroll-bottom-padding"></view>
 
       </scroll-view>
     </view>
