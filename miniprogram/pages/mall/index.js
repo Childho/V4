@@ -439,12 +439,16 @@ Page({
   goToCart() {
     console.log('用户点击购物车按钮');
     
-    // TODO: 跳转到购物车页面
+    // 跳转到购物车页面
     wx.navigateTo({
-      url: '/pages/cart/index',
-      fail: () => {
+      url: '/pages/cart/cart', // 修正购物车页面路径
+      success: () => {
+        console.log('成功跳转到购物车页面');
+      },
+      fail: (error) => {
+        console.error('跳转购物车页面失败:', error);
         wx.showToast({
-          title: '购物车功能开发中',
+          title: '跳转失败，请重试',
           icon: 'none'
         });
       }

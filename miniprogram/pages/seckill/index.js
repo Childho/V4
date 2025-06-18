@@ -401,7 +401,7 @@ Page({
     
     // 这里跳转到购物车页面
     wx.navigateTo({
-      url: '/pages/cart/index'
+      url: '/pages/cart/cart'
     });
   },
 

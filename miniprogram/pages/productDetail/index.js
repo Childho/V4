@@ -199,7 +199,7 @@ Page({
   // 跳转到购物车
   handleToCart() {
     wx.navigateTo({
-      url: '/pages/cart/index'
+      url: '/pages/cart/cart'
     })
   },
   

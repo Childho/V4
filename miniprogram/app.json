@@ -5,6 +5,7 @@
     "pages/personal/index",
     "pages/activity/index",
     "pages/mall/index",
+    "pages/cart/cart",
     "pages/booking/index",
     "pages/seckill/index",
     "pages/activityDetail/index",
