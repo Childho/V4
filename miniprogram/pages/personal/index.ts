@@ -55,9 +55,7 @@ Page({
     services: 1,
     // 定义常用工具数据
     tools: [
-      { id: 1, name: '地址管理', icon: '/assets/icons/address.svg', url: '/pages/address/index' },
-      { id: 2, name: '我的收藏', icon: '/assets/icons/heart.svg', url: '/pages/favorite/index' },
-      { id: 3, name: '浏览历史', icon: '/assets/icons/history.svg', url: '/pages/history/index' }
+      { id: 1, name: '地址管理', icon: '/assets/icons/address.svg', url: '/pages/address/index' }
     ]
   },
 
