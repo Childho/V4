@@ -2,10 +2,11 @@
 import { getUserInfo, UserInfo as ApiUserInfo } from '../../api/userApi'
 import { api } from '../../api/utils/request'
 
-const app = getApp()
+// 移除未使用的app变量声明，如果后续需要可以再加回来
+// const app = getApp()
 
-// 定义接口
-interface UserInfo {
+// 定义页面级用户信息接口（重命名避免与API接口冲突）
+interface PageUserInfo {
   avatarUrl?: string;
   nickName?: string;
   pointsTotal?: number;
@@ -45,7 +46,7 @@ Page({
       level: '初级会员',
       id: '10086',
       pointsBalance: 280
-    },
+    } as PageUserInfo,
     tasks: [
       { id: 1, name: '每日签到', desc: '连续签到7天额外奖励30积分', icon: 'check-in', status: 0 },
       { id: 2, name: '分享小程序', desc: '分享给好友获得5积分', icon: 'share', status: 0 },
@@ -175,10 +176,11 @@ Page({
       // 调用签到API
       const result = await signIn() as SignInResult
       if (result && result.success) {
-        // 更新签到状态
+        // 更新签到状态，安全访问pointsBalance属性
+        const currentPoints = this.data.userInfo.pointsBalance || 0 // 如果为undefined则使用0
         this.setData({
           'tasks[0].status': 1,
-          'userInfo.pointsBalance': this.data.userInfo.pointsBalance + (result.points || 5)
+          'userInfo.pointsBalance': currentPoints + (result.points || 5)
         })
         
         // 保存签到日期到本地

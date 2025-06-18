@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 地址管理</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 配色方案 - 微信小程序原生风格 */
+    :root {
+      --primary-color: #07C160;  /* 微信绿 */
+      --warning-color: #FF9500;  /* 橙色 */
+      --danger-color: #FA5151;   /* 红色 */
+      --info-color: #10AEFF;     /* 蓝色 */
+      --text-color: #191919;     /* 主文字 */
+      --secondary-text: #888888; /* 次要文字 */
+      --disabled-text: #C5C5C5;  /* 禁用文字 */
+      --border-color: #E5E5E5;   /* 边框色 */
+      --bg-color: #F7F7F7;       /* 背景色 */
+      --card-bg: #FFFFFF;        /* 卡片背景 */
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .content {
+      background-color: var(--bg-color);
+      min-height: 100vh;
+    }
+
+    /* 顶部导航栏 */
+    .header {
+      background-color: var(--card-bg);
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      border-bottom: 0.5px solid var(--border-color);
+      padding: 0 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: var(--text-color);
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .header-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .add-btn, .edit-btn {
+      background: none;
+      border: none;
+      font-size: 15px;
+      color: var(--primary-color);
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    /* 地址列表容器 */
+    .address-container {
+      padding: 12px;
+      min-height: calc(100vh - 140px);
+    }
+
+    /* 地址卡片 */
+    .address-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .address-main {
+      padding: 16px;
+    }
+
+    .address-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .contact-info {
+      flex: 1;
+    }
+
+    .contact-name {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-color);
+      margin-bottom: 4px;
+    }
+
+    .contact-phone {
+      font-size: 14px;
+      color: var(--secondary-text);
+    }
+
+    .address-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 4px 8px;
+      border: 0.5px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      opacity: 0.8;
+    }
+
+    .action-btn.edit {
+      color: var(--info-color);
+      border-color: var(--info-color);
+    }
+
+    .action-btn.delete {
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .address-detail {
+      margin: 8px 0;
+    }
+
+    .address-region {
+      font-size: 14px;
+      color: var(--text-color);
+      margin-bottom: 4px;
+    }
+
+    .address-full {
+      font-size: 14px;
+      color: var(--secondary-text);
+      line-height: 20px;
+    }
+
+    .address-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .default-tag {
+      display: inline-block;
+      padding: 2px 6px;
+      background-color: var(--primary-color);
+      color: white;
+      font-size: 10px;
+      border-radius: 2px;
+    }
+
+    .set-default-btn {
+      background: none;
+      border: 0.5px solid var(--border-color);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--secondary-text);
+      cursor: pointer;
+    }
+
+    /* 多选模式样式 */
+    .edit-mode .address-card {
+      padding-left: 50px;
+    }
+
+    .checkbox-wrapper {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: none;
+    }
+
+    .edit-mode .checkbox-wrapper {
+      display: block;
+    }
+
+    .checkbox {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .checkbox.checked {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .checkbox.checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* 底部操作栏 */
+    .bottom-actions {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--card-bg);
+      padding: 12px 16px;
+      border-top: 0.5px solid var(--border-color);
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+    }
+
+    .edit-mode .bottom-actions {
+      display: flex;
+    }
+
+    .select-all {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-color);
+      cursor: pointer;
+    }
+
+    .batch-delete-btn {
+      padding: 8px 16px;
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    .batch-delete-btn.enabled {
+      opacity: 1;
+    }
+
+    /* 新增地址按钮 */
+    .add-address-btn {
+      width: 100%;
+      padding: 16px;
+      background-color: var(--card-bg);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      color: var(--secondary-text);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+
+    .add-address-btn:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+
+    /* 表单模态框 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 16px;
+      border-bottom: 0.5px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: var(--secondary-text);
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--text-color);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-label.required::after {
+      content: '*';
+      color: var(--danger-color);
+      margin-left: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--text-color);
+      box-sizing: border-box;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .region-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .region-select {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--text-color);
+      background-color: var(--card-bg);
+    }
+
+    .form-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+      color: var(--text-color);
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .default-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .default-checkbox input {
+      width: 16px;
+      height: 16px;
+    }
+
+    .modal-footer {
+      padding: 16px;
+      border-top: 0.5px solid var(--border-color);
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-cancel {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn:hover {
+      opacity: 0.8;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      color: var(--disabled-text);
+      margin-bottom: 16px;
+    }
+
+    .empty-text {
+      font-size: 16px;
+      color: var(--secondary-text);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      color: var(--disabled-text);
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 375px) {
+      .modal-content {
+        width: 95%;
+      }
+
+      .region-selector {
+        flex-direction: column;
+      }
+
+      .address-actions {
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">15:20</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-three-quarters"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部导航栏 -->
+      <div class="header">
+        <div class="header-left">
+          <button class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="header-title">地址管理</div>
+        </div>
+        <div class="header-right">
+          <button class="edit-btn" id="editModeBtn">编辑</button>
+          <button class="add-btn" id="addAddressBtn">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 地址列表容器 -->
+      <div class="address-container" id="addressContainer">
+        <!-- 新增地址按钮 -->
+        <button class="add-address-btn" id="addAddressBtn2">
+          <i class="fas fa-plus"></i> 新增收货地址
+        </button>
+
+        <!-- 地址卡片示例1 - 默认地址 -->
+        <div class="address-card" data-id="1">
+          <div class="checkbox-wrapper">
+            <div class="checkbox" data-id="1"></div>
+          </div>
+          <div class="address-main">
+            <div class="address-header">
+              <div class="contact-info">
+                <div class="contact-name">张三</div>
+                <div class="contact-phone">138****8888</div>
+              </div>
+              <div class="address-actions">
+                <button class="action-btn edit" data-id="1">编辑</button>
+                <button class="action-btn delete" data-id="1">删除</button>
+              </div>
+            </div>
+            <div class="address-detail">
+              <div class="address-region">北京市 朝阳区 望京街道</div>
+              <div class="address-full">望京SOHO T1座 10层1008室，靠近望京地铁站A口</div>
+            </div>
+            <div class="address-footer">
+              <span class="default-tag">默认</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 地址卡片示例2 -->
+        <div class="address-card" data-id="2">
+          <div class="checkbox-wrapper">
+            <div class="checkbox" data-id="2"></div>
+          </div>
+          <div class="address-main">
+            <div class="address-header">
+              <div class="contact-info">
+                <div class="contact-name">李四</div>
+                <div class="contact-phone">139****9999</div>
+              </div>
+              <div class="address-actions">
+                <button class="action-btn edit" data-id="2">编辑</button>
+                <button class="action-btn delete" data-id="2">删除</button>
+              </div>
+            </div>
+            <div class="address-detail">
+              <div class="address-region">上海市 浦东新区 陆家嘴街道</div>
+              <div class="address-full">世纪大道88号 金茂大厦 22层2201室</div>
+            </div>
+            <div class="address-footer">
+              <button class="set-default-btn" data-id="2">设为默认</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 地址卡片示例3 -->
+        <div class="address-card" data-id="3">
+          <div class="checkbox-wrapper">
+            <div class="checkbox" data-id="3"></div>
+          </div>
+          <div class="address-main">
+            <div class="address-header">
+              <div class="contact-info">
+                <div class="contact-name">王五</div>
+                <div class="contact-phone">136****6666</div>
+              </div>
+              <div class="address-actions">
+                <button class="action-btn edit" data-id="3">编辑</button>
+                <button class="action-btn delete" data-id="3">删除</button>
+              </div>
+            </div>
+            <div class="address-detail">
+              <div class="address-region">广东省 深圳市 南山区</div>
+              <div class="address-full">科技园南区 腾讯大厦 35层3501室，近地铁深大站</div>
+            </div>
+            <div class="address-footer">
+              <button class="set-default-btn" data-id="3">设为默认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部多选操作栏 -->
+      <div class="bottom-actions" id="bottomActions">
+        <div class="select-all" id="selectAllBtn">
+          <div class="checkbox" id="selectAllCheckbox"></div>
+          <span>全选</span>
+        </div>
+        <button class="batch-delete-btn" id="batchDeleteBtn">删除选中</button>
+      </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增/编辑地址模态框 -->
+  <div class="modal" id="addressModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">新增地址</div>
+        <button class="close-btn" id="closeModalBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="addressForm">
+          <div class="form-group">
+            <label class="form-label required">收件人</label>
+            <input type="text" class="form-input" id="contactName" placeholder="请输入收件人姓名" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label required">联系电话</label>
+            <input type="tel" class="form-input" id="contactPhone" placeholder="请输入手机号码" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label required">所在地区</label>
+            <div class="region-selector">
+              <select class="region-select" id="province" required>
+                <option value="">省份</option>
+                <option value="北京市">北京市</option>
+                <option value="上海市">上海市</option>
+                <option value="广东省">广东省</option>
+                <option value="浙江省">浙江省</option>
+                <option value="江苏省">江苏省</option>
+              </select>
+              <select class="region-select" id="city" required>
+                <option value="">城市</option>
+              </select>
+              <select class="region-select" id="district" required>
+                <option value="">区县</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label required">详细地址</label>
+            <textarea class="form-textarea" id="detailAddress" placeholder="请输入详细地址，如街道、门牌号、楼层等" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <div class="default-checkbox">
+              <input type="checkbox" id="isDefault">
+              <label for="isDefault">设为默认地址</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" id="cancelBtn">取消</button>
+        <button type="submit" class="btn btn-primary" id="saveBtn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 地址管理数据 - 模拟小程序中的data
+    const addressData = {
+      isEditMode: false,  // 是否处于编辑模式
+      selectedIds: [],    // 选中的地址ID列表
+      currentEditId: null, // 当前编辑的地址ID
+      addressList: [
+        {
+          id: 1,
+          name: '张三',
+          phone: '138****8888',
+          province: '北京市',
+          city: '朝阳区',
+          district: '望京街道',
+          detail: '望京SOHO T1座 10层1008室，靠近望京地铁站A口',
+          isDefault: true
+        },
+        {
+          id: 2,
+          name: '李四',
+          phone: '139****9999',
+          province: '上海市',
+          city: '浦东新区',
+          district: '陆家嘴街道',
+          detail: '世纪大道88号 金茂大厦 22层2201室',
+          isDefault: false
+        },
+        {
+          id: 3,
+          name: '王五',
+          phone: '136****6666',
+          province: '广东省',
+          city: '深圳市',
+          district: '南山区',
+          detail: '科技园南区 腾讯大厦 35层3501室，近地铁深大站',
+          isDefault: false
+        }
+      ]
+    };
+
+    // 城市数据 - 简化版本
+    const regionData = {
+      '北京市': {
+        '朝阳区': ['望京街道', '三里屯街道', '国贸街道'],
+        '海淀区': ['中关村街道', '五道口街道', '上地街道'],
+        '西城区': ['西单街道', '金融街街道', '什刹海街道']
+      },
+      '上海市': {
+        '浦东新区': ['陆家嘴街道', '张江街道', '世纪大道街道'],
+        '黄浦区': ['南京东路街道', '外滩街道', '豫园街道'],
+        '徐汇区': ['徐家汇街道', '田林街道', '华泾镇']
+      },
+      '广东省': {
+        '深圳市': ['南山区', '福田区', '罗湖区'],
+        '广州市': ['天河区', '越秀区', '海珠区'],
+        '东莞市': ['莞城街道', '南城街道', '东城街道']
+      }
+    };
+
+    // DOM 元素引用
+    const editModeBtn = document.getElementById('editModeBtn');
+    const addAddressBtn = document.getElementById('addAddressBtn');
+    const addAddressBtn2 = document.getElementById('addAddressBtn2');
+    const addressContainer = document.getElementById('addressContainer');
+    const bottomActions = document.getElementById('bottomActions');
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+    const addressModal = document.getElementById('addressModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const saveBtn = document.getElementById('saveBtn');
+
+    // 切换编辑模式 - 相当于小程序中的toggleEditMode方法
+    function toggleEditMode() {
+      addressData.isEditMode = !addressData.isEditMode;
+      
+      if (addressData.isEditMode) {
+        addressContainer.classList.add('edit-mode');
+        editModeBtn.textContent = '完成';
+        console.log('进入编辑模式');
+      } else {
+        addressContainer.classList.remove('edit-mode');
+        editModeBtn.textContent = '编辑';
+        // 清空选中状态
+        addressData.selectedIds = [];
+        updateCheckboxes();
+        console.log('退出编辑模式');
+      }
+      
+      updateBatchDeleteButton();
+    }
+
+    // 更新复选框状态
+    function updateCheckboxes() {
+      const checkboxes = document.querySelectorAll('.checkbox[data-id]');
+      checkboxes.forEach(checkbox => {
+        const id = parseInt(checkbox.getAttribute('data-id'));
+        if (addressData.selectedIds.includes(id)) {
+          checkbox.classList.add('checked');
+        } else {
+          checkbox.classList.remove('checked');
+        }
+      });
+      
+      // 更新全选按钮状态
+      const totalCount = addressData.addressList.length;
+      const selectedCount = addressData.selectedIds.length;
+      if (selectedCount === totalCount && totalCount > 0) {
+        selectAllCheckbox.classList.add('checked');
+      } else {
+        selectAllCheckbox.classList.remove('checked');
+      }
+    }
+
+    // 更新批量删除按钮状态
+    function updateBatchDeleteButton() {
+      if (addressData.selectedIds.length > 0) {
+        batchDeleteBtn.classList.add('enabled');
+        batchDeleteBtn.textContent = `删除选中(${addressData.selectedIds.length})`;
+      } else {
+        batchDeleteBtn.classList.remove('enabled');
+        batchDeleteBtn.textContent = '删除选中';
+      }
+    }
+
+    // 显示地址表单模态框 - 相当于小程序中的showAddressForm方法
+    function showAddressModal(editId = null) {
+      addressData.currentEditId = editId;
+      
+      if (editId) {
+        modalTitle.textContent = '编辑地址';
+        const address = addressData.addressList.find(item => item.id === editId);
+        if (address) {
+          // 填充表单数据
+          document.getElementById('contactName').value = address.name;
+          document.getElementById('contactPhone').value = address.phone;
+          document.getElementById('province').value = address.province;
+          updateCityOptions(address.province);
+          document.getElementById('city').value = address.city;
+          updateDistrictOptions(address.province, address.city);
+          document.getElementById('district').value = address.district;
+          document.getElementById('detailAddress').value = address.detail;
+          document.getElementById('isDefault').checked = address.isDefault;
+        }
+      } else {
+        modalTitle.textContent = '新增地址';
+        // 清空表单
+        document.getElementById('addressForm').reset();
+      }
+      
+      addressModal.classList.add('show');
+      console.log(editId ? '编辑地址' : '新增地址');
+    }
+
+    // 隐藏地址表单模态框
+    function hideAddressModal() {
+      addressModal.classList.remove('show');
+      addressData.currentEditId = null;
+    }
+
+    // 更新城市选项
+    function updateCityOptions(province) {
+      const citySelect = document.getElementById('city');
+      const districtSelect = document.getElementById('district');
+      
+      citySelect.innerHTML = '<option value="">城市</option>';
+      districtSelect.innerHTML = '<option value="">区县</option>';
+      
+      if (province && regionData[province]) {
+        Object.keys(regionData[province]).forEach(city => {
+          const option = document.createElement('option');
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
+      }
+    }
+
+    // 更新区县选项
+    function updateDistrictOptions(province, city) {
+      const districtSelect = document.getElementById('district');
+      districtSelect.innerHTML = '<option value="">区县</option>';
+      
+      if (province && city && regionData[province] && regionData[province][city]) {
+        regionData[province][city].forEach(district => {
+          const option = document.createElement('option');
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      }
+    }
+
+    // 保存地址 - 相当于小程序中的saveAddress方法
+    function saveAddress() {
+      const formData = {
+        name: document.getElementById('contactName').value.trim(),
+        phone: document.getElementById('contactPhone').value.trim(),
+        province: document.getElementById('province').value,
+        city: document.getElementById('city').value,
+        district: document.getElementById('district').value,
+        detail: document.getElementById('detailAddress').value.trim(),
+        isDefault: document.getElementById('isDefault').checked
+      };
+      
+      // 表单验证
+      if (!formData.name || !formData.phone || !formData.province || !formData.city || !formData.district || !formData.detail) {
+        alert('请填写完整的地址信息');
+        return;
+      }
+      
+      if (addressData.currentEditId) {
+        // 编辑地址
+        const index = addressData.addressList.findIndex(item => item.id === addressData.currentEditId);
+        if (index !== -1) {
+          addressData.addressList[index] = {
+            ...addressData.addressList[index],
+            ...formData
+          };
+          console.log('地址编辑成功');
+        }
+      } else {
+        // 新增地址
+        const newId = Math.max(...addressData.addressList.map(item => item.id)) + 1;
+        addressData.addressList.push({
+          id: newId,
+          ...formData
+        });
+        console.log('地址新增成功');
+      }
+      
+      // 如果设为默认地址，取消其他地址的默认状态
+      if (formData.isDefault) {
+        addressData.addressList.forEach(item => {
+          if (item.id !== addressData.currentEditId) {
+            item.isDefault = false;
+          }
+        });
+      }
+      
+      hideAddressModal();
+      renderAddressList(); // 重新渲染地址列表
+    }
+
+    // 删除地址 - 相当于小程序中的deleteAddress方法
+    function deleteAddress(id) {
+      if (confirm('确定要删除这个地址吗？')) {
+        addressData.addressList = addressData.addressList.filter(item => item.id !== id);
+        console.log(`删除地址 ID: ${id}`);
+        renderAddressList();
+      }
+    }
+
+    // 批量删除地址
+    function batchDeleteAddresses() {
+      if (addressData.selectedIds.length === 0) {
+        alert('请选择要删除的地址');
+        return;
+      }
+      
+      if (confirm(`确定要删除选中的${addressData.selectedIds.length}个地址吗？`)) {
+        addressData.addressList = addressData.addressList.filter(item => !addressData.selectedIds.includes(item.id));
+        addressData.selectedIds = [];
+        console.log('批量删除地址成功');
+        renderAddressList();
+        updateBatchDeleteButton();
+      }
+    }
+
+    // 设置默认地址
+    function setDefaultAddress(id) {
+      addressData.addressList.forEach(item => {
+        item.isDefault = (item.id === id);
+      });
+      console.log(`设置默认地址 ID: ${id}`);
+      renderAddressList();
+    }
+
+    // 渲染地址列表 - 相当于小程序中的渲染函数
+    function renderAddressList() {
+      // 这里简化处理，实际小程序中会用wx:for来渲染
+      console.log('重新渲染地址列表');
+      // 在实际应用中，这里会重新生成DOM
+    }
+
+    // 事件监听器
+    editModeBtn.addEventListener('click', toggleEditMode);
+    addAddressBtn.addEventListener('click', () => showAddressModal());
+    addAddressBtn2.addEventListener('click', () => showAddressModal());
+    closeModalBtn.addEventListener('click', hideAddressModal);
+    cancelBtn.addEventListener('click', hideAddressModal);
+    saveBtn.addEventListener('click', saveAddress);
+
+    // 全选功能
+    selectAllBtn.addEventListener('click', () => {
+      const isAllSelected = addressData.selectedIds.length === addressData.addressList.length;
+      if (isAllSelected) {
+        // 取消全选
+        addressData.selectedIds = [];
+      } else {
+        // 全选
+        addressData.selectedIds = addressData.addressList.map(item => item.id);
+      }
+      updateCheckboxes();
+      updateBatchDeleteButton();
+      console.log(isAllSelected ? '取消全选' : '全选');
+    });
+
+    // 批量删除
+    batchDeleteBtn.addEventListener('click', batchDeleteAddresses);
+
+    // 省份选择变化
+    document.getElementById('province').addEventListener('change', (e) => {
+      updateCityOptions(e.target.value);
+    });
+
+    // 城市选择变化
+    document.getElementById('city').addEventListener('change', (e) => {
+      const province = document.getElementById('province').value;
+      updateDistrictOptions(province, e.target.value);
+    });
+
+    // 代理事件监听 - 处理动态生成的元素
+    document.addEventListener('click', (e) => {
+      // 复选框点击
+      if (e.target.classList.contains('checkbox') && e.target.dataset.id) {
+        const id = parseInt(e.target.dataset.id);
+        const index = addressData.selectedIds.indexOf(id);
+        if (index > -1) {
+          addressData.selectedIds.splice(index, 1);
+        } else {
+          addressData.selectedIds.push(id);
+        }
+        updateCheckboxes();
+        updateBatchDeleteButton();
+        console.log(`切换选中状态 ID: ${id}`);
+      }
+      
+      // 编辑按钮点击
+      if (e.target.classList.contains('edit')) {
+        const id = parseInt(e.target.dataset.id);
+        showAddressModal(id);
+      }
+      
+      // 删除按钮点击
+      if (e.target.classList.contains('delete')) {
+        const id = parseInt(e.target.dataset.id);
+        deleteAddress(id);
+      }
+      
+      // 设为默认按钮点击
+      if (e.target.classList.contains('set-default-btn')) {
+        const id = parseInt(e.target.dataset.id);
+        setDefaultAddress(id);
+      }
+    });
+
+    // 返回按钮
+    document.querySelector('.back-btn').addEventListener('click', () => {
+      console.log('返回上一页');
+      // 在实际小程序中，这里会调用 wx.navigateBack()
+    });
+
+    // 页面初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('地址管理页面初始化完成');
+      updateBatchDeleteButton();
+    });
+  </script>
+</body>
+</html> 

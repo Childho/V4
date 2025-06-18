@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>羽你同行 - 搜索结果</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* 配色方案 */
+    :root {
+      --primary-blue: #4A90E2;
+      --primary-blue-dark: #357ABD;
+      --accent-orange: #FF8B47;
+      --accent-orange-light: #FFB47A;
+      --success-green: #7ED321;
+      --bg-light: #FAFBFC;
+      --bg-white: #FFFFFF;
+      --text-dark: #2C3E50;
+      --text-medium: #7F8C8D;
+      --text-light: #BDC3C7;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+      --shadow-heavy: rgba(0, 0, 0, 0.16);
+    }
+
+    /* 页面内容区域样式 */
+    .content {
+      background: var(--bg-light);
+    }
+
+    /* 搜索栏顶部样式 */
+    .search-header {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+      padding: 10px 15px 16px;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 3px 12px rgba(74, 144, 226, 0.25);
+    }
+
+    .search-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-back-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .search-back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .search-input-container {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 12px 10px 36px;
+      border-radius: 20px;
+      border: none;
+      background-color: var(--bg-white);
+      font-size: 14px;
+      box-shadow: 0 2px 8px var(--shadow-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary-blue);
+      font-size: 14px;
+    }
+
+    .search-btn {
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-light));
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(255, 139, 71, 0.3);
+    }
+
+    /* 品类导航区域 */
+    .category-nav {
+      background: var(--bg-white);
+      margin: 12px 0 0;
+      padding: 16px 0;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .category-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-scroll {
+      display: flex;
+      gap: 20px;
+      padding: 0 15px;
+      min-width: max-content;
+    }
+
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 60px;
+      padding: 8px 12px;
+      border-radius: 16px;
+      background: var(--bg-light);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+      flex-shrink: 0;
+    }
+
+    .category-item:hover {
+      background: #E3F2FD;
+      border-color: var(--primary-blue);
+      transform: translateY(-2px);
+    }
+
+    .category-item.active {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+      color: white;
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    }
+
+    .category-icon {
+      font-size: 28px;
+      margin-bottom: 6px;
+      color: var(--primary-blue);
+    }
+
+    .category-item.active .category-icon {
+      color: white;
+    }
+
+    .category-name {
+      font-size: 11px;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* 排序筛选区域 */
+    .filter-bar {
+      background: var(--bg-white);
+      margin: 12px 15px 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sort-options {
+      display: flex;
+      gap: 20px;
+    }
+
+    .sort-option {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-medium);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 6px 0;
+      transition: color 0.3s ease;
+    }
+
+    .sort-option.active {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    .sort-option i {
+      font-size: 12px;
+    }
+
+    .filter-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-light);
+      border: 1px solid var(--text-light);
+      padding: 8px 12px;
+      border-radius: 20px;
+      color: var(--text-medium);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+    }
+
+    /* 搜索结果信息 */
+    .results-info {
+      margin: 12px 15px 0;
+      padding: 0 4px;
+    }
+
+    .results-count {
+      font-size: 13px;
+      color: var(--text-medium);
+    }
+
+    .search-keyword {
+      color: var(--primary-blue);
+      font-weight: 600;
+    }
+
+    /* 商品列表样式 */
+    .product-list {
+      margin: 12px 15px 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .product-item {
+      background: var(--bg-white);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .product-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px var(--shadow-medium);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-name {
+      font-size: 13px;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      font-weight: 500;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-price {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .price-current {
+      color: #FF4757;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .price-original {
+      color: var(--text-medium);
+      font-size: 12px;
+      text-decoration: line-through;
+    }
+
+    .product-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-medium);
+    }
+
+    .sales-count {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .rating i {
+      color: #FFD700;
+    }
+
+    /* 特殊标签 */
+    .product-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: linear-gradient(45deg, var(--accent-orange), var(--accent-orange-light));
+      color: white;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .product-tag.hot {
+      background: linear-gradient(45deg, #FF6B6B, #FF5722);
+    }
+
+    .product-tag.new {
+      background: linear-gradient(45deg, var(--success-green), #4CAF50);
+    }
+
+    /* 筛选面板 */
+    .filter-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 80%;
+      background: var(--bg-white);
+      box-shadow: -5px 0 15px var(--shadow-medium);
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-panel.active {
+      transform: translateX(0);
+    }
+
+    .filter-panel-header {
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filter-panel-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .filter-panel-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: var(--text-medium);
+      cursor: pointer;
+    }
+
+    .filter-panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .filter-section {
+      margin-bottom: 20px;
+    }
+
+    .filter-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+    }
+
+    .brand-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .brand-item {
+      padding: 8px 12px;
+      border: 1px solid #eee;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-medium);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .brand-item:hover {
+      border-color: var(--primary-blue);
+      color: var(--primary-blue);
+    }
+
+    .brand-item.selected {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+    }
+
+    .price-range {
+      margin-top: 10px;
+    }
+
+    .price-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .price-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .price-separator {
+      color: var(--text-medium);
+    }
+
+    .filter-panel-footer {
+      padding: 16px;
+      border-top: 1px solid #eee;
+      display: flex;
+      gap: 10px;
+    }
+
+    .filter-reset {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background: white;
+      color: var(--text-medium);
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .filter-apply {
+      flex: 2;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: var(--primary-blue);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-medium);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: var(--text-light);
+    }
+
+    .empty-text {
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .empty-tip {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-three-quarters"></i>
+      </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 搜索栏 -->
+      <div class="search-header">
+        <div class="search-container">
+          <button class="search-back-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="search-input-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="搜索商品..." value="羽毛球拍">
+          </div>
+          <button class="search-btn">搜索</button>
+        </div>
+      </div>
+
+      <!-- 品类导航 -->
+      <div class="category-nav">
+        <div class="category-scroll">
+          <div class="category-item active">
+            <div class="category-icon">🏸</div>
+            <div class="category-name">羽毛球拍</div>
+          </div>
+          <div class="category-item">
+            <div class="category-icon">⚪</div>
+            <div class="category-name">羽毛球</div>
+          </div>
+          <div class="category-item">
+            <div class="category-icon">👟</div>
+            <div class="category-name">羽毛球鞋</div>
+          </div>
+          <div class="category-item">
+            <div class="category-icon">🎒</div>
+            <div class="category-name">羽毛球包</div>
+          </div>
+          <div class="category-item">
+            <div class="category-icon">👕</div>
+            <div class="category-name">羽毛球服</div>
+          </div>
+          <div class="category-item">
+            <div class="category-icon">💪</div>
+            <div class="category-name">运动必备</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 排序筛选栏 -->
+      <div class="filter-bar">
+        <div class="sort-options">
+          <div class="sort-option active">
+            <span>销量</span>
+            <i class="fas fa-sort-down"></i>
+          </div>
+          <div class="sort-option">
+            <span>价格</span>
+            <i class="fas fa-sort"></i>
+          </div>
+        </div>
+        <div class="filter-btn">
+          <i class="fas fa-filter"></i>
+          <span>筛选</span>
+        </div>
+      </div>
+
+      <!-- 搜索结果信息 -->
+      <div class="results-info">
+        <div class="results-count">
+          找到 <span class="search-keyword">"羽毛球拍"</span> 相关商品 126 件
+        </div>
+      </div>
+
+      <!-- 商品列表 -->
+      <div class="product-list">
+        <!-- 商品1 -->
+        <div class="product-item">
+          <div class="product-tag hot">热销</div>
+          <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=300&h=300&fit=crop&crop=center" alt="羽毛球拍" class="product-image">
+          <div class="product-info">
+            <div class="product-name">YONEX尤尼克斯羽毛球拍单拍超轻碳纤维进攻型专业比赛拍</div>
+            <div class="product-price">
+              <span class="price-current">¥299</span>
+              <span class="price-original">¥399</span>
+            </div>
+            <div class="product-stats">
+              <div class="sales-count">
+                <i class="fas fa-fire"></i>
+                <span>已售1.2万</span>
+              </div>
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <span>4.9</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 商品2 -->
+        <div class="product-item">
+          <div class="product-tag new">新品</div>
+          <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop&crop=center" alt="羽毛球拍" class="product-image">
+          <div class="product-info">
+            <div class="product-name">李宁羽毛球拍单拍全碳素超轻进攻型耐打专业比赛训练拍</div>
+            <div class="product-price">
+              <span class="price-current">¥188</span>
+              <span class="price-original">¥268</span>
+            </div>
+            <div class="product-stats">
+              <div class="sales-count">
+                <i class="fas fa-fire"></i>
+                <span>已售8.5千</span>
+              </div>
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <span>4.8</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 商品3 -->
+        <div class="product-item">
+          <img src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=300&h=300&fit=crop&crop=center" alt="羽毛球拍" class="product-image">
+          <div class="product-info">
+            <div class="product-name">胜利VICTOR羽毛球拍单拍碳纤维超轻4U进攻型专业比赛拍</div>
+            <div class="product-price">
+              <span class="price-current">¥156</span>
+              <span class="price-original">¥220</span>
+            </div>
+            <div class="product-stats">
+              <div class="sales-count">
+                <i class="fas fa-fire"></i>
+                <span>已售6.8千</span>
+              </div>
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <span>4.7</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 商品4 -->
+        <div class="product-item">
+          <div class="product-tag">促销</div>
+          <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=300&fit=crop&crop=center" alt="羽毛球拍" class="product-image">
+          <div class="product-info">
+            <div class="product-name">凯胜KASON羽毛球拍单拍全碳素超轻进攻型耐用专业训练拍</div>
+            <div class="product-price">
+              <span class="price-current">¥98</span>
+              <span class="price-original">¥158</span>
+            </div>
+            <div class="product-stats">
+              <div class="sales-count">
+                <i class="fas fa-fire"></i>
+                <span>已售4.2千</span>
+              </div>
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <span>4.6</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 商品5 -->
+        <div class="product-item">
+          <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=300&fit=crop&crop=center" alt="羽毛球拍" class="product-image">
+          <div class="product-info">
+            <div class="product-name">川崎KAWASAKI羽毛球拍单拍碳纤维超轻4U进攻防守型</div>
+            <div class="product-price">
+              <span class="price-current">¥79</span>
+              <span class="price-original">¥128</span>
+            </div>
+            <div class="product-stats">
+              <div class="sales-count">
+                <i class="fas fa-fire"></i>
+                <span>已售3.1千</span>
+              </div>
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <span>4.5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 商品6 -->
+        <div class="product-item">
+          <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=300&h=300&fit=crop&crop=center" alt="羽毛球拍" class="product-image">
+          <div class="product-info">
+            <div class="product-name">红双喜DHS羽毛球拍单拍全碳素超轻进攻型专业比赛训练拍</div>
+            <div class="product-price">
+              <span class="price-current">¥69</span>
+              <span class="price-original">¥98</span>
+            </div>
+            <div class="product-stats">
+              <div class="sales-count">
+                <i class="fas fa-fire"></i>
+                <span>已售2.8千</span>
+              </div>
+              <div class="rating">
+                <i class="fas fa-star"></i>
+                <span>4.4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
+    </div>
+
+    <!-- 筛选面板 -->
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-panel-header">
+        <div class="filter-panel-title">筛选</div>
+        <button class="filter-panel-close" id="closeFilterPanel">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="filter-panel-content">
+        <div class="filter-section">
+          <div class="filter-section-title">品牌</div>
+          <div class="brand-list">
+            <div class="brand-item">李宁</div>
+            <div class="brand-item">威克多</div>
+            <div class="brand-item">倍特爱</div>
+            <div class="brand-item">威肯</div>
+            <div class="brand-item">超牌</div>
+            <div class="brand-item">泰昂</div>
+            <div class="brand-item">翎美</div>
+            <div class="brand-item">尤尼克斯</div>
+            <div class="brand-item">亚狮龙</div>
+            <div class="brand-item">GOSEN</div>
+          </div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">价格区间</div>
+          <div class="price-inputs">
+            <input type="number" class="price-input" placeholder="最低价">
+            <span class="price-separator">-</span>
+            <input type="number" class="price-input" placeholder="最高价">
+          </div>
+        </div>
+        <div class="filter-section">
+          <div class="filter-section-title">商品类型</div>
+          <div class="brand-list">
+            <div class="brand-item">全部</div>
+            <div class="brand-item">新品</div>
+            <div class="brand-item">热销</div>
+            <div class="brand-item">促销</div>
+          </div>
+        </div>
+      </div>
+      <div class="filter-panel-footer">
+        <button class="filter-reset" id="resetFilter">重置</button>
+        <button class="filter-apply" id="applyFilter">确认</button>
+      </div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay"></div>
+  </div>
+
+  <script>
+    // 搜索功能 - 处理用户点击搜索按钮的行为
+    document.querySelector('.search-btn').addEventListener('click', function() {
+      const keyword = document.querySelector('.search-input').value;
+      console.log('搜索关键词：', keyword);
+      // 这里可以添加实际的搜索逻辑
+    });
+
+    // 返回按钮功能 - 用户点击返回箭头回到上一页
+    document.querySelector('.search-back-btn').addEventListener('click', function() {
+      console.log('返回上一页');
+      // 在实际小程序中，这里会调用 wx.navigateBack()
+    });
+
+    // 品类筛选功能 - 用户点击不同品类进行筛选
+    document.querySelectorAll('.category-item').forEach(item => {
+      item.addEventListener('click', function() {
+        // 移除所有活跃状态
+        document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+        // 设置当前项为活跃状态
+        this.classList.add('active');
+        console.log('选中品类：', this.querySelector('.category-name').textContent);
+      });
+    });
+
+    // 排序选项功能 - 用户点击不同排序方式（销量和价格的升降切换）
+    document.querySelectorAll('.sort-option').forEach(option => {
+      option.addEventListener('click', function() {
+        const sortType = this.querySelector('span').textContent;
+        const icon = this.querySelector('i');
+        
+        // 移除所有活跃状态
+        document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('active'));
+        // 设置当前选项为活跃状态
+        this.classList.add('active');
+        
+        // 处理排序方向切换
+        if (sortType === '销量') {
+          if (icon.classList.contains('fa-sort-down')) {
+            // 从降序切换到升序
+            icon.className = 'fas fa-sort-up';
+            console.log('销量排序：升序（销量从低到高）');
+          } else {
+            // 从升序或默认状态切换到降序
+            icon.className = 'fas fa-sort-down';
+            console.log('销量排序：降序（销量从高到低）');
+          }
+        } else if (sortType === '价格') {
+          if (icon.classList.contains('fa-sort-down')) {
+            // 从降序切换到升序
+            icon.className = 'fas fa-sort-up';
+            console.log('价格排序：升序（价格从低到高）');
+          } else {
+            // 从升序或默认状态切换到降序
+            icon.className = 'fas fa-sort-down';
+            console.log('价格排序：降序（价格从高到低）');
+          }
+        }
+        
+        // 重置其他排序选项的图标
+        document.querySelectorAll('.sort-option').forEach(o => {
+          if (o !== this) {
+            const otherIcon = o.querySelector('i');
+            otherIcon.className = 'fas fa-sort';
+          }
+        });
+      });
+    });
+
+    // 筛选面板相关功能
+    const filterBtn = document.querySelector('.filter-btn');
+    const filterPanel = document.getElementById('filterPanel');
+    const overlay = document.getElementById('overlay');
+    const closeFilterPanel = document.getElementById('closeFilterPanel');
+    const resetFilter = document.getElementById('resetFilter');
+    const applyFilter = document.getElementById('applyFilter');
+    const brandItems = document.querySelectorAll('.brand-item');
+    
+    // 打开筛选面板
+    filterBtn.addEventListener('click', function() {
+      filterPanel.classList.add('active');
+      overlay.classList.add('active');
+      console.log('打开筛选面板');
+    });
+    
+    // 关闭筛选面板
+    function closePanel() {
+      filterPanel.classList.remove('active');
+      overlay.classList.remove('active');
+    }
+    
+    closeFilterPanel.addEventListener('click', closePanel);
+    overlay.addEventListener('click', closePanel);
+    
+    // 品牌选择
+    brandItems.forEach(item => {
+      item.addEventListener('click', function() {
+        this.classList.toggle('selected');
+        console.log('选择品牌：', this.textContent, this.classList.contains('selected') ? '已选中' : '已取消');
+      });
+    });
+    
+    // 重置筛选
+    resetFilter.addEventListener('click', function() {
+      // 清除所有选中的品牌
+      brandItems.forEach(item => {
+        item.classList.remove('selected');
+      });
+      
+      // 清除价格输入
+      document.querySelectorAll('.price-input').forEach(input => {
+        input.value = '';
+      });
+      
+      console.log('重置筛选条件');
+    });
+    
+    // 应用筛选
+    applyFilter.addEventListener('click', function() {
+      // 获取选中的品牌
+      const selectedBrands = [];
+      document.querySelectorAll('.brand-item.selected').forEach(item => {
+        selectedBrands.push(item.textContent);
+      });
+      
+      // 获取价格区间
+      const priceInputs = document.querySelectorAll('.price-input');
+      const minPrice = priceInputs[0].value;
+      const maxPrice = priceInputs[1].value;
+      
+      console.log('应用筛选：', {
+        brands: selectedBrands,
+        priceRange: {
+          min: minPrice || '不限',
+          max: maxPrice || '不限'
+        }
+      });
+      
+      // 关闭筛选面板
+      closePanel();
+    });
+
+    // 商品点击功能 - 跳转到商品详情页
+    document.querySelectorAll('.product-item').forEach(product => {
+      product.addEventListener('click', function() {
+        const productName = this.querySelector('.product-name').textContent;
+        console.log('查看商品：', productName);
+        // 在实际小程序中，这里会跳转到商品详情页
+      });
+    });
+  </script>
+</body>
+</html> 

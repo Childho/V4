@@ -3,581 +3,897 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品详情页</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <title>羽你同行 - 商品详情</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    /* 配色方案 */
+    :root {
+      --primary-blue: #4A90E2;
+      --primary-blue-dark: #357ABD;
+      --accent-orange: #FF8B47;
+      --accent-orange-light: #FFB47A;
+      --success-green: #7ED321;
+      --bg-light: #FAFBFC;
+      --bg-white: #FFFFFF;
+      --text-dark: #2C3E50;
+      --text-medium: #7F8C8D;
+      --text-light: #BDC3C7;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+      --shadow-heavy: rgba(0, 0, 0, 0.16);
     }
-    
-    body {
-      background-color: #f5f5f5;
-      padding-bottom: 80px; /* 为底部操作栏留空间 */
+
+    .content {
+      background: var(--bg-light);
     }
-    
-    /* 主图Banner区 */
-    .banner-section {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+    /* 顶部导航栏 */
+    .header {
+      background: var(--bg-white);
+      padding: 12px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .store-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .store-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(45deg, var(--accent-orange), var(--accent-orange-light));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+    }
+
+    .store-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-icon {
+      font-size: 18px;
+      color: var(--text-medium);
+      cursor: pointer;
+    }
+
+    /* 商品图片区域 */
+    .product-image-section {
+      background: var(--bg-white);
+      position: relative;
+    }
+
+    .product-swiper {
+      width: 100%;
+      height: 375px;
       position: relative;
       overflow: hidden;
     }
-    
-    .product-images {
-      position: relative;
+
+    .product-image {
       width: 100%;
-      height: 400px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .main-image {
-      width: 300px;
-      height: 300px;
-      border-radius: 15px;
+      height: 100%;
       object-fit: cover;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      border: 3px solid rgba(255, 255, 255, 0.2);
     }
-    
-    .image-indicators {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      padding: 15px 0;
-    }
-    
-    .indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.4);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .indicator.active {
-      background-color: #fff;
-      transform: scale(1.2);
-    }
-    
-    .banner-effects {
+
+    .swiper-dots {
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-      pointer-events: none;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
     }
-    
-    /* 标题与价格区 */
-    .title-price-section {
+
+    .swiper-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .swiper-dot.active {
       background: white;
-      padding: 20px;
-      margin-bottom: 10px;
+      transform: scale(1.3);
     }
-    
+
+    /* 商品基本信息区域 */
+    .product-info-section {
+      background: var(--bg-white);
+      padding: 20px 15px;
+      margin-bottom: 8px;
+    }
+
     .product-title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
-      color: #333;
-      margin-bottom: 15px;
+      color: var(--text-dark);
       line-height: 1.4;
+      margin-bottom: 12px;
     }
-    
-    .price-info {
+
+    .price-section {
       display: flex;
       align-items: baseline;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 8px;
+      margin-bottom: 12px;
     }
-    
+
     .current-price {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 700;
-      color: #ff4757;
+      color: #FF4757;
     }
-    
+
     .original-price {
-      font-size: 16px;
-      color: #999;
+      font-size: 14px;
+      color: var(--text-medium);
       text-decoration: line-through;
     }
-    
-    .discount-tag {
-      background: linear-gradient(45deg, #ff6b6b, #ff4757);
-      color: white;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    
-    .sales-info {
+
+    .promotion-tags {
       display: flex;
-      gap: 20px;
-      font-size: 14px;
-      color: #666;
+      gap: 8px;
+      margin-bottom: 15px;
     }
-    
+
+    .promo-tag {
+      background: #FFE8E8;
+      color: #FF4757;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .sales-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
     .sales-item {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-medium);
     }
-    
-    /* 发货与服务区 */
-    .shipping-service-section {
-      background: white;
-      padding: 20px;
-      margin-bottom: 10px;
-    }
-    
-    .shipping-info {
+
+    .guarantee-section {
+      display: flex;
+      gap: 12px;
       margin-bottom: 15px;
     }
-    
+
+    .guarantee-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #E8F5E8;
+      color: var(--success-green);
+      padding: 6px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .shipping-info {
+      padding: 12px 0;
+      border-top: 1px solid #f0f0f0;
+    }
+
     .shipping-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 14px;
+      margin-bottom: 6px;
+      font-size: 13px;
     }
-    
+
     .shipping-label {
-      color: #666;
+      color: var(--text-medium);
     }
-    
+
     .shipping-value {
-      color: #333;
+      color: var(--text-dark);
       font-weight: 500;
     }
-    
-    .free-shipping {
-      color: #ff4757;
-      font-weight: 600;
+
+    /* 评论区域 */
+    .reviews-section {
+      background: var(--bg-white);
+      margin-bottom: 8px;
     }
-    
-    .service-tags {
+
+    .section-header {
+      padding: 15px;
+      border-bottom: 1px solid #f0f0f0;
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
     }
-    
-    .service-tag {
-      background: linear-gradient(45deg, #74b9ff, #0984e3);
-      color: white;
-      padding: 6px 12px;
-      border-radius: 15px;
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .view-more {
       font-size: 12px;
+      color: var(--text-medium);
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
-    
-    /* 商品材质参数区 */
-    .specs-section {
-      background: white;
-      padding: 20px;
-      margin-bottom: 10px;
+
+    .review-summary {
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
-    
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 15px;
+
+    .review-score {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .score-number {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .score-stars {
+      color: #FFD700;
+      font-size: 14px;
+    }
+
+    .review-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .review-tag {
+      background: var(--bg-light);
+      color: var(--text-medium);
+      padding: 4px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .review-list {
+      padding: 0 15px 15px;
+    }
+
+    .review-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #f8f8f8;
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .reviewer-info {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    
-    .specs-grid {
+
+    .reviewer-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary-blue), var(--primary-blue-dark));
+    }
+
+    .reviewer-name {
+      font-size: 12px;
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    .review-rating {
+      color: #FFD700;
+      font-size: 12px;
+    }
+
+    .review-content {
+      font-size: 13px;
+      color: var(--text-medium);
+      line-height: 1.4;
+    }
+
+    /* 相关推荐区域 */
+    .recommend-section {
+      background: var(--bg-white);
+      margin-bottom: 8px;
+    }
+
+    .recommend-list {
+      padding: 15px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
-    
-    .spec-item {
+
+    .recommend-item {
+      background: var(--bg-light);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .recommend-image {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .recommend-info {
+      padding: 10px;
+    }
+
+    .recommend-name {
+      font-size: 12px;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .recommend-price {
+      font-size: 14px;
+      font-weight: 600;
+      color: #FF4757;
+    }
+
+    /* 商品参数区域 */
+    .params-section {
+      background: var(--bg-white);
+      margin-bottom: 8px;
+    }
+
+    .params-content {
+      padding: 15px;
+    }
+
+    .params-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .param-item {
       display: flex;
       justify-content: space-between;
       padding: 8px 0;
-      border-bottom: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f8f8f8;
     }
-    
-    .spec-label {
-      color: #666;
-      font-size: 14px;
+
+    .param-label {
+      font-size: 13px;
+      color: var(--text-medium);
     }
-    
-    .spec-value {
-      color: #333;
-      font-size: 14px;
+
+    .param-value {
+      font-size: 13px;
+      color: var(--text-dark);
       font-weight: 500;
     }
-    
-    /* 评价区 */
-    .reviews-section {
-      background: white;
-      padding: 20px;
-      margin-bottom: 10px;
-    }
-    
-    .review-item {
-      padding: 15px 0;
-      border-bottom: 1px solid #f0f0f0;
-    }
-    
-    .review-item:last-child {
-      border-bottom: none;
-    }
-    
-    .review-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    
-    .reviewer-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .reviewer-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(45deg, #ff9ff3, #f368e0);
-    }
-    
-    .reviewer-name {
-      font-size: 14px;
-      color: #333;
-      font-weight: 500;
-    }
-    
-    .rating-stars {
-      color: #ffa502;
-      font-size: 14px;
-    }
-    
-    .review-content {
-      font-size: 14px;
-      color: #666;
-      line-height: 1.4;
-    }
-    
-    /* 商品详情区 */
+
+    /* 图文详情区域 */
     .details-section {
-      background: white;
-      padding: 20px;
-      margin-bottom: 10px;
+      background: var(--bg-white);
+      margin-bottom: 80px;
     }
-    
+
+    .details-content {
+      padding: 15px;
+    }
+
     .detail-image {
       width: 100%;
       border-radius: 8px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
-    
+
     .detail-text {
       font-size: 14px;
-      color: #666;
-      line-height: 1.6;
+      color: var(--text-medium);
+      line-height: 1.5;
       margin-bottom: 15px;
     }
-    
+
     /* 底部操作栏 */
     .bottom-actions {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: white;
-      padding: 12px 20px;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+      background: var(--bg-white);
+      padding: 10px 15px;
+      box-shadow: 0 -2px 10px var(--shadow-light);
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
       z-index: 1000;
     }
-    
+
     .action-icon {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
       cursor: pointer;
-      transition: all 0.3s;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
     }
-    
+
     .action-icon:hover {
-      transform: scale(1.1);
+      background: var(--bg-light);
     }
-    
+
     .action-icon i {
-      font-size: 20px;
-      color: #666;
+      font-size: 18px;
+      color: var(--text-medium);
     }
-    
+
     .action-icon span {
-      font-size: 12px;
-      color: #666;
+      font-size: 10px;
+      color: var(--text-medium);
     }
-    
+
     .action-buttons {
       display: flex;
       flex: 1;
-      gap: 10px;
+      gap: 8px;
     }
-    
+
     .action-btn {
       flex: 1;
       padding: 12px;
       border: none;
-      border-radius: 25px;
-      font-size: 16px;
+      border-radius: 22px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
     }
-    
+
     .btn-cart {
-      background: linear-gradient(45deg, #ff9ff3, #f368e0);
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-light));
       color: white;
     }
-    
+
     .btn-buy {
-      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
       color: white;
     }
-    
+
     .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-    
-    /* 响应式设计 */
-    @media (max-width: 480px) {
-      .main-image {
-        width: 250px;
-        height: 250px;
-      }
-      
-      .specs-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .bottom-actions {
-        padding: 10px 15px;
-      }
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--shadow-medium);
     }
   </style>
 </head>
 <body>
-  <!-- 主图Banner区 -->
-  <div class="banner-section">
-    <div class="banner-effects"></div>
-    <div class="product-images">
-      <img src="https://via.placeholder.com/300x300/667eea/ffffff?text=商品主图" alt="商品主图" class="main-image">
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">15:20</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-three-quarters"></i>
+      </div>
     </div>
-    <div class="image-indicators">
-      <div class="indicator active"></div>
-      <div class="indicator"></div>
-      <div class="indicator"></div>
-    </div>
-  </div>
 
-  <!-- 标题与价格区 -->
-  <div class="title-price-section">
-    <h1 class="product-title">【新款/黑科技】威克多胜利羽毛球拍单拍 TK-RYUGA II 龙牙之刃二代</h1>
-    <div class="price-info">
-      <span class="current-price">¥1428</span>
-      <span class="original-price">¥1680</span>
-      <span class="discount-tag">券后价</span>
-    </div>
-    <div class="sales-info">
-      <div class="sales-item">
-        <i class="fas fa-fire"></i>
-        <span>已售 252件</span>
-      </div>
-      <div class="sales-item">
-        <i class="fas fa-star"></i>
-        <span>4.9分</span>
-      </div>
-      <div class="sales-item">
-        <i class="fas fa-comment"></i>
-        <span>88条评价</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 发货与服务区 -->
-  <div class="shipping-service-section">
-    <div class="shipping-info">
-      <div class="shipping-row">
-        <span class="shipping-label">发货时间</span>
-        <span class="shipping-value">48小时内发货</span>
-      </div>
-      <div class="shipping-row">
-        <span class="shipping-label">发货地</span>
-        <span class="shipping-value">吉林长春</span>
-      </div>
-      <div class="shipping-row">
-        <span class="shipping-label">快递</span>
-        <span class="shipping-value free-shipping">包邮</span>
-      </div>
-    </div>
-    <div class="service-tags">
-      <div class="service-tag">
-        <i class="fas fa-shield-alt"></i>
-        <span>假一赔四</span>
-      </div>
-      <div class="service-tag">
-        <i class="fas fa-rocket"></i>
-        <span>极速发货</span>
-      </div>
-      <div class="service-tag">
-        <i class="fas fa-undo"></i>
-        <span>七天无理由退货</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 商品材质参数区 -->
-  <div class="specs-section">
-    <h3 class="section-title">
-      <i class="fas fa-list-ul"></i>
-      产品参数
-    </h3>
-    <div class="specs-grid">
-      <div class="spec-item">
-        <span class="spec-label">材质</span>
-        <span class="spec-value">碳纤维</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-label">重量</span>
-        <span class="spec-value">83±2g</span>
-      </div>
-      <div class="spec-item">
-        <span class="spec-label">平衡点</span>
-        <span class="spec-value">295±3mm</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 评价区 -->
-  <div class="reviews-section">
-    <h3 class="section-title">
-      <i class="fas fa-comments"></i>
-      用户评价
-    </h3>
-    <div class="review-item">
-      <div class="review-header">
-        <div class="reviewer-info">
-          <div class="reviewer-avatar"></div>
-          <span class="reviewer-name">球拍达人</span>
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部导航栏 -->
+      <div class="header">
+        <div class="header-left">
+          <button class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <div class="store-info">
+            <div class="store-icon">倍</div>
+            <span class="store-name">倍特爱羽毛球专营店</span>
+          </div>
         </div>
-        <div class="rating-stars">
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
+        <div class="header-right">
+          <i class="fas fa-shopping-cart header-icon"></i>
+          <i class="fas fa-ellipsis-h header-icon"></i>
         </div>
       </div>
-      <p class="review-content">球拍质量很好，挥拍感觉很顺滑，进攻性很强，适合中高级选手使用。包装也很用心，物流很快！</p>
-    </div>
-    <div class="review-item">
-      <div class="review-header">
-        <div class="reviewer-info">
-          <div class="reviewer-avatar"></div>
-          <span class="reviewer-name">羽毛球爱好者</span>
-        </div>
-        <div class="rating-stars">
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
-          <i class="fas fa-star"></i>
+
+      <!-- 商品图片区域 -->
+      <div class="product-image-section">
+        <div class="product-swiper">
+          <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&h=400&fit=crop&crop=center" alt="商品图片" class="product-image">
+          <div class="swiper-dots">
+            <div class="swiper-dot active"></div>
+            <div class="swiper-dot"></div>
+            <div class="swiper-dot"></div>
+            <div class="swiper-dot"></div>
+          </div>
         </div>
       </div>
-      <p class="review-content">外观很酷炫，龙牙的设计很有特色。拍子的平衡性很好，适合攻守兼备的打法。</p>
-    </div>
-  </div>
 
-  <!-- 商品详情区 -->
-  <div class="details-section">
-    <h3 class="section-title">
-      <i class="fas fa-info-circle"></i>
-      商品详情
-    </h3>
-    <img src="https://via.placeholder.com/970x600/667eea/ffffff?text=商品详情图1" alt="产品详情" class="detail-image">
-    <img src="https://via.placeholder.com/970x600/764ba2/ffffff?text=商品详情图2" alt="产品详情" class="detail-image">
-    <img src="https://via.placeholder.com/970x600/ff6b6b/ffffff?text=商品详情图3" alt="产品详情" class="detail-image">
-  </div>
+      <!-- 商品基本信息区域 -->
+      <div class="product-info-section">
+        <h1 class="product-title">YONEX尤尼克斯羽毛球拍单拍超轻碳纤维进攻型专业比赛拍</h1>
+        
+        <div class="price-section">
+          <span class="current-price">¥1264.99</span>
+          <span class="original-price">¥1399.99</span>
+        </div>
 
-  <!-- 底部操作栏 -->
-  <div class="bottom-actions">
-    <div class="action-icon">
-      <i class="fas fa-comments"></i>
-      <span>客服</span>
+        <div class="promotion-tags">
+          <span class="promo-tag">跨店每满50减5</span>
+          <span class="promo-tag">新客满10减5</span>
+        </div>
+
+        <div class="sales-stats">
+          <div class="sales-item">
+            <i class="fas fa-fire"></i>
+            <span>已售77</span>
+          </div>
+          <div class="sales-item">
+            <i class="fas fa-star"></i>
+            <span>4.9分</span>
+          </div>
+          <div class="sales-item">
+            <i class="fas fa-comment"></i>
+            <span>200条评价</span>
+          </div>
+        </div>
+
+        <div class="guarantee-section">
+          <div class="guarantee-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>48小时内发货</span>
+          </div>
+          <div class="guarantee-item">
+            <i class="fas fa-undo"></i>
+            <span>7天无理由退换</span>
+          </div>
+        </div>
+
+        <div class="shipping-info">
+          <div class="shipping-row">
+            <span class="shipping-label">发货</span>
+            <span class="shipping-value">吉林长春 发货</span>
+          </div>
+          <div class="shipping-row">
+            <span class="shipping-label">保障</span>
+            <span class="shipping-value">运费险 · 7天无理由</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 评论区域 -->
+      <div class="reviews-section">
+        <div class="section-header">
+          <span class="section-title">商品评价</span>
+          <div class="view-more">
+            <span>查看全部评价</span>
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+
+        <div class="review-summary">
+          <div class="review-score">
+            <span class="score-number">4.9</span>
+            <div class="score-stars">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+          <div class="review-tags">
+            <span class="review-tag">方便携带 16</span>
+            <span class="review-tag">做工精致 15</span>
+            <span class="review-tag">非常可爱 13</span>
+          </div>
+        </div>
+
+        <div class="review-list">
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <div class="reviewer-avatar"></div>
+                <span class="reviewer-name">羽毛球爱好者</span>
+              </div>
+              <div class="review-rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+            <p class="review-content">球拍质量很好，挥拍感觉很顺滑，进攻性很强，适合中高级选手使用。包装也很用心，物流很快！</p>
+          </div>
+          
+          <div class="review-item">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <div class="reviewer-avatar"></div>
+                <span class="reviewer-name">专业球友</span>
+              </div>
+              <div class="review-rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+            <p class="review-content">外观很酷炫，龙牙的设计很有特色。拍子的平衡性很好，适合攻守兼备的打法。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 相关推荐区域 -->
+      <div class="recommend-section">
+        <div class="section-header">
+          <span class="section-title">相关推荐</span>
+          <div class="view-more">
+            <span>查看更多</span>
+            <i class="fas fa-chevron-right"></i>
+          </div>
+        </div>
+
+        <div class="recommend-list">
+          <div class="recommend-item">
+            <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=200&h=200&fit=crop&crop=center" alt="推荐商品" class="recommend-image">
+            <div class="recommend-info">
+              <div class="recommend-name">李宁羽毛球拍单拍全碳素超轻进攻型耐打专业比赛训练拍</div>
+              <div class="recommend-price">¥188</div>
+            </div>
+          </div>
+          
+          <div class="recommend-item">
+            <img src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=200&h=200&fit=crop&crop=center" alt="推荐商品" class="recommend-image">
+            <div class="recommend-info">
+              <div class="recommend-name">胜利VICTOR羽毛球拍单拍碳纤维超轻4U进攻型专业比赛拍</div>
+              <div class="recommend-price">¥156</div>
+            </div>
+          </div>
+
+          <div class="recommend-item">
+            <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop&crop=center" alt="推荐商品" class="recommend-image">
+            <div class="recommend-info">
+              <div class="recommend-name">凯胜KASON羽毛球拍单拍全碳素超轻进攻型耐用专业训练拍</div>
+              <div class="recommend-price">¥98</div>
+            </div>
+          </div>
+
+          <div class="recommend-item">
+            <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=200&h=200&fit=crop&crop=center" alt="推荐商品" class="recommend-image">
+            <div class="recommend-info">
+              <div class="recommend-name">川崎KAWASAKI羽毛球拍单拍碳纤维超轻4U进攻防守型</div>
+              <div class="recommend-price">¥79</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 商品参数区域 -->
+      <div class="params-section">
+        <div class="section-header">
+          <span class="section-title">商品参数</span>
+        </div>
+        
+        <div class="params-content">
+          <div class="params-grid">
+            <div class="param-item">
+              <span class="param-label">品牌</span>
+              <span class="param-value">YONEX/尤尼克斯</span>
+            </div>
+            <div class="param-item">
+              <span class="param-label">材质</span>
+              <span class="param-value">碳纤维</span>
+            </div>
+            <div class="param-item">
+              <span class="param-label">重量</span>
+              <span class="param-value">83±2g</span>
+            </div>
+            <div class="param-item">
+              <span class="param-label">平衡点</span>
+              <span class="param-value">295±3mm</span>
+            </div>
+            <div class="param-item">
+              <span class="param-label">拍杆硬度</span>
+              <span class="param-value">中硬</span>
+            </div>
+            <div class="param-item">
+              <span class="param-label">适用水平</span>
+              <span class="param-value">中高级</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 图文详情区域 -->
+      <div class="details-section">
+        <div class="section-header">
+          <span class="section-title">图文详情</span>
+        </div>
+        
+        <div class="details-content">
+          <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&h=300&fit=crop&crop=center" alt="商品详情" class="detail-image">
+          
+          <p class="detail-text">YONEX尤尼克斯羽毛球拍采用高强度碳纤维材质，重量仅为83±2g，为您提供极致的挥拍体验。专为进攻型选手设计，平衡点295±3mm，确保每一次挥拍都能发挥最大威力。</p>
+          
+          <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop&crop=center" alt="材质细节" class="detail-image">
+          
+          <p class="detail-text">精选高级碳纤维材质，经过特殊工艺处理，确保球拍的耐用性和稳定性。拍面采用先进的弦槽设计，提供更好的球感和控制力。</p>
+          
+          <img src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400&h=300&fit=crop&crop=center" alt="使用场景" class="detail-image">
+          
+          <p class="detail-text">适合中高级选手使用，无论是比赛还是日常训练，都能为您提供专业级的使用体验。配备专业级手胶，确保握感舒适，防滑效果出色。</p>
+        </div>
+      </div>
     </div>
-    <div class="action-icon">
-      <i class="fas fa-heart"></i>
-      <span>收藏</span>
+
+    <!-- 底部导航栏 -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
+      </div>
+      <div class="tab-item active">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
+      </div>
+      <div class="tab-item">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
+      </div>
     </div>
-    <div class="action-buttons">
-      <button class="action-btn btn-cart">加入购物车</button>
-      <button class="action-btn btn-buy">立即购买</button>
+
+    <!-- 底部操作栏 -->
+    <div class="bottom-actions">
+      <div class="action-icon">
+        <i class="fas fa-comments"></i>
+        <span>客服</span>
+      </div>
+      <div class="action-icon">
+        <i class="fas fa-heart"></i>
+        <span>收藏</span>
+      </div>
+      <div class="action-buttons">
+        <button class="action-btn btn-cart">加入购物车</button>
+        <button class="action-btn btn-buy">立即购买</button>
+      </div>
     </div>
   </div>
 
   <script>
-    // 图片轮播功能
-    const indicators = document.querySelectorAll('.indicator');
-    const mainImage = document.querySelector('.main-image');
+    // 图片轮播功能 - 切换商品图片展示
+    const swiperDots = document.querySelectorAll('.swiper-dot');
+    const productImage = document.querySelector('.product-image');
     
-    // 模拟多张商品图片
-    const images = [
-      'https://via.placeholder.com/300x300/667eea/ffffff?text=商品主图',
-      'https://via.placeholder.com/300x300/764ba2/ffffff?text=商品图2', 
-      'https://via.placeholder.com/300x300/ff6b6b/ffffff?text=商品图3'
+    // 模拟多张商品图片数据
+    const productImages = [
+      'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=400&h=400&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=400&h=400&fit=crop&crop=center',
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center'
     ];
     
-    indicators.forEach((indicator, index) => {
-      indicator.addEventListener('click', () => {
-        // 移除所有active类
-        indicators.forEach(ind => ind.classList.remove('active'));
-        // 添加active类到当前点击的指示器
-        indicator.classList.add('active');
-        // 切换主图
-        mainImage.src = images[index];
+    swiperDots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        // 移除所有激活状态
+        swiperDots.forEach(d => d.classList.remove('active'));
+        // 设置当前点击的指示器为激活状态
+        dot.classList.add('active');
+        // 切换对应的商品图片
+        productImage.src = productImages[index];
+        console.log(`切换到第${index + 1}张图片`);
       });
     });
-    
-    // 底部按钮点击事件
-    document.querySelector('.btn-cart').addEventListener('click', () => {
-      alert('已加入购物车！');
+
+    // 返回按钮功能 - 返回上一页
+    document.querySelector('.back-btn').addEventListener('click', function() {
+      console.log('返回上一页');
+      // 在实际小程序中，这里会调用 wx.navigateBack()
+    });
+
+    // 底部操作按钮功能
+    document.querySelector('.btn-cart').addEventListener('click', function() {
+      console.log('添加到购物车');
+      // 在实际小程序中，这里会调用购物车相关接口
     });
     
-    document.querySelector('.btn-buy').addEventListener('click', () => {
-      alert('立即购买功能！');
+    document.querySelector('.btn-buy').addEventListener('click', function() {
+      console.log('立即购买');
+      // 在实际小程序中，这里会跳转到订单确认页面
     });
     
-    // 客服和收藏按钮点击事件
+    // 客服和收藏按钮功能
     document.querySelectorAll('.action-icon').forEach(icon => {
-      icon.addEventListener('click', () => {
-        const text = icon.querySelector('span').textContent;
-        alert(`${text}功能！`);
+      icon.addEventListener('click', function() {
+        const text = this.querySelector('span').textContent;
+        console.log(`点击了${text}功能`);
+        // 在实际小程序中，这里会调用对应的功能接口
       });
+    });
+
+    // 推荐商品点击功能 - 跳转到其他商品详情
+    document.querySelectorAll('.recommend-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const productName = this.querySelector('.recommend-name').textContent;
+        console.log('点击推荐商品：', productName);
+        // 在实际小程序中，这里会跳转到对应商品的详情页
+      });
+    });
+
+    // 查看全部评价功能
+    document.querySelector('.reviews-section .view-more').addEventListener('click', function() {
+      console.log('查看全部评价');
+      // 在实际小程序中，这里会跳转到评价列表页面
+    });
+
+    // 查看更多推荐功能
+    document.querySelector('.recommend-section .view-more').addEventListener('click', function() {
+      console.log('查看更多推荐');
+      // 在实际小程序中，这里会跳转到推荐商品列表页面
     });
   </script>
 </body>

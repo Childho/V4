@@ -3,555 +3,919 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的订单</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <title>羽你同行 - 我的订单</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
+    /* 配色方案 - 微信小程序原生风格 */
+    :root {
+      --primary-color: #07C160;  /* 微信绿 */
+      --warning-color: #FF9500;  /* 橙色 */
+      --danger-color: #FA5151;   /* 红色 */
+      --info-color: #10AEFF;     /* 蓝色 */
+      --text-color: #191919;     /* 主文字 */
+      --secondary-text: #888888; /* 次要文字 */
+      --disabled-text: #C5C5C5;  /* 禁用文字 */
+      --border-color: #E5E5E5;   /* 边框色 */
+      --bg-color: #F7F7F7;       /* 背景色 */
+      --card-bg: #FFFFFF;        /* 卡片背景 */
+    }
+
+    body {
+      background-color: var(--bg-color);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, Roboto, sans-serif;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
     }
-    
-    body {
-      background-color: #f5f5f5;
+
+    .content {
+      background-color: var(--bg-color);
+      min-height: 100vh;
     }
-    
-    /* 页面头部 */
+
+    /* 顶部导航栏 - 微信原生风格 */
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      text-align: center;
+      background-color: var(--card-bg);
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: relative;
+      border-bottom: 0.5px solid var(--border-color);
     }
-    
-    .header h1 {
-      font-size: 18px;
+
+    .header-title {
+      font-size: 17px;
       font-weight: 600;
+      color: var(--text-color);
     }
-    
+
     .back-btn {
       position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
+      left: 16px;
       background: none;
       border: none;
-      color: white;
-      font-size: 20px;
+      font-size: 18px;
+      color: var(--text-color);
       cursor: pointer;
+      padding: 8px;
     }
-    
-    /* Tab切换栏 */
-    .tab-container {
-      background: white;
-      border-bottom: 1px solid #f0f0f0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+
+    /* Tab切换栏 - 微信原生风格 */
+    .tabs-container {
+      background-color: var(--card-bg);
+      border-bottom: 0.5px solid var(--border-color);
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
-    
-    .tab-bar {
+
+    .tabs-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tabs-wrapper {
       display: flex;
-      justify-content: space-around;
-      padding: 0;
+      min-width: 100%;
     }
-    
+
     .tab-item {
       flex: 1;
+      min-width: 80px;
+      padding: 12px 8px;
       text-align: center;
-      padding: 15px 10px;
-      font-size: 14px;
-      color: #666;
-      cursor: pointer;
+      font-size: 15px;
+      color: var(--secondary-text);
       position: relative;
-      transition: all 0.3s;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s;
     }
-    
+
     .tab-item.active {
-      color: #667eea;
-      font-weight: 600;
+      color: var(--text-color);
+      font-weight: 500;
     }
-    
+
     .tab-item.active::after {
       content: '';
       position: absolute;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 30px;
-      height: 3px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      border-radius: 2px;
+      width: 24px;
+      height: 2px;
+      background-color: var(--primary-color);
     }
-    
-    /* 订单列表区域 */
-    .order-list {
-      padding: 10px 15px;
+
+    /* 订单列表容器 */
+    .order-container {
+      padding: 0 0 100px 0;
     }
-    
-    /* 订单卡片 */
+
+    /* 订单卡片 - 微信原生卡片风格 */
     .order-card {
-      background: white;
-      border-radius: 12px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      background-color: var(--card-bg);
+      margin: 12px 12px 0 12px;
+      border-radius: 8px;
       overflow: hidden;
-      transition: all 0.3s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
-    
-    .order-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* 订单头部信息 */
+
+    /* 订单头部 */
     .order-header {
-      padding: 15px 20px 10px;
-      border-bottom: 1px solid #f8f8f8;
+      padding: 12px 16px;
+      border-bottom: 0.5px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background-color: #FAFAFA;
     }
-    
+
+    .order-info {
+      flex: 1;
+    }
+
     .order-number {
+      font-size: 13px;
+      color: var(--secondary-text);
+      margin-bottom: 2px;
+    }
+
+    .order-date {
       font-size: 12px;
-      color: #999;
+      color: var(--disabled-text);
     }
-    
+
     .order-status {
-      font-size: 14px;
-      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
     }
-    
+
+    /* 订单状态样式 */
     .status-pending {
-      color: #ff6b6b;
+      background-color: #FFF2F0;
+      color: var(--danger-color);
+      border: 0.5px solid #FFCCC7;
     }
-    
-    .status-shipping {
-      color: #4ecdc4;
+
+    .status-paid {
+      background-color: #FFF7E6;
+      color: var(--warning-color);
+      border: 0.5px solid #FFD591;
     }
-    
-    .status-delivered {
-      color: #45b7d1;
+
+    .status-shipped {
+      background-color: #E6F7FF;
+      color: var(--info-color);
+      border: 0.5px solid #91D5FF;
     }
-    
-    .status-completed {
-      color: #96ceb4;
+
+    .status-received {
+      background-color: #F6FFED;
+      color: var(--primary-color);
+      border: 0.5px solid #B7EB8F;
     }
-    
-    /* 商品信息区域 */
-    .product-info {
-      padding: 15px 20px;
+
+    .status-refund {
+      background-color: #FFF0F6;
+      color: #EB2F96;
+      border: 0.5px solid #FFADD2;
+    }
+
+    /* 商品列表 */
+    .product-list {
+      padding: 0;
+    }
+
+    .product-item {
+      padding: 16px;
+      border-bottom: 0.5px solid var(--border-color);
       display: flex;
-      gap: 15px;
+      gap: 12px;
     }
-    
-    .product-images {
-      position: relative;
-      flex-shrink: 0;
+
+    .product-item:last-child {
+      border-bottom: none;
     }
-    
-    .main-product-image {
-      width: 80px;
-      height: 80px;
-      border-radius: 8px;
+
+    .product-image {
+      width: 70px;
+      height: 70px;
+      border-radius: 4px;
       object-fit: cover;
-      border: 1px solid #f0f0f0;
+      flex-shrink: 0;
+      border: 0.5px solid var(--border-color);
     }
-    
-    .image-count {
-      position: absolute;
-      bottom: -5px;
-      right: -5px;
-      background: #667eea;
-      color: white;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 10px;
-      min-width: 16px;
-      text-align: center;
-    }
-    
+
     .product-details {
       flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
-    
+
     .product-name {
       font-size: 14px;
-      color: #333;
-      margin-bottom: 5px;
-      line-height: 1.4;
+      color: var(--text-color);
+      line-height: 20px;
+      margin-bottom: 4px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    
-    .product-spec {
+
+    .product-specs {
       font-size: 12px;
-      color: #999;
+      color: var(--secondary-text);
       margin-bottom: 8px;
     }
-    
-    .price-quantity {
+
+    .product-price-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    
+
     .product-price {
       font-size: 16px;
-      color: #ff4757;
-      font-weight: 600;
+      color: var(--danger-color);
+      font-weight: 500;
     }
-    
+
     .product-quantity {
       font-size: 12px;
-      color: #666;
+      color: var(--secondary-text);
     }
-    
-    /* 订单底部操作区 */
-    .order-actions {
-      padding: 15px 20px;
-      border-top: 1px solid #f8f8f8;
+
+    /* 订单底部 */
+    .order-footer {
+      padding: 12px 16px;
+      background-color: #FAFAFA;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-top: 0.5px solid var(--border-color);
     }
-    
+
     .order-total {
-      font-size: 14px;
-      color: #333;
+      font-size: 13px;
+      color: var(--secondary-text);
     }
-    
-    .total-amount {
-      font-size: 16px;
-      color: #ff4757;
-      font-weight: 600;
-      margin-left: 5px;
+
+    .total-price {
+      color: var(--danger-color);
+      font-weight: 500;
+      margin-left: 4px;
     }
-    
-    .action-buttons {
+
+    .order-actions {
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
-    
-    .action-btn {
-      padding: 8px 16px;
-      border: 1px solid #ddd;
-      border-radius: 20px;
-      background: white;
-      color: #666;
-      font-size: 12px;
+
+    /* 按钮样式 - 微信原生风格 */
+    .btn {
+      padding: 6px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      border: 0.5px solid var(--border-color);
+      background-color: var(--card-bg);
+      color: var(--text-color);
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.2s;
+      white-space: nowrap;
     }
-    
-    .action-btn.primary {
-      background: linear-gradient(45deg, #667eea, #764ba2);
+
+    .btn:hover {
+      opacity: 0.8;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
       color: white;
-      border-color: transparent;
+      border-color: var(--primary-color);
     }
-    
-    .action-btn.danger {
-      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+
+    .btn-warning {
+      background-color: var(--warning-color);
       color: white;
-      border-color: transparent;
+      border-color: var(--warning-color);
     }
-    
-    .action-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+      border-color: var(--danger-color);
     }
-    
-    /* 订单详情链接 */
-    .order-detail-link {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      color: #999;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.3s;
+
+    .btn-info {
+      background-color: var(--info-color);
+      color: white;
+      border-color: var(--info-color);
     }
-    
-    .order-detail-link:hover {
-      color: #667eea;
-      transform: scale(1.1);
-    }
-    
-    /* 时间信息 */
-    .order-time {
-      font-size: 12px;
-      color: #999;
-      margin-top: 5px;
-    }
-    
+
     /* 空状态 */
     .empty-state {
       text-align: center;
-      padding: 60px 20px;
-      color: #999;
+      padding: 80px 20px;
     }
-    
+
     .empty-icon {
-      font-size: 48px;
-      margin-bottom: 15px;
-      opacity: 0.5;
+      font-size: 64px;
+      color: var(--disabled-text);
+      margin-bottom: 16px;
     }
-    
-    /* 响应式设计 */
-    @media (max-width: 480px) {
-      .order-list {
-        padding: 10px;
+
+    .empty-text {
+      font-size: 16px;
+      color: var(--secondary-text);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 14px;
+      color: var(--disabled-text);
+    }
+
+    /* 删除按钮（仅全部订单显示） */
+    .delete-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      font-size: 10px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .order-card {
+      position: relative;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 375px) {
+      .tab-item {
+        min-width: 70px;
+        font-size: 14px;
+        padding: 10px 6px;
       }
-      
-      .product-info {
-        padding: 12px 15px;
+
+      .product-image {
+        width: 60px;
+        height: 60px;
       }
-      
-      .order-header,
+
       .order-actions {
-        padding: 12px 15px;
+        flex-direction: column;
+        gap: 6px;
       }
-      
-      .main-product-image {
-        width: 70px;
-        height: 70px;
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 12px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- 页面头部 -->
-  <div class="header">
-    <button class="back-btn">
-      <i class="fas fa-arrow-left"></i>
-    </button>
-    <h1>我的订单</h1>
-  </div>
+  <div class="phone-container">
+    <!-- 状态栏 -->
+    <div class="status-bar">
+      <span class="time">15:20</span>
+      <div class="icons">
+        <i class="fas fa-signal"></i>
+        <i class="fas fa-wifi"></i>
+        <i class="fas fa-battery-three-quarters"></i>
+      </div>
+    </div>
 
-  <!-- Tab切换栏 -->
-  <div class="tab-container">
+    <!-- 内容区域 -->
+    <div class="content">
+      <!-- 顶部导航栏 -->
+      <div class="header">
+        <button class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="header-title">我的订单</div>
+      </div>
+
+      <!-- Tab标签栏 -->
+      <div class="tabs-container">
+        <div class="tabs-wrapper">
+          <div class="tab-item active" data-status="all">全部订单</div>
+          <div class="tab-item" data-status="pending">待付款</div>
+          <div class="tab-item" data-status="paid">待发货</div>
+          <div class="tab-item" data-status="shipped">待收货</div>
+          <div class="tab-item" data-status="received">待评价</div>
+          <div class="tab-item" data-status="refund">退款/售后</div>
+        </div>
+      </div>
+
+      <!-- 订单列表容器 -->
+      <div class="order-container">
+        <!-- 待付款订单示例 -->
+        <div class="order-card" data-status="pending">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-number">订单号：2024011512345678</div>
+              <div class="order-date">2024-01-15 14:32:15</div>
+            </div>
+            <div class="order-status status-pending">待付款</div>
+          </div>
+          
+          <div class="product-list">
+            <div class="product-item">
+              <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=200&h=200&fit=crop&crop=center" alt="商品图片" class="product-image">
+              <div class="product-details">
+                <div class="product-name">YONEX尤尼克斯羽毛球拍单拍超轻碳纤维进攻型专业比赛拍</div>
+                <div class="product-specs">颜色：蓝色 | 规格：4U</div>
+                <div class="product-price-row">
+                  <div class="product-price">¥1,264.99</div>
+                  <div class="product-quantity">×1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="order-footer">
+            <div class="order-total">
+              共1件商品 合计：<span class="total-price">¥1,264.99</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn">取消订单</button>
+              <button class="btn btn-danger">去付款</button>
+            </div>
+          </div>
+          
+          <button class="delete-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- 待发货订单示例 -->
+        <div class="order-card" data-status="paid">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-number">订单号：2024011412345679</div>
+              <div class="order-date">2024-01-14 16:45:32</div>
+            </div>
+            <div class="order-status status-paid">待发货</div>
+          </div>
+          
+          <div class="product-list">
+            <div class="product-item">
+              <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=200&h=200&fit=crop&crop=center" alt="商品图片" class="product-image">
+              <div class="product-details">
+                <div class="product-name">李宁羽毛球鞋男鞋专业训练鞋防滑透气运动鞋</div>
+                <div class="product-specs">颜色：黑白 | 尺码：42</div>
+                <div class="product-price-row">
+                  <div class="product-price">¥398.00</div>
+                  <div class="product-quantity">×1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="order-footer">
+            <div class="order-total">
+              共1件商品 合计：<span class="total-price">¥398.00</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn btn-warning">催发货</button>
+            </div>
+          </div>
+          
+          <button class="delete-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- 待收货订单示例 -->
+        <div class="order-card" data-status="shipped">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-number">订单号：2024011312345680</div>
+              <div class="order-date">2024-01-13 10:22:18</div>
+            </div>
+            <div class="order-status status-shipped">待收货</div>
+          </div>
+          
+          <div class="product-list">
+            <div class="product-item">
+              <img src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=200&h=200&fit=crop&crop=center" alt="商品图片" class="product-image">
+              <div class="product-details">
+                <div class="product-name">李宁羽毛球线 AP61 弹性好耐打专业比赛训练用线</div>
+                <div class="product-specs">颜色：白色 | 规格：0.67mm</div>
+                <div class="product-price-row">
+                  <div class="product-price">¥85.00</div>
+                  <div class="product-quantity">×2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="order-footer">
+            <div class="order-total">
+              共2件商品 合计：<span class="total-price">¥170.00</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn btn-info">查看物流</button>
+              <button class="btn btn-primary">确认收货</button>
+            </div>
+          </div>
+          
+          <button class="delete-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- 待评价订单示例 -->
+        <div class="order-card" data-status="received">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-number">订单号：2024011212345681</div>
+              <div class="order-date">2024-01-12 09:15:44</div>
+            </div>
+            <div class="order-status status-received">待评价</div>
+          </div>
+          
+          <div class="product-list">
+            <div class="product-item">
+              <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop&crop=center" alt="商品图片" class="product-image">
+              <div class="product-details">
+                <div class="product-name">李宁羽毛球包大容量双肩背包运动包球拍收纳包</div>
+                <div class="product-specs">颜色：蓝黑 | 尺码：大号</div>
+                <div class="product-price-row">
+                  <div class="product-price">¥168.00</div>
+                  <div class="product-quantity">×1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="order-footer">
+            <div class="order-total">
+              共1件商品 合计：<span class="total-price">¥168.00</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn btn-warning">去评价</button>
+            </div>
+          </div>
+          
+          <button class="delete-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- 退款/售后订单示例 -->
+        <div class="order-card" data-status="refund">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-number">订单号：2024011112345682</div>
+              <div class="order-date">2024-01-11 15:30:26</div>
+            </div>
+            <div class="order-status status-refund">退款处理中</div>
+          </div>
+          
+          <div class="product-list">
+            <div class="product-item">
+              <img src="https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=200&h=200&fit=crop&crop=center" alt="商品图片" class="product-image">
+              <div class="product-details">
+                <div class="product-name">胜利VICTOR羽毛球拍单拍碳纤维超轻4U进攻型专业比赛拍</div>
+                <div class="product-specs">颜色：红色 | 规格：4U</div>
+                <div class="product-price-row">
+                  <div class="product-price">¥799.00</div>
+                  <div class="product-quantity">×1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="order-footer">
+            <div class="order-total">
+              退款状态：<span class="total-price">审核通过，预计3-7个工作日到账</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn btn-info">查看进度</button>
+            </div>
+          </div>
+          
+          <button class="delete-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- 多商品待付款订单示例 -->
+        <div class="order-card" data-status="pending">
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-number">订单号：2024011012345683</div>
+              <div class="order-date">2024-01-10 20:45:12</div>
+            </div>
+            <div class="order-status status-pending">待付款</div>
+          </div>
+          
+          <div class="product-list">
+            <div class="product-item">
+              <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop&crop=center" alt="商品图片" class="product-image">
+              <div class="product-details">
+                <div class="product-name">凯胜KASON羽毛球拍单拍全碳素超轻进攻型耐用专业训练拍</div>
+                <div class="product-specs">颜色：黑金 | 规格：5U</div>
+                <div class="product-price-row">
+                  <div class="product-price">¥298.00</div>
+                  <div class="product-quantity">×1</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-item">
+              <img src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=200&h=200&fit=crop&crop=center" alt="商品图片" class="product-image">
+              <div class="product-details">
+                <div class="product-name">羽毛球专业比赛用球12只装耐打天然鹅毛球</div>
+                <div class="product-specs">规格：77速 | 包装：12只装</div>
+                <div class="product-price-row">
+                  <div class="product-price">¥88.00</div>
+                  <div class="product-quantity">×2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="order-footer">
+            <div class="order-total">
+              共3件商品 合计：<span class="total-price">¥474.00</span>
+            </div>
+            <div class="order-actions">
+              <button class="btn">取消订单</button>
+              <button class="btn btn-danger">去付款</button>
+            </div>
+          </div>
+          
+          <button class="delete-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部导航栏 -->
     <div class="tab-bar">
-      <div class="tab-item active" data-status="all">全部</div>
-      <div class="tab-item" data-status="pending">待付款</div>
-      <div class="tab-item" data-status="shipping">待发货</div>
-      <div class="tab-item" data-status="review">待评价</div>
-    </div>
-  </div>
-
-  <!-- 订单列表 -->
-  <div class="order-list">
-    <!-- 待付款订单 -->
-    <div class="order-card" data-order-status="pending">
-      <div class="order-header">
-        <div>
-          <div class="order-number">订单号：2024010118328901</div>
-          <div class="order-time">下单时间：2024-01-01 18:32:45</div>
-        </div>
-        <div class="order-status status-pending">待付款</div>
-        <i class="fas fa-chevron-right order-detail-link"></i>
+      <div class="tab-item">
+        <i class="fas fa-home"></i>
+        <span class="tab-text">首页</span>
       </div>
-      
-      <div class="product-info">
-        <div class="product-images">
-          <img src="https://via.placeholder.com/80x80/667eea/ffffff?text=球拍" alt="商品图片" class="main-product-image">
-          <div class="image-count">2</div>
-        </div>
-        
-        <div class="product-details">
-          <div class="product-name">威克多胜利羽毛球拍单拍 TK-RYUGA II 龙牙之刃二代</div>
-          <div class="product-spec">规格：4U 蓝色</div>
-          <div class="price-quantity">
-            <span class="product-price">¥1,428.00</span>
-            <span class="product-quantity">×1</span>
-          </div>
-        </div>
+      <div class="tab-item">
+        <i class="fas fa-volleyball-ball"></i>
+        <span class="tab-text">活动</span>
       </div>
-      
-      <div class="order-actions">
-        <div class="order-total">
-          共1件商品 合计：<span class="total-amount">¥1,428.00</span>
-        </div>
-        <div class="action-buttons">
-          <button class="action-btn">取消订单</button>
-          <button class="action-btn primary">去付款</button>
-        </div>
+      <div class="tab-item">
+        <i class="fas fa-shopping-bag"></i>
+        <span class="tab-text">商城</span>
       </div>
-    </div>
-
-    <!-- 待发货订单 -->
-    <div class="order-card" data-order-status="shipping">
-      <div class="order-header">
-        <div>
-          <div class="order-number">订单号：2024010117285604</div>
-          <div class="order-time">下单时间：2024-01-01 17:28:30</div>
-        </div>
-        <div class="order-status status-shipping">待发货</div>
-        <i class="fas fa-chevron-right order-detail-link"></i>
+      <div class="tab-item">
+        <i class="fas fa-hands-helping"></i>
+        <span class="tab-text">服务</span>
       </div>
-      
-      <div class="product-info">
-        <div class="product-images">
-          <img src="https://via.placeholder.com/80x80/764ba2/ffffff?text=球鞋" alt="商品图片" class="main-product-image">
-        </div>
-        
-        <div class="product-details">
-          <div class="product-name">李宁羽毛球鞋男鞋专业训练鞋防滑透气运动鞋</div>
-          <div class="product-spec">规格：42码 黑白配色</div>
-          <div class="price-quantity">
-            <span class="product-price">¥398.00</span>
-            <span class="product-quantity">×1</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="order-actions">
-        <div class="order-total">
-          共1件商品 合计：<span class="total-amount">¥398.00</span>
-        </div>
-        <div class="action-buttons">
-          <button class="action-btn">联系客服</button>
-          <button class="action-btn">提醒发货</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 已发货订单 -->
-    <div class="order-card" data-order-status="delivered">
-      <div class="order-header">
-        <div>
-          <div class="order-number">订单号：2023123016428937</div>
-          <div class="order-time">下单时间：2023-12-30 16:42:15</div>
-        </div>
-        <div class="order-status status-delivered">运输中</div>
-        <i class="fas fa-chevron-right order-detail-link"></i>
-      </div>
-      
-      <div class="product-info">
-        <div class="product-images">
-          <img src="https://via.placeholder.com/80x80/ff6b6b/ffffff?text=球线" alt="商品图片" class="main-product-image">
-          <div class="image-count">3</div>
-        </div>
-        
-        <div class="product-details">
-          <div class="product-name">李宁羽毛球线 AP61 弹性好耐打专业比赛训练用线</div>
-          <div class="product-spec">规格：0.67mm 白色</div>
-          <div class="price-quantity">
-            <span class="product-price">¥85.00</span>
-            <span class="product-quantity">×3</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="order-actions">
-        <div class="order-total">
-          共3件商品 合计：<span class="total-amount">¥255.00</span>
-        </div>
-        <div class="action-buttons">
-          <button class="action-btn">查看物流</button>
-          <button class="action-btn primary">确认收货</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 待评价订单 -->
-    <div class="order-card" data-order-status="review">
-      <div class="order-header">
-        <div>
-          <div class="order-number">订单号：2023122815367842</div>
-          <div class="order-time">下单时间：2023-12-28 15:36:20</div>
-        </div>
-        <div class="order-status status-completed">待评价</div>
-        <i class="fas fa-chevron-right order-detail-link"></i>
-      </div>
-      
-      <div class="product-info">
-        <div class="product-images">
-          <img src="https://via.placeholder.com/80x80/4ecdc4/ffffff?text=球包" alt="商品图片" class="main-product-image">
-        </div>
-        
-        <div class="product-details">
-          <div class="product-name">李宁羽毛球包大容量双肩背包运动包球拍收纳包</div>
-          <div class="product-spec">规格：大号 蓝黑配色</div>
-          <div class="price-quantity">
-            <span class="product-price">¥168.00</span>
-            <span class="product-quantity">×1</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="order-actions">
-        <div class="order-total">
-          共1件商品 合计：<span class="total-amount">¥168.00</span>
-        </div>
-        <div class="action-buttons">
-          <button class="action-btn">申请售后</button>
-          <button class="action-btn primary">去评价</button>
-        </div>
+      <div class="tab-item active">
+        <i class="fas fa-user"></i>
+        <span class="tab-text">我的</span>
       </div>
     </div>
   </div>
 
   <script>
-    // Tab切换功能
-    const tabItems = document.querySelectorAll('.tab-item');
+    // 模拟wx:if和wx:for的数据驱动逻辑
+    const orderData = {
+      // 模拟小程序中的data数据
+      currentTab: 'all',
+      orderList: [
+        {
+          id: '2024011512345678',
+          status: 'pending',
+          createTime: '2024-01-15 14:32:15',
+          statusText: '待付款',
+          products: [
+            {
+              image: 'https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=200&h=200&fit=crop&crop=center',
+              name: 'YONEX尤尼克斯羽毛球拍单拍超轻碳纤维进攻型专业比赛拍',
+              specs: '颜色：蓝色 | 规格：4U',
+              price: 1264.99,
+              quantity: 1
+            }
+          ],
+          totalPrice: 1264.99,
+          actions: ['取消订单', '去付款']
+        },
+        {
+          id: '2024011412345679',
+          status: 'paid',
+          createTime: '2024-01-14 16:45:32',
+          statusText: '待发货',
+          products: [
+            {
+              image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=200&h=200&fit=crop&crop=center',
+              name: '李宁羽毛球鞋男鞋专业训练鞋防滑透气运动鞋',
+              specs: '颜色：黑白 | 尺码：42',
+              price: 398.00,
+              quantity: 1
+            }
+          ],
+          totalPrice: 398.00,
+          actions: ['催发货']
+        }
+        // 更多订单数据...
+      ]
+    };
+
+    // Tab切换功能 - 模拟wx:if逻辑
+    const tabItems = document.querySelectorAll('.tab-item[data-status]');
     const orderCards = document.querySelectorAll('.order-card');
     
+    // 切换Tab的函数 - 相当于小程序中的switchTab方法
+    function switchTab(status) {
+      // 更新当前激活的Tab
+      tabItems.forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-status') === status) {
+          tab.classList.add('active');
+        }
+      });
+      
+      // 控制订单卡片显示/隐藏 - 模拟wx:if="{{status === 'all' || item.status === status}}"
+      orderCards.forEach(card => {
+        const cardStatus = card.getAttribute('data-status');
+        const deleteBtn = card.querySelector('.delete-btn');
+        
+        if (status === 'all' || cardStatus === status) {
+          card.style.display = 'block';
+          // 只在全部订单Tab显示删除按钮 - 模拟wx:if="{{currentTab === 'all'}}"
+          if (status === 'all' && deleteBtn) {
+            deleteBtn.style.display = 'flex';
+          }
+        } else {
+          card.style.display = 'none';
+        }
+        
+        if (status !== 'all' && deleteBtn) {
+          deleteBtn.style.display = 'none';
+        }
+      });
+      
+      // 检查空状态 - 模拟wx:if="{{filteredOrders.length === 0}}"
+      checkEmptyState(status);
+      
+      console.log(`切换到${getTabName(status)}Tab`); // 相当于小程序中的console.log
+    }
+
+    // Tab点击事件监听 - 相当于小程序中的bindtap
     tabItems.forEach(tab => {
       tab.addEventListener('click', () => {
-        // 移除所有active类
-        tabItems.forEach(t => t.classList.remove('active'));
-        // 添加active类到当前tab
-        tab.classList.add('active');
-        
         const status = tab.getAttribute('data-status');
-        
-        // 过滤显示订单
-        orderCards.forEach(card => {
-          const cardStatus = card.getAttribute('data-order-status');
-          if (status === 'all' || cardStatus === status) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
+        orderData.currentTab = status; // 更新data中的currentTab
+        switchTab(status);
+      });
+    });
+
+    // 检查空状态函数 - 模拟wx:if条件渲染
+    function checkEmptyState(status) {
+      const visibleCards = Array.from(orderCards).filter(card => {
+        return card.style.display !== 'none';
+      });
+      
+      let existingEmptyState = document.querySelector('.empty-state');
+      
+      // 如果没有可见订单，显示空状态 - 模拟wx:if="{{filteredList.length === 0}}"
+      if (visibleCards.length === 0) {
+        if (!existingEmptyState) {
+          const emptyState = document.createElement('div');
+          emptyState.className = 'empty-state';
+          emptyState.innerHTML = `
+            <div class="empty-icon">
+              <i class="fas fa-inbox"></i>
+            </div>
+            <div class="empty-text">暂无${getTabName(status)}订单</div>
+            <div class="empty-desc">去商城看看有什么好商品吧~</div>
+          `;
+          document.querySelector('.order-container').appendChild(emptyState);
+        }
+      } else {
+        if (existingEmptyState) {
+          existingEmptyState.remove();
+        }
+      }
+    }
+
+    // 获取Tab名称的工具函数
+    function getTabName(status) {
+      const statusMap = {
+        'all': '',
+        'pending': '待付款',
+        'paid': '待发货', 
+        'shipped': '待收货',
+        'received': '待评价',
+        'refund': '退款/售后'
+      };
+      return statusMap[status] || '';
+    }
+
+    // 按钮点击事件处理 - 相当于小程序中的各种bindtap方法
+    document.addEventListener('click', function(e) {
+      const target = e.target;
+      
+      // 处理操作按钮点击 - 相当于小程序中的handleAction方法
+      if (target.classList.contains('btn') && !target.classList.contains('delete-btn')) {
+        const buttonText = target.textContent;
+        handleOrderAction(buttonText); // 调用对应的处理方法
+      }
+      
+      // 处理删除按钮 - 相当于小程序中的deleteOrder方法
+      if (target.closest('.delete-btn')) {
+        handleDeleteOrder(target.closest('.order-card'));
+      }
+    });
+
+    // 订单操作处理函数 - 相当于小程序中的各种业务方法
+    function handleOrderAction(action) {
+      console.log(`执行操作：${action}`); // 相当于小程序中的console.log
+      
+      switch(action) {
+        case '去付款':
+          // 相当于小程序中的 wx.navigateTo({url: '/pages/payment/payment'})
+          alert('跳转到支付页面');
+          break;
+        case '取消订单':
+          // 相当于小程序中的 wx.showModal 确认取消
+          if (confirm('确定要取消这个订单吗？')) {
+            alert('订单已取消');
+            // 这里可以调用取消订单的API
           }
-        });
-      });
+          break;
+        case '催发货':
+          // 相当于小程序中的调用催发货API
+          alert('已提醒商家尽快发货');
+          break;
+        case '查看物流':
+          // 相当于小程序中的 wx.navigateTo({url: '/pages/logistics/logistics'})
+          alert('跳转到物流详情页面');
+          break;
+        case '确认收货':
+          // 相当于小程序中的 wx.showModal 确认收货
+          if (confirm('确认已收到商品吗？')) {
+            alert('已确认收货，订单完成');
+          }
+          break;
+        case '去评价':
+          // 相当于小程序中的 wx.navigateTo({url: '/pages/review/review'})
+          alert('跳转到商品评价页面');
+          break;
+        case '查看进度':
+          // 相当于小程序中的 wx.navigateTo({url: '/pages/refund/refund'})
+          alert('跳转到售后进度页面');
+          break;
+        default:
+          alert(`${action}功能`);
+      }
+    }
+
+    // 删除订单处理函数 - 相当于小程序中的deleteOrder方法
+    function handleDeleteOrder(orderCard) {
+      if (confirm('确定要删除这个订单记录吗？')) {
+        // 添加删除动画
+        orderCard.style.transition = 'all 0.3s ease';
+        orderCard.style.transform = 'translateX(100%)';
+        orderCard.style.opacity = '0';
+        
+        setTimeout(() => {
+          orderCard.remove();
+          console.log('订单已删除'); // 相当于小程序中的console.log
+          // 检查删除后是否需要显示空状态
+          checkEmptyState(orderData.currentTab);
+        }, 300);
+      }
+    }
+
+    // 返回按钮功能 - 相当于小程序中的wx.navigateBack()
+    document.querySelector('.back-btn').addEventListener('click', function() {
+      console.log('返回上一页'); // 相当于小程序中的console.log
+      // 在实际小程序中，这里会调用 wx.navigateBack()
     });
-    
-    // 订单操作按钮点击事件
-    document.querySelectorAll('.action-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const action = btn.textContent;
-        alert(`${action}功能`);
-      });
-    });
-    
-    // 订单详情链接点击事件
-    document.querySelectorAll('.order-detail-link').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.stopPropagation();
-        alert('跳转到订单详情页');
-      });
-    });
-    
-    // 订单卡片点击事件
-    document.querySelectorAll('.order-card').forEach(card => {
-      card.addEventListener('click', () => {
-        alert('查看订单详情');
-      });
-    });
-    
-    // 返回按钮
-    document.querySelector('.back-btn').addEventListener('click', () => {
-      alert('返回上一页');
+
+    // 页面初始化 - 相当于小程序中的onLoad生命周期
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('订单页面初始化完成'); // 相当于小程序中的console.log
+      // 默认显示全部订单
+      switchTab('all');
     });
   </script>
 </body>
