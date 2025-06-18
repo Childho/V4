@@ -227,22 +227,32 @@
   margin-right: 30rpx;
 }
 
-.total-price {
+.summary-info {
   display: flex;
   align-items: center;
   margin-bottom: 5rpx;
 }
 
-.price-label {
+.summary-text {
   font-size: 28rpx;
   color: #333333;
 }
 
-.price-value {
+.summary-price {
   font-size: 36rpx;
   color: #ff4444;
   font-weight: bold;
   margin-left: 10rpx;
+}
+
+.detail-btn {
+  font-size: 26rpx;
+  color: #4169e1;
+  margin-left: 15rpx;
+  padding: 8rpx 16rpx;
+  border: 1rpx solid #4169e1;
+  border-radius: 20rpx;
+  background-color: #f0f7ff;
 }
 
 .discount-info {
@@ -515,4 +525,136 @@
   background: #4169e1;
   color: #ffffff;
   margin: 0;
+}
+
+/* 金额明细弹窗样式 */
+.price-detail-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.detail-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.detail-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  padding-bottom: 32rpx;
+}
+
+.detail-header {
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: relative;
+  text-align: center;
+}
+
+.detail-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333333;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.detail-subtitle {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.detail-close {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  font-size: 40rpx;
+  color: #999999;
+}
+
+.detail-items {
+  padding: 32rpx;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.detail-item-label {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.detail-item-value {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.detail-item-value.discount {
+  color: #4169e1;
+}
+
+.detail-item-value.total-price {
+  font-size: 32rpx;
+  color: #ff4444;
+  font-weight: bold;
+}
+
+.detail-item.total {
+  border-top: 1rpx solid #f0f0f0;
+  padding-top: 24rpx;
+  margin-top: 8rpx;
+}
+
+.detail-divider {
+  height: 1rpx;
+  background-color: #f0f0f0;
+  margin: 16rpx 0;
+}
+
+.detail-bottom {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 32rpx;
+  background-color: #f8f8f8;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.detail-count {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.detail-final-price {
+  font-size: 32rpx;
+  color: #ff4444;
+  font-weight: bold;
+  flex: 1;
+  margin-left: 10rpx;
+}
+
+.detail-buy-btn {
+  background-color: #ff6b35;
+  color: #ffffff;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  padding: 16rpx 32rpx;
+  margin: 0;
+  border: none;
 } 

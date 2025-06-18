@@ -65,9 +65,10 @@
 
     <!-- 金额明细区域 -->
     <view wx:if="{{!isManageMode}}" class="price-summary">
-      <view class="total-price">
-        <text class="price-label">合计：</text>
-        <text class="price-value">¥{{totalPrice}}</text>
+      <view class="summary-info">
+        <text class="summary-text">{{selectedCount}}件总计：</text>
+        <text class="summary-price">¥{{totalPrice}}</text>
+        <text class="detail-btn" bindtap="showPriceDetail">明细</text>
       </view>
       <view wx:if="{{discountAmount > 0}}" class="discount-info">
         <text class="discount-text">优惠：-¥{{discountAmount}}</text>
@@ -130,6 +131,40 @@
       
       <view class="popup-btns">
         <button class="popup-confirm-btn" bindtap="confirmSpecsChange">确认修改</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 金额明细弹窗 -->
+  <view class="price-detail-popup" wx:if="{{showPriceDetail}}">
+    <view class="detail-mask" bindtap="hidePriceDetail"></view>
+    <view class="detail-content">
+      <view class="detail-header">
+        <text class="detail-title">金额明细</text>
+        <text class="detail-subtitle">实际优惠金额以下单页为准</text>
+        <view class="detail-close" bindtap="hidePriceDetail">×</view>
+      </view>
+      
+      <view class="detail-items">
+        <view class="detail-item">
+          <text class="detail-item-label">商品总价</text>
+          <text class="detail-item-value">¥{{originalPrice}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{discountAmount > 0}}">
+          <text class="detail-item-label">共减</text>
+          <text class="detail-item-value discount">-¥{{discountAmount}}</text>
+        </view>
+        <view class="detail-divider"></view>
+        <view class="detail-item total">
+          <text class="detail-item-label">总计</text>
+          <text class="detail-item-value total-price">¥{{totalPrice}}</text>
+        </view>
+      </view>
+      
+      <view class="detail-bottom">
+        <text class="detail-count">{{selectedCount}}件总计：</text>
+        <text class="detail-final-price">¥{{totalPrice}}</text>
+        <button class="detail-buy-btn" bindtap="goToCheckout">购买</button>
       </view>
     </view>
   </view>

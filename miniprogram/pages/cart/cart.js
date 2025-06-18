@@ -14,7 +14,9 @@ Page({
     selectedCount: 0, // 已选择商品数量
     totalPrice: '0.00', // 总价格
     discountAmount: '0.00', // 优惠金额
+    originalPrice: '0.00', // 商品原价总计
     showSpecsPopup: false, // 是否显示规格选择弹窗
+    showPriceDetail: false, // 是否显示金额明细弹窗
     currentIndex: -1, // 当前操作的商品索引
     currentItem: {}, // 当前操作的商品
     specOptions: [], // 规格选项
@@ -385,22 +387,23 @@ Page({
     const cartList = this.data.cartList;
     const selectedItems = cartList.filter(item => item.selected);
     
-    let totalPrice = 0;
+    let originalTotal = 0;
     selectedItems.forEach(item => {
-      totalPrice += item.price * item.quantity;
+      originalTotal += item.price * item.quantity;
     });
     
     // 计算优惠金额（这里可以根据业务需求计算优惠）
     let discountAmount = 0;
-    if (totalPrice > 10000) {
+    if (originalTotal > 10000) {
       discountAmount = 100; // 满10000减100
-    } else if (totalPrice > 5000) {
+    } else if (originalTotal > 5000) {
       discountAmount = 50; // 满5000减50
     }
     
-    const finalPrice = totalPrice - discountAmount;
+    const finalPrice = originalTotal - discountAmount;
     
     this.setData({
+      originalPrice: originalTotal.toFixed(2),
       totalPrice: finalPrice.toFixed(2),
       discountAmount: discountAmount.toFixed(2)
     });
@@ -630,5 +633,31 @@ Page({
     }
     
     return true;
+  },
+
+  /**
+   * 显示金额明细弹窗
+   */
+  showPriceDetail() {
+    if (this.data.selectedCount === 0) {
+      wx.showToast({
+        title: '请选择商品',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    this.setData({
+      showPriceDetail: true
+    });
+  },
+
+  /**
+   * 隐藏金额明细弹窗
+   */
+  hidePriceDetail() {
+    this.setData({
+      showPriceDetail: false
+    });
   }
 }); 
