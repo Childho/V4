@@ -1,0 +1,116 @@
+<!-- 订单确认页面 -->
+<view class="order-confirm-container">
+  
+  <!-- 收货地址模块 -->
+  <view class="address-section" bindtap="selectAddress">
+    <view class="section-header">
+      <text class="location-icon">📍</text>
+      <text class="section-title">收货地址</text>
+      <text class="arrow-icon">></text>
+    </view>
+    
+    <view class="address-content" wx:if="{{addressInfo}}">
+      <view class="address-info">
+        <text class="receiver-name">{{addressInfo.name}}</text>
+        <text class="receiver-phone">{{addressInfo.phone}}</text>
+      </view>
+      <view class="address-detail">{{addressInfo.address}}</view>
+    </view>
+    
+    <view class="no-address" wx:else>
+      <text class="no-address-text">请选择收货地址</text>
+    </view>
+  </view>
+
+  <!-- 商品列表模块 -->
+  <view class="goods-section">
+    <view class="section-header">
+      <text class="shop-icon">🏪</text>
+      <text class="section-title">商品信息</text>
+    </view>
+    
+    <view class="goods-list">
+      <view class="goods-item" wx:for="{{orderGoods}}" wx:key="id">
+        <image class="goods-image" src="{{item.image}}" mode="aspectFill"></image>
+        <view class="goods-info">
+          <view class="goods-name">{{item.name}}</view>
+          <view class="goods-spec" wx:if="{{item.spec}}">{{item.spec}}</view>
+          <view class="goods-bottom">
+            <view class="goods-price">¥{{item.price}}</view>
+            <view class="goods-quantity">x{{item.quantity}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 优惠券选择模块 -->
+  <view class="coupon-section" bindtap="selectCoupon">
+    <view class="section-item">
+      <view class="item-left">
+        <text class="coupon-icon">🎫</text>
+        <text class="item-title">优惠券</text>
+      </view>
+      <view class="item-right">
+        <text class="coupon-text" wx:if="{{selectedCoupon}}">-¥{{selectedCoupon.discount}}</text>
+        <text class="coupon-text" wx:else>{{availableCoupons}}张可用</text>
+        <text class="arrow-icon">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 备注模块 -->
+  <view class="remark-section">
+    <view class="section-item">
+      <view class="item-left">
+        <text class="remark-icon">📝</text>
+        <text class="item-title">备注</text>
+      </view>
+      <input 
+        class="remark-input" 
+        placeholder="可填写备注内容（选填）" 
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+        maxlength="100"
+      />
+    </view>
+  </view>
+
+  <!-- 金额明细模块 -->
+  <view class="amount-section">
+    <view class="amount-item">
+      <text class="amount-label">商品金额</text>
+      <text class="amount-value">¥{{totalGoodsAmount}}</text>
+    </view>
+    <view class="amount-item" wx:if="{{selectedCoupon}}">
+      <text class="amount-label">优惠券</text>
+      <text class="amount-value discount">-¥{{selectedCoupon.discount}}</text>
+    </view>
+    <view class="amount-item">
+      <text class="amount-label">运费</text>
+      <text class="amount-value free">{{shippingFee > 0 ? '¥' + shippingFee : '免运费'}}</text>
+    </view>
+  </view>
+
+  <!-- 开发票提示 -->
+  <view class="invoice-tip">
+    <text class="invoice-icon">📄</text>
+    <text class="invoice-text">开发票联系客服</text>
+  </view>
+
+  <!-- 底部操作区 -->
+  <view class="footer-section">
+    <view class="total-info">
+      <text class="total-label">实付金额：</text>
+      <text class="total-amount">¥{{finalAmount}}</text>
+    </view>
+    <button 
+      class="submit-button" 
+      bindtap="submitOrder"
+      disabled="{{!addressInfo || submitting}}"
+    >
+      {{submitting ? '提交中...' : '提交订单'}}
+    </button>
+  </view>
+
+</view> 

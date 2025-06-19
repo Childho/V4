@@ -6,6 +6,7 @@
     "pages/activity/index",
     "pages/mall/index",
     "pages/cart/cart",
+    "pages/order-confirm/order-confirm",
     "pages/booking/index",
     "pages/seckill/index",
     "pages/activityDetail/index",

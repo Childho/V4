@@ -423,7 +423,7 @@ Page({
   },
 
   /**
-   * 去结算
+   * 去结算 - 跳转到订单确认页面
    */
   goToCheckout() {
     const selectedItems = this.data.cartList.filter(item => item.selected);
@@ -436,19 +436,32 @@ Page({
       return;
     }
     
+    // 准备订单商品数据
+    const orderGoods = selectedItems.map(item => ({
+      id: item.id,
+      name: item.name,
+      image: item.image,
+      spec: item.spec,
+      price: item.price,
+      quantity: item.quantity
+    }));
+    
     // 保存选中的商品到缓存，供订单确认页面使用
     try {
       wx.setStorageSync('checkoutItems', selectedItems);
       wx.setStorageSync('checkoutTotal', this.data.totalPrice);
       wx.setStorageSync('checkoutDiscount', this.data.discountAmount);
       
-      // 跳转到订单确认页面
+      // 跳转到订单确认页面，通过URL参数传递商品数据
       wx.navigateTo({
-        url: '/pages/checkout/checkout',
-        fail: () => {
-          // 如果订单确认页面不存在，先提示用户
+        url: `/pages/order-confirm/order-confirm?goods=${encodeURIComponent(JSON.stringify(orderGoods))}`,
+        success: () => {
+          console.log('成功跳转到订单确认页面，商品数量：', orderGoods.length);
+        },
+        fail: (error) => {
+          console.error('跳转订单确认页面失败：', error);
           wx.showToast({
-            title: '订单确认页面开发中',
+            title: '页面跳转失败，请重试',
             icon: 'none'
           });
         }

@@ -1,0 +1,406 @@
+/* 订单确认页面样式 */
+.order-confirm-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 160rpx; /* 为底部按钮预留空间 */
+}
+
+/* 通用区块样式 */
+.address-section,
+.goods-section,
+.coupon-section,
+.remark-section,
+.amount-section {
+  background-color: #ffffff;
+  margin-bottom: 20rpx;
+  border-radius: 16rpx;
+  margin: 0 24rpx 20rpx 24rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+/* 区块标题样式 */
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 24rpx 24rpx 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.location-icon,
+.shop-icon,
+.coupon-icon,
+.remark-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+  flex: 1;
+}
+
+.arrow-icon {
+  font-size: 24rpx;
+  color: #999999;
+  font-weight: bold;
+}
+
+/* 收货地址模块样式 */
+.address-content {
+  padding: 24rpx;
+}
+
+.address-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.receiver-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-right: 24rpx;
+}
+
+.receiver-phone {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.address-detail {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.5;
+}
+
+.no-address {
+  padding: 40rpx 24rpx;
+  text-align: center;
+}
+
+.no-address-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+/* 商品列表模块样式 */
+.goods-list {
+  padding: 0 24rpx 24rpx 24rpx;
+}
+
+.goods-item {
+  display: flex;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.goods-item:last-child {
+  border-bottom: none;
+}
+
+.goods-image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  background-color: #f8f8f8;
+}
+
+.goods-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.goods-name {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+  /* 限制显示行数 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.goods-spec {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 12rpx;
+  background-color: #f8f8f8;
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+}
+
+.goods-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.goods-price {
+  font-size: 28rpx;
+  color: #ff4444;
+  font-weight: 600;
+}
+
+.goods-quantity {
+  font-size: 26rpx;
+  color: #666666;
+}
+
+/* 通用列表项样式 */
+.section-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.section-item:last-child {
+  border-bottom: none;
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+}
+
+.item-title {
+  font-size: 30rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+}
+
+/* 优惠券模块样式 */
+.coupon-text {
+  font-size: 28rpx;
+  color: #666666;
+  margin-right: 12rpx;
+}
+
+.coupon-text:first-child {
+  color: #ff4444;
+  font-weight: 600;
+}
+
+/* 备注模块样式 */
+.remark-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+  text-align: right;
+  margin-left: 24rpx;
+}
+
+.remark-input::placeholder {
+  color: #999999;
+}
+
+/* 金额明细模块样式 */
+.amount-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.amount-item:last-child {
+  border-bottom: none;
+}
+
+.amount-label {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.amount-value {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+.amount-value.discount {
+  color: #4169e1;
+}
+
+.amount-value.free {
+  color: #4169e1;
+}
+
+/* 开发票提示样式 */
+.invoice-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx;
+  margin: 0 24rpx 20rpx 24rpx;
+  background: linear-gradient(135deg, #f8fafb, #f1f5f9);
+  border-radius: 12rpx;
+  border: 1rpx solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+
+.invoice-tip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, #4169e1, transparent);
+  opacity: 0.6;
+}
+
+.invoice-icon {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+  opacity: 0.8;
+}
+
+.invoice-text {
+  font-size: 24rpx;
+  color: #64748b;
+  font-weight: 400;
+  letter-spacing: 0.5rpx;
+}
+
+/* 底部操作区样式 */
+.footer-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 24rpx;
+  border-top: 1rpx solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.05);
+  /* 适配安全区域 */
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.total-info {
+  display: flex;
+  align-items: baseline;
+  flex: 1;
+}
+
+.total-label {
+  font-size: 28rpx;
+  color: #333333;
+  margin-right: 8rpx;
+}
+
+.total-amount {
+  font-size: 36rpx;
+  color: #ff4444;
+  font-weight: 700;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #ff4444, #dc2626);
+  color: #ffffff;
+  border-radius: 50rpx;
+  padding: 24rpx 48rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4rpx 16rpx rgba(255, 68, 68, 0.3);
+  transition: all 0.3s ease;
+  margin: 0;
+  min-width: 200rpx;
+  margin-left: 24rpx;
+}
+
+.submit-button:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 8rpx rgba(255, 68, 68, 0.4);
+}
+
+.submit-button[disabled] {
+  background: #e5e7eb;
+  color: #9ca3af;
+  box-shadow: none;
+  transform: none;
+}
+
+/* 响应式适配 */
+@media (max-width: 750rpx) {
+  .order-confirm-container {
+    padding-bottom: 140rpx;
+  }
+  
+  .footer-section {
+    padding: 20rpx;
+  }
+  
+  .submit-button {
+    padding: 20rpx 40rpx;
+    font-size: 28rpx;
+    min-width: 180rpx;
+  }
+  
+  .total-amount {
+    font-size: 32rpx;
+  }
+  
+  .invoice-tip {
+    margin: 0 20rpx 16rpx 20rpx;
+    padding: 20rpx;
+  }
+  
+  .invoice-text {
+    font-size: 22rpx;
+  }
+}
+
+/* 加载状态样式 */
+.loading-state {
+  text-align: center;
+  padding: 40rpx;
+  color: #999999;
+  font-size: 28rpx;
+}
+
+/* 空状态样式 */
+.empty-state {
+  text-align: center;
+  padding: 80rpx 40rpx;
+  color: #999999;
+  font-size: 28rpx;
+}
+
+/* 动画效果 */
+.order-confirm-container > view {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 
