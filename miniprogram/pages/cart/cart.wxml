@@ -57,31 +57,49 @@
 
   <!-- 底部操作区域 -->
   <view wx:if="{{cartList.length > 0}}" class="cart-footer">
-    <!-- 全选区域 -->
-    <view class="select-all" bindtap="toggleSelectAll">
-      <icon class="checkbox-icon" type="{{allSelected ? 'success' : 'circle'}}" size="20" color="{{allSelected ? '#4169e1' : '#ccc'}}"></icon>
-      <text class="select-all-text">全选</text>
+    <!-- 左侧区域：全选 + 金额信息 -->
+    <view class="footer-left">
+      <!-- 全选区域 -->
+      <view class="select-all" bindtap="toggleSelectAll">
+        <icon class="checkbox-icon" type="{{allSelected ? 'success' : 'circle'}}" size="20" color="{{allSelected ? '#4169e1' : '#ccc'}}"></icon>
+        <text class="select-all-text">全选</text>
+      </view>
+
+      <!-- 金额信息区域（正常模式） -->
+      <view wx:if="{{!isManageMode}}" class="price-info">
+        <view class="total-info">
+          <text class="total-label">合计：</text>
+          <text class="total-price">¥{{totalPrice}}</text>
+        </view>
+        <view wx:if="{{discountAmount > 0}}" class="discount-info">
+          <text class="discount-text">已优惠 ¥{{discountAmount}}</text>
+        </view>
+        <!-- 金额明细按钮 -->
+        <view class="detail-trigger" bindtap="showPriceDetail">
+          <text class="detail-text">明细</text>
+          <text class="detail-arrow">></text>
+        </view>
+      </view>
     </view>
 
-    <!-- 金额明细区域 -->
-    <view wx:if="{{!isManageMode}}" class="price-summary">
-      <view class="summary-info">
-        <text class="summary-text">{{selectedCount}}件总计：</text>
-        <text class="summary-price">¥{{totalPrice}}</text>
-        <text class="detail-btn" bindtap="showPriceDetail">明细</text>
-      </view>
-      <view wx:if="{{discountAmount > 0}}" class="discount-info">
-        <text class="discount-text">优惠：-¥{{discountAmount}}</text>
-      </view>
-    </view>
-
-    <!-- 操作按钮 -->
-    <view class="action-btn">
-      <button wx:if="{{!isManageMode}}" class="checkout-btn" bindtap="goToCheckout" disabled="{{selectedCount === 0}}">
-        结算({{selectedCount}})
+    <!-- 右侧区域：操作按钮 -->
+    <view class="footer-right">
+      <!-- 正常模式：结算按钮 -->
+      <button wx:if="{{!isManageMode}}" 
+              class="action-button checkout-button {{selectedCount === 0 ? 'disabled' : ''}}" 
+              bindtap="goToCheckout" 
+              disabled="{{selectedCount === 0}}">
+        <text class="button-text">结算</text>
+        <text wx:if="{{selectedCount > 0}}" class="button-count">({{selectedCount}})</text>
       </button>
-      <button wx:else class="delete-btn" bindtap="deleteSelectedItems" disabled="{{selectedCount === 0}}">
-        删除({{selectedCount}})
+      
+      <!-- 管理模式：删除按钮 -->
+      <button wx:else 
+              class="action-button delete-button {{selectedCount === 0 ? 'disabled' : ''}}" 
+              bindtap="deleteSelectedItems" 
+              disabled="{{selectedCount === 0}}">
+        <text class="button-text">删除</text>
+        <text wx:if="{{selectedCount > 0}}" class="button-count">({{selectedCount}})</text>
       </button>
     </view>
   </view>

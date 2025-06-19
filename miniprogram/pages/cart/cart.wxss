@@ -14,6 +14,9 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1rpx solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 99;
 }
 
 .header-title {
@@ -32,6 +35,10 @@
 .cart-content {
   flex: 1;
   padding: 20rpx 0;
+  /* 为底部固定栏留出空间 */
+  padding-bottom: 140rpx;
+  /* 确保滚动区域不与底部栏重叠 */
+  box-sizing: border-box;
 }
 
 /* 空购物车样式 */
@@ -198,131 +205,188 @@
   margin-top: 10rpx;
 }
 
-/* 底部操作区域样式 */
+/* 底部操作区域样式 - 重新设计 */
 .cart-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background-color: #ffffff;
-  padding: 30rpx;
-  border-top: 1rpx solid #e5e5e5;
+  padding: 16rpx 24rpx;
+  border-top: 1rpx solid #f0f0f0;
   display: flex;
   align-items: center;
-  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  justify-content: space-between;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  /* 为底部导航栏留出空间 */
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+}
+
+/* 左侧区域 */
+.footer-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 24rpx;
 }
 
 /* 全选区域 */
 .select-all {
   display: flex;
   align-items: center;
-  margin-right: 30rpx;
+  gap: 8rpx;
+  padding: 8rpx 0;
 }
 
 .select-all-text {
   font-size: 28rpx;
   color: #333333;
-  margin-left: 10rpx;
+  font-weight: 500;
 }
 
-/* 金额明细区域 */
-.price-summary {
+/* 金额信息区域 */
+.price-info {
   flex: 1;
-  margin-right: 30rpx;
-}
-
-.summary-info {
   display: flex;
-  align-items: center;
-  margin-bottom: 5rpx;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4rpx;
 }
 
-.summary-text {
-  font-size: 28rpx;
-  color: #333333;
+.total-info {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
 }
 
-.summary-price {
-  font-size: 36rpx;
-  color: #ff4444;
-  font-weight: bold;
-  margin-left: 10rpx;
-}
-
-.detail-btn {
+.total-label {
   font-size: 26rpx;
-  color: #4169e1;
-  margin-left: 15rpx;
-  padding: 8rpx 16rpx;
-  border: 1rpx solid #4169e1;
-  border-radius: 20rpx;
-  background-color: #f0f7ff;
+  color: #666666;
+}
+
+.total-price {
+  font-size: 32rpx;
+  color: #ff4444;
+  font-weight: 700;
 }
 
 .discount-info {
-  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+}
+
+.discount-text {
+  font-size: 22rpx;
   color: #4169e1;
 }
 
-/* 操作按钮样式 */
-.action-btn {
-  min-width: 200rpx;
+.detail-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 4rpx 8rpx;
+  border-radius: 12rpx;
+  background-color: #f8f9fa;
+  margin-top: 4rpx;
 }
 
-.checkout-btn {
-  background-color: #4169e1;
-  color: #ffffff;
-  border-radius: 50rpx;
-  font-size: 28rpx;
-  padding: 20rpx 40rpx;
-  border: none;
+.detail-text {
+  font-size: 22rpx;
+  color: #666666;
 }
 
-.checkout-btn[disabled] {
-  background-color: #cccccc;
+.detail-arrow {
+  font-size: 20rpx;
   color: #999999;
 }
 
-.delete-btn {
-  background-color: #ff4444;
-  color: #ffffff;
-  border-radius: 50rpx;
-  font-size: 28rpx;
-  padding: 20rpx 40rpx;
+/* 右侧区域 */
+.footer-right {
+  display: flex;
+  align-items: center;
+}
+
+/* 操作按钮统一样式 */
+.action-button {
+  min-width: 160rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
   border: none;
-}
-
-.delete-btn[disabled] {
-  background-color: #cccccc;
-  color: #999999;
-}
-
-/* 动画效果 */
-.cart-item {
+  font-size: 28rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
   transition: all 0.3s ease;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
 }
 
-.cart-item:active {
-  background-color: #f8f8f8;
+/* 结算按钮 */
+.checkout-button {
+  background: linear-gradient(135deg, #ff4444, #dc2626);
+  color: #ffffff;
 }
 
-.quantity-btn:active {
-  background-color: #e0e0e0;
+.checkout-button.disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  box-shadow: none;
 }
 
-/* 响应式布局 */
+.checkout-button:not(.disabled):active {
+  transform: translateY(1rpx);
+  box-shadow: 0 2rpx 8rpx rgba(255, 68, 68, 0.3);
+}
+
+/* 删除按钮 */
+.delete-button {
+  background: linear-gradient(135deg, #ff4444, #dc2626);
+  color: #ffffff;
+}
+
+.delete-button.disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  box-shadow: none;
+}
+
+.delete-button:not(.disabled):active {
+  transform: translateY(1rpx);
+  box-shadow: 0 2rpx 8rpx rgba(255, 68, 68, 0.3);
+}
+
+/* 按钮文字样式 */
+.button-text {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.button-count {
+  font-size: 24rpx;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* 响应式适配 */
 @media (max-width: 750rpx) {
-  .item-image {
-    width: 160rpx;
-    height: 160rpx;
+  .cart-footer {
+    padding: 12rpx 20rpx;
   }
   
-  .quantity-btn {
-    width: 50rpx;
-    height: 50rpx;
+  .footer-left {
+    gap: 20rpx;
+  }
+  
+  .action-button {
+    min-width: 140rpx;
+    height: 72rpx;
+    font-size: 26rpx;
+  }
+  
+  .total-price {
     font-size: 28rpx;
-  }
-  
-  .quantity-input {
-    width: 80rpx;
-    height: 50rpx;
-    font-size: 24rpx;
   }
 }
 
@@ -650,11 +714,14 @@
 }
 
 .detail-buy-btn {
-  background-color: #ff6b35;
+  background: linear-gradient(135deg, #ff4444, #dc2626);
   color: #ffffff;
-  border-radius: 30rpx;
+  border-radius: 40rpx;
   font-size: 28rpx;
+  font-weight: 600;
   padding: 16rpx 32rpx;
   margin: 0;
   border: none;
+  box-shadow: 0 4rpx 12rpx rgba(255, 68, 68, 0.15);
+  transition: all 0.3s ease;
 } 
