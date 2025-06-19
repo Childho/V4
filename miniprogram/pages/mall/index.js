@@ -376,9 +376,9 @@ Page({
     }
     
     console.log('执行搜索，关键词：', searchKeyword);
-    // TODO: 跳转到搜索结果页面或执行搜索逻辑
+    // 跳转到搜索结果页面
     wx.navigateTo({
-      url: `/pages/search/index?keyword=${encodeURIComponent(searchKeyword)}`
+      url: `/pages/search-result/search-result?keyword=${encodeURIComponent(searchKeyword)}`
     });
   },
 

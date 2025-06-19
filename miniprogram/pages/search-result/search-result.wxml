@@ -1,0 +1,233 @@
+<!-- 搜索结果页面 -->
+<view class="search-page">
+  
+  <!-- 1. 顶部搜索栏 -->
+  <view class="search-header" style="padding-top: {{statusBarHeight + 20}}rpx;">
+    <!-- 返回按钮 -->
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">←</text>
+    </view>
+    
+    <!-- 搜索输入框 -->
+    <view class="search-input-container">
+      <view class="search-input-box">
+        <text class="search-icon">🔍</text>
+        <input 
+          class="search-input" 
+          placeholder="羽毛球拍" 
+          value="{{keyword}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearchConfirm"
+          confirm-type="search"
+        />
+      </view>
+    </view>
+    
+    <!-- 搜索按钮 -->
+    <view class="search-btn" bindtap="onSearchConfirm">
+      <text>搜索</text>
+    </view>
+  </view>
+
+  <!-- 2. 商品分类导航 -->
+  <view class="category-tabs">
+    <scroll-view class="category-scroll" scroll-x="true" show-scrollbar="false">
+      <view class="category-list">
+        <!-- 全部分类 -->
+        <view 
+          class="category-item {{currentCategoryId === 0 ? 'active' : ''}}"
+          bindtap="onCategoryTap"
+          data-id="0"
+        >
+          <view class="category-icon">🏷️</view>
+          <text class="category-name">全部</text>
+        </view>
+        
+        <!-- 具体分类 -->
+        <view 
+          wx:for="{{categories}}" 
+          wx:key="id"
+          class="category-item {{currentCategoryId === item.id ? 'active' : ''}}"
+          bindtap="onCategoryTap"
+          data-id="{{item.id}}"
+        >
+          <view class="category-icon">{{item.icon}}</view>
+          <text class="category-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 3. 排序筛选栏 -->
+  <view class="filter-bar">
+    <!-- 排序选项 -->
+    <view class="sort-section">
+      <view 
+        wx:for="{{sortOptions}}" 
+        wx:key="type"
+        class="sort-item {{item.active ? 'active' : ''}}"
+        bindtap="onSortTap"
+        data-type="{{item.type}}"
+      >
+        <text>{{item.name}}</text>
+        <text class="sort-icon" wx:if="{{item.active}}">⌄</text>
+      </view>
+    </view>
+    
+    <!-- 筛选按钮 -->
+    <view class="filter-btn" bindtap="showBrandFilter">
+      <text class="filter-icon">⚙</text>
+      <text>筛选</text>
+      <view class="filter-count" wx:if="{{selectedBrandIds.length > 0}}">{{selectedBrandIds.length}}</view>
+    </view>
+  </view>
+
+  <!-- 4. 商品列表 -->
+  <view class="product-container">
+    <view class="product-grid">
+      <view 
+        wx:for="{{productList}}" 
+        wx:key="id"
+        class="product-card"
+        bindtap="onProductTap"
+        data-id="{{item.id}}"
+      >
+        <!-- 商品标签 -->
+        <view class="product-badges" wx:if="{{item.tags}}">
+          <text class="badge" wx:if="{{item.originalPrice}}">特价</text>
+          <text class="badge new" wx:if="{{item.id <= 2}}">新品</text>
+        </view>
+        
+        <!-- 商品图片 -->
+        <image 
+          class="product-image" 
+          src="{{item.image}}" 
+          mode="aspectFill"
+          lazy-load="true"
+        ></image>
+        
+        <!-- 商品信息 -->
+        <view class="product-info">
+          <!-- 商品标题 -->
+          <text class="product-title">{{item.title}}</text>
+          
+          <!-- 价格区域 -->
+          <view class="price-row">
+            <text class="current-price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+          </view>
+          
+          <!-- 底部信息 -->
+          <view class="bottom-info">
+            <view class="rating-sales">
+              <text class="rating" wx:if="{{item.rating}}">⭐ {{item.rating}}</text>
+              <text class="sales">月售{{item.sales}}+</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 加载状态 -->
+    <view class="loading-state" wx:if="{{loading}}">
+      <text class="loading-text">正在搜索中...</text>
+    </view>
+    
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{loadingMore}}">
+      <text>加载更多...</text>
+    </view>
+    
+    <!-- 没有更多数据 -->
+    <view class="no-more" wx:if="{{!hasMore && productList.length > 0}}">
+      <text>已加载全部商品</text>
+    </view>
+  </view>
+
+  <!-- 6. 优化后的品牌筛选弹窗 -->
+  <view class="brand-modal {{showBrandModal ? 'show' : ''}}" wx:if="{{showBrandModal}}">
+    <!-- 遮罩层 -->
+    <view class="modal-mask" bindtap="hideBrandFilter"></view>
+    
+    <!-- 弹窗内容 -->
+    <view class="modal-content">
+      <!-- 弹窗头部 - 优化样式 -->
+      <view class="modal-header">
+        <view class="header-left">
+          <view class="modal-icon">🏷️</view>
+          <text class="modal-title">选择品牌</text>
+        </view>
+        <view class="modal-close" bindtap="hideBrandFilter">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+      
+      <!-- 已选中品牌显示区 - 新增 -->
+      <view class="selected-brands" wx:if="{{selectedBrandIds.length > 0}}">
+        <view class="selected-title">
+          <text>已选 ({{selectedBrandIds.length}})</text>
+        </view>
+        <view class="selected-list">
+          <view 
+            wx:for="{{brands}}" 
+            wx:key="id"
+            wx:if="{{item.selected}}"
+            class="selected-tag"
+            bindtap="onBrandSelect"
+            data-id="{{item.id}}"
+          >
+            <text class="tag-name">{{item.name}}</text>
+            <text class="tag-close">✕</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 品牌网格 - 改为网格布局，不需要滚动 -->
+      <view class="brand-grid-container">
+        <view class="brand-grid-title">
+          <text>全部品牌</text>
+        </view>
+        <view class="brand-grid">
+          <view 
+            wx:for="{{brands}}" 
+            wx:key="id"
+            class="brand-item {{item.selected ? 'selected' : ''}}"
+            bindtap="onBrandSelect"
+            data-id="{{item.id}}"
+          >
+            <!-- 品牌图标 - 新增视觉元素 -->
+            <view class="brand-logo">
+              <text class="brand-initial">{{item.name.charAt(0)}}</text>
+            </view>
+            
+            <!-- 品牌名称 -->
+            <text class="brand-name">{{item.name}}</text>
+            
+            <!-- 选中状态指示器 -->
+            <view class="brand-check {{item.selected ? 'checked' : ''}}">
+              <text class="check-icon" wx:if="{{item.selected}}">✓</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 弹窗底部 - 优化按钮样式 -->
+      <view class="modal-footer">
+        <view class="footer-info" wx:if="{{selectedBrandIds.length > 0}}">
+          <text class="info-text">已选择 {{selectedBrandIds.length}} 个品牌</text>
+        </view>
+        <view class="footer-buttons">
+          <button class="btn-reset" bindtap="resetBrandFilter">
+            <text class="btn-icon">🔄</text>
+            <text>重置</text>
+          </button>
+          <button class="btn-confirm" bindtap="confirmBrandFilter">
+            <text class="btn-icon">✓</text>
+            <text>确定</text>
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+</view> 

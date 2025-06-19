@@ -272,28 +272,26 @@ Page({
 
   // 处理搜索栏点击
   onSearchTap() {
-    // 如果有单独的搜索页面，可以跳转过去
-    // wx.navigateTo({
-    //   url: '/pages/search/index'
-    // })
-
-    // 如果没有搜索页面，可以使用微信小程序内置的搜索组件
-    wx.showActionSheet({
-      itemList: ['搜索活动', '搜索商品'],
+    // 弹出搜索输入框，让用户输入搜索关键词
+    wx.showModal({
+      title: '搜索商品',
+      content: '',
+      placeholderText: '请输入商品关键词',
+      editable: true,
       success: (res) => {
-        if (res.tapIndex === 0) {
-          // 跳转到活动搜索
-          wx.navigateTo({
-            url: '/pages/activity/index?mode=search'
-          })
-        } else if (res.tapIndex === 1) {
-          // 跳转到商品搜索
-          wx.navigateTo({
-            url: '/pages/mall/index?mode=search'
-          })
+        if (res.confirm && res.content) {
+          // 用户输入了搜索关键词并点击确定
+          const keyword = res.content.trim();
+          if (keyword) {
+            console.log('搜索关键词:', keyword);
+            // 跳转到搜索结果页
+            wx.navigateTo({
+              url: `/pages/search-result/search-result?keyword=${encodeURIComponent(keyword)}`
+            });
+          }
         }
       }
-    })
+    });
   },
 
   // 处理通知图标点击

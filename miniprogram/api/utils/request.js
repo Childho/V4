@@ -97,6 +97,84 @@ const mockData = {
   },
   '/points/exchange': {
     success: true
+  },
+  // 搜索相关mock数据
+  '/api/search/products': {
+    list: [
+      {
+        id: 1,
+        title: '李宁N72三代羽毛球拍全碳素超轻进攻型单拍',
+        image: 'https://img.alicdn.com/imgextra/i1/2200756107659/O1CN01YXz5Tl1H8QBqKJPYu_!!2200756107659.jpg',
+        price: 299,
+        originalPrice: 399,
+        sales: 112
+      },
+      {
+        id: 2,
+        title: '威克多胜利羽毛球拍ARS90K单拍进攻型碳纤维',
+        image: 'https://img.alicdn.com/imgextra/i3/725677994/O1CN01wKJzpA28vKWmLhcYf_!!725677994.jpg',
+        price: 1288,
+        originalPrice: 1580,
+        sales: 85
+      },
+      {
+        id: 3,
+        title: '尤尼克斯YONEX羽毛球鞋男女款专业运动鞋',
+        image: 'https://img.alicdn.com/imgextra/i4/1917047079/O1CN01oQDGnt22AEHxZ8u8h_!!1917047079.jpg',
+        price: 668,
+        originalPrice: 880,
+        sales: 203
+      },
+      {
+        id: 4,
+        title: '李宁羽毛球服套装男女款速干透气比赛服',
+        image: 'https://img.alicdn.com/imgextra/i2/2200848636169/O1CN01YLSJc81YWUO1XJ0a4_!!2200848636169.jpg',
+        price: 158,
+        originalPrice: 228,
+        sales: 67
+      },
+      {
+        id: 5,
+        title: '威克多胜利羽毛球包双肩背包大容量装备包',
+        image: 'https://img.alicdn.com/imgextra/i1/3002554020/O1CN01L0FWnE1K4VHtRf7OY_!!3002554020.jpg',
+        price: 198,
+        originalPrice: 268,
+        sales: 156
+      },
+      {
+        id: 6,
+        title: 'GOSEN高神羽毛球12只装比赛级训练球',
+        image: 'https://img.alicdn.com/imgextra/i4/725677994/O1CN01Kh4s1q28vKWfDfCk3_!!725677994.jpg',
+        price: 88,
+        originalPrice: 128,
+        sales: 89
+      }
+    ],
+    hasMore: true,
+    total: 156
+  },
+  '/api/search/categories': [
+    { id: 1, name: '羽毛球拍', icon: '🏸' },
+    { id: 2, name: '球鞋', icon: '👟' },
+    { id: 3, name: '球服', icon: '👕' },
+    { id: 4, name: '球包', icon: '🎒' },
+    { id: 5, name: '羽毛球', icon: '🏸' },
+    { id: 6, name: '运动必备', icon: '⚡' }
+  ],
+  '/api/search/brands': [
+    { id: 1, name: '李宁' },
+    { id: 2, name: '威克多' },
+    { id: 3, name: '倍特爱' },
+    { id: 4, name: '威肯' },
+    { id: 5, name: '超牌' },
+    { id: 6, name: '泰昂' },
+    { id: 7, name: '翎美' },
+    { id: 8, name: '尤尼克斯' },
+    { id: 9, name: '亚狮龙' },
+    { id: 10, name: 'GOSEN' }
+  ],
+  '/api/search/suggestions': {
+    suggestions: ['羽毛球拍', '李宁球拍', '尤尼克斯', '威克多', '球鞋']
   }
 };
 
