@@ -22,6 +22,7 @@
           value="{{searchKeyword}}"
           bindinput="onSearchInput"
           bindconfirm="onSearchConfirm"
+          confirm-type="search"
         />
       </view>
       <button class="search-btn" bindtap="onSearchConfirm">搜索</button>

@@ -365,9 +365,23 @@ Page({
   /**
    * 搜索确认事件处理
    */
-  onSearchConfirm() {
-    const { searchKeyword } = this.data;
-    if (!searchKeyword.trim()) {
+  onSearchConfirm(e) {
+    console.log('商城首页 - 搜索确认事件触发', e);
+    
+    let keyword = '';
+    
+    // 从事件对象获取关键词
+    if (e && e.detail && e.detail.value !== undefined) {
+      keyword = e.detail.value.trim();
+      console.log('从事件对象获取关键词:', keyword);
+    } else {
+      // 如果事件对象没有值，使用当前数据中的关键词
+      keyword = this.data.searchKeyword.trim();
+      console.log('从数据对象获取关键词:', keyword);
+    }
+    
+    if (!keyword) {
+      console.log('商城首页 - 搜索关键词为空');
       wx.showToast({
         title: '请输入搜索关键词',
         icon: 'none'
@@ -375,10 +389,21 @@ Page({
       return;
     }
     
-    console.log('执行搜索，关键词：', searchKeyword);
+    console.log('商城首页 - 准备跳转到搜索结果页，关键词：', keyword);
+    
     // 跳转到搜索结果页面
     wx.navigateTo({
-      url: `/pages/search-result/search-result?keyword=${encodeURIComponent(searchKeyword)}`
+      url: `/pages/search-result/search-result?keyword=${encodeURIComponent(keyword)}`,
+      success: (res) => {
+        console.log('商城首页 - 成功跳转到搜索结果页', res);
+      },
+      fail: (error) => {
+        console.error('商城首页 - 跳转搜索结果页失败:', error);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        });
+      }
     });
   },
 

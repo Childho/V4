@@ -64,11 +64,18 @@ page {
   max-width: 320rpx;
 }
 
-.search-text {
+.search-input {
   flex: 1;
   font-size: 28rpx;
-  color: #999;
+  color: #333;
   margin-left: 10rpx;
+  height: 100%;
+  border: none;
+  background: transparent;
+}
+
+.search-placeholder {
+  color: #999;
 }
 
 /* 右侧容器：包含铃铛和会员等级 */

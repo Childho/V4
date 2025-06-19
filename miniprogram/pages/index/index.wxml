@@ -4,9 +4,18 @@
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
     <!-- 搜索栏和会员等级 -->
     <view class="search-container">
-      <view class="search-bar" bindtap="onSearchTap">
+      <view class="search-bar">
         <icon type="search" size="14" color="#999"></icon>
-        <view class="search-text">搜索商品、活动</view>
+        <input 
+          class="search-input" 
+          placeholder="搜索商品" 
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearchConfirm"
+          confirm-type="search"
+          placeholder-class="search-placeholder"
+          focus="{{false}}"
+        />
       </view>
       <!-- 将铃铛和会员等级包裹到右侧容器中 -->
       <view class="header-right-container">

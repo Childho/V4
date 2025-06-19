@@ -6,6 +6,7 @@ Page({
   data: {
     statusBarHeight: 0,
     notificationCount: 2,
+    searchKeyword: '', // 添加搜索关键词数据
     banners: [
       {
         id: 'banner_1',
@@ -270,26 +271,56 @@ Page({
     }
   },
 
-  // 处理搜索栏点击
-  onSearchTap() {
-    // 弹出搜索输入框，让用户输入搜索关键词
-    wx.showModal({
-      title: '搜索商品',
-      content: '',
-      placeholderText: '请输入商品关键词',
-      editable: true,
+  // 搜索输入处理
+  onSearchInput(e) {
+    this.setData({
+      searchKeyword: e.detail.value
+    });
+  },
+
+  // 搜索确认处理（点击键盘搜索按钮）
+  onSearchConfirm(e) {
+    console.log('首页 - 搜索确认事件触发', e);
+    
+    let keyword = '';
+    
+    // 从事件对象获取关键词
+    if (e && e.detail && e.detail.value !== undefined) {
+      keyword = e.detail.value.trim();
+      console.log('从事件对象获取关键词:', keyword);
+    } else {
+      // 如果事件对象没有值，使用当前数据中的关键词
+      keyword = this.data.searchKeyword.trim();
+      console.log('从数据对象获取关键词:', keyword);
+    }
+    
+    if (!keyword) {
+      console.log('首页 - 搜索关键词为空');
+      wx.showToast({
+        title: '请输入搜索关键词',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    console.log('首页 - 准备跳转到搜索结果页，关键词：', keyword);
+    
+    // 跳转到搜索结果页面，注明搜索类型为商品
+    wx.navigateTo({
+      url: `/pages/search-result/search-result?keyword=${encodeURIComponent(keyword)}&type=product`,
       success: (res) => {
-        if (res.confirm && res.content) {
-          // 用户输入了搜索关键词并点击确定
-          const keyword = res.content.trim();
-          if (keyword) {
-            console.log('搜索关键词:', keyword);
-            // 跳转到搜索结果页
-            wx.navigateTo({
-              url: `/pages/search-result/search-result?keyword=${encodeURIComponent(keyword)}`
-            });
-          }
-        }
+        console.log('首页 - 成功跳转到搜索结果页', res);
+        // 清空搜索框
+        this.setData({
+          searchKeyword: ''
+        });
+      },
+      fail: (error) => {
+        console.error('首页 - 跳转搜索结果页失败:', error);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        });
       }
     });
   },

@@ -61,7 +61,11 @@ Page({
     loadingMore: false,
     
     // 状态栏高度
-    statusBarHeight: 0
+    statusBarHeight: 0,
+
+    // 搜索类型参数
+    searchType: '',
+    searchSource: ''
   },
 
   // 页面加载时执行
@@ -82,6 +86,20 @@ Page({
         console.warn('关键词解码失败，使用原始值:', e);
         // 如果解码失败，使用原始值
       }
+    }
+    
+    // 获取搜索类型参数
+    const searchType = options.type || '';
+    console.log('搜索类型:', searchType);
+    
+    // 如果是从首页搜索过来的，显示提示
+    if (searchType === 'product') {
+      console.log('来自首页的商品搜索');
+      // 可以设置一个标志来显示不同的搜索提示
+      this.setData({
+        searchType: 'product',
+        searchSource: 'index'
+      });
     }
     
     this.setData({
@@ -120,7 +138,14 @@ Page({
   },
 
   // 搜索确认事件（点击搜索按钮或键盘确认）
-  onSearchConfirm() {
+  onSearchConfirm(e) {
+    // 如果事件来自input的confirm事件，获取输入的值
+    if (e && e.detail && e.detail.value !== undefined) {
+      this.setData({
+        keyword: e.detail.value
+      });
+    }
+    
     console.log('搜索确认，关键词：', this.data.keyword);
     
     // 重置分页和商品列表
