@@ -5,6 +5,27 @@
     "compileHotReLoad": true,
     "showShadowRootInWxmlPanel": false,
     "showES6CompileOption": false,
-    "checkInvalidKey": false
-  }
+    "checkInvalidKey": false,
+    "urlCheck": false,
+    "useStaticServer": true,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "coverView": true,
+    "es6": true,
+    "postcss": true,
+    "minified": false,
+    "newFeature": true,
+    "nodeModules": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": false,
+    "enhance": false,
+    "showShadowRootInWxmlPanel": false,
+    "disableUseStrict": false,
+    "useMultiFrameRuntime": false,
+    "useApiHook": true,
+    "checkSiteMap": false
+  },
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "condition": {}
 }

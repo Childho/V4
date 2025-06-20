@@ -1,5 +1,19 @@
-// 引入搜索相关的API
-const { searchProducts, getCategories, getBrands } = require('../../api/searchApi');
+// 引入搜索相关的API - 添加错误处理
+import { searchProducts } from '../../api/productApi.js'
+// 引入系统信息工具函数
+import { getStatusBarHeight } from '../../utils/systemInfo.js'
+
+let getCategories, getBrands;
+try {
+  const searchApi = require('../../api/searchApi');
+  getCategories = searchApi.getCategories;
+  getBrands = searchApi.getBrands;
+} catch (e) {
+  console.warn('搜索API模块加载失败，使用降级处理:', e);
+  // 降级处理：创建空的API函数
+  getCategories = () => Promise.resolve([]);
+  getBrands = () => Promise.resolve([]);
+}
 
 Page({
   data: {
@@ -112,8 +126,8 @@ Page({
 
   // 设置状态栏高度
   setStatusBarHeight() {
-    const systemInfo = wx.getSystemInfoSync();
-    const statusBarHeight = systemInfo.statusBarHeight || 44; // 默认44px
+    // 使用新的API获取状态栏高度，替代已弃用的wx.getSystemInfoSync
+    const statusBarHeight = getStatusBarHeight(); // 默认44px已在工具函数中处理
     
     // 将状态栏高度转换为rpx（微信小程序中 1px = 2rpx）
     const statusBarHeightRpx = statusBarHeight * 2;

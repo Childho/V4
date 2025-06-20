@@ -1,6 +1,6 @@
 // 通用API请求处理函数
 
-// API配置从配置文件获取
+// API配置从配置文件获取 - 现在使用正确的JavaScript配置文件
 const config = require('../../config/index').config;
 const BASE_URL = config.apiBaseUrl;
 

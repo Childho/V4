@@ -1,0 +1,9 @@
+# 微信小程序浏览器兼容性配置
+# 用于解决SharedArrayBuffer弃用警告
+
+> 0.5%
+last 2 versions
+not dead
+# 避免新版本Chrome的SharedArrayBuffer警告
+Chrome >= 88
+not Chrome > 95 

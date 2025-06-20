@@ -1,10 +1,18 @@
+// 引入系统信息工具函数
+import { getSystemInfo } from './utils/systemInfo.js'
+// 引入浏览器兼容性处理工具
+import { setupBrowserCompatibility } from './utils/compatibility.js'
+
 App({
   onLaunch() {
+    // 首先设置浏览器兼容性配置，解决各种开发环境警告
+    setupBrowserCompatibility()
+    
     // 检查是否有新版本
     this.checkUpdate()
     
-    // 获取系统信息
-    const systemInfo = wx.getSystemInfoSync()
+    // 获取系统信息 - 使用新的API替代已弃用的wx.getSystemInfoSync
+    const systemInfo = getSystemInfo()
     this.globalData.systemInfo = systemInfo
     
     // 缓存一些常用的系统尺寸信息

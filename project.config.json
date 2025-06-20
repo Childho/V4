@@ -23,7 +23,12 @@
     "minifyWXSS": true,
     "minifyWXML": true,
     "uglifyFileName": true,
-    "ignoreUploadUnusedFiles": true
+    "ignoreUploadUnusedFiles": true,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "nodeModules": false,
+    "showShadowRootInWxmlPanel": false
   },
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},

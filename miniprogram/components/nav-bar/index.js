@@ -1,3 +1,6 @@
+// 引入系统信息工具函数
+import { getStatusBarHeight } from '../../utils/systemInfo.js'
+
 Component({
   properties: {
     title: {
@@ -16,9 +19,10 @@ Component({
 
   lifetimes: {
     attached() {
-      const systemInfo = wx.getSystemInfoSync()
+      // 使用新的API获取状态栏高度，替代已弃用的wx.getSystemInfoSync
+      const statusBarHeight = getStatusBarHeight()
       this.setData({
-        statusBarHeight: systemInfo.statusBarHeight
+        statusBarHeight: statusBarHeight
       })
     }
   },

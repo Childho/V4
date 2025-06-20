@@ -2,6 +2,9 @@
 // 获取应用实例
 const app = getApp()
 
+// 引入系统信息工具函数
+import { getStatusBarHeight } from '../../utils/systemInfo.js'
+
 Page({
   data: {
     statusBarHeight: 0,
@@ -99,14 +102,14 @@ Page({
   },
 
   onLoad() {
-    // 获取系统状态栏高度
+    // 获取系统状态栏高度 - 使用新的API替代已弃用的wx.getSystemInfoSync
     try {
-      const systemInfo = wx.getSystemInfoSync()
+      const statusBarHeight = getStatusBarHeight()
       // 添加更大的安全边距（额外增加20px）
       this.setData({
-        statusBarHeight: systemInfo.statusBarHeight + 20
+        statusBarHeight: statusBarHeight + 20
       })
-      console.log('状态栏高度+额外边距:', systemInfo.statusBarHeight + 20)
+      console.log('状态栏高度+额外边距:', statusBarHeight + 20)
     } catch (e) {
       // 使用固定的安全值
       this.setData({

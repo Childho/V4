@@ -1,6 +1,9 @@
 // index.ts
 // 获取应用实例
-const app = getApp<IAppOption>()
+const app = getApp()
+
+// 引入系统信息工具函数
+import { getStatusBarHeight } from '../../utils/systemInfo.js'
 
 Page({
   data: {
@@ -41,11 +44,11 @@ Page({
   },
 
   onLoad() {
-    // 获取状态栏高度
+    // 获取状态栏高度 - 使用新的API替代已弃用的wx.getSystemInfoSync
     try {
-      const systemInfo = wx.getSystemInfoSync();
+      const statusBarHeight = getStatusBarHeight();
       this.setData({
-        statusBarHeight: systemInfo.statusBarHeight || 0
+        statusBarHeight: statusBarHeight || 0
       });
     } catch (e) {
       console.error('获取系统信息失败', e);

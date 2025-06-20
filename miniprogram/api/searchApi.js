@@ -1,5 +1,5 @@
 // 搜索相关API接口
-// 引入通用请求函数
+// 引入通用请求函数 - 修复路径错误
 const { api } = require('./utils/request');
 
 /**
