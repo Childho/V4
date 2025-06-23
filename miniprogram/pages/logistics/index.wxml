@@ -1,0 +1,102 @@
+<!-- 查看物流页面 -->
+<view class="logistics-container">
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在查询物流信息...</text>
+  </view>
+
+  <!-- 物流信息内容 -->
+  <view class="logistics-content" wx:else>
+    <!-- 顶部订单信息卡片 -->
+    <view class="order-info-card">
+      <view class="card-header">
+        <text class="header-title">订单物流信息</text>
+        <view class="status-badge status-{{logisticsInfo.status}}">
+          {{logisticsInfo.statusText}}
+        </view>
+      </view>
+      
+      <view class="order-details">
+        <view class="detail-row">
+          <text class="detail-label">订单号码：</text>
+          <text class="detail-value">{{orderInfo.orderNo}}</text>
+          <text class="copy-btn" bindtap="copyOrderNo">复制</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">物流公司：</text>
+          <text class="detail-value">{{logisticsInfo.companyName}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">运单号码：</text>
+          <text class="detail-value">{{logisticsInfo.trackingNo}}</text>
+          <text class="copy-btn" bindtap="copyTrackingNo">复制</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 物流进度时间线 -->
+    <view class="timeline-container" wx:if="{{logisticsInfo.tracks && logisticsInfo.tracks.length > 0}}">
+      <view class="timeline-header">
+        <text class="timeline-title">物流轨迹</text>
+        <text class="timeline-subtitle">共{{logisticsInfo.tracks.length}}条记录</text>
+      </view>
+      
+      <view class="timeline-list">
+        <view 
+          class="timeline-item {{index === 0 ? 'active' : ''}}" 
+          wx:for="{{logisticsInfo.tracks}}" 
+          wx:key="index"
+        >
+          <!-- 时间线左侧圆点和线条 -->
+          <view class="timeline-dot-wrapper">
+            <view class="timeline-dot {{index === 0 ? 'current' : ''}}">
+              <view class="dot-icon" wx:if="{{index === 0}}">📍</view>
+            </view>
+            <view class="timeline-line" wx:if="{{index < logisticsInfo.tracks.length - 1}}"></view>
+          </view>
+          
+          <!-- 时间线右侧内容 -->
+          <view class="timeline-content">
+            <view class="timeline-time">{{item.time}}</view>
+            <view class="timeline-status">{{item.status}}</view>
+            <view class="timeline-location" wx:if="{{item.location}}">{{item.location}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 异常状态提示 -->
+    <view class="error-container" wx:elif="{{!logisticsInfo.tracks || logisticsInfo.tracks.length === 0}}">
+      <view class="error-icon">📦</view>
+      <view class="error-title">暂未查询到物流信息</view>
+      <view class="error-desc">
+        物流信息可能存在延迟更新，请稍后重试
+        <text class="error-highlight">或联系客服咨询</text>
+      </view>
+      <button class="retry-btn" bindtap="refreshLogistics">重新查询</button>
+    </view>
+
+    <!-- 底部操作区域 -->
+    <view class="bottom-actions">
+      <button class="action-btn secondary" bindtap="contactService">联系客服</button>
+      <button class="action-btn primary" bindtap="refreshLogistics">刷新物流</button>
+    </view>
+  </view>
+
+  <!-- 物流公司信息卡片 -->
+  <view class="company-info-card" wx:if="{{logisticsInfo.companyInfo && !loading}}">
+    <view class="company-header">
+      <image class="company-logo" src="{{logisticsInfo.companyInfo.logo}}" mode="aspectFit"></image>
+      <view class="company-details">
+        <text class="company-name">{{logisticsInfo.companyInfo.name}}</text>
+        <text class="company-phone">客服电话：{{logisticsInfo.companyInfo.phone}}</text>
+      </view>
+    </view>
+    <view class="company-actions">
+      <button class="company-call-btn" bindtap="callCompany">
+        📞 拨打客服
+      </button>
+    </view>
+  </view>
+</view> 

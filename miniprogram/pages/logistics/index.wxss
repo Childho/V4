@@ -1,0 +1,411 @@
+/* 物流页面样式 - 现代电商风格 */
+
+.logistics-container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 32rpx;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.loading-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #FF6B35;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 32rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 主要内容区域 */
+.logistics-content {
+  padding: 24rpx;
+}
+
+/* 订单信息卡片 */
+.order-info-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 32rpx 24rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.status-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 32rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.status-shipping {
+  background: #FFF3E0;
+  color: #FF8F00;
+}
+
+.status-delivered {
+  background: #E8F5E8;
+  color: #4CAF50;
+}
+
+.status-pending {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.status-exception {
+  background: #FFEBEE;
+  color: #F44336;
+}
+
+/* 订单详情 */
+.order-details {
+  padding: 0 32rpx 32rpx;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  font-size: 28rpx;
+  color: #666;
+  width: 160rpx;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  color: #333;
+  flex: 1;
+  font-weight: 500;
+}
+
+.copy-btn {
+  font-size: 24rpx;
+  color: #FF6B35;
+  padding: 8rpx 16rpx;
+  border: 1rpx solid #FF6B35;
+  border-radius: 32rpx;
+  margin-left: 16rpx;
+}
+
+.copy-btn:active {
+  background: #FF6B35;
+  color: #fff;
+}
+
+/* 时间线容器 */
+.timeline-container {
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 32rpx 24rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.timeline-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.timeline-subtitle {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 时间线列表 */
+.timeline-list {
+  padding: 24rpx 32rpx 32rpx;
+}
+
+.timeline-item {
+  display: flex;
+  position: relative;
+  margin-bottom: 40rpx;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-item.active .timeline-content {
+  opacity: 1;
+}
+
+/* 时间线左侧圆点和线条 */
+.timeline-dot-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 32rpx;
+}
+
+.timeline-dot {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 50%;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-dot.current {
+  background: #FF6B35;
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.dot-icon {
+  font-size: 16rpx;
+  color: #fff;
+}
+
+.timeline-line {
+  width: 2rpx;
+  height: 60rpx;
+  background: #e0e0e0;
+  margin-top: 8rpx;
+}
+
+/* 时间线右侧内容 */
+.timeline-content {
+  flex: 1;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.timeline-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.timeline-status {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+}
+
+.timeline-location {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 异常状态提示 */
+.error-container {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 80rpx 32rpx;
+  text-align: center;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.error-icon {
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+}
+
+.error-title {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.error-desc {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 48rpx;
+}
+
+.error-highlight {
+  color: #FF6B35;
+  font-weight: 500;
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+  color: #fff;
+  border: none;
+  border-radius: 48rpx;
+  padding: 24rpx 48rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  margin: 0;
+}
+
+.retry-btn::after {
+  border: none;
+}
+
+/* 底部操作区域 */
+.bottom-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 32rpx;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 48rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  border: none;
+  margin: 0;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%);
+  color: #fff;
+}
+
+.action-btn.secondary {
+  background: #f5f5f5;
+  color: #666;
+  border: 2rpx solid #e0e0e0;
+}
+
+.action-btn.secondary:active {
+  background: #e0e0e0;
+}
+
+/* 物流公司信息卡片 */
+.company-info-card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+}
+
+.company-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.company-logo {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 12rpx;
+  margin-right: 24rpx;
+  background: #f5f5f5;
+}
+
+.company-details {
+  flex: 1;
+}
+
+.company-name {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.company-phone {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+}
+
+.company-actions {
+  text-align: center;
+}
+
+.company-call-btn {
+  background: #fff;
+  color: #FF6B35;
+  border: 2rpx solid #FF6B35;
+  border-radius: 48rpx;
+  padding: 20rpx 48rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  margin: 0;
+}
+
+.company-call-btn::after {
+  border: none;
+}
+
+.company-call-btn:active {
+  background: #FF6B35;
+  color: #fff;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .detail-label {
+    width: 140rpx;
+    font-size: 26rpx;
+  }
+  
+  .detail-value {
+    font-size: 26rpx;
+  }
+  
+  .timeline-title {
+    font-size: 32rpx;
+  }
+} 
