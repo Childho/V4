@@ -1,5 +1,7 @@
-// 引入搜索相关的API - 添加错误处理
-import { searchProducts } from '../../api/productApi.js'
+// 引入搜索相关的API - 修复API引用错误
+// 暂时注释掉不存在的API引用，使用本地数据
+// import { searchProducts } from '../../api/productApi.js'
+
 // 引入系统信息工具函数
 import { getStatusBarHeight } from '../../utils/systemInfo.js'
 
