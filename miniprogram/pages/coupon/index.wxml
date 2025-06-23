@@ -73,9 +73,19 @@
         
         <!-- 操作按钮 -->
         <view class="coupon-actions">
-          <!-- 可使用状态的按钮 -->
+          <!-- 从订单确认页面来的，显示选择按钮 -->
           <view 
-            wx:if="{{item.status === 1}}" 
+            wx:if="{{item.status === 1 && fromPage === 'order-confirm'}}" 
+            class="select-btn"
+            data-index="{{index}}"
+            bindtap="selectCoupon"
+          >
+            选择
+          </view>
+          
+          <!-- 可使用状态的按钮（非订单确认页面） -->
+          <view 
+            wx:elif="{{item.status === 1 && fromPage !== 'order-confirm'}}" 
             class="use-btn"
             data-index="{{index}}"
             bindtap="showUseCouponModal"

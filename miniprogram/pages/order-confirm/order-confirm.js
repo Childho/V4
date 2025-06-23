@@ -199,7 +199,7 @@ Page({
     const orderAmount = this.data.totalGoodsAmount;
     
     wx.navigateTo({
-      url: `/pages/coupon-list/coupon-list?orderAmount=${orderAmount}&from=order-confirm`,
+      url: `/pages/coupon/index?from=order-confirm&orderAmount=${orderAmount}&tab=1`,
       fail: (error) => {
         console.error('跳转优惠券页面失败：', error);
         wx.showToast({

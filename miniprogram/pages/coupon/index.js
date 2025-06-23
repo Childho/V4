@@ -39,7 +39,11 @@ Page({
     // 显示使用确认弹窗
     showUseModal: false,
     // 当前要使用的优惠券
-    currentCoupon: null
+    currentCoupon: null,
+    // 来源页面
+    fromPage: 'personal',
+    // 订单金额
+    orderAmount: 0
   },
 
   /**
@@ -48,13 +52,27 @@ Page({
   onLoad(options) {
     console.log('优惠券页面加载，参数：', options);
     
-    // 设置页面标题
-    wx.setNavigationBarTitle({
-      title: '我的优惠券'
+    // 获取传入参数
+    const { from, orderAmount, tab } = options;
+    
+    // 设置页面数据
+    this.setData({
+      fromPage: from || 'personal',  // 来源页面
+      orderAmount: orderAmount ? parseFloat(orderAmount) : 0  // 订单金额
     });
     
+    // 根据来源设置页面标题
+    if (from === 'order-confirm') {
+      wx.setNavigationBarTitle({
+        title: '选择优惠券'
+      });
+    } else {
+      wx.setNavigationBarTitle({
+        title: '我的优惠券'
+      });
+    }
+    
     // 获取传入的tab参数，用于直接跳转到指定tab
-    const { tab } = options;
     if (tab && tab >= 0 && tab <= 3) {
       this.setData({
         currentTab: parseInt(tab)
@@ -222,6 +240,54 @@ Page({
   },
 
   /**
+   * 选择优惠券（从订单确认页面调用）
+   */
+  selectCoupon(e) {
+    const { index } = e.currentTarget.dataset;
+    const coupon = this.data.couponList[index];
+    const { fromPage, orderAmount } = this.data;
+    
+    console.log('选择优惠券：', coupon);
+    
+    // 如果不是从订单确认页面来的，直接返回
+    if (fromPage !== 'order-confirm') {
+      return;
+    }
+    
+    // 检查优惠券是否可用
+    if (coupon.status !== 1) {
+      wx.showToast({
+        title: '该优惠券不可用',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 检查订单金额是否满足优惠券使用条件
+    if (coupon.minAmount > 0 && orderAmount < coupon.minAmount) {
+      wx.showToast({
+        title: `订单金额需满${coupon.minAmount}元`,
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 将选中的优惠券保存到本地存储
+    wx.setStorageSync('selectedCoupon', coupon);
+    
+    wx.showToast({
+      title: '优惠券选择成功',
+      icon: 'success',
+      duration: 1500
+    });
+    
+    // 返回上一页
+    setTimeout(() => {
+      wx.navigateBack();
+    }, 1500);
+  },
+
+  /**
    * 显示使用优惠券确认弹窗
    */
   showUseCouponModal(e) {
@@ -296,12 +362,13 @@ Page({
         endTime: '2024-12-31',
         status: 1, // 1=可使用，2=已使用，3=已过期
         useTime: null,
-        description: '购买任意商品满100元可用'
+        description: '购买任意商品满100元可用',
+        discount: 20 // 优惠金额，用于订单计算
       },
       {
         id: 2,
         title: '8.8折优惠券',
-        amount: 12, // 这里表示折扣，88表示8.8折
+        amount: 88, // 表示8.8折
         minAmount: 50,
         type: 2,
         scope: '服装类商品',
@@ -309,10 +376,25 @@ Page({
         endTime: '2024-06-30',
         status: 1,
         useTime: null,
-        description: '购买服装类商品满50元可用'
+        description: '购买服装类商品满50元可用',
+        discount: 0 // 折扣券的优惠金额需要根据订单金额计算
       },
       {
         id: 3,
+        title: '满200减50元优惠券',
+        amount: 50,
+        minAmount: 200,
+        type: 1,
+        scope: '运动器材',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31',
+        status: 1,
+        useTime: null,
+        description: '购买运动器材满200元可用',
+        discount: 50
+      },
+      {
+        id: 4,
         title: '免邮券',
         amount: 0,
         minAmount: 0,
@@ -322,10 +404,11 @@ Page({
         endTime: '2024-12-31', 
         status: 2,
         useTime: '2024-01-15 10:30:00',
-        description: '任意订单免运费'
+        description: '任意订单免运费',
+        discount: 0 // 免邮券针对运费
       },
       {
-        id: 4,
+        id: 5,
         title: '满200减50元优惠券',
         amount: 50,
         minAmount: 200,
@@ -335,7 +418,8 @@ Page({
         endTime: '2023-12-31', // 已过期
         status: 3,
         useTime: null,
-        description: '购买电子产品满200元可用'
+        description: '购买电子产品满200元可用',
+        discount: 50
       }
     ];
     

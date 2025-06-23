@@ -233,6 +233,23 @@
   box-shadow: 0 6rpx 20rpx rgba(255, 107, 53, 0.4);
 }
 
+/* 选择按钮 */
+.select-btn {
+  background: linear-gradient(135deg, #4169e1 0%, #6690ff 100%);
+  color: #fff;
+  padding: 12rpx 32rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  box-shadow: 0 4rpx 16rpx rgba(65, 105, 225, 0.3);
+  transition: all 0.3s ease;
+}
+
+.select-btn:hover {
+  transform: translateY(-2rpx);
+  box-shadow: 0 6rpx 20rpx rgba(65, 105, 225, 0.4);
+}
+
 /* 状态标签 */
 .status-tag {
   padding: 8rpx 20rpx;
