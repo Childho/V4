@@ -1,0 +1,111 @@
+<!-- 地址编辑页面 - 新增或编辑收货地址 -->
+<view class="address-form-container">
+  <!-- 表单内容 -->
+  <view class="form-content">
+    
+    <!-- 收件人姓名 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">收件人</text>
+        <text class="required">*</text>
+      </view>
+      <view class="form-input">
+        <input 
+          class="input-field" 
+          type="text" 
+          placeholder="请输入收件人姓名"
+          value="{{formData.consignee}}"
+          bindinput="onInputChange"
+          data-field="consignee"
+          maxlength="20"
+        />
+      </view>
+    </view>
+
+    <!-- 联系电话 -->
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">联系电话</text>
+        <text class="required">*</text>
+      </view>
+      <view class="form-input">
+        <input 
+          class="input-field" 
+          type="number" 
+          placeholder="请输入联系电话"
+          value="{{formData.mobile}}"
+          bindinput="onInputChange"
+          data-field="mobile"
+          maxlength="11"
+        />
+      </view>
+    </view>
+
+    <!-- 地区选择 -->
+    <view class="form-item region-picker" bindtap="openRegionPicker">
+      <view class="form-label">
+        <text class="label-text">所在地区</text>
+        <text class="required">*</text>
+      </view>
+      <view class="form-input picker-input">
+        <text class="picker-text {{!formData.region ? 'placeholder' : ''}}">
+          {{formData.region || '请选择省市区'}}
+        </text>
+        <text class="picker-arrow">></text>
+      </view>
+    </view>
+
+    <!-- 详细地址 -->
+    <view class="form-item detail-address">
+      <view class="form-label">
+        <text class="label-text">详细地址</text>
+        <text class="required">*</text>
+      </view>
+      <view class="form-input">
+        <textarea 
+          class="textarea-field" 
+          placeholder="街道、楼牌号等详细地址"
+          value="{{formData.detail}}"
+          bindinput="onInputChange"
+          data-field="detail"
+          maxlength="200"
+          show-confirm-bar="{{false}}"
+          auto-height
+        ></textarea>
+      </view>
+    </view>
+
+    <!-- 设为默认地址 -->
+    <view class="form-item switch-item">
+      <view class="form-label">
+        <text class="label-text">设为默认地址</text>
+      </view>
+      <view class="form-input">
+        <switch 
+          class="switch-field" 
+          checked="{{formData.isDefault}}"
+          bindchange="onSwitchChange"
+          color="#4169e1"
+        />
+      </view>
+    </view>
+
+  </view>
+
+  <!-- 底部保存按钮 -->
+  <view class="bottom-actions">
+    <button class="save-btn" bindtap="saveAddress" disabled="{{!canSave}}">
+      保存地址
+    </button>
+  </view>
+</view>
+
+<!-- 地区选择器 -->
+<picker 
+  mode="region" 
+  value="{{regionArray}}" 
+  bindchange="onRegionChange"
+  wx:if="{{showRegionPicker}}"
+>
+  <view></view>
+</picker> 

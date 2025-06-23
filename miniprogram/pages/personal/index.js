@@ -28,6 +28,45 @@ Page({
       { id: 2, name: '分享小程序', desc: '分享给好友获得5积分', icon: 'share', status: 0 },
       { id: 3, name: '邀请好友', desc: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
     ],
+    // 常用工具列表
+    tools: [
+      {
+        id: 1,
+        name: '地址管理',
+        icon: '/assets/icons/address.svg',
+        url: '/pages/address-list/index'
+      },
+      {
+        id: 2,
+        name: '我的收藏',
+        icon: '/assets/icons/favorite.svg',
+        url: '/pages/favorites/favorites'
+      },
+      {
+        id: 3,
+        name: '我的足迹',
+        icon: '/assets/icons/footprint.svg',
+        url: '/pages/history/history'
+      },
+      {
+        id: 4,
+        name: '在线客服',
+        icon: '/assets/icons/service.svg',
+        url: '/pages/service/service'
+      },
+      {
+        id: 5,
+        name: '意见反馈',
+        icon: '/assets/icons/feedback.svg',
+        url: '/pages/feedback/feedback'
+      },
+      {
+        id: 6,
+        name: '关于我们',
+        icon: '/assets/icons/about.svg',
+        url: '/pages/about/about'
+      }
+    ],
     coupons: 3,
     services: 1,
     // 添加订单红点数据
@@ -290,10 +329,44 @@ Page({
 
   // 页面跳转
   navigateTo(e) {
-    const url = e.currentTarget.dataset.url || e
-    wx.navigateTo({
-      url
-    })
+    // 获取跳转URL，可能来自事件对象的dataset或直接传入的字符串
+    const url = e.currentTarget?.dataset?.url || e;
+    
+    console.log('准备跳转到页面：', url); // 添加调试信息
+    
+    // 检查URL是否有效
+    if (!url) {
+      console.error('跳转URL无效：', url);
+      wx.showToast({
+        title: '页面路径无效',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 显示加载中
+    wx.showLoading({
+      title: '正在跳转...',
+      mask: true
+    });
+    
+    // 执行页面跳转
+    setTimeout(() => {
+      wx.hideLoading();
+      wx.navigateTo({
+        url,
+        success: () => {
+          console.log('页面跳转成功：', url); // 跳转成功的调试信息
+        },
+        fail: (error) => {
+          console.error('页面跳转失败：', url, error); // 跳转失败的调试信息
+          wx.showToast({
+            title: '页面跳转失败，请重试',
+            icon: 'none'
+          });
+        }
+      });
+    }, 300);
   },
 
   // 处理设置

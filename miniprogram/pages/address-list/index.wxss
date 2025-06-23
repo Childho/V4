@@ -1,0 +1,303 @@
+/* 地址管理页面样式 */
+.address-container {
+  min-height: 100vh;
+  background-color: #f5f5f5; /* 浅灰色背景，营造层次感 */
+  padding-bottom: 120rpx; /* 为底部固定按钮留出空间 */
+}
+
+/* 顶部操作栏样式 */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+/* 全选按钮区域 */
+.select-all {
+  display: flex;
+  align-items: center;
+}
+
+.select-icon {
+  font-size: 36rpx;
+  color: #cccccc;
+  margin-right: 16rpx;
+}
+
+.select-icon.selected {
+  color: #4169e1; /* 蓝色选中状态 */
+}
+
+.select-text {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+/* 操作按钮区域 */
+.action-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.edit-btn {
+  font-size: 28rpx;
+  color: #4169e1;
+  padding: 10rpx 20rpx;
+}
+
+/* 地址列表样式 */
+.address-list {
+  margin-top: 20rpx;
+}
+
+.address-item {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  margin-bottom: 20rpx;
+  padding: 30rpx;
+  border-radius: 12rpx;
+  margin-left: 30rpx;
+  margin-right: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05); /* 轻微阴影 */
+  position: relative;
+}
+
+/* 默认地址特殊样式 */
+.address-item.default {
+  border: 2rpx solid #4169e1;
+}
+
+/* 选择框样式 */
+.checkbox {
+  margin-right: 24rpx;
+}
+
+.check-icon {
+  font-size: 36rpx;
+  color: #cccccc;
+}
+
+.check-icon.selected {
+  color: #4169e1;
+}
+
+/* 地址内容主体 */
+.address-content {
+  flex: 1;
+}
+
+/* 收件人信息行 */
+.recipient-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-right: 20rpx;
+}
+
+.phone {
+  font-size: 28rpx;
+  color: #666666;
+  margin-right: 20rpx;
+}
+
+/* 默认地址标签 */
+.default-tag {
+  background-color: #4169e1;
+  color: #ffffff;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  line-height: 1;
+}
+
+/* 地址详情 */
+.address-detail {
+  margin-top: 8rpx;
+}
+
+.address-text {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.4;
+}
+
+/* 编辑按钮 */
+.edit-action {
+  margin-left: 20rpx;
+  padding: 16rpx;
+}
+
+.edit-icon {
+  font-size: 32rpx;
+}
+
+/* 空状态样式 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 60rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 40rpx;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #999999;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #cccccc;
+}
+
+/* 底部操作栏 */
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+/* 批量删除按钮 */
+.batch-delete {
+  background-color: #ff4757; /* 红色删除按钮 */
+  color: #ffffff;
+  padding: 20rpx 40rpx;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.delete-text {
+  font-size: 28rpx;
+}
+
+/* 新增地址按钮 */
+.add-address {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #4169e1;
+  color: #ffffff;
+  padding: 20rpx 40rpx;
+  border-radius: 8rpx;
+  flex: 1;
+}
+
+.add-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.add-text {
+  font-size: 28rpx;
+}
+
+/* 弹窗样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  margin: 60rpx;
+  overflow: hidden;
+  max-width: 500rpx;
+  width: 100%;
+}
+
+.modal-header {
+  padding: 40rpx 30rpx 20rpx;
+  text-align: center;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.modal-body {
+  padding: 30rpx;
+  text-align: center;
+}
+
+.modal-message {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.4;
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 30rpx;
+  font-size: 28rpx;
+  border: none;
+  background-color: #ffffff;
+  border-radius: 0;
+}
+
+.modal-btn.cancel {
+  color: #666666;
+  border-right: 1rpx solid #f0f0f0;
+}
+
+.modal-btn.confirm {
+  color: #ff4757;
+  font-weight: 600;
+}
+
+/* 按钮按下效果 */
+.modal-btn:active {
+  background-color: #f5f5f5;
+}
+
+.add-address:active,
+.batch-delete:active {
+  opacity: 0.8;
+}
+
+.edit-btn:active {
+  opacity: 0.6;
+} 

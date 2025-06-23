@@ -1,0 +1,145 @@
+<view class="coupon-page">
+  <!-- 顶部tab切换 -->
+  <view class="tab-container">
+    <view class="tab-wrapper">
+      <view 
+        class="tab-item {{currentTab === index ? 'active' : ''}}"
+        wx:for="{{tabs}}" 
+        wx:key="id"
+        data-index="{{index}}"
+        bindtap="switchTab"
+      >
+        {{item.name}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 优惠券列表 -->
+  <view class="coupon-list">
+    <!-- 优惠券卡片 -->
+    <view 
+      class="coupon-item {{item.status === 2 ? 'used' : ''}} {{item.status === 3 ? 'expired' : ''}}"
+      wx:for="{{couponList}}" 
+      wx:key="id"
+    >
+      <!-- 左侧金额区域 -->
+      <view class="coupon-left">
+        <view class="amount-wrapper">
+          <!-- 满减券显示 -->
+          <view wx:if="{{item.type === 1}}" class="amount-section">
+            <text class="currency">¥</text>
+            <text class="amount">{{item.amount}}</text>
+          </view>
+          <!-- 折扣券显示 -->
+          <view wx:elif="{{item.type === 2}}" class="discount-section">
+            <text class="discount">{{item.amount}}</text>
+            <text class="discount-text">折</text>
+          </view>
+          <!-- 免邮券显示 -->
+          <view wx:else class="free-shipping">
+            <text class="free-text">免邮</text>
+          </view>
+          
+          <!-- 使用条件 -->
+          <view class="condition" wx:if="{{item.minAmount > 0}}">
+            满{{item.minAmount}}可用
+          </view>
+          <view class="condition" wx:else>
+            无门槛
+          </view>
+        </view>
+      </view>
+
+      <!-- 右侧信息区域 -->
+      <view class="coupon-right">
+        <!-- 优惠券标题 -->
+        <view class="coupon-title">{{item.title}}</view>
+        
+        <!-- 适用范围 -->
+        <view class="coupon-scope">适用范围：{{item.scope}}</view>
+        
+        <!-- 有效期 -->
+        <view class="coupon-time">
+          有效期：{{item.startTime}} 至 {{item.endTime}}
+        </view>
+        
+        <!-- 使用时间（已使用状态） -->
+        <view class="use-time" wx:if="{{item.status === 2}}">
+          使用时间：{{item.useTime}}
+        </view>
+        
+        <!-- 优惠券描述 -->
+        <view class="coupon-desc">{{item.description}}</view>
+        
+        <!-- 操作按钮 -->
+        <view class="coupon-actions">
+          <!-- 可使用状态的按钮 -->
+          <view 
+            wx:if="{{item.status === 1}}" 
+            class="use-btn"
+            data-index="{{index}}"
+            bindtap="showUseCouponModal"
+          >
+            立即使用
+          </view>
+          
+          <!-- 已使用状态的标签 -->
+          <view wx:elif="{{item.status === 2}}" class="status-tag used-tag">
+            已使用
+          </view>
+          
+          <!-- 已过期状态的标签 -->
+          <view wx:else class="status-tag expired-tag">
+            已过期
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{couponList.length === 0 && !loading}}">
+      <image class="empty-icon" src="/assets/icons/empty-coupon.png"></image>
+      <view class="empty-text">{{emptyText}}</view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading-state" wx:if="{{loading}}">
+      <view class="loading-text">加载中...</view>
+    </view>
+
+    <!-- 没有更多数据提示 -->
+    <view class="no-more" wx:if="{{!hasMore && couponList.length > 0}}">
+      没有更多了～
+    </view>
+  </view>
+
+  <!-- 使用优惠券确认弹窗 -->
+  <view class="modal-overlay" wx:if="{{showUseModal}}" bindtap="hideUseCouponModal">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">确认使用优惠券</view>
+        <view class="modal-close" bindtap="hideUseCouponModal">×</view>
+      </view>
+      
+      <view class="modal-body" wx:if="{{currentCoupon}}">
+        <view class="coupon-preview">
+          <view class="preview-amount">
+            <text wx:if="{{currentCoupon.type === 1}}">¥{{currentCoupon.amount}}</text>
+            <text wx:elif="{{currentCoupon.type === 2}}">{{currentCoupon.amount}}折</text>
+            <text wx:else>免邮</text>
+          </view>
+          <view class="preview-title">{{currentCoupon.title}}</view>
+        </view>
+        
+        <view class="confirm-text">
+          确认要使用这张优惠券吗？使用后将无法撤销。
+        </view>
+      </view>
+      
+      <view class="modal-footer">
+        <view class="cancel-btn" bindtap="hideUseCouponModal">取消</view>
+        <view class="confirm-btn" bindtap="confirmUseCoupon">确认使用</view>
+      </view>
+    </view>
+  </view>
+</view> 

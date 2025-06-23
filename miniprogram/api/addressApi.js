@@ -1,75 +1,74 @@
-// 地址管理相关API接口文件
-const { api } = require('./utils/request');
+/**
+ * 地址管理相关接口
+ * 包含地址的增删改查等功能
+ */
+import { apiRequest } from './utils/request.js';
 
 /**
- * 获取用户的地址列表
- * @returns {Promise<Array>} 地址列表
+ * 获取用户地址列表
+ * @returns {Promise} 返回地址列表数据
  */
-const getAddressList = () => {
-  return api.get('/api/address/list');
-};
+export function getAddressList() {
+  return apiRequest('/api/address/list', {}, 'POST');
+}
 
 /**
- * 新增收货地址
- * @param {Object} addressData - 地址信息
- * @param {string} addressData.region - 所在地区，格式："省,市,区"
- * @param {string} addressData.detail - 详细地址
- * @param {string} addressData.consignee - 收件人姓名
- * @param {string} addressData.mobile - 手机号码
- * @param {boolean} addressData.isDefault - 是否设为默认地址
- * @returns {Promise<Object>} 新增结果
+ * 添加新地址
+ * @param {Object} addressData 地址信息
+ * @param {string} addressData.name 收件人姓名
+ * @param {string} addressData.phone 收件人电话
+ * @param {string} addressData.province 省份
+ * @param {string} addressData.city 城市
+ * @param {string} addressData.district 区县
+ * @param {string} addressData.detail 详细地址
+ * @param {boolean} addressData.isDefault 是否为默认地址
+ * @returns {Promise} 返回添加结果
  */
-const addAddress = (addressData) => {
-  return api.post('/api/address/add', addressData);
-};
+export function addAddress(addressData) {
+  return apiRequest('/api/address/add', addressData, 'POST');
+}
 
 /**
- * 修改收货地址
- * @param {Object} addressData - 地址信息
- * @param {number} addressData.id - 地址ID
- * @param {string} addressData.region - 所在地区，格式："省,市,区"
- * @param {string} addressData.detail - 详细地址
- * @param {string} addressData.consignee - 收件人姓名
- * @param {string} addressData.mobile - 手机号码
- * @param {boolean} addressData.isDefault - 是否设为默认地址
- * @returns {Promise<Object>} 修改结果
+ * 更新地址信息
+ * @param {Object} addressData 地址信息（包含id）
+ * @returns {Promise} 返回更新结果
  */
-const updateAddress = (addressData) => {
-  return api.post('/api/address/update', addressData);
-};
+export function updateAddress(addressData) {
+  return apiRequest('/api/address/update', addressData, 'POST');
+}
 
 /**
- * 删除单个收货地址
- * @param {number} addressId - 地址ID
- * @returns {Promise<Object>} 删除结果
+ * 删除单个地址
+ * @param {number} addressId 地址ID
+ * @returns {Promise} 返回删除结果
  */
-const deleteAddress = (addressId) => {
-  return api.post('/api/address/delete', { id: addressId });
-};
+export function deleteAddress(addressId) {
+  return apiRequest('/api/address/delete', { id: addressId }, 'POST');
+}
 
 /**
- * 批量删除收货地址
- * @param {Array<number>} addressIds - 地址ID数组
- * @returns {Promise<Object>} 删除结果
+ * 批量删除地址
+ * @param {Array} addressIds 地址ID数组
+ * @returns {Promise} 返回批量删除结果
  */
-const batchDeleteAddress = (addressIds) => {
-  return api.post('/api/address/batchDelete', { ids: addressIds });
-};
+export function batchDeleteAddress(addressIds) {
+  return apiRequest('/api/address/batchDelete', { ids: addressIds }, 'POST');
+}
 
 /**
  * 设置默认地址
- * @param {number} addressId - 地址ID
- * @returns {Promise<Object>} 设置结果
+ * @param {number} addressId 地址ID
+ * @returns {Promise} 返回设置结果
  */
-const setDefaultAddress = (addressId) => {
-  return api.post('/api/address/setDefault', { id: addressId });
-};
+export function setDefaultAddress(addressId) {
+  return apiRequest('/api/address/setDefault', { id: addressId }, 'POST');
+}
 
-module.exports = {
-  getAddressList,
-  addAddress,
-  updateAddress,
-  deleteAddress,
-  batchDeleteAddress,
-  setDefaultAddress
-}; 
+/**
+ * 根据ID获取地址详情
+ * @param {number} addressId 地址ID
+ * @returns {Promise} 返回地址详情
+ */
+export function getAddressDetail(addressId) {
+  return apiRequest('/api/address/detail', { id: addressId }, 'POST');
+} 

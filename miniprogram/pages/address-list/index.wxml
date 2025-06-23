@@ -1,0 +1,93 @@
+<!-- 地址管理页面 - 显示用户所有收货地址 -->
+<view class="address-container">
+  <!-- 顶部操作栏 -->
+  <view class="top-bar">
+    <!-- 全选按钮 - 仅在编辑模式下显示 -->
+    <view class="select-all" wx:if="{{isEditMode}}" bindtap="toggleSelectAll">
+      <text class="select-icon {{isSelectAll ? 'selected' : ''}}">{{isSelectAll ? '✓' : '○'}}</text>
+      <text class="select-text">全选</text>
+    </view>
+    
+    <!-- 右侧操作按钮 -->
+    <view class="action-buttons">
+      <!-- 编辑/完成按钮 -->
+      <text class="edit-btn" bindtap="toggleEditMode" wx:if="{{addressList.length > 0}}">
+        {{isEditMode ? '完成' : '编辑'}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 地址列表 -->
+  <view class="address-list" wx:if="{{addressList.length > 0}}">
+    <view 
+      class="address-item {{item.isDefault ? 'default' : ''}}" 
+      wx:for="{{addressList}}" 
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="selectAddress"
+    >
+      <!-- 选择框 - 仅在编辑模式下显示 -->
+      <view class="checkbox" wx:if="{{isEditMode}}" bindtap="toggleSelect" data-id="{{item.id}}">
+        <text class="check-icon {{item.selected ? 'selected' : ''}}">{{item.selected ? '✓' : '○'}}</text>
+      </view>
+      
+      <!-- 地址信息主体 -->
+      <view class="address-content">
+        <!-- 收件人信息 -->
+        <view class="recipient-info">
+          <text class="name">{{item.consignee}}</text>
+          <text class="phone">{{item.mobile}}</text>
+          <!-- 默认地址标识 -->
+          <view class="default-tag" wx:if="{{item.isDefault}}">默认</view>
+        </view>
+        
+        <!-- 地址详情 -->
+        <view class="address-detail">
+          <text class="address-text">{{item.region}} {{item.detail}}</text>
+        </view>
+      </view>
+      
+      <!-- 编辑按钮 - 仅在非编辑模式下显示 -->
+      <view class="edit-action" wx:if="{{!isEditMode}}" bindtap="editAddress" data-id="{{item.id}}">
+        <text class="edit-icon">✏️</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态提示 -->
+  <view class="empty-state" wx:if="{{addressList.length === 0}}">
+    <image class="empty-icon" src="../../assets/icons/empty-box.svg" mode="aspectFit"></image>
+    <text class="empty-text">暂无收货地址</text>
+    <text class="empty-desc">请添加您的收货地址</text>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-actions">
+    <!-- 编辑模式下的批量删除按钮 -->
+    <view class="batch-delete" wx:if="{{isEditMode && selectedIds.length > 0}}" bindtap="batchDelete">
+      <text class="delete-text">删除选中 ({{selectedIds.length}})</text>
+    </view>
+    
+    <!-- 新增地址按钮 -->
+    <view class="add-address" bindtap="addNewAddress">
+      <text class="add-icon">+</text>
+      <text class="add-text">新增地址</text>
+    </view>
+  </view>
+</view>
+
+<!-- 确认删除弹窗 -->
+<view class="modal-overlay" wx:if="{{showDeleteModal}}" bindtap="hideDeleteModal">
+  <view class="modal-content" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">确认删除</text>
+    </view>
+    <view class="modal-body">
+      <text class="modal-message">{{deleteModalMessage}}</text>
+    </view>
+    <view class="modal-footer">
+      <button class="modal-btn cancel" bindtap="hideDeleteModal">取消</button>
+      <button class="modal-btn confirm" bindtap="confirmDelete">确认</button>
+    </view>
+  </view>
+</view> 

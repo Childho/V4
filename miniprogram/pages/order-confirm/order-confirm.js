@@ -178,7 +178,7 @@ Page({
   selectAddress() {
     console.log('跳转到地址选择页面');
     wx.navigateTo({
-      url: '/pages/address-list/address-list?from=order-confirm',
+      url: '/pages/address-list/index?from=order-confirm',
       fail: (error) => {
         console.error('跳转地址页面失败：', error);
         wx.showToast({

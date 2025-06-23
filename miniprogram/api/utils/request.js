@@ -270,6 +270,167 @@ const mockData = {
   ],
   '/api/search/suggestions': {
     suggestions: ['羽毛球拍', '李宁球拍', '尤尼克斯', '威克多', '球鞋']
+  },
+  // 优惠券相关mock数据
+  '/api/coupon/list': (data) => {
+    // 模拟优惠券数据
+    const allCoupons = [
+      {
+        id: 1,
+        title: '满100减20元优惠券',
+        amount: 20,
+        minAmount: 100,
+        type: 1, // 1=满减券，2=折扣券，3=免邮券
+        scope: '全场通用',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31',
+        status: 1, // 1=可使用，2=已使用，3=已过期
+        useTime: null,
+        description: '购买任意商品满100元可用'
+      },
+      {
+        id: 2,
+        title: '8.8折优惠券',
+        amount: 88, // 表示8.8折
+        minAmount: 50,
+        type: 2,
+        scope: '服装类商品',
+        startTime: '2024-01-01', 
+        endTime: '2024-06-30',
+        status: 1,
+        useTime: null,
+        description: '购买服装类商品满50元可用'
+      },
+      {
+        id: 3,
+        title: '满200减50元优惠券',
+        amount: 50,
+        minAmount: 200,
+        type: 1,
+        scope: '运动器材',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31',
+        status: 1,
+        useTime: null,
+        description: '购买运动器材满200元可用'
+      },
+      {
+        id: 4,
+        title: '免邮券',
+        amount: 0,
+        minAmount: 0,
+        type: 3,
+        scope: '全场通用',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31', 
+        status: 2,
+        useTime: '2024-01-15 10:30:00',
+        description: '任意订单免运费'
+      },
+      {
+        id: 5,
+        title: '新人专享券',
+        amount: 30,
+        minAmount: 99,
+        type: 1,
+        scope: '全场通用',
+        startTime: '2024-01-01',
+        endTime: '2024-03-31',
+        status: 2,
+        useTime: '2024-02-20 15:20:00',
+        description: '新用户首次购买专享'
+      },
+      {
+        id: 6,
+        title: '满300减80元优惠券',
+        amount: 80,
+        minAmount: 300,
+        type: 1,
+        scope: '电子产品',
+        startTime: '2024-01-01',
+        endTime: '2023-12-31', // 已过期
+        status: 3,
+        useTime: null,
+        description: '购买电子产品满300元可用'
+      },
+      {
+        id: 7,
+        title: '9折优惠券',
+        amount: 90,
+        minAmount: 100,
+        type: 2,
+        scope: '运动服装',
+        startTime: '2024-01-01',
+        endTime: '2023-11-30', // 已过期
+        status: 3,
+        useTime: null,
+        description: '购买运动服装满100元可用'
+      }
+    ];
+    
+    // 根据状态过滤优惠券
+    let filteredCoupons = allCoupons;
+    if (data.status > 0) {
+      filteredCoupons = allCoupons.filter(coupon => coupon.status === data.status);
+    }
+    
+    // 模拟分页
+    const page = data.page || 1;
+    const pageSize = data.pageSize || 10;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    
+    return {
+      list: filteredCoupons.slice(startIndex, endIndex),
+      total: filteredCoupons.length,
+      hasMore: endIndex < filteredCoupons.length
+    };
+  },
+  '/api/coupon/use': (data) => {
+    // 模拟使用优惠券
+    console.log('模拟使用优惠券，ID：', data.couponId);
+    return {
+      success: true,
+      message: '优惠券使用成功'
+    };
+  },
+  '/api/coupon/count': () => {
+    // 模拟获取可用优惠券数量
+    return {
+      availableCount: 3,
+      usedCount: 2,
+      expiredCount: 2,
+      totalCount: 7
+    };
+  },
+  '/api/coupon/receive': (data) => {
+    // 模拟领取优惠券
+    console.log('模拟领取优惠券，活动ID：', data.activityId, '券ID：', data.couponId);
+    return {
+      success: true,
+      message: '优惠券领取成功',
+      couponId: Date.now()
+    };
+  },
+  '/api/coupon/detail': (data) => {
+    // 模拟获取优惠券详情
+    return {
+      id: data.couponId,
+      title: '满100减20元优惠券',
+      amount: 20,
+      minAmount: 100,
+      type: 1,
+      scope: '全场通用',
+      startTime: '2024-01-01',
+      endTime: '2024-12-31',
+      status: 1,
+      description: '购买任意商品满100元可用',
+      rules: [
+        '每人限领1张',
+        '不与其他优惠券同时使用',
+        '仅限线上商城使用'
+      ]
+    };
   }
 };
 

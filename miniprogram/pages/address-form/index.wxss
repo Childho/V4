@@ -1,0 +1,215 @@
+/* 地址编辑页面样式 */
+.address-form-container {
+  min-height: 100vh;
+  background-color: #f5f5f5; /* 浅灰色背景 */
+  padding-bottom: 120rpx; /* 为底部按钮留空间 */
+}
+
+/* 表单内容区域 */
+.form-content {
+  background-color: #ffffff;
+  margin: 20rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05); /* 轻微阴影 */
+}
+
+/* 表单项通用样式 */
+.form-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: relative;
+}
+
+.form-item:last-child {
+  border-bottom: none; /* 最后一项不需要底边框 */
+}
+
+/* 表单标签样式 */
+.form-label {
+  width: 160rpx;
+  margin-right: 30rpx;
+  padding-top: 10rpx;
+  flex-shrink: 0; /* 防止标签被压缩 */
+}
+
+.label-text {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.4;
+}
+
+.required {
+  color: #ff4757; /* 红色必填标识 */
+  margin-left: 4rpx;
+}
+
+/* 表单输入区域 */
+.form-input {
+  flex: 1;
+  min-height: 40rpx;
+}
+
+/* 普通输入框样式 */
+.input-field {
+  width: 100%;
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.4;
+  padding: 10rpx 0;
+}
+
+.input-field::placeholder {
+  color: #cccccc;
+}
+
+/* 文本域样式 */
+.textarea-field {
+  width: 100%;
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.4;
+  padding: 10rpx 0;
+  min-height: 80rpx;
+}
+
+.textarea-field::placeholder {
+  color: #cccccc;
+}
+
+/* 详细地址项特殊样式 */
+.detail-address {
+  align-items: flex-start;
+}
+
+.detail-address .form-label {
+  padding-top: 20rpx; /* 与文本域顶部对齐 */
+}
+
+/* 地区选择器样式 */
+.region-picker {
+  background-color: #ffffff;
+}
+
+.picker-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 0;
+  min-height: 40rpx;
+}
+
+.picker-text {
+  font-size: 28rpx;
+  color: #333333;
+  flex: 1;
+}
+
+.picker-text.placeholder {
+  color: #cccccc; /* 占位符颜色 */
+}
+
+.picker-arrow {
+  font-size: 24rpx;
+  color: #999999;
+  margin-left: 20rpx;
+  transform: rotate(90deg); /* 向右的箭头 */
+}
+
+/* 开关组件样式 */
+.switch-item {
+  align-items: center;
+}
+
+.switch-item .form-label {
+  padding-top: 0;
+}
+
+.switch-field {
+  transform: scale(0.8); /* 稍微缩小开关尺寸 */
+}
+
+/* 底部操作区域 */
+.bottom-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #f0f0f0;
+  z-index: 1000;
+}
+
+/* 保存按钮样式 */
+.save-btn {
+  width: 100%;
+  background-color: #4169e1; /* 主题蓝色 */
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 600;
+  padding: 24rpx 0;
+  border-radius: 12rpx;
+  border: none;
+  line-height: 1;
+}
+
+/* 按钮禁用状态 */
+.save-btn[disabled] {
+  background-color: #cccccc;
+  color: #ffffff;
+}
+
+/* 按钮按下效果 */
+.save-btn:not([disabled]):active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+/* 输入框聚焦样式 */
+.input-field:focus,
+.textarea-field:focus {
+  outline: none;
+}
+
+/* 地区选择器按下效果 */
+.region-picker:active {
+  background-color: #f8f8f8;
+}
+
+/* 表单验证错误提示样式 */
+.form-item.error .input-field,
+.form-item.error .textarea-field {
+  color: #ff4757;
+}
+
+.form-item.error .picker-text {
+  color: #ff4757;
+}
+
+/* 输入字数统计 */
+.char-count {
+  font-size: 24rpx;
+  color: #999999;
+  text-align: right;
+  margin-top: 10rpx;
+}
+
+/* 响应式适配 */
+@media screen and (max-width: 350px) {
+  .form-label {
+    width: 140rpx; /* 小屏幕上缩小标签宽度 */
+  }
+  
+  .label-text {
+    font-size: 26rpx;
+  }
+  
+  .input-field,
+  .textarea-field,
+  .picker-text {
+    font-size: 26rpx;
+  }
+} 
