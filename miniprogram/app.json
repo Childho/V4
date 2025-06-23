@@ -16,7 +16,9 @@
     "pages/myPoints/myPoints",
     "pages/pointsExchange/index",
     "pages/dailyCheck/index",
-    "pages/search-result/search-result"
+    "pages/search-result/search-result",
+    "pages/address-list/address-list",
+    "pages/address-form/address-form"
   ],
   "window": {
     "navigationBarTextStyle": "black",

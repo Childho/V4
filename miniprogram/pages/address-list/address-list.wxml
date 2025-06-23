@@ -1,0 +1,82 @@
+<!-- 地址管理页面模板 -->
+<view class="container">
+  <!-- 页面头部：标题和新增按钮 -->
+  <view class="header">
+    <view class="title">地址管理</view>
+    <view class="header-buttons">
+      <!-- 管理按钮：用于进入多选模式 -->
+      <button class="manage-btn" bindtap="toggleManageMode" wx:if="{{addressList.length > 0}}">
+        {{isManageMode ? '取消' : '管理'}}
+      </button>
+      <!-- 新增地址按钮 -->
+      <button class="add-btn" bindtap="addAddress">新增地址</button>
+    </view>
+  </view>
+
+  <!-- 地址列表 -->
+  <view class="address-list" wx:if="{{addressList.length > 0}}">
+    <view 
+      class="address-item {{item.isDefault ? 'default' : ''}}" 
+      wx:for="{{addressList}}" 
+      wx:key="id"
+    >
+      <!-- 多选模式的选择框 -->
+      <view class="checkbox-wrapper" wx:if="{{isManageMode}}">
+        <checkbox 
+          value="{{item.id}}" 
+          checked="{{item.checked}}" 
+          bindtap="onCheckboxTap" 
+          data-id="{{item.id}}"
+        />
+      </view>
+
+      <!-- 地址信息主体 -->
+      <view class="address-content" bindtap="editAddress" data-address="{{item}}">
+        <!-- 收件人和手机号 -->
+        <view class="contact-info">
+          <text class="consignee">{{item.consignee}}</text>
+          <text class="mobile">{{item.mobile}}</text>
+          <!-- 默认地址标签 -->
+          <text class="default-tag" wx:if="{{item.isDefault}}">默认</text>
+        </view>
+        
+        <!-- 地址信息 -->
+        <view class="address-info">
+          <text class="region">{{item.region}}</text>
+          <text class="detail">{{item.detail}}</text>
+        </view>
+      </view>
+
+      <!-- 操作按钮（非管理模式下显示） -->
+      <view class="actions" wx:if="{{!isManageMode}}">
+        <button class="edit-btn" bindtap="editAddress" data-address="{{item}}">编辑</button>
+        <button class="delete-btn" bindtap="deleteAddress" data-id="{{item.id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态提示 -->
+  <view class="empty-state" wx:if="{{addressList.length === 0}}">
+    <image class="empty-icon" src="/assets/images/empty-address.png" mode="aspectFit"></image>
+    <text class="empty-text">暂无收货地址</text>
+    <button class="add-first-btn" bindtap="addAddress">添加收货地址</button>
+  </view>
+
+  <!-- 批量删除底部操作栏（管理模式下显示） -->
+  <view class="bottom-actions" wx:if="{{isManageMode}}">
+    <view class="select-all">
+      <checkbox 
+        checked="{{isAllSelected}}" 
+        bindtap="toggleSelectAll"
+      />
+      <text>全选</text>
+    </view>
+    <button 
+      class="batch-delete-btn {{selectedCount > 0 ? 'active' : ''}}" 
+      bindtap="batchDeleteAddress"
+      disabled="{{selectedCount === 0}}"
+    >
+      删除选中 ({{selectedCount}})
+    </button>
+  </view>
+</view> 

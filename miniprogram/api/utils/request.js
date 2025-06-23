@@ -71,6 +71,34 @@ const requestInterceptor = (options) => {
   return options;
 };
 
+// 模拟数据存储（用于开发测试）
+let mockAddressList = [
+  {
+    id: 1,
+    region: '广东省,深圳市,南山区',
+    detail: '科技园南区深南大道9988号',
+    consignee: '张三',
+    mobile: '13812345678',
+    isDefault: true
+  },
+  {
+    id: 2,
+    region: '广东省,广州市,天河区',
+    detail: '珠江新城花城大道85号',
+    consignee: '李四',
+    mobile: '13987654321',
+    isDefault: false
+  },
+  {
+    id: 3,
+    region: '北京市,北京市,朝阳区',
+    detail: '望京SOHO T3座26层',
+    consignee: '王五',
+    mobile: '13611112222',
+    isDefault: false
+  }
+];
+
 // 模拟数据，用于开发测试
 const mockData = {
   '/api/user/info': {
@@ -97,6 +125,73 @@ const mockData = {
   },
   '/points/exchange': {
     success: true
+  },
+  // 地址管理相关mock数据
+  '/api/address/list': () => {
+    // 返回当前地址列表的副本
+    return [...mockAddressList];
+  },
+  '/api/address/add': (data) => {
+    // 模拟添加地址
+    const newAddress = {
+      id: Date.now(), // 使用时间戳作为ID
+      ...data
+    };
+    
+    // 如果设为默认地址，需要将其他地址的默认状态取消
+    if (newAddress.isDefault) {
+      mockAddressList.forEach(addr => {
+        addr.isDefault = false;
+      });
+    }
+    
+    mockAddressList.push(newAddress);
+    return { success: true, id: newAddress.id };
+  },
+  '/api/address/update': (data) => {
+    // 模拟更新地址
+    const index = mockAddressList.findIndex(addr => addr.id === data.id);
+    if (index !== -1) {
+      // 如果设为默认地址，需要将其他地址的默认状态取消
+      if (data.isDefault) {
+        mockAddressList.forEach(addr => {
+          addr.isDefault = false;
+        });
+      }
+      
+      mockAddressList[index] = { ...mockAddressList[index], ...data };
+      return { success: true };
+    }
+    throw new Error('地址不存在');
+  },
+  '/api/address/delete': (data) => {
+    // 模拟删除地址
+    const index = mockAddressList.findIndex(addr => addr.id === data.id);
+    if (index !== -1) {
+      mockAddressList.splice(index, 1);
+      return { success: true };
+    }
+    throw new Error('地址不存在');
+  },
+  '/api/address/batchDelete': (data) => {
+    // 模拟批量删除地址
+    const idsToDelete = data.ids || [];
+    mockAddressList = mockAddressList.filter(addr => !idsToDelete.includes(addr.id));
+    return { success: true, deletedCount: idsToDelete.length };
+  },
+  '/api/address/setDefault': (data) => {
+    // 模拟设置默认地址
+    const targetAddress = mockAddressList.find(addr => addr.id === data.id);
+    if (targetAddress) {
+      // 取消所有地址的默认状态
+      mockAddressList.forEach(addr => {
+        addr.isDefault = false;
+      });
+      // 设置目标地址为默认
+      targetAddress.isDefault = true;
+      return { success: true };
+    }
+    throw new Error('地址不存在');
   },
   // 搜索相关mock数据
   '/api/search/products': {
@@ -187,21 +282,28 @@ const request = async (options) => {
   try {
     // 开发环境使用mock数据
     if (config.env === 'development' && mockData[options.url]) {
-      console.log('[使用模拟数据]', options.url);
+      console.log('[使用模拟数据]', options.url, options.data);
       
       // 模拟网络延迟
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      return mockData[options.url];
+      const mockResult = mockData[options.url];
+      
+      // 如果是函数，则调用并传入请求数据
+      if (typeof mockResult === 'function') {
+        return mockResult(options.data);
+      }
+      
+      return mockResult;
     }
     
     // 应用请求拦截器
-    const config = requestInterceptor(options);
+    const requestConfig = requestInterceptor(options);
     
     // 发起请求
     const response = await new Promise((resolve, reject) => {
       wx.request({
-        ...config,
+        ...requestConfig,
         url: `${BASE_URL}${options.url}`,
         method: options.method || 'POST', // 默认使用POST方法
         success: (res) => {
