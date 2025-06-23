@@ -1,0 +1,128 @@
+<!--退款详情页面模板-->
+<!--包含：页面头部信息、商品信息、退款详情、进度时间线、底部操作按钮-->
+
+<view class="container" wx:if="{{!loading && !hasError}}">
+  
+  <!-- 页面顶部：订单号和退款编号 -->
+  <view class="header-section">
+    <view class="order-info">
+      <view class="info-row">
+        <text class="label">订单号:</text>
+        <text class="value">{{orderInfo.orderNo}}</text>
+        <text class="copy-btn" bindtap="copyOrderNo">复制</text>
+      </view>
+      <view class="info-row">
+        <text class="label">退款编号:</text>
+        <text class="value">{{orderInfo.refundNo}}</text>
+        <text class="copy-btn" bindtap="copyRefundNo">复制</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品信息区域 -->
+  <view class="product-section">
+    <view class="section-title">商品信息</view>
+    <view class="product-card">
+      <image class="product-image" src="{{productInfo.image}}" mode="aspectFill"></image>
+      <view class="product-details">
+        <view class="product-title">{{productInfo.title}}</view>
+        <view class="product-spec">{{productInfo.spec}}</view>
+        <view class="product-price-qty">
+          <text class="price">¥{{productInfo.price}}</text>
+          <text class="quantity">x{{productInfo.quantity}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款信息区域 -->
+  <view class="refund-section">
+    <view class="section-title">退款信息</view>
+    <view class="refund-card">
+      
+      <!-- 退款金额和状态 -->
+      <view class="refund-amount-status">
+        <view class="amount-row">
+          <text class="label">退款金额:</text>
+          <text class="amount">¥{{refundInfo.amount}}</text>
+        </view>
+        <view class="status-row">
+          <text class="label">当前状态:</text>
+          <text class="status status-{{refundInfo.status}}">{{refundInfo.statusText}}</text>
+        </view>
+      </view>
+
+      <!-- 退款详细信息 -->
+      <view class="refund-details">
+        <view class="detail-row">
+          <text class="label">退款方式:</text>
+          <text class="value">{{refundInfo.refundMethodText}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="label">退款原因:</text>
+          <text class="value">{{refundInfo.reason}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="label">申请时间:</text>
+          <text class="value">{{refundInfo.applyTime}}</text>
+        </view>
+        <view class="detail-row" wx:if="{{refundInfo.processTime}}">
+          <text class="label">处理时间:</text>
+          <text class="value">{{refundInfo.processTime}}</text>
+        </view>
+        <view class="detail-row" wx:if="{{refundInfo.completeTime}}">
+          <text class="label">完成时间:</text>
+          <text class="value">{{refundInfo.completeTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款进度时间线 -->
+  <view class="progress-section">
+    <view class="section-title">退款进度</view>
+    <view class="progress-timeline">
+      <view 
+        class="timeline-item timeline-{{item.status}}" 
+        wx:for="{{progressList}}" 
+        wx:key="step"
+      >
+        <!-- 时间线图标 -->
+        <view class="timeline-icon">
+          <view class="icon-dot"></view>
+          <view class="icon-line" wx:if="{{index < progressList.length - 1}}"></view>
+        </view>
+        
+        <!-- 时间线内容 -->
+        <view class="timeline-content">
+          <view class="timeline-title">{{item.title}}</view>
+          <view class="timeline-desc">{{item.desc}}</view>
+          <view class="timeline-time" wx:if="{{item.time}}">{{item.time}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-container" wx:if="{{loading}}">
+  <view class="loading-content">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>
+
+<!-- 错误状态 -->
+<view class="error-container" wx:if="{{hasError}}">
+  <view class="error-content">
+    <view class="error-icon">😞</view>
+    <text class="error-message">{{errorMessage}}</text>
+    <button class="retry-btn" bindtap="reloadData">重试</button>
+  </view>
+</view>
+
+<!-- 底部联系客服按钮 -->
+<view class="bottom-actions" wx:if="{{!loading && !hasError}}">
+  <button class="contact-service-btn" bindtap="contactService">联系客服</button>
+</view> 

@@ -8,6 +8,7 @@
     "pages/cart/cart",
     "pages/order-confirm/order-confirm",
     "pages/order-list/index",
+    "pages/refund-detail/refund-detail",
     "pages/order-evaluate/index",
     "pages/logistics/index",
     "pages/booking/index",

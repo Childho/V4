@@ -731,8 +731,12 @@ Page({
    */
   onRefundDetail(e) {
     const { orderId } = e.currentTarget.dataset;
+    
+    // 根据订单ID生成退款编号（实际开发中应该从订单数据中获取真实的退款编号）
+    const refundNo = `REFUND${orderId.replace('ORDER', '')}`;
+    
     wx.navigateTo({
-      url: `/pages/refund-detail/index?orderId=${orderId}`
+      url: `/pages/refund-detail/refund-detail?orderNo=${orderId}&refundNo=${refundNo}`
     });
   },
 }); 
