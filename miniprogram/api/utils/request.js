@@ -431,6 +431,290 @@ const mockData = {
         '仅限线上商城使用'
       ]
     };
+  },
+  // 订单管理相关mock数据
+  '/api/order/list': (data) => {
+    // 模拟订单数据
+    const allOrders = [
+      {
+        id: 'ORD202401001',
+        status: 'unpaid', // unpaid=待付款, shipped=待发货, shipping=待收货, completed=待评价, refunding=退款中
+        statusText: '待付款',
+        createTime: '2024-01-15 14:30:00',
+        payTime: null,
+        shipTime: null,
+        finishTime: null,
+        totalAmount: 458,
+        goods: [
+          {
+            id: 1,
+            title: '李宁N72三代羽毛球拍全碳素超轻进攻型单拍',
+            image: 'https://img.alicdn.com/imgextra/i1/2200756107659/O1CN01YXz5Tl1H8QBqKJPYu_!!2200756107659.jpg',
+            spec: '黑红色 / 4U',
+            price: 299,
+            quantity: 1
+          },
+          {
+            id: 2,
+            title: '李宁羽毛球服套装男女款速干透气比赛服',
+            image: 'https://img.alicdn.com/imgextra/i2/2200848636169/O1CN01YLSJc81YWUO1XJ0a4_!!2200848636169.jpg',
+            spec: '蓝色 / L',
+            price: 158,
+            quantity: 1
+          }
+        ],
+        logistics: {
+          company: '',
+          trackingNo: '',
+          status: '等待付款'
+        }
+      },
+      {
+        id: 'ORD202401002',
+        status: 'shipped',
+        statusText: '待发货',
+        createTime: '2024-01-14 10:20:00',
+        payTime: '2024-01-14 10:25:00',
+        shipTime: null,
+        finishTime: null,
+        totalAmount: 1288,
+        goods: [
+          {
+            id: 3,
+            title: '威克多胜利羽毛球拍ARS90K单拍进攻型碳纤维',
+            image: 'https://img.alicdn.com/imgextra/i3/725677994/O1CN01wKJzpA28vKWmLhcYf_!!725677994.jpg',
+            spec: '红色 / 3U',
+            price: 1288,
+            quantity: 1
+          }
+        ],
+        logistics: {
+          company: '',
+          trackingNo: '',
+          status: '商家正在准备发货'
+        }
+      },
+      {
+        id: 'ORD202401003',
+        status: 'shipping',
+        statusText: '待收货',
+        createTime: '2024-01-12 16:45:00',
+        payTime: '2024-01-12 16:50:00',
+        shipTime: '2024-01-13 09:30:00',
+        finishTime: null,
+        totalAmount: 866,
+        goods: [
+          {
+            id: 4,
+            title: '尤尼克斯YONEX羽毛球鞋男女款专业运动鞋',
+            image: 'https://img.alicdn.com/imgextra/i4/1917047079/O1CN01oQDGnt22AEHxZ8u8h_!!1917047079.jpg',
+            spec: '白蓝色 / 42',
+            price: 668,
+            quantity: 1
+          },
+          {
+            id: 5,
+            title: '威克多胜利羽毛球包双肩背包大容量装备包',
+            image: 'https://img.alicdn.com/imgextra/i1/3002554020/O1CN01L0FWnE1K4VHtRf7OY_!!3002554020.jpg',
+            spec: '黑色',
+            price: 198,
+            quantity: 1
+          }
+        ],
+        logistics: {
+          company: '顺丰速运',
+          trackingNo: 'SF1234567890',
+          status: '运输中，预计明日送达'
+        }
+      },
+      {
+        id: 'ORD202401004',
+        status: 'completed',
+        statusText: '待评价',
+        createTime: '2024-01-10 11:15:00',
+        payTime: '2024-01-10 11:20:00',
+        shipTime: '2024-01-10 15:30:00',
+        finishTime: '2024-01-12 14:20:00',
+        totalAmount: 88,
+        goods: [
+          {
+            id: 6,
+            title: 'GOSEN高神羽毛球12只装比赛级训练球',
+            image: 'https://img.alicdn.com/imgextra/i4/725677994/O1CN01Kh4s1q28vKWfDfCk3_!!725677994.jpg',
+            spec: '白色',
+            price: 88,
+            quantity: 1
+          }
+        ],
+        logistics: {
+          company: '圆通速递',
+          trackingNo: 'YT9876543210',
+          status: '已签收'
+        }
+      },
+      {
+        id: 'ORD202401005',
+        status: 'refunding',
+        statusText: '退款中',
+        createTime: '2024-01-08 09:20:00',
+        payTime: '2024-01-08 09:25:00',
+        shipTime: '2024-01-08 14:30:00',
+        finishTime: null,
+        totalAmount: 299,
+        goods: [
+          {
+            id: 7,
+            title: '李宁羽毛球拍 AYPM442 攻守兼备型',
+            image: 'https://img.alicdn.com/imgextra/i1/2200756107659/O1CN01YXz5Tl1H8QBqKJPYu_!!2200756107659.jpg',
+            spec: '蓝色 / 5U',
+            price: 299,
+            quantity: 1
+          }
+        ],
+        logistics: {
+          company: '中通快递',
+          trackingNo: 'ZTO1357924680',
+          status: '退款处理中'
+        },
+        refund: {
+          reason: '商品有质量问题',
+          status: '处理中',
+          refundAmount: 299,
+          applyTime: '2024-01-13 10:30:00'
+        }
+      }
+    ];
+    
+    // 根据状态过滤订单
+    let filteredOrders = allOrders;
+    if (data.status && data.status !== 'all') {
+      filteredOrders = allOrders.filter(order => order.status === data.status);
+    }
+    
+    // 模拟分页
+    const page = data.page || 1;
+    const pageSize = data.pageSize || 10;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    
+    return {
+      list: filteredOrders.slice(startIndex, endIndex),
+      total: filteredOrders.length,
+      hasMore: endIndex < filteredOrders.length
+    };
+  },
+  '/api/order/detail': (data) => {
+    // 模拟获取订单详情
+    const orderId = data.orderId;
+    const orders = {
+      'ORD202401001': {
+        id: 'ORD202401001',
+        status: 'unpaid',
+        statusText: '待付款',
+        createTime: '2024-01-15 14:30:00',
+        payTime: null,
+        shipTime: null,
+        finishTime: null,
+        totalAmount: 458,
+        discountAmount: 20,
+        shippingFee: 10,
+        actualAmount: 448,
+        goods: [
+          {
+            id: 1,
+            title: '李宁N72三代羽毛球拍全碳素超轻进攻型单拍',
+            image: 'https://img.alicdn.com/imgextra/i1/2200756107659/O1CN01YXz5Tl1H8QBqKJPYu_!!2200756107659.jpg',
+            spec: '黑红色 / 4U',
+            price: 299,
+            quantity: 1
+          },
+          {
+            id: 2,
+            title: '李宁羽毛球服套装男女款速干透气比赛服',
+            image: 'https://img.alicdn.com/imgextra/i2/2200848636169/O1CN01YLSJc81YWUO1XJ0a4_!!2200848636169.jpg',
+            spec: '蓝色 / L',
+            price: 158,
+            quantity: 1
+          }
+        ],
+        address: {
+          consignee: '张三',
+          mobile: '13812345678',
+          region: '广东省深圳市南山区',
+          detail: '科技园南区深南大道9988号'
+        },
+        logistics: {
+          company: '',
+          trackingNo: '',
+          status: '等待付款',
+          tracks: []
+        }
+      }
+    };
+    
+    const order = orders[orderId];
+    if (!order) {
+      throw new Error('订单不存在');
+    }
+    
+    return order;
+  },
+  '/api/order/confirm-receive': (data) => {
+    // 模拟确认收货
+    console.log('模拟确认收货，订单ID：', data.orderId);
+    return { success: true, message: '确认收货成功' };
+  },
+  '/api/order/cancel': (data) => {
+    // 模拟取消订单
+    console.log('模拟取消订单，订单ID：', data.orderId, '原因：', data.reason);
+    return { success: true, message: '订单取消成功' };
+  },
+  '/api/order/refund': (data) => {
+    // 模拟申请退款
+    console.log('模拟申请退款，订单ID：', data.orderId, '原因：', data.reason);
+    return { success: true, message: '退款申请提交成功' };
+  },
+  '/api/order/logistics': (data) => {
+    // 模拟获取物流信息
+    const logistics = {
+      company: '顺丰速运',
+      trackingNo: 'SF1234567890',
+      status: '运输中',
+      tracks: [
+        {
+          time: '2024-01-13 09:30:00',
+          desc: '快件已发出',
+          location: '深圳分拨中心'
+        },
+        {
+          time: '2024-01-13 12:45:00',
+          desc: '快件运输中',
+          location: '广州转运中心'
+        },
+        {
+          time: '2024-01-14 08:20:00',
+          desc: '快件到达目的地',
+          location: '北京分拨中心'
+        },
+        {
+          time: '2024-01-14 14:30:00',
+          desc: '正在派件中',
+          location: '北京朝阳区配送点'
+        }
+      ]
+    };
+    
+    return logistics;
+  },
+  '/api/order/urge-shipping': (data) => {
+    // 模拟催发货
+    console.log('模拟催发货，订单ID：', data.orderId);
+    return { success: true, message: '催发货成功，商家会尽快处理' };
+  },
+  '/api/order/evaluate': (data) => {
+    // 模拟订单评价
+    console.log('模拟订单评价，订单ID：', data.orderId, '评价：', data);
+    return { success: true, message: '评价提交成功' };
   }
 };
 

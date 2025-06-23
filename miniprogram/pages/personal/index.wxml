@@ -51,40 +51,40 @@
     <view class="order-status-panel">
       <view class="order-header">
         <view class="order-title">我的订单</view>
-        <view class="order-all" bindtap="navigateTo" data-url="/pages/orders/index">
+        <view class="order-all" bindtap="navigateTo" data-url="/pages/order-list/index">
           全部订单<text class="arrow-right">></text>
         </view>
       </view>
       <view class="order-items">
-        <view class="order-item" bindtap="navigateTo" data-url="/pages/payment/index">
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/order-list/index?tab=unpaid">
           <view class="order-icon">
             <image class="order-icon-image" src="/assets/icons/pending-payment.svg"></image>
             <view class="badge" wx:if="{{paymentCount > 0}}">{{paymentCount}}</view>
           </view>
           <view class="order-label">待付款</view>
         </view>
-        <view class="order-item" bindtap="navigateTo" data-url="/pages/delivery/index">
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/order-list/index?tab=shipped">
           <view class="order-icon">
             <image class="order-icon-image" src="/assets/icons/pending-delivery.svg"></image>
             <view class="badge" wx:if="{{deliveryCount > 0}}">{{deliveryCount}}</view>
           </view>
           <view class="order-label">待发货</view>
         </view>
-        <view class="order-item" bindtap="navigateTo" data-url="/pages/receipt/index">
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/order-list/index?tab=shipping">
           <view class="order-icon">
             <image class="order-icon-image" src="/assets/icons/pending-receipt.svg"></image>
             <view class="badge" wx:if="{{receiptCount > 0}}">{{receiptCount}}</view>
           </view>
           <view class="order-label">待收货</view>
         </view>
-        <view class="order-item" bindtap="navigateTo" data-url="/pages/comment/index">
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/order-list/index?tab=completed">
           <view class="order-icon">
             <image class="order-icon-image" src="/assets/icons/favorite.svg"></image>
             <view class="badge" wx:if="{{commentCount > 0}}">{{commentCount}}</view>
           </view>
           <view class="order-label">待评价</view>
         </view>
-        <view class="order-item" bindtap="navigateTo" data-url="/pages/refund/index">
+        <view class="order-item" bindtap="navigateTo" data-url="/pages/order-list/index?tab=refunding">
           <view class="order-icon">
             <image class="order-icon-image" src="/assets/icons/refund.svg"></image>
             <view class="badge" wx:if="{{refundCount > 0}}">{{refundCount}}</view>
