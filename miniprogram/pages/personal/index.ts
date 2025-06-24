@@ -222,6 +222,25 @@ Page({
     })
   },
 
+  // 点击积分卡片 - 跳转到推广返佣tab（当前index=2）
+  handlePointsClick() {
+    console.log('积分按钮被点击，跳转推广返佣tab')
+    wx.showToast({
+      title: '进入推广返佣',
+      icon: 'success',
+      duration: 600
+    })
+    // 通过全局变量告知 booking 页面切换到特定 tab
+    const app = getApp();
+    if (app && app.globalData) {
+      app.globalData.targetTab = 2; // 0:穿线 1:积分 2:推广返佣 3:我的服务
+    }
+    // 切换到底栏"服务"页面
+    wx.switchTab({
+      url: '/pages/booking/index'
+    })
+  },
+
   // 页面跳转
   navigateTo(e: any) {
     // 处理直接传递URL字符串的情况

@@ -160,7 +160,7 @@ Page({
         imageUrl: `https://picsum.photos/400/400?random=${i}`, // 使用随机图片服务
         seckillPrice: (Math.random() * 200 + 50).toFixed(2), // 秒杀价格：50-250
         originalPrice: (Math.random() * 300 + 200).toFixed(2), // 原价：200-500
-        stock: Math.floor(Math.random() * 100) + 1, // 库存：1-100
+        stock: i <= 15 ? Math.floor(Math.random() * 100) + 10 : 0, // 前15个商品确保有库存(10-110)，后5个售罄
         soldCount: Math.floor(Math.random() * 500), // 已售数量
         endTime: endTime,
         countdownText: formatCountdown(getRemainingTime(endTime)), // 使用工具类格式化倒计时
@@ -303,7 +303,7 @@ Page({
       
       if (remainingTime > 0) {
         product.countdownText = formatCountdown(remainingTime); // 使用工具类格式化倒计时
-        product.stock = product.stock > 0 ? product.stock : 0; // 确保库存不为负数
+        // 保持原有库存状态，不修改
       } else {
         product.countdownText = '已结束';
         product.stock = 0; // 倒计时结束，库存设为0

@@ -60,31 +60,30 @@ Page({
     refundCount: 0
   },
 
+  // 页面加载时执行
   onLoad: function() {
     console.log('个人页面加载')
   },
 
+  // 页面显示时执行
   onShow: function() {
     console.log('个人页面显示')
   },
 
-  // 测试方法 - 验证事件绑定是否正常
-  testClick: function() {
-    console.log('测试按钮被点击')
-    wx.showToast({
-      title: '测试成功！',
-      icon: 'success'
-    })
-  },
-
   // 积分按钮点击事件处理 - 最简化版本
   handlePointsClick: function() {
-    console.log('积分按钮被点击')
+    console.log('积分按钮被点击，跳转推广返佣tab')
     wx.showToast({
-      title: '点击成功！',
-      icon: 'success'
+      title: '进入推广返佣',
+      icon: 'success',
+      duration: 600
     })
-    // 跳转到积分兑换页面（这里暂时跳转到服务页面做测试）
+    // 设置全局变量，告知服务页面切换到推广返佣tab
+    const app = getApp()
+    if (app && app.globalData) {
+      app.globalData.targetTab = 2 // 0:穿线 1:积分兑换 2:推广返佣 3:我的服务
+    }
+    // 跳转到底栏服务页面
     wx.switchTab({
       url: '/pages/booking/index'
     })
@@ -93,10 +92,24 @@ Page({
   // 通用跳转方法
   navigateTo: function(e) {
     var url = e.currentTarget.dataset.url
+    console.log('点击跳转，目标页面:', url)  // 添加调试信息，方便查看点击是否生效
     if (url) {
+      console.log('准备跳转到:', url)  // 确认跳转路径
       wx.navigateTo({
-        url: url
+        url: url,
+        success: function() {
+          console.log('跳转成功')  // 跳转成功的提示
+        },
+        fail: function(err) {
+          console.log('跳转失败:', err)  // 跳转失败的错误信息
+          wx.showToast({
+            title: '页面跳转失败',
+            icon: 'none'
+          })
+        }
       })
+    } else {
+      console.log('错误：没有找到跳转链接')  // 如果没有url的错误提示
     }
   },
 
@@ -134,4 +147,4 @@ Page({
       icon: 'none'
     })
   }
-}) 
+})

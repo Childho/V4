@@ -43,14 +43,6 @@
       <view class="stats-label">我的服务</view>
       <view class="stats-value">{{services || 1}}</view>
     </view>
-    <view class="divider"></view>
-    <view class="stats-item" bindtap="testClick">
-      <view class="stats-icon test-bg">
-        <text class="iconfont icon-test"></text>
-      </view>
-      <view class="stats-label">测试</view>
-      <view class="stats-value">点击测试</view>
-    </view>
   </view>
 
   <!-- 内容主体区域（灰色背景） -->

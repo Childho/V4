@@ -248,6 +248,43 @@
   font-weight: 500;
 }
 
+/* 新增：商城首页秒杀商品的小尺寸抢字角标 */
+.grab-corner-badge-small {
+  position: absolute;
+  top: -6rpx;
+  right: -6rpx;
+  width: 44rpx;
+  height: 44rpx;
+  background: linear-gradient(135deg, #FF1744 0%, #E91E63 50%, #FF1744 100%);
+  color: #ffffff;
+  font-size: 22rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 4rpx 12rpx rgba(255, 23, 68, 0.5),
+              0 0 0 2rpx rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  letter-spacing: 0;
+  text-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.3);
+  transform: rotate(-8deg);
+  animation: bounce-small 2.5s ease-in-out infinite;
+}
+
+/* 小尺寸抢字角标的跳动动画效果 */
+@keyframes bounce-small {
+  0%, 60%, 100% {
+    transform: rotate(-8deg) scale(1);
+  }
+  30% {
+    transform: rotate(-8deg) scale(1.08);
+  }
+  80% {
+    transform: rotate(-8deg) scale(0.96);
+  }
+}
+
 .product-info {
   text-align: left;
 }
@@ -279,6 +316,52 @@
   font-size: 24rpx;
   color: #999999;
   text-decoration: line-through;
+}
+
+/* 新增：商城首页秒杀商品抢购按钮样式 */
+.seckill-buy-section {
+  margin-top: 12rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.seckill-buy-btn {
+  width: 120rpx;
+  height: 56rpx;
+  background: linear-gradient(135deg, #FF4757 0%, #FF6B81 50%, #FF4757 100%);
+  color: #ffffff;
+  border-radius: 28rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 16rpx rgba(255, 71, 87, 0.4);
+  text-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.3);
+  letter-spacing: 2rpx;
+  transition: all 0.3s ease;
+  animation: pulse-small 2s ease-in-out infinite alternate;
+}
+
+.seckill-buy-btn::after {
+  border: none;
+}
+
+.seckill-buy-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 12rpx rgba(255, 71, 87, 0.5);
+}
+
+/* 小版本的脉动动画 */
+@keyframes pulse-small {
+  0% {
+    box-shadow: 0 6rpx 16rpx rgba(255, 71, 87, 0.4);
+  }
+  100% {
+    box-shadow: 0 8rpx 20rpx rgba(255, 71, 87, 0.6),
+                0 0 12rpx rgba(255, 71, 87, 0.2);
+  }
 }
 
 /* 3. 轮播Banner区域样式 */

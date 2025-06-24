@@ -302,6 +302,49 @@
   letter-spacing: 1rpx;
 }
 
+/* 新增：右上角抢字角标样式 - 参考主流电商平台设计 */
+.grab-corner-badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 60rpx;
+  height: 60rpx;
+  background: linear-gradient(135deg, #FF1744 0%, #E91E63 50%, #FF1744 100%);
+  color: #ffffff;
+  font-size: 28rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 6rpx 16rpx rgba(255, 23, 68, 0.5),
+              0 0 0 3rpx rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  letter-spacing: 0;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+  transform: rotate(-8deg); /* 轻微旋转，增加动感 */
+  animation: bounce 2s ease-in-out infinite;
+}
+
+/* 抢字角标的跳动动画效果 */
+@keyframes bounce {
+  0%, 50%, 100% {
+    transform: rotate(-8deg) scale(1);
+  }
+  25% {
+    transform: rotate(-8deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(-8deg) scale(0.98);
+  }
+}
+
+/* 鼠标悬停效果（虽然小程序中不常用，但为了完整性添加） */
+.grab-corner-badge:active {
+  animation-play-state: paused;
+  transform: rotate(-8deg) scale(0.95);
+}
+
 /* 商品信息区域 */
 .product-info {
   flex: 1;
@@ -424,7 +467,7 @@
   width: 120rpx;
   height: 80rpx;
   border-radius: 40rpx;
-  font-size: 32rpx;
+  font-size: 36rpx;
   font-weight: bold;
   border: none;
   display: flex;
@@ -432,7 +475,9 @@
   justify-content: center;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  letter-spacing: 2rpx;
+  letter-spacing: 4rpx;
+  position: relative;
+  overflow: hidden;
 }
 
 .buy-btn::after {
@@ -440,9 +485,38 @@
 }
 
 .buy-btn.active {
-  background: linear-gradient(135deg, #FF4757, #FF6B81);
+  background: linear-gradient(135deg, #FF4757 0%, #FF6B81 50%, #FF4757 100%);
   color: #ffffff;
-  box-shadow: 0 8rpx 20rpx rgba(255, 71, 87, 0.4);
+  box-shadow: 0 8rpx 20rpx rgba(255, 71, 87, 0.4), 
+              0 0 0 2rpx rgba(255, 255, 255, 0.2) inset;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+}
+
+.buy-btn.active::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, 
+    transparent 30%, 
+    rgba(255, 255, 255, 0.3) 50%, 
+    transparent 70%);
+  animation: shine 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  50% {
+    transform: translateX(0%) translateY(0%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
 }
 
 .buy-btn.active:active {
@@ -450,10 +524,32 @@
   box-shadow: 0 6rpx 16rpx rgba(255, 71, 87, 0.5);
 }
 
+.buy-btn.active {
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 8rpx 20rpx rgba(255, 71, 87, 0.4), 
+                0 0 0 2rpx rgba(255, 255, 255, 0.2) inset;
+  }
+  100% {
+    box-shadow: 0 12rpx 28rpx rgba(255, 71, 87, 0.6), 
+                0 0 0 2rpx rgba(255, 255, 255, 0.4) inset,
+                0 0 20rpx rgba(255, 71, 87, 0.3);
+  }
+}
+
 .buy-btn.disabled {
   background: #cccccc;
   color: #ffffff;
   opacity: 0.6;
+  text-shadow: none;
+  animation: none;
+}
+
+.buy-btn.disabled::before {
+  display: none;
 }
 
 /* === 悬浮购物车样式 === */
