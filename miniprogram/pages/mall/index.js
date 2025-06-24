@@ -158,7 +158,7 @@ Page({
       },
       {
         groupId: 'accessories',
-        groupName: '运动配件',
+        groupName: '运动必备',
         groupDesc: '运动装备，提升运动体验',
         products: [
           {
@@ -446,12 +446,16 @@ Page({
     const groupId = event.currentTarget.dataset.groupId;
     console.log('查看更多商品，分组ID：', groupId);
     
-    // TODO: 跳转到商品列表页面
+    // 跳转到搜索结果页面，并传递分类参数
     wx.navigateTo({
-      url: `/pages/productList/index?category=${groupId}`,
-      fail: () => {
+      url: `/pages/search-result/search-result?category=${groupId}`,
+      success: () => {
+        console.log('成功跳转到搜索结果页，分类：', groupId);
+      },
+      fail: (error) => {
+        console.error('跳转搜索结果页失败:', error);
         wx.showToast({
-          title: '页面暂未开放',
+          title: '页面跳转失败',
           icon: 'none'
         });
       }

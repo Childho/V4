@@ -29,7 +29,7 @@ Page({
       { id: 3, name: '球服', icon: '👕' },
       { id: 4, name: '球包', icon: '🎒' },
       { id: 5, name: '羽毛球', icon: '🏸' },
-      { id: 6, name: '运动必备', icon: '⚡' }
+      { id: 6, name: '运动配件', icon: '⚡' }
     ],
     
     // 当前选中的分类ID
@@ -117,6 +117,25 @@ Page({
       }
     }
     
+    // 获取分类参数（来自商场首页的"查看更多"）
+    const category = options.category || '';
+    let selectedCategoryId = 0; // 默认选中"全部"
+    
+    if (category) {
+      // 建立分组ID与分类ID的映射关系
+      const categoryMapping = {
+        'racket': 1,      // 羽毛球拍
+        'shoes': 2,       // 羽毛球鞋
+        'clothes': 3,     // 球服
+        'bag': 4,         // 球包
+        'ball': 5,        // 羽毛球
+        'accessories': 6  // 运动配件
+      };
+      
+      selectedCategoryId = categoryMapping[category] || 0;
+      console.log(`从商场页面跳转，分类：${category} -> ID：${selectedCategoryId}`);
+    }
+    
     // 获取搜索类型参数
     const searchType = options.type || '';
     console.log('搜索类型:', searchType);
@@ -132,7 +151,8 @@ Page({
     }
     
     this.setData({
-      keyword: keyword
+      keyword: keyword,
+      currentCategoryId: selectedCategoryId // 设置选中的分类ID
     });
     
     // 始终加载商品列表，无论是否有关键词
@@ -649,29 +669,29 @@ Page({
         tags: ['训练球', '耐打王']
       },
 
-      // 运动必备类商品（2个）
+      // 运动配件类商品（2个）
       {
         id: 17,
         title: '李宁护腕吸汗带护膝套装运动防护用品',
-        image: 'https://via.placeholder.com/300x300/8e44ad/ffffff?text=运动必备',
+        image: 'https://via.placeholder.com/300x300/8e44ad/ffffff?text=运动配件',
         price: 39,
         originalPrice: 69,
         sales: 1890,
         rating: 4.2,
         brand: '李宁',
-        category: '运动必备',
+        category: '运动配件',
         tags: ['护腕', '防护']
       },
       {
         id: 18,
         title: '运动毛巾吸汗快干羽毛球专用擦汗巾套装',
-        image: 'https://via.placeholder.com/300x300/d35400/ffffff?text=运动必备',
+        image: 'https://via.placeholder.com/300x300/d35400/ffffff?text=运动配件',
         price: 25,
         originalPrice: 45,
         sales: 3260,
         rating: 4.1,
         brand: '通用',
-        category: '运动必备',
+        category: '运动配件',
         tags: ['吸汗', '快干']
       }
     ];
