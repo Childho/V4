@@ -42,16 +42,24 @@
     </view>
 
     <!-- 地区选择 -->
-    <view class="form-item region-picker" bindtap="openRegionPicker">
+    <view class="form-item">
       <view class="form-label">
         <text class="label-text">所在地区</text>
         <text class="required">*</text>
       </view>
-      <view class="form-input picker-input">
-        <text class="picker-text {{!formData.region ? 'placeholder' : ''}}">
-          {{formData.region || '请选择省市区'}}
-        </text>
-        <text class="picker-arrow">></text>
+      <view class="form-input">
+        <picker 
+          mode="region" 
+          value="{{regionArray}}" 
+          bindchange="onRegionChange"
+        >
+          <view class="picker-display">
+            <text class="picker-text {{!formData.region ? 'placeholder' : ''}}">
+              {{formData.region || '请选择省市区'}}
+            </text>
+            <text class="picker-arrow">></text>
+          </view>
+        </picker>
       </view>
     </view>
 
@@ -98,14 +106,4 @@
       保存地址
     </button>
   </view>
-</view>
-
-<!-- 地区选择器 -->
-<picker 
-  mode="region" 
-  value="{{regionArray}}" 
-  bindchange="onRegionChange"
-  wx:if="{{showRegionPicker}}"
->
-  <view></view>
-</picker> 
+</view> 

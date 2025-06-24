@@ -467,17 +467,17 @@
   width: 120rpx;
   height: 80rpx;
   border-radius: 40rpx;
-  font-size: 36rpx;
-  font-weight: bold;
+  font-size: 40rpx;
+  font-weight: 900;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  letter-spacing: 4rpx;
   position: relative;
   overflow: hidden;
+  line-height: 1;
 }
 
 .buy-btn::after {
@@ -489,7 +489,7 @@
   color: #ffffff;
   box-shadow: 0 8rpx 20rpx rgba(255, 71, 87, 0.4), 
               0 0 0 2rpx rgba(255, 255, 255, 0.2) inset;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.4);
 }
 
 .buy-btn.active::before {

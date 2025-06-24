@@ -318,52 +318,6 @@
   text-decoration: line-through;
 }
 
-/* 新增：商城首页秒杀商品抢购按钮样式 */
-.seckill-buy-section {
-  margin-top: 12rpx;
-  display: flex;
-  justify-content: center;
-}
-
-.seckill-buy-btn {
-  width: 120rpx;
-  height: 56rpx;
-  background: linear-gradient(135deg, #FF4757 0%, #FF6B81 50%, #FF4757 100%);
-  color: #ffffff;
-  border-radius: 28rpx;
-  font-size: 28rpx;
-  font-weight: bold;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6rpx 16rpx rgba(255, 71, 87, 0.4);
-  text-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.3);
-  letter-spacing: 2rpx;
-  transition: all 0.3s ease;
-  animation: pulse-small 2s ease-in-out infinite alternate;
-}
-
-.seckill-buy-btn::after {
-  border: none;
-}
-
-.seckill-buy-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 4rpx 12rpx rgba(255, 71, 87, 0.5);
-}
-
-/* 小版本的脉动动画 */
-@keyframes pulse-small {
-  0% {
-    box-shadow: 0 6rpx 16rpx rgba(255, 71, 87, 0.4);
-  }
-  100% {
-    box-shadow: 0 8rpx 20rpx rgba(255, 71, 87, 0.6),
-                0 0 12rpx rgba(255, 71, 87, 0.2);
-  }
-}
-
 /* 3. 轮播Banner区域样式 */
 .banner-section {
   margin-top: 20rpx;

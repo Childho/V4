@@ -56,7 +56,7 @@ Page({
     services: 1,
     // 定义常用工具数据
     tools: [
-      { id: 1, name: '地址管理', icon: '/assets/icons/address.svg', url: '/pages/address/index' }
+      { id: 1, name: '地址管理', icon: '/assets/icons/address.svg', url: '/pages/address-list/index' }
     ]
   },
 
@@ -222,22 +222,32 @@ Page({
     })
   },
 
-  // 点击积分卡片 - 跳转到推广返佣tab（当前index=2）
+  // 点击积分卡片 - 跳转到积分兑换tab（当前index=1）
   handlePointsClick() {
-    console.log('积分按钮被点击，跳转推广返佣tab')
+    console.log('积分按钮被点击，跳转到积分兑换tab') // 调试日志
     wx.showToast({
-      title: '进入推广返佣',
-      icon: 'success',
-      duration: 600
+      title: '正在打开积分兑换', // 用户提示
+      icon: 'loading',
+      duration: 800
     })
     // 通过全局变量告知 booking 页面切换到特定 tab
     const app = getApp();
     if (app && app.globalData) {
-      app.globalData.targetTab = 2; // 0:穿线 1:积分 2:推广返佣 3:我的服务
+      app.globalData.targetTab = 1; // 0:穿线服务 1:积分兑换 2:推广返佣 3:我的服务
     }
     // 切换到底栏"服务"页面
     wx.switchTab({
-      url: '/pages/booking/index'
+      url: '/pages/booking/index',
+      success: () => {
+        console.log('成功跳转到服务页面，将显示积分兑换tab')
+      },
+      fail: (err) => {
+        console.error('跳转失败', err)
+        wx.showToast({
+          title: '跳转失败，请重试',
+          icon: 'none'
+        })
+      }
     })
   },
 

@@ -138,14 +138,13 @@
           
           <!-- 抢购按钮 -->
           <view class="buy-section">
-            <button 
+            <view 
               class="buy-btn {{item.stock > 0 ? 'active' : 'disabled'}}" 
               bindtap="onBuyNow" 
               data-id="{{item.id}}"
-              disabled="{{item.stock <= 0}}"
             >
               {{item.stock > 0 ? '抢' : '售罄'}}
-            </button>
+            </view>
           </view>
         </view>
       </view>

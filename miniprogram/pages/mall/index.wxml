@@ -70,10 +70,6 @@
               <text class="current-price">¥{{item.seckillPrice}}</text>
               <text class="original-price">¥{{item.originalPrice}}</text>
             </view>
-            <!-- 新增：秒杀商品抢购按钮 -->
-            <view class="seckill-buy-section">
-              <button class="seckill-buy-btn" bindtap="onSeckillBuy" data-id="{{item.id}}">抢</button>
-            </view>
           </view>
         </view>
       </scroll-view>

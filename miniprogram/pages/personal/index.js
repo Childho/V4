@@ -70,22 +70,32 @@ Page({
     console.log('个人页面显示')
   },
 
-  // 积分按钮点击事件处理 - 最简化版本
+  // 积分按钮点击事件处理 - 跳转到积分兑换tab
   handlePointsClick: function() {
-    console.log('积分按钮被点击，跳转推广返佣tab')
+    console.log('积分按钮被点击，跳转到积分兑换tab')
     wx.showToast({
-      title: '进入推广返佣',
-      icon: 'success',
-      duration: 600
+      title: '正在打开积分兑换',
+      icon: 'loading',
+      duration: 800
     })
-    // 设置全局变量，告知服务页面切换到推广返佣tab
+    // 设置全局变量，告知服务页面切换到积分兑换tab
     const app = getApp()
     if (app && app.globalData) {
-      app.globalData.targetTab = 2 // 0:穿线 1:积分兑换 2:推广返佣 3:我的服务
+      app.globalData.targetTab = 1 // 0:穿线服务 1:积分兑换 2:推广返佣 3:我的服务
     }
     // 跳转到底栏服务页面
     wx.switchTab({
-      url: '/pages/booking/index'
+      url: '/pages/booking/index',
+      success: function() {
+        console.log('成功跳转到服务页面，将显示积分兑换tab')
+      },
+      fail: function(err) {
+        console.log('跳转失败:', err)
+        wx.showToast({
+          title: '跳转失败，请重试',
+          icon: 'none'
+        })
+      }
     })
   },
 
