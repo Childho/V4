@@ -28,7 +28,8 @@
     "checkSiteMap": true,
     "uploadWithSourceMap": true,
     "nodeModules": false,
-    "showShadowRootInWxmlPanel": false
+    "showShadowRootInWxmlPanel": false,
+    "ignoreDevUnusedFiles": true
   },
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},

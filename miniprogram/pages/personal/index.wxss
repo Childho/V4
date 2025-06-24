@@ -411,13 +411,6 @@
   color: #333333;
 }
 
-.more-btn {
-  font-size: 22rpx;
-  color: #4F6AED;
-  display: flex;
-  align-items: center;
-}
-
 .task-item {
   display: flex;
   justify-content: space-between;

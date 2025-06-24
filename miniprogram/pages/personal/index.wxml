@@ -98,9 +98,6 @@
     <view class="daily-tasks-section">
       <view class="section-header">
         <view class="section-title">每日任务</view>
-        <view class="more-btn" bindtap="navigateTo" data-url="/pages/tasks/index">
-          赚取更多积分
-        </view>
       </view>
       
       <view class="task-item" bindtap="handleTaskClick" data-id="1">

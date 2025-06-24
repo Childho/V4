@@ -3,12 +3,13 @@
  * 主要功能：显示用户的优惠券列表、切换不同状态、使用优惠券
  */
 
+// TODO: 实际开发时取消下面的注释，引入真实的API文件
 // 引入优惠券相关API
-import { 
-  getCouponList, 
-  useCoupon, 
-  getAvailableCouponCount 
-} from '../../api/couponApi.js';
+// import { 
+//   getCouponList, 
+//   useCoupon, 
+//   getAvailableCouponCount 
+// } from '../../api/couponApi.js';
 
 Page({
   /**
@@ -164,11 +165,13 @@ Page({
       
       console.log('加载优惠券列表，参数：', params);
       
-      const result = await getCouponList(params);
-      console.log('获取到优惠券列表：', result);
+      // TODO: 实际开发时取消下面的注释，使用真实API
+      // const result = await getCouponList(params);
+      // console.log('获取到优惠券列表：', result);
       
-      // 模拟数据（实际开发中删除这部分）
+      // 使用模拟数据（实际开发中替换为 result.list 或 result）
       const mockData = this.getMockCouponData(currentTab);
+      console.log('生成的mock数据：', mockData);
       
       this.setData({
         couponList: mockData,           // 实际应该是 result.list 或 result
@@ -181,6 +184,14 @@ Page({
       wx.showToast({
         title: '加载失败，请重试',
         icon: 'none'
+      });
+      
+      // 即使API失败，也尝试使用mock数据作为降级方案
+      const mockData = this.getMockCouponData(currentTab);
+      this.setData({
+        couponList: mockData,
+        hasMore: mockData.length >= pageSize,
+        currentPage: 1
       });
     } finally {
       this.setData({ loading: false });
@@ -215,9 +226,10 @@ Page({
         pageSize: pageSize
       };
       
-      const result = await getCouponList(params);
+      // TODO: 实际开发时取消下面的注释，使用真实API
+      // const result = await getCouponList(params);
       
-      // 模拟数据（实际开发中删除这部分）
+      // 使用模拟数据（实际开发中替换为 result.list 或 result）
       const mockData = this.getMockCouponData(currentTab, nextPage);
       
       if (mockData.length > 0) {
@@ -325,8 +337,11 @@ Page({
     try {
       wx.showLoading({ title: '使用中...' });
       
-      // 调用使用优惠券API
-      await useCoupon(currentCoupon.id);
+      // TODO: 实际开发时取消下面的注释，使用真实API
+      // await useCoupon(currentCoupon.id);
+      
+      // 模拟API调用成功（实际开发中删除这个延时）
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       wx.showToast({
         title: '使用成功',
@@ -341,6 +356,10 @@ Page({
       
     } catch (error) {
       console.error('使用优惠券失败：', error);
+      wx.showToast({
+        title: '使用失败，请重试',
+        icon: 'none'
+      });
     } finally {
       wx.hideLoading();
     }
@@ -348,93 +367,285 @@ Page({
 
   /**
    * 获取模拟优惠券数据（实际开发中删除）
+   * 这个方法模拟了不同状态的优惠券数据，方便前端UI联调
    */
   getMockCouponData(status, page = 1) {
-    const baseData = [
+    // 创建完整的模拟数据集，包含各种类型和状态的优惠券
+    const allMockData = [
+      // ========== 可使用的优惠券 ==========
       {
-        id: 1,
-        title: '满100减20元优惠券',
-        amount: 20,
-        minAmount: 100,
+        id: 101,
+        title: '新用户专享大礼包',
+        amount: 50,
+        minAmount: 99,
         type: 1, // 1=满减券，2=折扣券，3=免邮券
         scope: '全场通用',
         startTime: '2024-01-01',
         endTime: '2024-12-31',
         status: 1, // 1=可使用，2=已使用，3=已过期
         useTime: null,
-        description: '购买任意商品满100元可用',
-        discount: 20 // 优惠金额，用于订单计算
-      },
-      {
-        id: 2,
-        title: '8.8折优惠券',
-        amount: 88, // 表示8.8折
-        minAmount: 50,
-        type: 2,
-        scope: '服装类商品',
-        startTime: '2024-01-01', 
-        endTime: '2024-06-30',
-        status: 1,
-        useTime: null,
-        description: '购买服装类商品满50元可用',
-        discount: 0 // 折扣券的优惠金额需要根据订单金额计算
-      },
-      {
-        id: 3,
-        title: '满200减50元优惠券',
-        amount: 50,
-        minAmount: 200,
-        type: 1,
-        scope: '运动器材',
-        startTime: '2024-01-01',
-        endTime: '2024-12-31',
-        status: 1,
-        useTime: null,
-        description: '购买运动器材满200元可用',
+        description: '新用户注册即得，购买任意商品满99元可用',
         discount: 50
       },
       {
-        id: 4,
+        id: 102,
+        title: '服装类8折优惠券',
+        amount: 80, // 表示8折，80代表80%
+        minAmount: 150,
+        type: 2,
+        scope: '服装鞋帽类',
+        startTime: '2024-02-01',
+        endTime: '2024-08-31',
+        status: 1,
+        useTime: null,
+        description: '春夏服装大促，满150元享8折优惠',
+        discount: 0 // 折扣券的优惠金额需要根据订单金额计算
+      },
+      {
+        id: 103,
+        title: '满200减30优惠券',
+        amount: 30,
+        minAmount: 200,
+        type: 1,
+        scope: '电子数码产品',
+        startTime: '2024-01-15',
+        endTime: '2024-07-15',
+        status: 1,
+        useTime: null,
+        description: '购买手机、电脑、平板等数码产品专用',
+        discount: 30
+      },
+      {
+        id: 104,
         title: '免邮券',
         amount: 0,
         minAmount: 0,
         type: 3,
         scope: '全场通用',
         startTime: '2024-01-01',
-        endTime: '2024-12-31', 
-        status: 2,
-        useTime: '2024-01-15 10:30:00',
-        description: '任意订单免运费',
-        discount: 0 // 免邮券针对运费
+        endTime: '2024-12-31',
+        status: 1,
+        useTime: null,
+        description: '任意订单免运费，最高免15元运费',
+        discount: 0
       },
       {
-        id: 5,
-        title: '满200减50元优惠券',
-        amount: 50,
-        minAmount: 200,
+        id: 105,
+        title: '家具家电9折券',
+        amount: 90,
+        minAmount: 500,
+        type: 2,
+        scope: '家具家电类',
+        startTime: '2024-03-01',
+        endTime: '2024-09-30',
+        status: 1,
+        useTime: null,
+        description: '家装节特惠，购买家具家电满500元享9折',
+        discount: 0
+      },
+      {
+        id: 106,
+        title: '满500减80元券',
+        amount: 80,
+        minAmount: 500,
         type: 1,
-        scope: '电子产品',
+        scope: '美妆护肤类',
         startTime: '2024-01-01',
+        endTime: '2024-06-30',
+        status: 1,
+        useTime: null,
+        description: '美妆护肤品牌联合大促销',
+        discount: 80
+      },
+      {
+        id: 107,
+        title: '无门槛5元券',
+        amount: 5,
+        minAmount: 0,
+        type: 1,
+        scope: '零食饮料类',
+        startTime: '2024-02-14',
+        endTime: '2024-05-14',
+        status: 1,
+        useTime: null,
+        description: '情人节专享，购买零食饮料无门槛使用',
+        discount: 5
+      },
+
+      // ========== 已使用的优惠券 ==========
+      {
+        id: 201,
+        title: '满100减15元券',
+        amount: 15,
+        minAmount: 100,
+        type: 1,
+        scope: '图书文具类',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31',
+        status: 2,
+        useTime: '2024-02-15 14:30:25',
+        description: '知识就是力量，买书优惠多多',
+        discount: 15
+      },
+      {
+        id: 202,
+        title: '运动用品8.5折券',
+        amount: 85,
+        minAmount: 200,
+        type: 2,
+        scope: '运动户外类',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31',
+        status: 2,
+        useTime: '2024-01-28 09:15:42',
+        description: '健康生活从运动开始',
+        discount: 0
+      },
+      {
+        id: 203,
+        title: '满300减40元券',
+        amount: 40,
+        minAmount: 300,
+        type: 1,
+        scope: '母婴用品类',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31',
+        status: 2,
+        useTime: '2024-02-08 16:45:18',
+        description: '妈妈的爱，宝宝的需要',
+        discount: 40
+      },
+      {
+        id: 204,
+        title: '免邮券',
+        amount: 0,
+        minAmount: 0,
+        type: 3,
+        scope: '全场通用',
+        startTime: '2024-01-01',
+        endTime: '2024-12-31',
+        status: 2,
+        useTime: '2024-01-20 11:22:35',
+        description: '任意订单免运费',
+        discount: 0
+      },
+      {
+        id: 205,
+        title: '满88减12元券',
+        amount: 12,
+        minAmount: 88,
+        type: 1,
+        scope: '生活用品类',
+        startTime: '2024-01-01',
+        endTime: '2024-06-30',
+        status: 2,
+        useTime: '2024-01-25 20:10:15',
+        description: '生活必需品，优惠享不停',
+        discount: 12
+      },
+
+      // ========== 已过期的优惠券 ==========
+      {
+        id: 301,
+        title: '双11狂欢券',
+        amount: 100,
+        minAmount: 300,
+        type: 1,
+        scope: '全场通用',
+        startTime: '2023-11-01',
+        endTime: '2023-11-30', // 已过期
+        status: 3,
+        useTime: null,
+        description: '双11购物狂欢节专享优惠券',
+        discount: 100
+      },
+      {
+        id: 302,
+        title: '元旦特惠7折券',
+        amount: 70,
+        minAmount: 200,
+        type: 2,
+        scope: '服装鞋帽类',
+        startTime: '2023-12-28',
+        endTime: '2024-01-03', // 已过期
+        status: 3,
+        useTime: null,
+        description: '新年新衣，折扣给力',
+        discount: 0
+      },
+      {
+        id: 303,
+        title: '满199减25元券',
+        amount: 25,
+        minAmount: 199,
+        type: 1,
+        scope: '电子数码产品',
+        startTime: '2023-12-01',
         endTime: '2023-12-31', // 已过期
         status: 3,
         useTime: null,
-        description: '购买电子产品满200元可用',
-        discount: 50
+        description: '年末数码产品清仓大促',
+        discount: 25
+      },
+      {
+        id: 304,
+        title: '周年庆9折券',
+        amount: 90,
+        minAmount: 500,
+        type: 2,
+        scope: '家具家电类',
+        startTime: '2023-10-01',
+        endTime: '2023-10-31', // 已过期
+        status: 3,
+        useTime: null,
+        description: '店庆周年，感恩回馈',
+        discount: 0
+      },
+      {
+        id: 305,
+        title: '中秋团圆券',
+        amount: 30,
+        minAmount: 150,
+        type: 1,
+        scope: '食品生鲜类',
+        startTime: '2023-09-15',
+        endTime: '2023-09-30', // 已过期
+        status: 3,
+        useTime: null,
+        description: '中秋佳节，团圆有礼',
+        discount: 30
       }
     ];
+
+    // 根据选择的tab状态过滤数据
+    let filteredData;
+    if (status === 0) {
+      // status = 0 表示"全部"tab，返回所有优惠券
+      filteredData = allMockData;
+    } else {
+      // 根据具体状态过滤：1=可使用，2=已使用，3=已过期
+      filteredData = allMockData.filter(item => item.status === status);
+    }
+
+    // 模拟分页逻辑，每页显示10条数据
+    const pageSize = 10;
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
     
-    // 根据状态过滤数据
-    let filteredData = baseData;
-    if (status > 0) {
-      filteredData = baseData.filter(item => item.status === status);
+    // 获取当前页的数据
+    const currentPageData = filteredData.slice(startIndex, endIndex);
+    
+    // 如果是第一页，直接返回数据
+    if (page === 1) {
+      return currentPageData;
     }
     
-    // 模拟分页
-    if (page > 1 && Math.random() > 0.5) {
-      return []; // 随机返回空数据模拟没有更多
+    // 如果是后续页面，有一定概率返回空数据模拟加载完毕
+    if (page > 2 && Math.random() > 0.7) {
+      return []; // 70%的概率返回空数据，模拟数据加载完毕
     }
     
-    return filteredData;
+    return currentPageData;
   },
 
   /**
