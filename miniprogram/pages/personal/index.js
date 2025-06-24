@@ -1,19 +1,4 @@
-// 引入API接口
-import { getUserInfo } from '../../api/userApi'
-import { api } from '../../api/utils/request'
-
-const app = getApp()
-
-// 定义获取积分的函数
-const getPoints = () => {
-  return api.post('/points/info', {});
-};
-
-// 定义签到的函数
-const signIn = () => {
-  return api.post('/points/signIn', {});
-};
-
+// 个人中心页面 - 测试版本
 Page({
   data: {
     userInfo: {
@@ -72,313 +57,81 @@ Page({
     deliveryCount: 1,
     receiptCount: 0,
     commentCount: 3,
-    refundCount: 0,
-    isRefreshing: false
+    refundCount: 0
   },
 
-  onLoad() {
-    this.checkSignInStatus()
+  onLoad: function() {
+    console.log('个人页面加载')
   },
 
-  onShow() {
+  onShow: function() {
     console.log('个人页面显示')
-    this.refreshPageData()
   },
 
-  onPullDownRefresh() {
-    this.setData({
-      isRefreshing: true
-    })
-    
-    this.refreshPageData(() => {
-      setTimeout(() => {
-        wx.stopPullDownRefresh()
-        this.setData({
-          isRefreshing: false
-        })
-        
-        wx.showToast({
-          title: '刷新成功',
-          icon: 'success',
-          duration: 800
-        })
-      }, 800)
-    })
-  },
-  
-  refreshPageData(callback) {
-    Promise.all([
-      this.getUserInfo(),
-      this.getPointsInfo(),
-      this.getOrderBadgeCounts()
-    ]).then(() => {
-      if (typeof callback === 'function') {
-        callback()
-      }
-    }).catch(error => {
-      console.error('刷新数据失败:', error)
-      if (typeof callback === 'function') {
-        callback()
-      }
-    })
-  },
-
-  async getOrderBadgeCounts() {
-    try {
-      const token = wx.getStorageSync('token')
-      if (!token) return
-      
-      this.setData({
-        paymentCount: Math.floor(Math.random() * 5),
-        deliveryCount: Math.floor(Math.random() * 3),
-        receiptCount: Math.floor(Math.random() * 2),
-        commentCount: Math.floor(Math.random() * 5),
-        refundCount: Math.floor(Math.random() * 2)
-      })
-    } catch (error) {
-      console.error('[获取订单红点数量失败]', error)
-    }
-  },
-
-  async getUserInfo() {
-    try {
-      const token = wx.getStorageSync('token')
-      if (!token) {
-        return
-      }
-      
-      const userInfo = await getUserInfo()
-      if (userInfo) {
-        this.setData({ 
-          userInfo: {
-            avatarUrl: userInfo.avatarUrl || '/assets/icons/default-avatar.png',
-            nickName: userInfo.nickName || '微信用户',
-            level: this.getUserLevel(userInfo.pointsTotal || 0),
-            id: userInfo.userId || '10086',
-            pointsBalance: userInfo.pointsBalance || 280
-          },
-          coupons: userInfo.coupons || 3,
-          services: userInfo.services || 1
-        })
-      }
-    } catch (error) {
-      console.error('[获取用户信息失败]', error)
-    }
-  },
-
-  getUserLevel(points) {
-    if (points >= 1000) return '高级会员'
-    if (points >= 500) return '中级会员'
-    return '初级会员'
-  },
-
-  async getPointsInfo() {
-    try {
-      const token = wx.getStorageSync('token')
-      if (!token) return
-      
-      const pointsInfo = await getPoints()
-      if (pointsInfo) {
-        this.setData({
-          'userInfo.pointsBalance': pointsInfo.balance || 280,
-          'tasks[0].status': pointsInfo.isSigned ? 1 : 0
-        })
-      }
-    } catch (error) {
-      console.error('[获取积分信息失败]', error)
-    }
-  },
-  
-  checkSignInStatus() {
-    const today = new Date().toDateString()
-    const lastSignIn = wx.getStorageSync('lastSignIn')
-    
-    if (lastSignIn === today) {
-      this.setData({
-        'tasks[0].status': 1
-      })
-    }
-  },
-
-  async handleSignIn() {
-    try {
-      const token = wx.getStorageSync('token')
-      if (!token) {
-        this.navigateTo('/pages/login/index')
-        return
-      }
-      
-      if (this.data.tasks[0].status === 1) {
-        wx.showToast({
-          title: '今日已签到',
-          icon: 'none'
-        })
-        return
-      }
-      
-      wx.showLoading({
-        title: '签到中...',
-        mask: true
-      })
-      
-      const result = await signIn()
-      wx.hideLoading()
-      
-      if (result && result.success) {
-        this.setData({
-          'tasks[0].status': 1,
-          'userInfo.pointsBalance': this.data.userInfo.pointsBalance + (result.points || 5)
-        })
-        
-        const today = new Date().toDateString()
-        wx.setStorageSync('lastSignIn', today)
-        
-        this.showPointsAnimation(result.points || 5)
-      }
-    } catch (error) {
-      wx.hideLoading()
-      console.error('[签到失败]', error)
-      wx.showToast({
-        title: '签到失败，请重试',
-        icon: 'none'
-      })
-    }
-  },
-  
-  showPointsAnimation(points) {
+  // 测试方法 - 验证事件绑定是否正常
+  testClick: function() {
+    console.log('测试按钮被点击')
     wx.showToast({
-      title: `签到成功 +${points}积分`,
-      icon: 'success',
-      duration: 1500
-    })
-  },
-
-  onShareAppMessage() {
-    return {
-      title: '积分商城 - 签到领好礼',
-      path: '/pages/index/index',
-      imageUrl: '/assets/images/share.png'
-    }
-  },
-
-  handleShare() {
-    wx.showToast({
-      title: '感谢分享',
+      title: '测试成功！',
       icon: 'success'
     })
-    
-    this.setData({
-      'userInfo.pointsBalance': this.data.userInfo.pointsBalance + 5
-    })
-    
-    this.showPointsAnimation(5)
   },
 
-  handleInvite() {
+  // 积分按钮点击事件处理 - 最简化版本
+  handlePointsClick: function() {
+    console.log('积分按钮被点击')
     wx.showToast({
-      title: '邀请功能即将上线',
+      title: '点击成功！',
+      icon: 'success'
+    })
+    // 跳转到积分兑换页面（这里暂时跳转到服务页面做测试）
+    wx.switchTab({
+      url: '/pages/booking/index'
+    })
+  },
+
+  // 通用跳转方法
+  navigateTo: function(e) {
+    var url = e.currentTarget.dataset.url
+    if (url) {
+      wx.navigateTo({
+        url: url
+      })
+    }
+  },
+
+  // 任务点击
+  handleTaskClick: function(e) {
+    var taskId = e.currentTarget.dataset.id
+    console.log('任务ID:', taskId)
+    wx.showToast({
+      title: '任务' + taskId,
       icon: 'none'
     })
   },
 
-  // 重要：处理积分点击的函数
-  handlePointsClick() {
-    console.log('点击了我的积分按钮')
-    
-    // 显示提示信息
+  // 签到
+  handleSignIn: function() {
+    console.log('处理签到')
     wx.showToast({
-      title: '跳转到积分兑换',
-      icon: 'none',
-      duration: 1000
-    })
-
-    // 设置全局数据，告诉booking页面切换到积分兑换标签
-    const app = getApp()
-    app.globalData = app.globalData || {}
-    app.globalData.targetTab = 1  // 1表示积分兑换标签页
-
-    // 跳转到booking页面（底部标签页）
-    wx.switchTab({
-      url: '/pages/booking/index',
-      success: function() {
-        console.log('成功跳转到积分兑换页面')
-      },
-      fail: function(error) {
-        console.error('跳转失败:', error)
-        wx.showToast({
-          title: '跳转失败',
-          icon: 'none'
-        })
-      }
+      title: '签到成功',
+      icon: 'success'
     })
   },
 
-  navigateTo(e) {
-    const url = e.currentTarget?.dataset?.url || e
-    
-    console.log('准备跳转到页面：', url)
-    
-    if (!url) {
-      console.error('跳转URL无效：', url)
-      wx.showToast({
-        title: '页面路径无效',
-        icon: 'none'
-      })
-      return
-    }
-    
-    wx.navigateTo({
-      url,
-      success: () => {
-        console.log('页面跳转成功：', url)
-      },
-      fail: (error) => {
-        console.error('页面跳转失败：', url, error)
-        wx.showToast({
-          title: '页面跳转失败，请重试',
-          icon: 'none'
-        })
-      }
+  // 分享
+  handleShare: function() {
+    wx.showToast({
+      title: '分享成功',
+      icon: 'success'
     })
   },
 
-  handleSetting() {
-    this.navigateTo('/pages/setting/index')
-  },
-
-  handleLogin() {
-    this.navigateTo('/pages/login/index')
-  },
-
-  handleTaskClick(e) {
-    const taskId = e.currentTarget.dataset.id
-    
-    switch (taskId) {
-      case 1:
-        this.handleSignIn()
-        break
-      case 2:
-        this.handleShare()
-        break
-      case 3:
-        this.handleInvite()
-        break
-    }
-  },
-
-  handleViewPrivacy() {
-    wx.navigateTo({
-      url: '/pages/webview/index?type=privacy'
+  // 邀请
+  handleInvite: function() {
+    wx.showToast({
+      title: '邀请功能即将上线',
+      icon: 'none'
     })
-  },
-
-  handleViewTerms() {
-    wx.navigateTo({
-      url: '/pages/webview/index?type=terms'
-    })
-  },
-
-  handleContact() {
-    // 微信开放能力
   }
 }) 

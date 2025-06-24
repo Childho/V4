@@ -70,7 +70,7 @@
         data-type="{{item.type}}"
       >
         <text>{{item.name}}</text>
-        <text class="sort-icon" wx:if="{{item.active}}">⌄</text>
+        <text class="sort-icon" wx:if="{{item.active}}">{{item.icon}}</text>
       </view>
     </view>
     

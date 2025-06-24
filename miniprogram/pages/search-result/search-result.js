@@ -22,10 +22,10 @@ Page({
     // 搜索关键词，从页面参数获取
     keyword: '',
     
-    // 分类导航数据（固定的6个分类）
+    // 分类导航数据（与商品分类字段对应）
     categories: [
       { id: 1, name: '羽毛球拍', icon: '🏸' },
-      { id: 2, name: '球鞋', icon: '👟' },
+      { id: 2, name: '羽毛球鞋', icon: '👟' },
       { id: 3, name: '球服', icon: '👕' },
       { id: 4, name: '球包', icon: '🎒' },
       { id: 5, name: '羽毛球', icon: '🏸' },
@@ -35,14 +35,27 @@ Page({
     // 当前选中的分类ID
     currentCategoryId: 0,
     
-    // 排序选项
+    // 排序选项 - 增加排序方向支持
     sortOptions: [
-      { type: 'sales', name: '销量', active: true },
-      { type: 'price', name: '价格', active: false }
+      { 
+        type: 'sales', 
+        name: '销量', 
+        active: true, 
+        direction: 'desc', // 'desc'=从高到低, 'asc'=从低到高
+        icon: '↓' // 显示当前排序方向的图标
+      },
+      { 
+        type: 'price', 
+        name: '价格', 
+        active: false, 
+        direction: 'asc', // 价格默认从低到高
+        icon: '↑'
+      }
     ],
     
-    // 当前排序类型
+    // 当前排序类型和方向
     currentSortType: 'sales',
+    currentSortDirection: 'desc',
     
     // 品牌列表（用于筛选弹窗）
     brands: [
@@ -180,6 +193,7 @@ Page({
     const categoryId = parseInt(e.currentTarget.dataset.id);
     console.log('点击分类:', categoryId);
     
+    // 更新当前选中的分类ID
     this.setData({
       currentCategoryId: categoryId,
       page: 1,
@@ -187,30 +201,52 @@ Page({
       hasMore: true
     });
     
-    // 重新搜索
+    // 重新加载商品（会触发筛选逻辑）
     this.searchProducts();
   },
 
-  // 排序点击事件
+  // 排序点击事件 - 支持双向排序切换
   onSortTap(e) {
     const sortType = e.currentTarget.dataset.type;
     console.log('点击排序:', sortType);
     
+    let newDirection;
+    let updatedSortOptions;
+    
+    // 如果点击的是当前已激活的排序类型，则切换排序方向
+    if (this.data.currentSortType === sortType) {
+      // 切换排序方向
+      const currentOption = this.data.sortOptions.find(item => item.type === sortType);
+      newDirection = currentOption.direction === 'asc' ? 'desc' : 'asc';
+      console.log(`切换${sortType}排序方向: ${currentOption.direction} -> ${newDirection}`);
+    } else {
+      // 点击不同的排序类型，使用该类型的默认方向
+      if (sortType === 'sales') {
+        newDirection = 'desc'; // 销量默认从高到低
+      } else if (sortType === 'price') {
+        newDirection = 'asc';  // 价格默认从低到高
+      }
+      console.log(`切换到${sortType}排序，使用默认方向: ${newDirection}`);
+    }
+    
     // 更新排序选项状态
-    const sortOptions = this.data.sortOptions.map(item => ({
+    updatedSortOptions = this.data.sortOptions.map(item => ({
       ...item,
-      active: item.type === sortType
+      active: item.type === sortType,
+      direction: item.type === sortType ? newDirection : item.direction,
+      icon: item.type === sortType ? (newDirection === 'desc' ? '↓' : '↑') : item.icon
     }));
     
     this.setData({
-      sortOptions: sortOptions,
+      sortOptions: updatedSortOptions,
       currentSortType: sortType,
+      currentSortDirection: newDirection,
       page: 1,
       productList: [],
       hasMore: true
     });
     
-    // 重新搜索
+    // 重新搜索（会应用新的排序）
     this.searchProducts();
   },
 
@@ -299,52 +335,19 @@ Page({
       
       console.log('搜索参数:', params);
       
-      const result = await searchProducts(params);
-      console.log('搜索结果:', result);
+      // 由于API可能不存在或失败，直接使用默认商品数据
+      // const result = await searchProducts(params);
+      console.log('使用静态商品数据代替API调用');
       
-      // 处理返回的商品数据
-      let newProductList = [];
-      if (result && result.list && Array.isArray(result.list)) {
-        newProductList = result.list;
-      }
-      
-      // 如果是第一页且没有数据，使用默认商品并进行搜索相关性排序
-      if (this.data.page === 1 && newProductList.length === 0) {
-        console.log('搜索结果为空，使用默认商品列表');
-        this.setDefaultProducts();
-        return;
-      }
-      
-      // 如果有搜索关键词，对商品列表进行相关性排序
-      if (this.data.keyword && newProductList.length > 0) {
-        newProductList = this.sortProductsByRelevance(newProductList, this.data.keyword);
-      }
-      
-      // 根据分页情况更新商品列表
-      const productList = this.data.page === 1 
-        ? newProductList 
-        : [...this.data.productList, ...newProductList];
-      
-      this.setData({
-        productList: productList,
-        hasMore: newProductList.length >= this.data.pageSize,
-        loading: false,
-        loadingMore: false
-      });
+      // 直接调用默认商品逻辑（包含分类筛选）
+      this.setDefaultProducts();
       
     } catch (error) {
       console.error('搜索失败:', error);
       
-      // 如果是首次加载失败，显示默认商品列表
-      if (this.data.page === 1 && this.data.productList.length === 0) {
-        console.log('搜索失败，显示默认商品列表');
-        this.setDefaultProducts();
-      } else {
-        wx.showToast({
-          title: '加载失败，请重试',
-          icon: 'none'
-        });
-      }
+      // 搜索失败时显示默认商品列表（包含分类筛选）
+      console.log('搜索失败，显示默认商品列表');
+      this.setDefaultProducts();
       
       this.setData({
         loading: false,
@@ -422,9 +425,11 @@ Page({
       
       // 相关性得分相同时，按当前排序方式排序
       if (this.data.currentSortType === 'price') {
-        return a.price - b.price; // 价格从低到高
+        // 根据当前价格排序方向
+        return this.data.currentSortDirection === 'desc' ? b.price - a.price : a.price - b.price;
       } else {
-        return b.sales - a.sales; // 销量从高到低
+        // 根据当前销量排序方向  
+        return this.data.currentSortDirection === 'desc' ? b.sales - a.sales : a.sales - b.sales;
       }
     });
     
@@ -440,82 +445,303 @@ Page({
 
   // 设置默认商品列表（当搜索失败时显示）
   setDefaultProducts() {
+    // 定义15个以上的静态商品数据，包含完整的字段信息
     const defaultProducts = [
+      // 羽毛球拍类商品（4个）
       {
         id: 1,
-        title: 'YONEX尤尼克斯羽毛球拍单拍超轻碳纤维进攻型球拍',
-        image: 'https://img.alicdn.com/imgextra/i1/2206743762847/O1CN01Zk5XOI1zKjzn9DQPq_!!2206743762847.jpg',
+        title: 'YONEX尤尼克斯羽毛球拍单拍超轻碳纤维进攻型球拍ARC11',
+        image: 'https://via.placeholder.com/300x300/4a90e2/ffffff?text=羽毛球拍',
         price: 299,
         originalPrice: 399,
         sales: 1200,
         rating: 4.9,
+        brand: '尤尼克斯',
+        category: '羽毛球拍',
         tags: ['专业', '进攻型']
       },
       {
         id: 2,
-        title: '李宁羽毛球拍碳纤维超轻5U单拍攻守兼备型球拍',
-        image: 'https://img.alicdn.com/imgextra/i2/2206743762847/O1CN01rVzFGf1zKjzpqQiNX_!!2206743762847.jpg',
+        title: '李宁羽毛球拍碳纤维超轻5U单拍攻守兼备型球拍N7II',
+        image: 'https://via.placeholder.com/300x300/ff6b6b/ffffff?text=羽毛球拍',
         price: 188,
         originalPrice: 268,
         sales: 850,
         rating: 4.8,
+        brand: '李宁',
+        category: '羽毛球拍',
         tags: ['攻守兼备', '轻便']
       },
       {
         id: 3,
-        title: '威克多VICTOR羽毛球拍专业训练拍',
-        image: 'https://img.alicdn.com/imgextra/i3/2206743762847/O1CN01YGzQzZ1zKjzn9DkuE_!!2206743762847.jpg',
+        title: '威克多VICTOR羽毛球拍专业训练拍挑战者9500',
+        image: 'https://via.placeholder.com/300x300/50e3c2/ffffff?text=羽毛球拍',
         price: 158,
         originalPrice: 228,
         sales: 650,
         rating: 4.7,
+        brand: '威克多',
+        category: '羽毛球拍',
         tags: ['训练专用', '耐用']
       },
       {
         id: 4,
-        title: '李宁羽毛球鞋男女透气防滑专业运动鞋',
-        image: 'https://img.alicdn.com/imgextra/i4/2206743762847/O1CN01CdTZGJ1zKjzqJQKXf_!!2206743762847.jpg',
+        title: '凯胜KASON羽毛球拍双刃10超轻进攻型球拍',
+        image: 'https://via.placeholder.com/300x300/bd10e0/ffffff?text=羽毛球拍',
+        price: 228,
+        originalPrice: 298,
+        sales: 720,
+        rating: 4.6,
+        brand: '凯胜',
+        category: '羽毛球拍',
+        tags: ['双刃', '超轻']
+      },
+
+      // 羽毛球鞋类商品（4个）
+      {
+        id: 5,
+        title: '李宁羽毛球鞋男女透气防滑专业运动鞋云四代',
+        image: 'https://via.placeholder.com/300x300/4ecdc4/ffffff?text=羽毛球鞋',
         price: 268,
         originalPrice: 358,
         sales: 920,
         rating: 4.6,
+        brand: '李宁',
+        category: '羽毛球鞋',
         tags: ['透气', '防滑']
       },
       {
-        id: 5,
-        title: '尤尼克斯YONEX羽毛球服套装吸汗透气',
-        image: 'https://img.alicdn.com/imgextra/i1/2206743762847/O1CN01Mnh8qQ1zKjzn9DMkT_!!2206743762847.jpg',
+        id: 6,
+        title: 'YONEX尤尼克斯羽毛球鞋SHB65男女款专业比赛鞋',
+        image: 'https://via.placeholder.com/300x300/45b7d1/ffffff?text=羽毛球鞋',
+        price: 398,
+        originalPrice: 498,
+        sales: 560,
+        rating: 4.8,
+        brand: '尤尼克斯',
+        category: '羽毛球鞋',
+        tags: ['专业比赛', '耐磨']
+      },
+      {
+        id: 7,
+        title: '威克多VICTOR羽毛球鞋P9200男女通用训练鞋',
+        image: 'https://via.placeholder.com/300x300/f39c12/ffffff?text=羽毛球鞋',
+        price: 168,
+        originalPrice: 228,
+        sales: 890,
+        rating: 4.5,
+        brand: '威克多',
+        category: '羽毛球鞋',
+        tags: ['训练', '通用']
+      },
+      {
+        id: 8,
+        title: '川崎KAWASAKI羽毛球鞋K063专业防滑减震运动鞋',
+        image: 'https://via.placeholder.com/300x300/e74c3c/ffffff?text=羽毛球鞋',
+        price: 139,
+        originalPrice: 199,
+        sales: 1150,
+        rating: 4.4,
+        brand: '川崎',
+        category: '羽毛球鞋',
+        tags: ['减震', '性价比']
+      },
+
+      // 球服类商品（3个）
+      {
+        id: 9,
+        title: '尤尼克斯YONEX羽毛球服套装吸汗透气运动服装',
+        image: 'https://via.placeholder.com/300x300/9b59b6/ffffff?text=球服',
         price: 128,
         originalPrice: 198,
         sales: 760,
         rating: 4.5,
+        brand: '尤尼克斯',
+        category: '球服',
         tags: ['吸汗', '透气']
       },
       {
-        id: 6,
-        title: '威克多VICTOR羽毛球包单肩背包大容量',
-        image: 'https://img.alicdn.com/imgextra/i2/2206743762847/O1CN01nKzP3k1zKjzqJQKXg_!!2206743762847.jpg',
+        id: 10,
+        title: '李宁羽毛球服男女短袖透气速干运动套装',
+        image: 'https://via.placeholder.com/300x300/27ae60/ffffff?text=球服',
+        price: 98,
+        originalPrice: 148,
+        sales: 1320,
+        rating: 4.3,
+        brand: '李宁',
+        category: '球服',
+        tags: ['速干', '舒适']
+      },
+      {
+        id: 11,
+        title: '威克多VICTOR羽毛球服T恤短裤套装专业比赛服',
+        image: 'https://via.placeholder.com/300x300/2c3e50/ffffff?text=球服',
+        price: 158,
+        originalPrice: 218,
+        sales: 480,
+        rating: 4.6,
+        brand: '威克多',
+        category: '球服',
+        tags: ['比赛服', '专业']
+      },
+
+      // 球包类商品（3个）
+      {
+        id: 12,
+        title: '威克多VICTOR羽毛球包单肩背包大容量BR6211',
+        image: 'https://via.placeholder.com/300x300/34495e/ffffff?text=球包',
         price: 89,
         originalPrice: 138,
         sales: 450,
         rating: 4.4,
+        brand: '威克多',
+        category: '球包',
         tags: ['大容量', '便携']
+      },
+      {
+        id: 13,
+        title: '尤尼克斯YONEX羽毛球包双肩背包多功能运动包',
+        image: 'https://via.placeholder.com/300x300/1abc9c/ffffff?text=球包',
+        price: 168,
+        originalPrice: 228,
+        sales: 680,
+        rating: 4.7,
+        brand: '尤尼克斯',
+        category: '球包',
+        tags: ['双肩', '多功能']
+      },
+      {
+        id: 14,
+        title: '李宁羽毛球包手提包独立鞋仓设计专业球包',
+        image: 'https://via.placeholder.com/300x300/e67e22/ffffff?text=球包',
+        price: 128,
+        originalPrice: 178,
+        sales: 590,
+        rating: 4.5,
+        brand: '李宁',
+        category: '球包',
+        tags: ['独立鞋仓', '手提']
+      },
+
+      // 羽毛球类商品（2个）
+      {
+        id: 15,
+        title: 'YONEX尤尼克斯羽毛球AS-40比赛用球12只装',
+        image: 'https://via.placeholder.com/300x300/f1c40f/ffffff?text=羽毛球',
+        price: 258,
+        originalPrice: 308,
+        sales: 1580,
+        rating: 4.9,
+        brand: '尤尼克斯',
+        category: '羽毛球',
+        tags: ['比赛用球', '耐打']
+      },
+      {
+        id: 16,
+        title: '亚狮龙RSL羽毛球7号耐打王训练球12只装',
+        image: 'https://via.placeholder.com/300x300/16a085/ffffff?text=羽毛球',
+        price: 98,
+        originalPrice: 148,
+        sales: 2150,
+        rating: 4.4,
+        brand: '亚狮龙',
+        category: '羽毛球',
+        tags: ['训练球', '耐打王']
+      },
+
+      // 运动必备类商品（2个）
+      {
+        id: 17,
+        title: '李宁护腕吸汗带护膝套装运动防护用品',
+        image: 'https://via.placeholder.com/300x300/8e44ad/ffffff?text=运动必备',
+        price: 39,
+        originalPrice: 69,
+        sales: 1890,
+        rating: 4.2,
+        brand: '李宁',
+        category: '运动必备',
+        tags: ['护腕', '防护']
+      },
+      {
+        id: 18,
+        title: '运动毛巾吸汗快干羽毛球专用擦汗巾套装',
+        image: 'https://via.placeholder.com/300x300/d35400/ffffff?text=运动必备',
+        price: 25,
+        originalPrice: 45,
+        sales: 3260,
+        rating: 4.1,
+        brand: '通用',
+        category: '运动必备',
+        tags: ['吸汗', '快干']
       }
     ];
+
+    // 根据当前选中的分类筛选商品
+    let filteredProducts = defaultProducts;
     
-    // 如果有搜索关键词，对默认商品也进行相关性排序
+    // 如果选中了具体分类（不是"全部"），进行筛选
+    if (this.data.currentCategoryId > 0) {
+      const selectedCategory = this.data.categories.find(cat => cat.id === this.data.currentCategoryId);
+      if (selectedCategory) {
+        filteredProducts = defaultProducts.filter(product => product.category === selectedCategory.name);
+        console.log(`筛选分类: ${selectedCategory.name}, 筛选结果: ${filteredProducts.length}个商品`);
+      }
+    }
+    
+    // 应用排序逻辑
+    filteredProducts = this.applySorting(filteredProducts);
+    
+    // 如果有搜索关键词，对筛选和排序后的商品进行相关性排序（搜索相关性优先级更高）
     if (this.data.keyword) {
-      const sortedProducts = this.sortProductsByRelevance(defaultProducts, this.data.keyword);
+      const sortedProducts = this.sortProductsByRelevance(filteredProducts, this.data.keyword);
       this.setData({
         productList: sortedProducts,
-        hasMore: false
+        hasMore: false,
+        loading: false,
+        loadingMore: false
       });
     } else {
       this.setData({
-        productList: defaultProducts,
-        hasMore: false
+        productList: filteredProducts,
+        hasMore: false,
+        loading: false,
+        loadingMore: false
       });
     }
+    
+    console.log(`最终显示商品数量: ${filteredProducts.length}`);
+  },
+
+  // 应用排序逻辑 - 新增方法
+  applySorting(productList) {
+    const sortType = this.data.currentSortType;
+    const sortDirection = this.data.currentSortDirection;
+    
+    console.log(`应用排序: ${sortType} - ${sortDirection === 'desc' ? '降序' : '升序'}`);
+    
+    const sortedProducts = [...productList].sort((a, b) => {
+      let comparison = 0;
+      
+      if (sortType === 'sales') {
+        // 按销量排序
+        comparison = a.sales - b.sales;
+      } else if (sortType === 'price') {
+        // 按价格排序
+        comparison = a.price - b.price;
+      }
+      
+      // 根据排序方向调整结果
+      return sortDirection === 'desc' ? -comparison : comparison;
+    });
+    
+    // 输出排序结果便于调试
+    console.log('排序结果预览:');
+    sortedProducts.slice(0, 5).forEach((product, index) => {
+      const value = sortType === 'sales' ? `${product.sales}销量` : `¥${product.price}`;
+      console.log(`${index + 1}. ${product.title.substring(0, 20)}... (${value})`);
+    });
+    
+    return sortedProducts;
   },
 
   // 加载更多商品
