@@ -206,8 +206,32 @@ Page({
       return;
     }
     
-    // 管理模式下，点击可设置为默认地址
-    this.setAsDefault(id);
+    // 管理模式下，点击地址卡片不再设置默认地址
+    // 用户可以通过编辑页面来设置默认地址
+    console.log('点击了地址卡片，但在管理模式下不执行任何操作');
+  },
+
+  /**
+   * 长按地址卡片进入编辑模式
+   */
+  onLongPress() {
+    if (!this.data.isEditMode) {
+      this.toggleEditMode();
+      
+      // 给出提示
+      wx.showToast({
+        title: '已进入编辑模式',
+        icon: 'none',
+        duration: 1500
+      });
+      
+      // 轻震动反馈
+      wx.vibrateShort({
+        type: 'light'
+      });
+      
+      console.log('长按进入编辑模式');
+    }
   },
 
   /**
@@ -238,7 +262,7 @@ Page({
    * 编辑地址
    */
   editAddress(e) {
-    e.stopPropagation(); // 阻止事件冒泡
+    // 使用catchtap，不需要手动stopPropagation
     const { id } = e.currentTarget.dataset;
     
     console.log('编辑地址ID：', id);
@@ -247,6 +271,36 @@ Page({
     wx.navigateTo({
       url: `/pages/address-form/index?id=${id}&action=edit`
     });
+  },
+
+  /**
+   * 删除单个地址
+   */
+  deleteAddress(e) {
+    // 使用catchtap，不需要手动stopPropagation
+    const { id } = e.currentTarget.dataset;
+    const address = this.data.addressList.find(item => item.id === id);
+    
+    if (!address) {
+      wx.showToast({
+        title: '地址不存在',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 如果是默认地址，给出特别提示
+    const message = address.isDefault 
+      ? `确定要删除默认地址"${address.consignee}"吗？` 
+      : `确定要删除"${address.consignee}"的地址吗？`;
+    
+    this.setData({
+      showDeleteModal: true,
+      deleteModalMessage: message,
+      pendingDeleteIds: [id]
+    });
+    
+    console.log('准备删除地址ID：', id);
   },
 
   /**

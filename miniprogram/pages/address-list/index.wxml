@@ -1,11 +1,22 @@
 <!-- 地址管理页面 - 显示用户所有收货地址 -->
 <view class="address-container">
+  <!-- 使用提示 - 仅在有地址且非编辑模式时显示 -->
+  <view class="tips-bar" wx:if="{{addressList.length > 0 && !isEditMode}}">
+    <text class="tips-text">💡 点击编辑可修改地址信息和设置默认地址</text>
+  </view>
+
   <!-- 顶部操作栏 -->
   <view class="top-bar">
     <!-- 全选按钮 - 仅在编辑模式下显示 -->
     <view class="select-all" wx:if="{{isEditMode}}" bindtap="toggleSelectAll">
       <text class="select-icon {{isSelectAll ? 'selected' : ''}}">{{isSelectAll ? '✓' : '○'}}</text>
       <text class="select-text">全选</text>
+    </view>
+    
+    <!-- 新增地址按钮 - 非编辑模式下显示 -->
+    <view class="top-add-btn" wx:if="{{!isEditMode}}" bindtap="addNewAddress">
+      <text class="add-icon">+</text>
+      <text class="add-text">新增地址</text>
     </view>
     
     <!-- 右侧操作按钮 -->
@@ -24,15 +35,15 @@
       wx:for="{{addressList}}" 
       wx:key="id"
       data-id="{{item.id}}"
-      bindtap="selectAddress"
+      bindlongpress="onLongPress"
     >
       <!-- 选择框 - 仅在编辑模式下显示 -->
       <view class="checkbox" wx:if="{{isEditMode}}" bindtap="toggleSelect" data-id="{{item.id}}">
         <text class="check-icon {{item.selected ? 'selected' : ''}}">{{item.selected ? '✓' : '○'}}</text>
       </view>
       
-      <!-- 地址信息主体 -->
-      <view class="address-content">
+      <!-- 地址信息主体 - 点击可选择地址（仅在来自订单页面时） -->
+      <view class="address-content" bindtap="selectAddress" data-id="{{item.id}}">
         <!-- 收件人信息 -->
         <view class="recipient-info">
           <text class="name">{{item.consignee}}</text>
@@ -47,9 +58,16 @@
         </view>
       </view>
       
-      <!-- 编辑按钮 - 仅在非编辑模式下显示 -->
-      <view class="edit-action" wx:if="{{!isEditMode}}" bindtap="editAddress" data-id="{{item.id}}">
-        <text class="edit-icon">✏️</text>
+      <!-- 操作按钮区域 -->
+      <view class="action-buttons" wx:if="{{!isEditMode}}">
+        <!-- 编辑按钮 -->
+        <view class="action-btn edit-btn" catchtap="editAddress" data-id="{{item.id}}">
+          <text class="btn-text">编辑</text>
+        </view>
+        <!-- 删除按钮 -->
+        <view class="action-btn delete-btn" catchtap="deleteAddress" data-id="{{item.id}}">
+          <text class="btn-text">删除</text>
+        </view>
       </view>
     </view>
   </view>
@@ -59,16 +77,20 @@
     <image class="empty-icon" src="../../assets/icons/empty-box.svg" mode="aspectFit"></image>
     <text class="empty-text">暂无收货地址</text>
     <text class="empty-desc">请添加您的收货地址</text>
+    <!-- 空状态下的新增按钮 -->
+    <view class="empty-add-btn" bindtap="addNewAddress">
+      <text class="add-text">立即添加</text>
+    </view>
   </view>
 
   <!-- 底部操作栏 -->
-  <view class="bottom-actions">
+  <view class="bottom-actions" wx:if="{{isEditMode}}">
     <!-- 编辑模式下的批量删除按钮 -->
-    <view class="batch-delete" wx:if="{{isEditMode && selectedIds.length > 0}}" bindtap="batchDelete">
+    <view class="batch-delete" wx:if="{{selectedIds.length > 0}}" bindtap="batchDelete">
       <text class="delete-text">删除选中 ({{selectedIds.length}})</text>
     </view>
     
-    <!-- 新增地址按钮 -->
+    <!-- 编辑模式下的新增地址按钮 -->
     <view class="add-address" bindtap="addNewAddress">
       <text class="add-icon">+</text>
       <text class="add-text">新增地址</text>
