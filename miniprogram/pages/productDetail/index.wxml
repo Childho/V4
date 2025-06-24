@@ -1,100 +1,187 @@
 <view class="product-detail-container">
-  <nav-bar title="商品详情" showBack="{{true}}" />
-  
   <!-- 商品轮播图 -->
   <swiper class="product-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="{{3000}}" duration="{{500}}" circular="{{true}}">
     <swiper-item wx:for="{{product.images}}" wx:key="index">
-      <image class="product-image" src="{{item}}" mode="aspectFill" />
+      <image class="product-image" src="{{item}}" mode="aspectFill" lazy-load />
     </swiper-item>
   </swiper>
   
-  <!-- 商品基本信息 -->
+  <!-- 商品基本信息区域 -->
   <view class="product-info">
-    <view class="product-price">¥{{product.price}}</view>
-    <view class="product-name">{{product.name}}</view>
-    <view class="product-desc">{{product.description}}</view>
+    <!-- 价格和销量 -->
+    <view class="price-section">
+      <view class="current-price">¥{{product.price}}</view>
+      <view class="original-price" wx:if="{{product.originalPrice}}">¥{{product.originalPrice}}</view>
+      <view class="sales-info">已售{{product.salesCount}}件</view>
+    </view>
+    
+    <!-- 商品标题和描述 -->
+    <view class="product-title">{{product.name}}</view>
+    <view class="product-subtitle">{{product.description}}</view>
+    
+    <!-- 服务保障标签 -->
+    <view class="service-tags">
+      <view class="service-tag">
+        <image src="/assets/icons/shipping.png" mode="aspectFit" />
+        <text>{{product.shippingInfo || '24小时发货'}}</text>
+      </view>
+      <view class="service-tag">
+        <image src="/assets/icons/return.png" mode="aspectFit" />
+        <text>7天无理由退换</text>
+      </view>
+      <view class="service-tag">
+        <image src="/assets/icons/authentic.png" mode="aspectFit" />
+        <text>正品保障</text>
+      </view>
+    </view>
+    
+    <!-- 品牌和规格选择 -->
     <view class="product-meta">
-      <view class="product-brand">
+      <view class="brand-info" wx:if="{{product.brand}}">
         <text class="label">品牌：</text>
         <text class="value">{{product.brand}}</text>
       </view>
-      <view class="product-sales">
-        <text class="label">销量：</text>
-        <text class="value">{{product.salesCount}}件</text>
+      <view class="specs-selector" bindtap="showSpecsPopup">
+        <text class="label">规格：</text>
+        <text class="value">{{selectedSpecs || '请选择规格'}}</text>
+        <image class="arrow-right" src="/assets/icons/arrow_right.png" mode="aspectFit" />
       </view>
     </view>
   </view>
-  
-  <!-- 商品规格 -->
+
+  <!-- 商品评论区域 -->
+  <view class="comments-section">
+    <view class="section-header">
+      <view class="section-title">商品评价 ({{comments.total || 0}})</view>
+      <view class="view-all" bindtap="navigateToComments" wx:if="{{comments.total > 0}}">
+        查看全部
+        <image src="/assets/icons/arrow_right.png" mode="aspectFit" />
+      </view>
+    </view>
+    
+    <!-- 评价概览 -->
+    <view class="comment-overview" wx:if="{{comments.total > 0}}">
+      <view class="rating-score">
+        <text class="score">{{comments.averageRating || '5.0'}}</text>
+        <view class="stars">
+          <image wx:for="{{5}}" wx:key="index" 
+                 src="{{index < Math.floor(comments.averageRating) ? '/assets/icons/star_filled.png' : '/assets/icons/star_empty.png'}}" 
+                 mode="aspectFit" />
+        </view>
+      </view>
+      <view class="rating-tags">
+        <text class="tag" wx:for="{{comments.tags}}" wx:key="index">{{item}}</text>
+      </view>
+    </view>
+    
+    <!-- 评论列表预览 -->
+    <view class="comment-preview" wx:if="{{comments.list.length > 0}}">
+      <view class="comment-item" wx:for="{{comments.list}}" wx:key="id" wx:for-index="idx" wx:if="{{idx < 2}}">
+        <view class="comment-header">
+          <image class="user-avatar" src="{{item.userAvatar || '/assets/icons/default_avatar.png'}}" mode="aspectFill" />
+          <view class="user-info">
+            <text class="username">{{item.username}}</text>
+            <view class="comment-rating">
+              <image wx:for="{{5}}" wx:key="ratingIndex" wx:for-index="ratingIndex"
+                     src="{{ratingIndex < item.rating ? '/assets/icons/star_filled.png' : '/assets/icons/star_empty.png'}}" 
+                     mode="aspectFit" />
+            </view>
+          </view>
+          <text class="comment-date">{{item.createTime}}</text>
+        </view>
+        <text class="comment-content">{{item.content}}</text>
+        <view class="comment-images" wx:if="{{item.images && item.images.length > 0}}">
+          <image wx:for="{{item.images}}" wx:key="imgIndex" wx:for-item="imgItem"
+                 src="{{imgItem}}" mode="aspectFill" class="comment-img" />
+        </view>
+      </view>
+    </view>
+    
+    <!-- 无评论提示 -->
+    <view class="no-comments" wx:if="{{comments.total === 0}}">
+      <image src="/assets/icons/no_comment.png" mode="aspectFit" />
+      <text>暂无评价，快来抢沙发吧~</text>
+    </view>
+  </view>
+
+  <!-- 商品规格参数 -->
   <view class="product-specs">
     <view class="section-title">规格参数</view>
     <view class="specs-list">
       <view class="specs-item" wx:for="{{product.specs}}" wx:key="name">
-        <text class="specs-label">{{item.name}}：</text>
+        <text class="specs-label">{{item.name}}</text>
         <text class="specs-value">{{item.value}}</text>
       </view>
     </view>
   </view>
-  
-  <!-- 商品详情 -->
-  <view class="product-detail">
-    <view class="section-title">商品详情</view>
-    <view class="detail-content">
-      <rich-text nodes="{{product.detailContent}}"></rich-text>
-    </view>
-  </view>
-  
+
   <!-- 相关推荐 -->
   <view class="related-products" wx:if="{{relatedProducts.length > 0}}">
     <view class="section-title">相关推荐</view>
-    <scroll-view scroll-x="true" class="related-scroll">
+    <scroll-view scroll-x="true" class="related-scroll" show-scrollbar="{{false}}">
       <view class="related-list">
         <view class="related-item" wx:for="{{relatedProducts}}" wx:key="id" bindtap="navigateToProduct" data-id="{{item.id}}">
-          <image class="related-image" src="{{item.imageUrl}}" mode="aspectFill" />
+          <image class="related-image" src="{{item.imageUrl}}" mode="aspectFill" lazy-load />
           <view class="related-name">{{item.name}}</view>
           <view class="related-price">¥{{item.price}}</view>
         </view>
       </view>
     </scroll-view>
   </view>
-  
+
+  <!-- 商品详情图文 -->
+  <view class="product-detail">
+    <view class="section-title">图文详情</view>
+    <view class="detail-content">
+      <rich-text nodes="{{product.detailContent}}"></rich-text>
+    </view>
+  </view>
+
   <!-- 底部操作栏 -->
   <view class="bottom-bar">
     <view class="left-actions">
-      <view class="action-btn" bindtap="handleToHome">
-        <image src="/assets/icons/home.png" mode="aspectFit" />
-        <text>首页</text>
-      </view>
+      <!-- 客服 -->
+      <button class="action-btn" open-type="contact" show-message-card="{{true}}">
+        <image src="/assets/icons/service.png" mode="aspectFit" />
+        <text>客服</text>
+      </button>
+      
+      <!-- 收藏 -->
       <view class="action-btn" bindtap="handleAddFavorite">
         <image src="{{product.isFavorite ? '/assets/icons/heart_filled.png' : '/assets/icons/heart.png'}}" mode="aspectFit" />
-        <text>收藏</text>
+        <text>{{product.isFavorite ? '已收藏' : '收藏'}}</text>
       </view>
+      
+      <!-- 购物车 -->
       <view class="action-btn" bindtap="handleToCart">
         <image src="/assets/icons/cart.png" mode="aspectFit" />
         <text>购物车</text>
-        <view class="badge" wx:if="{{cartCount > 0}}">{{cartCount}}</view>
+        <view class="badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
       </view>
     </view>
+    
     <view class="right-actions">
       <button class="add-cart-btn" bindtap="handleAddToCart">加入购物车</button>
       <button class="buy-now-btn" bindtap="handleBuyNow">立即购买</button>
     </view>
   </view>
-  
+
   <!-- 规格选择弹窗 -->
   <view class="specs-popup" wx:if="{{showSpecsPopup}}">
     <view class="popup-mask" bindtap="closeSpecsPopup"></view>
     <view class="popup-content">
+      <!-- 弹窗头部 -->
       <view class="popup-header">
         <image class="popup-product-image" src="{{product.images[0]}}" mode="aspectFill" />
         <view class="popup-product-info">
           <view class="popup-product-price">¥{{product.price}}</view>
           <view class="popup-product-name">{{product.name}}</view>
-          <view class="popup-selected-specs">已选：{{selectedSpecs}}</view>
+          <view class="popup-selected-specs">已选：{{selectedSpecs || '请选择规格'}}</view>
         </view>
         <view class="popup-close" bindtap="closeSpecsPopup">×</view>
       </view>
       
+      <!-- 规格选择 -->
       <view class="popup-specs">
         <view class="popup-specs-item" wx:for="{{product.optionGroups}}" wx:key="name">
           <view class="popup-specs-title">{{item.name}}</view>
@@ -115,6 +202,7 @@
         </view>
       </view>
       
+      <!-- 数量选择 -->
       <view class="popup-quantity">
         <view class="popup-quantity-title">数量</view>
         <view class="popup-quantity-control">
@@ -124,10 +212,23 @@
         </view>
       </view>
       
+      <!-- 确认按钮 -->
       <view class="popup-btns">
-        <button class="popup-add-cart-btn" bindtap="confirmAddToCart">加入购物车</button>
-        <button class="popup-buy-now-btn" bindtap="confirmBuyNow">立即购买</button>
+        <button class="popup-add-cart-btn" bindtap="confirmAddToCart" wx:if="{{currentAction === 'cart'}}">
+          加入购物车
+        </button>
+        <button class="popup-buy-now-btn" bindtap="confirmBuyNow" wx:if="{{currentAction === 'buy'}}">
+          立即购买
+        </button>
       </view>
+    </view>
+  </view>
+  
+  <!-- 加载中状态 -->
+  <view class="loading-mask" wx:if="{{loading}}">
+    <view class="loading-content">
+      <image src="/assets/icons/loading.gif" mode="aspectFit" />
+      <text>商品信息加载中...</text>
     </view>
   </view>
 </view> 
