@@ -202,96 +202,121 @@
     <view class="content-panel {{currentTab === 2 ? 'show' : 'hide'}}">
       <scroll-view scroll-y="true" class="scroll-content" enable-flex="true">
         
-        <!-- 推广二维码区 -->
-        <view class="section">
-          <view class="section-title">推广二维码</view>
-          <view class="qrcode-container">
-            <image class="qrcode-image" src="{{promotionData.qrcode_url}}" mode="aspectFit"></image>
-            <view class="invite-url">{{promotionData.invite_url}}</view>
-            <view class="qrcode-actions">
-              <button class="btn-action" bindtap="saveQrcode">保存二维码</button>
-              <button class="btn-action" bindtap="copyUrl">复制链接</button>
-            </view>
-          </view>
-        </view>
-
-        <!-- 数据统计区 -->
-        <view class="section">
-          <view class="section-title">数据统计</view>
-          <view class="stats-container">
+        <!-- 数据统计面板 - 优化版 -->
+        <view class="promotion-header">
+          <view class="promotion-stats">
             <view class="stat-item">
-              <view class="stat-value">{{promotionData.invite_count}}</view>
+              <view class="stat-value">{{promotionData.total_earnings || 0}}</view>
+              <view class="stat-label">累计返佣（元）</view>
+            </view>
+            <view class="stat-item">
+              <view class="stat-value">{{promotionData.invited_users || 0}}</view>
               <view class="stat-label">累计邀请人数</view>
             </view>
             <view class="stat-item">
-              <view class="stat-value">¥{{promotionData.total_commission}}</view>
-              <view class="stat-label">累计返佣</view>
-            </view>
-            <view class="stat-item">
-              <view class="stat-value">¥{{promotionData.pending_commission}}</view>
-              <view class="stat-label">今日收益</view>
+              <view class="stat-value">{{promotionData.today_earnings || 0}}</view>
+              <view class="stat-label">今日收益（元）</view>
             </view>
           </view>
-        </view>
-
-        <!-- 佣金明细区 -->
-        <view class="section">
-          <view class="section-title">佣金明细</view>
-          <view class="commission-list">
-            <view 
-              wx:for="{{promotionData.commission_history}}" 
-              wx:key="index"
-              class="commission-item"
-            >
-              <view class="commission-info">
-                <view class="commission-type">{{item.type}}</view>
-                <view class="commission-time">{{item.date}}</view>
-              </view>
-              <view class="commission-amount">+¥{{item.amount}}</view>
-              <view class="commission-status">{{item.status}}</view>
+          
+          <!-- 账户余额区域 -->
+          <view class="balance-section">
+            <view class="balance-info">
+              <view class="balance-title">账户余额</view>
+              <view class="balance-amount">¥{{promotionData.account_balance || 0}}</view>
             </view>
-          </view>
-        </view>
-
-        <!-- 提现区 -->
-        <view class="section">
-          <view class="section-title">余额提现</view>
-          <view class="withdraw-container">
-            <view class="withdraw-balance">
-              <text>可提现余额：¥{{promotionData.withdrawable_amount}}</text>
-            </view>
-            <input 
-              class="withdraw-input"
-              placeholder="请输入提现金额"
-              type="digit"
-              value="{{withdrawAmount}}"
-              bindinput="onWithdrawInput"
-            />
             <button 
-              class="btn-withdraw {{canWithdraw ? 'active' : 'disabled'}}"
-              disabled="{{!canWithdraw}}"
-              bindtap="submitWithdraw"
+              class="btn-withdraw {{promotionData.account_balance >= withdrawData.min_withdraw_amount ? 'active' : 'disabled'}}"
+              disabled="{{promotionData.account_balance < withdrawData.min_withdraw_amount}}"
+              bindtap="showWithdrawModal"
             >
-              提现到微信
+              余额提现
             </button>
           </view>
         </view>
 
-        <!-- 历史提现记录 -->
+        <!-- 推广二维码区域 -->
+        <view class="section">
+          <view class="section-title">推广二维码</view>
+          <view class="qr-code-container">
+            <image class="qr-code-image" src="{{promotionData.qr_code_url}}" mode="aspectFit"></image>
+            <view class="qr-code-buttons">
+              <button class="btn-qr-action" bindtap="saveQrCode">保存到相册</button>
+              <button class="btn-qr-action" bindtap="copyInviteLink">复制链接</button>
+            </view>
+            <view class="qr-code-tip">分享二维码或链接，邀请好友获得丰厚返佣</view>
+          </view>
+        </view>
+
+        <!-- 佣金明细 -->
+        <view class="section">
+          <view class="section-title">佣金明细</view>
+          <view class="commission-records">
+            <view 
+              wx:for="{{promotionData.commission_records || []}}" 
+              wx:key="index"
+              class="commission-record"
+            >
+              <view class="record-header">
+                <view class="commission-desc">
+                  <view class="desc-main">{{item.desc}}</view>
+                  <view class="desc-type">{{item.type === 'invite' ? '邀请奖励' : '消费返佣'}}</view>
+                </view>
+                <view class="commission-amount">+¥{{item.amount}}</view>
+              </view>
+              <view class="record-footer">
+                <view class="record-time">{{item.date}}</view>
+                <view class="record-status {{item.status === '已到账' ? 'success' : ''}}">{{item.status}}</view>
+              </view>
+            </view>
+          </view>
+          
+          <!-- 空状态提示 -->
+          <view wx:if="{{!promotionData.commission_records || promotionData.commission_records.length === 0}}" class="empty-state">
+            <image class="empty-icon" src="/assets/icons/empty.png"></image>
+            <view class="empty-text">暂无佣金记录</view>
+          </view>
+        </view>
+
+        <!-- 提现记录 -->
         <view class="section">
           <view class="section-title">提现记录</view>
           <view class="withdraw-records">
             <view 
-              wx:for="{{promotionData.withdraw_history}}" 
+              wx:for="{{promotionData.withdraw_records || []}}" 
               wx:key="index"
               class="withdraw-record"
             >
-              <view class="record-info">
-                <view class="record-amount">¥{{item.amount}}</view>
-                <view class="record-time">{{item.date}}</view>
+              <view class="record-header">
+                <view class="withdraw-desc">
+                  <view class="desc-main">余额提现</view>
+                  <view class="desc-order">订单号：{{item.order_no}}</view>
+                </view>
+                <view class="withdraw-amount">-¥{{item.amount}}</view>
               </view>
-              <view class="record-status">{{item.status}}</view>
+              <view class="record-footer">
+                <view class="record-time">{{item.date}}</view>
+                <view class="record-status {{item.status === '已到账' ? 'success' : 'processing'}}">{{item.status}}</view>
+              </view>
             </view>
+          </view>
+          
+          <!-- 空状态提示 -->
+          <view wx:if="{{!promotionData.withdraw_records || promotionData.withdraw_records.length === 0}}" class="empty-state">
+            <image class="empty-icon" src="/assets/icons/empty.png"></image>
+            <view class="empty-text">暂无提现记录</view>
+          </view>
+        </view>
+
+        <!-- 推广规则 -->
+        <view class="section">
+          <view class="section-title">推广规则</view>
+          <view class="rules-content">
+            <view class="rule-item">1. 邀请好友注册并完成首次消费，获得20元返佣</view>
+            <view class="rule-item">2. 好友每次消费，您可获得订单金额5%的返佣</view>
+            <view class="rule-item">3. 返佣金额实时到账，可在账户余额中查看</view>
+            <view class="rule-item">4. 最低提现金额{{withdrawData.min_withdraw_amount}}元，提现免手续费</view>
+            <view class="rule-item">5. 返佣有效期为邀请成功后12个月内</view>
           </view>
         </view>
 
@@ -402,6 +427,38 @@
     <view class="modal-buttons">
       <button class="btn-cancel" bindtap="hideOrderModal">稍后查看</button>
       <button class="btn-confirm" bindtap="goToMyService">立即查看</button>
+    </view>
+  </view>
+</view>
+
+<!-- 提现弹窗 -->
+<view class="modal {{withdrawData.show_withdraw_modal ? 'show' : ''}}" catchtap="hideWithdrawModal">
+  <view class="modal-content withdraw-modal" catchtap="">
+    <view class="modal-title">余额提现</view>
+    <view class="withdraw-balance">
+      <view class="balance-label">可提现余额</view>
+      <view class="balance-value">¥{{promotionData.account_balance || 0}}</view>
+    </view>
+    <view class="withdraw-input-section">
+      <view class="input-label">提现金额</view>
+      <input 
+        class="withdraw-input"
+        type="digit"
+        placeholder="请输入提现金额"
+        value="{{withdrawData.withdraw_amount}}"
+        bindinput="onWithdrawAmountInput"
+      />
+      <view class="withdraw-tip">最低提现金额{{withdrawData.min_withdraw_amount}}元，免手续费</view>
+    </view>
+    <view class="modal-buttons">
+      <button class="btn-cancel" bindtap="hideWithdrawModal">取消</button>
+      <button 
+        class="btn-confirm {{withdrawData.withdraw_amount >= withdrawData.min_withdraw_amount ? 'active' : 'disabled'}}"
+        disabled="{{withdrawData.withdraw_amount < withdrawData.min_withdraw_amount}}"
+        bindtap="confirmWithdraw"
+      >
+        确认提现
+      </button>
     </view>
   </view>
 </view>

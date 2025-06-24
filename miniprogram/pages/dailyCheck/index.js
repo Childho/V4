@@ -220,5 +220,77 @@ Page({
       path: '/pages/index/index',
       imageUrl: '/assets/icons/share.svg'
     };
+  },
+
+  // 页面跳转处理（新增）
+  navigateTo(e) {
+    // 获取跳转URL，可能来自事件对象的dataset或直接传入的字符串
+    const url = e.currentTarget?.dataset?.url || e;
+    
+    console.log('准备跳转到页面：', url); // 添加调试信息
+    
+    // 检查URL是否有效
+    if (!url) {
+      console.error('跳转URL无效：', url);
+      wx.showToast({
+        title: '页面路径无效',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    // 特殊处理：如果是跳转到积分页面，改为跳转到服务页面的积分兑换tab
+    if (url.includes('/pages/myPoints/myPoints')) {
+      console.log('检测到积分页面跳转，转向服务页面的积分兑换tab');
+      
+      // 使用全局变量传递目标tab信息
+      const app = getApp();
+      app.globalData = app.globalData || {};
+      app.globalData.targetTab = 1; // 1对应积分兑换tab
+      
+      // 跳转到服务页面
+      wx.switchTab({
+        url: '/pages/booking/index',
+        success: () => {
+          console.log('成功跳转到服务页面，目标tab: 积分兑换');
+          wx.showToast({
+            title: '已跳转到积分兑换',
+            icon: 'success'
+          });
+        },
+        fail: (error) => {
+          console.error('跳转到服务页面失败：', error);
+          wx.showToast({
+            title: '跳转失败，请重试',
+            icon: 'none'
+          });
+        }
+      });
+      return;
+    }
+    
+    // 显示加载中
+    wx.showLoading({
+      title: '正在跳转...',
+      mask: true
+    });
+    
+    // 执行页面跳转
+    setTimeout(() => {
+      wx.hideLoading();
+      wx.navigateTo({
+        url,
+        success: () => {
+          console.log('页面跳转成功：', url); // 跳转成功的调试信息
+        },
+        fail: (error) => {
+          console.error('页面跳转失败：', url, error); // 跳转失败的调试信息
+          wx.showToast({
+            title: '页面跳转失败，请重试',
+            icon: 'none'
+          });
+        }
+      });
+    }, 300);
   }
 }); 

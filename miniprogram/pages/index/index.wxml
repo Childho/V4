@@ -1,11 +1,13 @@
 <!--index.wxml-->
 <view class="index-container">
-  <!-- 替换原来的占位元素，使用新的header元素 -->
+  <!-- 简化的header区域 - 去除通知功能 -->
   <view class="header" style="padding-top: {{statusBarHeight}}px;">
-    <!-- 搜索栏和会员等级 -->
+    <!-- 简化的搜索栏和会员等级区域 -->
     <view class="search-container">
+      <!-- 左侧搜索栏 - 采用更现代的设计 -->
       <view class="search-bar">
-        <icon type="search" size="14" color="#999"></icon>
+        <!-- 使用更现代的搜索图标 -->
+        <view class="search-icon">🔍</view>
         <input 
           class="search-input" 
           placeholder="搜索商品" 
@@ -17,74 +19,98 @@
           focus="{{false}}"
         />
       </view>
-      <!-- 将铃铛和会员等级包裹到右侧容器中 -->
-      <view class="header-right-container">
-        <view class="notification-icon" bindtap="onNotificationTap">
-          <image src="/assets/icons/notification.svg" mode="aspectFit"></image>
+      
+      <!-- 右侧功能区域 - 仅保留会员徽章 -->
+      <view class="header-actions">
+        <!-- 会员徽章 - 更精致的设计 -->
+        <view class="member-badge">
+          <view class="member-icon">⭐</view>
+          <text>初级会员</text>
         </view>
-        <view class="member-badge">初级会员</view>
       </view>
     </view>
   </view>
   
-  <!-- 轮播图 -->
+  <!-- 优化后的轮播图区域 - 减少边距，增加视觉冲击力 -->
   <view class="banner-container">
     <swiper class="banner-swiper" indicator-dots="{{true}}" autoplay="{{true}}" interval="{{3000}}" duration="{{500}}" circular="{{true}}">
       <swiper-item wx:for="{{banners}}" wx:key="id">
+        <!-- 使用更美观的banner图片 -->
         <image src="{{item.imageUrl}}" class="banner-image" mode="aspectFill" bindtap="handleBannerClick" data-id="{{item.id}}" data-type="{{item.type}}" />
+        <!-- 添加遮罩层和文字，提升视觉效果 -->
+        <view class="banner-overlay">
+          <view class="banner-title">{{item.title}}</view>
+          <view class="banner-subtitle">{{item.subtitle}}</view>
+        </view>
       </swiper-item>
     </swiper>
   </view>
   
-  <!-- 功能导航 - 更新为推广返佣和穿线服务 -->
+  <!-- 功能导航 - 使用更美观的图标 -->
   <view class="nav-container">
     <view class="nav-grid">
-      <!-- 推广返佣功能 -->
+      <!-- 推广返佣功能 - 使用emoji图标替代svg -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/promotion/index">
-        <image class="nav-icon" src="/assets/icons/promotion.svg" mode="aspectFit" />
+        <view class="nav-icon">
+          <text class="nav-emoji">💰</text>
+        </view>
         <text>推广返佣</text>
       </view>
       <!-- 穿线服务功能 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/stringing/index">
-        <image class="nav-icon" src="/assets/icons/stringing.svg" mode="aspectFit" />
+        <view class="nav-icon">
+          <text class="nav-emoji">🎾</text>
+        </view>
         <text>穿线服务</text>
       </view>
-      <!-- 保留积分兑换 -->
+      <!-- 积分兑换 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/pointsExchange/index">
-        <image class="nav-icon" src="/assets/icons/points.svg" mode="aspectFit" />
+        <view class="nav-icon">
+          <text class="nav-emoji">🎁</text>
+        </view>
         <text>积分兑换</text>
       </view>
-      <!-- 保留客服服务 -->
+      <!-- 客服服务 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
-        <image class="nav-icon" src="/assets/icons/service.svg" mode="aspectFit" />
+        <view class="nav-icon">
+          <text class="nav-emoji">🎧</text>
+        </view>
         <text>客服服务</text>
       </view>
     </view>
   </view>
   
-  <!-- 热门活动部分 - 修改标题位置 -->
+  <!-- 热门活动部分 - 保持原有结构 -->
   <view class="section-container">
     <!-- 标题和"查看全部"移到外部 -->
     <view class="section-header">
-      <view class="section-title">活动</view>
+      <view class="section-title">
+        <text class="section-emoji">🔥</text>
+        <text>热门活动</text>
+      </view>
       <view class="more-btn" bindtap="navigateTo" data-url="/pages/activity/index">查看全部 ></view>
     </view>
     
-    <!-- 活动列表 -->
+    <!-- 活动列表 - 使用更美观的默认图片 -->
     <view class="activity-list">
       <view class="activity-card" wx:for="{{activities}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="activity">
-        <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
+        <!-- 活动图片区域 -->
+        <view class="activity-image-container">
+          <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill" />
+          <!-- 活动类型标签 -->
+          <view class="activity-type-tag">活动</view>
+        </view>
         <view class="activity-info">
           <view class="activity-title">{{item.title}}</view>
           <view class="activity-desc">{{item.description}}</view>
           <view class="activity-footer">
             <view class="activity-time">
               <view class="time-item">
-                <icon class="icon-calendar" type="waiting" size="14" color="#999999"></icon>
+                <text class="time-icon">📅</text>
                 <text class="time-text">{{item.timeRange}}</text>
               </view>
               <view class="location-item">
-                <icon class="icon-location" type="info" size="14" color="#999999"></icon>
+                <text class="location-icon">📍</text>
                 <text class="location-text">{{item.location}}</text>
               </view>
             </view>
@@ -94,48 +120,37 @@
     </view>
   </view>
   
-  <!-- 精选装备模块 - 新增模块 -->
+  <!-- 精选装备模块 - 使用商场页面的商品卡片样式 -->
   <view class="section-container">
     <view class="section-header">
-      <view class="section-title">精选装备</view>
+      <view class="section-title">
+        <text class="section-emoji">⭐</text>
+        <text>精选装备</text>
+      </view>
       <view class="more-btn" bindtap="navigateTo" data-url="/pages/mall/index?category=featured">查看全部 ></view>
     </view>
     
-    <!-- 精选装备列表，采用横向滚动布局 -->
-    <scroll-view class="equipment-scroll" scroll-x="true" show-scrollbar="false">
-      <view class="equipment-list">
-        <view class="equipment-item" wx:for="{{featuredEquipment}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="product">
-          <image class="equipment-image" src="{{item.imageUrl}}" mode="aspectFill" />
-          <view class="equipment-info">
-            <view class="equipment-name">{{item.name}}</view>
-            <view class="equipment-brand">{{item.brand}}</view>
-            <view class="equipment-price">¥{{item.price}}</view>
-            <!-- 精选标签 -->
-            <view class="featured-tag">精选</view>
-          </view>
-        </view>
-      </view>
-    </scroll-view>
-    
-    <!-- 测试按钮 - 调试用 -->
-    <view style="text-align: center; padding: 20rpx;">
-      <button size="mini" bindtap="testRefreshEquipment">刷新装备数据</button>
-    </view>
-  </view>
-  
-  <!-- 热门商品 -->
-  <view class="section-container" wx:if="{{products && products.length > 0}}">
-    <view class="section-header">
-      <view class="section-title">热门商品</view>
-      <view class="more-btn" bindtap="navigateTo" data-url="/pages/mall/index">查看全部 ></view>
-    </view>
-    
+    <!-- 两列商品卡片布局 - 与商场页面一致 -->
     <view class="product-grid">
-      <view class="product-item" wx:for="{{products}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}" data-type="product">
-        <image class="product-image" src="{{item.imageUrl}}" mode="aspectFill" />
-        <view class="product-info">
-          <view class="product-name">{{item.name}}</view>
-          <view class="product-price">¥{{item.price}}</view>
+      <view 
+        class="product-card" 
+        wx:for="{{featuredEquipment}}" 
+        wx:key="id" 
+        bindtap="navigateToDetail" 
+        data-id="{{item.id}}" 
+        data-type="product"
+      >
+        <view class="card-image-wrapper">
+          <image class="card-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
+          <!-- 商品标签（热销/新品） -->
+          <view class="product-tag">{{item.tag}}</view>
+        </view>
+        <view class="card-content">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-price-row">
+            <text class="product-price">¥{{item.price}}</text>
+            <text class="product-sales">{{item.sales}}</text>
+          </view>
         </view>
       </view>
     </view>

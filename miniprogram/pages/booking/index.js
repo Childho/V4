@@ -4,7 +4,7 @@ Page({
    * 包含所有tab页面需要的数据和状态管理
    */
   data: {
-    // 当前激活的主tab页面 (0: 穿线服务, 1: 积分兑换, 2: 推广返佣, 3: 我的服务)
+    // 当前激活的主tab页面 (0: 穿线服务, 1: 积分兑换, 2: 我的服务)
     currentTab: 0,
     
     // 当前激活的子tab页面 (用于"我的服务"页面)
@@ -133,46 +133,68 @@ Page({
 
     // === Tab3: 推广返佣数据 ===
     promotionData: {
-      invite_code: 'ABC123',                              // 邀请码
-      qrcode_url: '/assets/images/qrcode.png',           // 二维码图片链接
-      invite_url: 'https://miniprog.com/invite/ABC123',  // 邀请链接
-      total_commission: 352.00,                          // 累计返佣
-      pending_commission: 28.00,                         // 今日收益
-      withdrawable_amount: 120.00,                       // 可提现余额
-      invite_count: 15,                                  // 累计邀请人数
-      commission_history: [                              // 佣金明细
+      total_earnings: 158,       // 累计收益
+      invited_users: 6,          // 累计邀请人数
+      this_month_earnings: 45,   // 本月收益
+      today_earnings: 8,         // 今日收益（新增）
+      account_balance: 245,      // 账户余额（新增）
+      invite_code: 'PROMO001',   // 邀请码
+      invite_link: 'https://miniprogram.com/invite?code=PROMO001', // 邀请链接（新增）
+      qr_code_url: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://miniprogram.com/invite?code=PROMO001', // 推广二维码URL（新增）
+      commission_records: [      // 佣金明细记录
         {
-          type: '获得佣金',
-          amount: 10,
-          date: '2024-06-01',
-          status: '已到账'
+          desc: '邀请好友注册奖励',
+          amount: 20,
+          date: '2024-06-08',
+          status: '已到账',
+          type: 'invite'
         },
         {
-          type: '获得佣金',
-          amount: 18,
-          date: '2024-05-30',
-          status: '已到账'
+          desc: '好友消费返佣',
+          amount: 15,
+          date: '2024-06-07',
+          status: '已到账',
+          type: 'commission'
+        },
+        {
+          desc: '邀请好友注册奖励',
+          amount: 20,
+          date: '2024-06-05',
+          status: '已到账',
+          type: 'invite'
+        },
+        {
+          desc: '好友消费返佣',
+          amount: 8,
+          date: '2024-06-03',
+          status: '已到账',
+          type: 'commission'
         }
       ],
-      withdraw_history: [                                // 提现记录
+      // 提现记录（新增）
+      withdraw_records: [
         {
           amount: 100,
-          date: '2024-05-20',
-          status: '已完成'
+          date: '2024-06-01',
+          status: '已到账',
+          order_no: 'WD202406010001'
         },
         {
           amount: 50,
-          date: '2024-05-15',
-          status: '已完成'
+          date: '2024-05-25',
+          status: '已到账',
+          order_no: 'WD202405250001'
         }
       ]
     },
-    
-    // 提现金额输入
-    withdrawAmount: '',
-    
-    // 是否可以提现 (金额验证)
-    canWithdraw: false,
+
+    // 提现相关数据（新增）
+    withdrawData: {
+      show_withdraw_modal: false,    // 显示提现弹窗
+      withdraw_amount: '',           // 提现金额
+      min_withdraw_amount: 10,       // 最小提现金额
+      withdraw_fee_rate: 0,          // 提现手续费率（0表示免费）
+    },
 
     // === Tab4: 我的服务数据 ===
     // 子tab配置
@@ -234,7 +256,62 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    console.log('服务页面显示');
+    console.log('[DEBUG] 服务页面显示 - onShow被调用');
+    
+    // 检查是否需要切换到特定tab（从首页跳转过来）
+    const app = getApp()
+    console.log('[DEBUG] 检查全局数据:', app.globalData);
+    
+    if (app.globalData && app.globalData.targetTab !== undefined) {
+      const targetTab = app.globalData.targetTab
+      console.log('[DEBUG] 从其他页面跳转，切换到tab:', targetTab)
+      console.log('[DEBUG] 当前tab:', this.data.currentTab, '目标tab:', targetTab);
+      
+      // 延迟设置，确保页面完全渲染完成
+      setTimeout(() => {
+        console.log('[DEBUG] 开始设置currentTab为:', targetTab);
+        this.setData({
+          currentTab: targetTab
+        })
+        console.log('[DEBUG] currentTab设置完成，当前值:', this.data.currentTab);
+        
+        // 如果是跳转到积分兑换tab，显示提示
+        if (targetTab === 1) {
+          console.log('[DEBUG] 已切换到积分兑换tab');
+          // 额外显示一个提示确认tab切换成功
+          wx.showToast({
+            title: 'Tab切换成功',
+            icon: 'success',
+            duration: 1000
+          });
+        }
+      }, 100);
+      
+      // 检查是否有子tab跳转
+      if (app.globalData.targetSubTab !== undefined) {
+        const targetSubTab = app.globalData.targetSubTab
+        console.log('[DEBUG] 同时切换到子tab:', targetSubTab)
+        
+        setTimeout(() => {
+          this.setData({
+            currentSubTab: targetSubTab
+          })
+          
+          // 重新筛选服务记录
+          this.filterServiceList()
+        }, 100);
+        
+        // 清除子tab数据
+        app.globalData.targetSubTab = undefined
+      }
+      
+      // 清除全局数据，避免重复触发
+      console.log('[DEBUG] 清除全局变量targetTab');
+      app.globalData.targetTab = undefined
+    } else {
+      console.log('[DEBUG] 没有发现targetTab全局变量，正常显示页面');
+    }
+    
     // 刷新数据
     this.loadData();
   },
@@ -265,9 +342,6 @@ Page({
     
     // 检查订单提交条件
     this.checkCanSubmitOrder();
-    
-    // 检查提现条件
-    this.checkCanWithdraw();
   },
 
   /**
@@ -300,7 +374,7 @@ Page({
       currentTab: index
     });
     
-    // 切换到"我的服务"时刷新数据
+    // 切换到"我的服务"时刷新数据（现在是索引3）
     if (index === 3) {
       this.filterServiceList();
     }
@@ -568,78 +642,132 @@ Page({
   // =============== Tab3: 推广返佣相关方法 ===============
 
   /**
-   * 保存二维码到相册
+   * 保存推广二维码到相册（新增）
    */
-  saveQrcode: function() {
-    console.log('保存二维码');
+  saveQrCode: function() {
+    const { promotionData } = this.data;
     
     wx.showLoading({
-      title: '保存中...'
+      title: '保存中...',
     });
     
-    // 模拟保存操作
-    setTimeout(() => {
-      wx.hideLoading();
-      wx.showToast({
-        title: '保存成功',
-        icon: 'success'
-      });
-    }, 1000);
+    // 下载二维码图片
+    wx.downloadFile({
+      url: promotionData.qr_code_url,
+      success: (res) => {
+        // 保存到相册
+        wx.saveImageToPhotosAlbum({
+          filePath: res.tempFilePath,
+          success: () => {
+            wx.hideLoading();
+            wx.showToast({
+              title: '已保存到相册',
+              icon: 'success'
+            });
+          },
+          fail: (err) => {
+            wx.hideLoading();
+            if (err.errMsg.includes('auth deny')) {
+              wx.showModal({
+                title: '保存失败',
+                content: '请在设置中开启相册权限',
+                showCancel: false
+              });
+            } else {
+              wx.showToast({
+                title: '保存失败',
+                icon: 'none'
+              });
+            }
+          }
+        });
+      },
+      fail: () => {
+        wx.hideLoading();
+        wx.showToast({
+          title: '下载失败',
+          icon: 'none'
+        });
+      }
+    });
+    
+    console.log('保存推广二维码:', promotionData.qr_code_url);
   },
 
   /**
-   * 复制邀请链接
+   * 复制邀请链接（新增）
    */
-  copyUrl: function() {
+  copyInviteLink: function() {
     const { promotionData } = this.data;
     
     wx.setClipboardData({
-      data: promotionData.invite_url,
+      data: promotionData.invite_link,
       success: () => {
         wx.showToast({
-          title: '链接已复制',
+          title: '邀请链接已复制',
           icon: 'success'
         });
-        console.log('复制链接:', promotionData.invite_url);
+      },
+      fail: () => {
+        wx.showToast({
+          title: '复制失败',
+          icon: 'none'
+        });
       }
     });
-  },
-
-  /**
-   * 提现金额输入处理
-   * @param {Object} e 输入事件对象
-   */
-  onWithdrawInput: function(e) {
-    const value = e.detail.value;
-    this.setData({
-      withdrawAmount: value
-    });
-    this.checkCanWithdraw();
-  },
-
-  /**
-   * 检查是否可以提现
-   */
-  checkCanWithdraw: function() {
-    const { withdrawAmount, promotionData } = this.data;
-    const amount = parseFloat(withdrawAmount);
     
-    const canWithdraw = amount > 0 && 
-                       amount <= promotionData.withdrawable_amount && 
-                       amount >= 10; // 最低提现金额10元
+    console.log('复制邀请链接:', promotionData.invite_link);
+  },
+
+  /**
+   * 显示提现弹窗（新增）
+   */
+  showWithdrawModal: function() {
+    const { promotionData } = this.data;
+    
+    if (promotionData.account_balance < this.data.withdrawData.min_withdraw_amount) {
+      wx.showToast({
+        title: `余额不足${this.data.withdrawData.min_withdraw_amount}元`,
+        icon: 'none'
+      });
+      return;
+    }
     
     this.setData({
-      canWithdraw: canWithdraw
+      'withdrawData.show_withdraw_modal': true,
+      'withdrawData.withdraw_amount': ''
     });
-    
-    console.log('提现检查:', canWithdraw, amount);
   },
 
   /**
-   * 提交提现申请
+   * 隐藏提现弹窗（新增）
    */
-  submitWithdraw: function() {
-    if (!this.data.canWithdraw) {
+  hideWithdrawModal: function() {
+    this.setData({
+      'withdrawData.show_withdraw_modal': false,
+      'withdrawData.withdraw_amount': ''
+    });
+  },
+
+  /**
+   * 提现金额输入处理（新增）
+   */
+  onWithdrawAmountInput: function(e) {
+    const value = parseFloat(e.detail.value) || 0;
+    this.setData({
+      'withdrawData.withdraw_amount': value
+    });
+  },
+
+  /**
+   * 确认提现（新增）
+   */
+  confirmWithdraw: function() {
+    const { withdrawData, promotionData } = this.data;
+    const amount = parseFloat(withdrawData.withdraw_amount);
+    
+    // 验证提现金额
+    if (!amount || amount <= 0) {
       wx.showToast({
         title: '请输入正确的提现金额',
         icon: 'none'
@@ -647,13 +775,26 @@ Page({
       return;
     }
     
-    const amount = parseFloat(this.data.withdrawAmount);
-    console.log('申请提现:', amount);
+    if (amount < withdrawData.min_withdraw_amount) {
+      wx.showToast({
+        title: `最低提现金额为${withdrawData.min_withdraw_amount}元`,
+        icon: 'none'
+      });
+      return;
+    }
+    
+    if (amount > promotionData.account_balance) {
+      wx.showToast({
+        title: '余额不足',
+        icon: 'none'
+      });
+      return;
+    }
     
     // 确认提现
     wx.showModal({
       title: '确认提现',
-      content: `确定要提现¥${amount}到微信钱包吗？`,
+      content: `确定要提现${amount}元吗？预计1-3个工作日到账`,
       success: (res) => {
         if (res.confirm) {
           this.performWithdraw(amount);
@@ -663,41 +804,40 @@ Page({
   },
 
   /**
-   * 执行提现操作
-   * @param {number} amount 提现金额
+   * 执行提现操作（新增）
    */
   performWithdraw: function(amount) {
     this.setData({ loading: true });
     
-    // 模拟提现接口
+    // 模拟提现接口调用
     setTimeout(() => {
       const { promotionData } = this.data;
+      const newBalance = promotionData.account_balance - amount;
+      const orderNo = 'WD' + new Date().getTime();
       
-      // 更新余额
-      const newWithdrawableAmount = promotionData.withdrawable_amount - amount;
-      
-      // 添加提现记录
-      const newRecord = {
+      // 创建提现记录
+      const newWithdrawRecord = {
         amount: amount,
         date: new Date().toISOString().split('T')[0],
-        status: '处理中'
+        status: '处理中',
+        order_no: orderNo
       };
       
+      // 更新数据
       this.setData({
-        'promotionData.withdrawable_amount': newWithdrawableAmount,
-        'promotionData.withdraw_history': [newRecord, ...promotionData.withdraw_history],
-        withdrawAmount: '',
+        'promotionData.account_balance': newBalance,
+        'promotionData.withdraw_records': [newWithdrawRecord, ...promotionData.withdraw_records],
+        'withdrawData.show_withdraw_modal': false,
+        'withdrawData.withdraw_amount': '',
         loading: false
       });
-      
-      this.checkCanWithdraw();
       
       wx.showToast({
         title: '提现申请已提交',
         icon: 'success'
       });
       
-      console.log('提现申请成功，剩余余额:', newWithdrawableAmount);
+      console.log('提现成功:', amount, '订单号:', orderNo);
       
     }, 1500);
   },

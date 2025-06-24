@@ -20,7 +20,7 @@
 
   <!-- 积分/优惠券/服务悬浮卡片 -->
   <view class="stats-panel">
-    <view class="stats-item" bindtap="navigateTo" data-url="/pages/myPoints/myPoints">
+    <view class="stats-item" bindtap="handlePointsClick">
       <view class="stats-icon gift-bg">
         <image class="icon-image" src="/assets/icons/gift.svg"></image>
       </view>

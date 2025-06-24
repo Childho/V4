@@ -18,7 +18,6 @@
 - `productDetail/` - 商品详情页面
 - `courseDetail/` - 课程详情页面
 - `myBooking/` - 我的预订页面
-- `myPoints/` - 我的积分页面
 - `pointsExchange/` - 积分兑换页面
 - `dailyCheck/` - 每日签到页面
 - `search-result/` - 搜索结果页面

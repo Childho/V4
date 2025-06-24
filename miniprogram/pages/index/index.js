@@ -8,95 +8,86 @@ import { getStatusBarHeight } from '../../utils/systemInfo.js'
 Page({
   data: {
     statusBarHeight: 0,
-    notificationCount: 2,
-    searchKeyword: '', // 添加搜索关键词数据
+    searchKeyword: '', // 搜索关键词数据
+    // 优化后的轮播图数据 - 添加更美观的图片和文案
     banners: [
       {
         id: 'banner_1',
-        imageUrl: '/assets/icons/home.png',
+        imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800', // 网球主题图片
         type: 'activity',
-        linkId: 'activity_1'
+        linkId: 'activity_1',
+        title: '夏季网球训练营',
+        subtitle: '专业教练指导，提升你的网球技能'
       },
       {
-        id: 'banner_2',
-        imageUrl: '/assets/icons/activity.png',
+        id: 'banner_2', 
+        imageUrl: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=800', // 网球装备图片
         type: 'product',
-        linkId: 'product_1'
+        linkId: 'product_1',
+        title: '精选网球装备',
+        subtitle: '专业器材，助力你的运动表现'
+      },
+      {
+        id: 'banner_3',
+        imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800', // 运动场地图片
+        type: 'activity',
+        linkId: 'activity_2',
+        title: '会员专享福利',
+        subtitle: '全场8折优惠，更多惊喜等你发现'
       }
     ],
+    // 活动数据 - 使用更美观的图片
     activities: [
       {
         id: 'activity_1',
         title: '门店周年庆活动',
-        description: '全场商品8折，会员额外95折，还有精美礼品赠送',
-        coverUrl: '/assets/icons/activity.png',
+        description: '全场商品8折，会员额外95折，还有精美礼品赠送。专业网球装备一应俱全，品质保证。',
+        coverUrl: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400', // 庆祝活动图片
         timeRange: '6月18日-6月24日',
         location: '滨顺店'
       },
       {
         id: 'activity_2',
         title: '实体店免费体验课',
-        description: '专业教练指导，提升你的网球技能，适合各年龄段球友',
-        coverUrl: '/assets/icons/activity_active.png',
+        description: '专业教练指导，提升你的网球技能，适合各年龄段球友。小班授课，个性化指导。',
+        coverUrl: 'https://images.unsplash.com/photo-1622163642998-1ea32b0bbc42?w=400', // 网球教学图片
         timeRange: '6月25日-7月15日',
         location: '中心店'
       }
     ],
-    // 新增精选装备数据
+    // 精选装备数据 - 使用更美观的商品图片
     featuredEquipment: [
       {
         id: 'equipment_1',
-        name: 'Wilson Pro Staff 97',
-        brand: 'Wilson',
-        price: '1299.00',
-        imageUrl: '/assets/icons/mall.png'
+        name: 'YONEX尤尼克斯ARC-11羽毛球拍',
+        tag: '热销',
+        price: '899',
+        sales: '销量268',
+        imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300' // 网球拍图片
       },
       {
         id: 'equipment_2',
-        name: 'Babolat Pure Drive',
-        brand: 'Babolat',
-        price: '1199.00',
-        imageUrl: '/assets/icons/mall_active.png'
+        name: 'Victor胜利挑战者9500羽毛球拍',
+        tag: '新品',
+        price: '599',
+        sales: '销量156',
+        imageUrl: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=300' // 网球拍图片
       },
       {
         id: 'equipment_3',
-        name: 'HEAD Speed MP',
-        brand: 'HEAD',
-        price: '1099.00',
-        imageUrl: '/assets/icons/activity.png'
+        name: 'LI-NING李宁风动9000超轻球拍',
+        tag: '爆款',
+        price: '1280',
+        sales: '销量189',
+        imageUrl: 'https://images.unsplash.com/photo-1544963150-889b086b6cb5?w=300' // 网球拍图片
       },
       {
         id: 'equipment_4',
-        name: 'Yonex EZONE 98',
-        brand: 'Yonex',
-        price: '1399.00',
-        imageUrl: '/assets/icons/activity_active.png'
-      }
-    ],
-    products: [
-      {
-        id: 'product_1',
-        name: 'YONEX 网球拍 VR-800',
-        price: '899.00',
-        imageUrl: '/assets/icons/mall.png'
-      },
-      {
-        id: 'product_2',
-        name: 'VICTOR 专业球鞋',
-        price: '499.00',
-        imageUrl: '/assets/icons/mall_active.png'
-      },
-      {
-        id: 'product_3',
-        name: '高弹性网球 8只装',
-        price: '129.00',
-        imageUrl: '/assets/icons/mall.png'
-      },
-      {
-        id: 'product_4',
-        name: '专业运动护腕',
-        price: '69.00',
-        imageUrl: '/assets/icons/mall_active.png'
+        name: 'KAWASAKI川崎羽毛球拍碳纤维',
+        tag: '推荐',
+        price: '458',
+        sales: '销量342',
+        imageUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300' // 网球拍图片
       }
     ]
   },
@@ -105,20 +96,20 @@ Page({
     // 获取系统状态栏高度 - 使用新的API替代已弃用的wx.getSystemInfoSync
     try {
       const statusBarHeight = getStatusBarHeight()
-      // 添加更大的安全边距（额外增加20px）
+      // 增加更多额外边距，确保banner完全显示不被遮挡
       this.setData({
         statusBarHeight: statusBarHeight + 20
       })
-      console.log('状态栏高度+额外边距:', statusBarHeight + 20)
+      console.log('状态栏高度+安全边距:', statusBarHeight + 20)
     } catch (e) {
-      // 使用固定的安全值
+      // 使用固定的安全值，兼容旧设备
       this.setData({
-        statusBarHeight: 64  // 更大的默认值
+        statusBarHeight: 64  // 增加默认安全高度
       })
       console.error('获取系统信息失败', e)
     }
     
-    // 打印初始数据状态
+    // 打印初始数据状态，便于调试
     console.log('页面onLoad - 初始精选装备数据:', this.data.featuredEquipment)
     
     // 页面加载时获取数据
@@ -128,7 +119,7 @@ Page({
     this.checkLoginStatus()
   },
 
-  // 页面显示时也检查数据
+  // 页面显示时也检查数据，确保数据完整性
   onShow() {
     console.log('页面onShow - 当前精选装备数据:', this.data.featuredEquipment)
     // 如果数据为空，重新设置
@@ -151,33 +142,161 @@ Page({
     }
   },
 
-  // 导航到指定页面 - 增强版本，支持更多页面跳转
+  // 导航到指定页面 - 修复tab跳转问题
   navigateTo(e) {
     const { url } = e.currentTarget.dataset
     
-    // 处理新增功能页面的跳转
+    // 处理功能页面的跳转
     if (url === '/pages/promotion/index') {
-      // 推广返佣页面，如果页面不存在，先显示提示
-      wx.showToast({
-        title: '推广返佣功能即将上线',
-        icon: 'none',
-        duration: 2000
-      })
-      // 实际开发中取消注释下面的代码
-      // wx.navigateTo({ url })
+      // 推广返佣功能，跳转到服务页面的推广返佣tab
+      this.switchToServiceTab(2, '推广返佣')
+    } else if (url === '/pages/pointsExchange/index') {
+      // 积分兑换功能，跳转到服务页面的积分兑换tab
+      this.switchToServiceTab(1, '积分兑换')
     } else if (url === '/pages/stringing/index') {
-      // 穿线服务页面
+      // 穿线服务功能，跳转到服务页面的穿线服务tab
+      this.switchToServiceTab(0, '穿线服务')
+    } else if (url === '/pages/booking/index') {
+      // 客服服务功能 - 暂时不跳转，显示开发中提示
       wx.showToast({
-        title: '穿线服务功能即将上线',
+        title: '客服功能开发中，敬请期待',
         icon: 'none',
         duration: 2000
       })
-      // 实际开发中取消注释下面的代码
-      // wx.navigateTo({ url })
+      console.log('首页客服服务 - 暂时不跳转，后续对接微信客服')
+    } else if (url === '/pages/activity/index') {
+      // 热门活动查看全部，跳转到活动页面的全部tab
+      this.switchToActivityTab(0, '全部活动')  // 假设全部tab是第一个tab，索引为0
+    } else if (url.includes('/pages/mall/index')) {
+      // 精选装备查看全部，跳转到商场页面
+      console.log('首页精选装备 - 准备跳转到商场页面:', url)
+      
+      // 商场页面是tab页面，使用switchTab跳转
+      wx.switchTab({
+        url: '/pages/mall/index',
+        success: () => {
+          console.log('首页精选装备 - 成功跳转到商场页面')
+          
+          // 如果URL包含category参数，可以通过全局数据传递
+          if (url.includes('category=featured')) {
+            const app = getApp()
+            app.globalData = app.globalData || {}
+            app.globalData.mallCategory = 'featured'
+            app.globalData.fromIndex = true
+            console.log('首页精选装备 - 设置商场分类为featured')
+          }
+        },
+        fail: (error) => {
+          console.error('首页精选装备 - 跳转商场页面失败:', error)
+          wx.showToast({
+            title: '页面跳转失败',
+            icon: 'none'
+          })
+        }
+      })
     } else {
       // 其他已存在的页面正常跳转
-      wx.navigateTo({ url })
+      wx.navigateTo({ 
+        url,
+        fail: (error) => {
+          console.error('页面跳转失败:', error)
+          wx.showToast({
+            title: '页面不存在或跳转失败',
+            icon: 'none'
+          })
+        }
+      })
     }
+  },
+
+  // 统一处理跳转到服务页面指定tab的方法
+  switchToServiceTab(targetTab, serviceName) {
+    console.log(`首页${serviceName} - 准备跳转到服务页面tab ${targetTab}`)
+    
+    // 先设置全局数据
+    const app = getApp()
+    app.globalData = app.globalData || {}
+    app.globalData.targetTab = targetTab
+    app.globalData.fromIndex = true  // 标记来源于首页
+    
+    wx.switchTab({
+      url: '/pages/booking/index',
+      success: () => {
+        console.log(`首页${serviceName} - 成功跳转到服务页面`)
+        
+        // 延迟触发tab切换，确保服务页面已经加载完成
+        setTimeout(() => {
+          // 通过事件系统通知服务页面切换tab
+          const pages = getCurrentPages()
+          const currentPage = pages[pages.length - 1]
+          
+          if (currentPage && currentPage.route === 'pages/booking/index') {
+            // 如果当前页面是服务页面，直接调用切换方法
+            if (typeof currentPage.switchToTab === 'function') {
+              currentPage.switchToTab(targetTab)
+              console.log(`首页${serviceName} - 延迟切换到tab ${targetTab}成功`)
+            } else {
+              // 如果方法不存在，再次设置全局数据并尝试触发onShow
+              app.globalData.targetTab = targetTab
+              app.globalData.needSwitchTab = true
+              console.log(`首页${serviceName} - 设置全局数据等待服务页面处理`)
+            }
+          }
+        }, 100) // 延迟100ms确保页面加载完成
+      },
+      fail: (error) => {
+        console.error(`首页${serviceName} - 跳转失败:`, error)
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        })
+      }
+    })
+  },
+
+  // 统一处理跳转到活动页面指定tab的方法
+  switchToActivityTab(targetTab, tabName) {
+    console.log(`首页${tabName} - 准备跳转到活动页面tab ${targetTab}`)
+    
+    // 先设置全局数据
+    const app = getApp()
+    app.globalData = app.globalData || {}
+    app.globalData.activityTargetTab = targetTab  // 使用不同的键名避免冲突
+    app.globalData.fromIndex = true  // 标记来源于首页
+    
+    wx.switchTab({
+      url: '/pages/activity/index',
+      success: () => {
+        console.log(`首页${tabName} - 成功跳转到活动页面`)
+        
+        // 延迟触发tab切换，确保活动页面已经加载完成
+        setTimeout(() => {
+          // 通过事件系统通知活动页面切换tab
+          const pages = getCurrentPages()
+          const currentPage = pages[pages.length - 1]
+          
+          if (currentPage && currentPage.route === 'pages/activity/index') {
+            // 如果当前页面是活动页面，直接调用切换方法
+            if (typeof currentPage.switchToTab === 'function') {
+              currentPage.switchToTab(targetTab)
+              console.log(`首页${tabName} - 延迟切换到tab ${targetTab}成功`)
+            } else {
+              // 如果方法不存在，再次设置全局数据并尝试触发onShow
+              app.globalData.activityTargetTab = targetTab
+              app.globalData.needSwitchActivityTab = true
+              console.log(`首页${tabName} - 设置全局数据等待活动页面处理`)
+            }
+          }
+        }, 100) // 延迟100ms确保页面加载完成
+      },
+      fail: (error) => {
+        console.error(`首页${tabName} - 跳转失败:`, error)
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        })
+      }
+    })
   },
 
   // 获取轮播图数据
@@ -328,15 +447,6 @@ Page({
     });
   },
 
-  // 处理通知图标点击
-  onNotificationTap() {
-    // TODO: 跳转到通知页面或显示通知列表
-    wx.showToast({
-      title: '通知功能开发中',
-      icon: 'none'
-    })
-  },
-
   onShareAppMessage() {
     return {
       title: '倍特爱小程序',
@@ -344,48 +454,48 @@ Page({
     }
   },
 
-  // 测试方法：手动刷新精选装备数据
+  // 测试方法 - 重新设置精选装备数据（调试用）
   testRefreshEquipment() {
-    console.log('手动刷新精选装备数据')
-    const equipmentData = [
-      {
-        id: 'equipment_1',
-        name: 'Wilson Pro Staff 97',
-        brand: 'Wilson',
-        price: '1299.00',
-        imageUrl: '/assets/icons/mall.png'
-      },
-      {
-        id: 'equipment_2',
-        name: 'Babolat Pure Drive', 
-        brand: 'Babolat',
-        price: '1199.00',
-        imageUrl: '/assets/icons/mall_active.png'
-      },
-      {
-        id: 'equipment_3',
-        name: 'HEAD Speed MP',
-        brand: 'HEAD', 
-        price: '1099.00',
-        imageUrl: '/assets/icons/activity.png'
-      },
-      {
-        id: 'equipment_4',
-        name: 'Yonex EZONE 98',
-        brand: 'Yonex',
-        price: '1399.00',
-        imageUrl: '/assets/icons/activity_active.png'
-      }
-    ]
+    console.log('测试刷新精选装备数据')
     
+    // 重新设置数据
     this.setData({
-      featuredEquipment: equipmentData
-    }, () => {
-      console.log('数据刷新完成:', this.data.featuredEquipment)
-      wx.showToast({
-        title: '数据已刷新',
-        icon: 'success'
-      })
+      featuredEquipment: [
+        {
+          id: 'equipment_1',
+          name: 'YONEX尤尼克斯ARC-11羽毛球拍',
+          tag: '热销',
+          price: '899',
+          sales: '销量268',
+          imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300'
+        },
+        {
+          id: 'equipment_2',
+          name: 'Victor胜利挑战者9500羽毛球拍',
+          tag: '新品',
+          price: '599',
+          sales: '销量156',
+          imageUrl: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=300'
+        },
+        {
+          id: 'equipment_3',
+          name: 'LI-NING李宁风动9000超轻球拍',
+          tag: '爆款',
+          price: '1280',
+          sales: '销量189',
+          imageUrl: 'https://images.unsplash.com/photo-1544963150-889b086b6cb5?w=300'
+        },
+        {
+          id: 'equipment_4',
+          name: 'KAWASAKI川崎羽毛球拍碳纤维',
+          tag: '推荐',
+          price: '458',
+          sales: '销量342',
+          imageUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300'
+        }
+      ]
     })
+    
+    console.log('精选装备数据已刷新:', this.data.featuredEquipment)
   }
 }) 
