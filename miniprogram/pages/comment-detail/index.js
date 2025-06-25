@@ -40,7 +40,14 @@ Page({
     
     const { productId, productName, productImage } = options;
     
+    // 打印详细的参数信息用于调试
+    console.log('[Comment Detail] 接收参数:');
+    console.log('- productId:', productId);
+    console.log('- productName:', productName);
+    console.log('- productImage:', productImage);
+    
     if (!productId) {
+      console.error('[Comment Detail] 商品ID为空');
       wx.showToast({
         title: '商品信息错误',
         icon: 'none'
@@ -52,10 +59,16 @@ Page({
     }
 
     // 设置商品信息
+    const productData = {
+      id: productId,
+      name: decodeURIComponent(productName || '商品详情'),
+      coverImage: decodeURIComponent(productImage || '/assets/icons/default_product.png')
+    };
+    
+    console.log('[Comment Detail] 设置商品数据:', productData);
+    
     this.setData({
-      'product.id': productId,
-      'product.name': productName || '商品详情',
-      'product.coverImage': productImage || '/assets/icons/default_product.png'
+      product: productData
     });
 
     // 加载评论数据

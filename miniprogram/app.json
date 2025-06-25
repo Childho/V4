@@ -15,6 +15,7 @@
     "pages/seckill/index",
     "pages/activityDetail/index",
     "pages/productDetail/index",
+    "pages/comment-detail/index",
     "pages/courseDetail/courseDetail",
     "pages/myBooking/myBooking",
     "pages/pointsExchange/index",

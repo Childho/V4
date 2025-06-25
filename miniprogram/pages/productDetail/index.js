@@ -463,6 +463,8 @@ Page({
   navigateToComments() {
     const { product } = this.data;
     
+    console.log('[Product Detail] 跳转到评论详情页，商品信息:', product);
+    
     if (!product.id) {
       wx.showToast({
         title: '商品信息异常',
@@ -471,9 +473,26 @@ Page({
       return;
     }
     
+    // 构建跳转URL
+    const productName = product.name || '商品详情';
+    const productImage = product.images && product.images[0] ? product.images[0] : '';
+    const targetUrl = `/pages/comment-detail/index?productId=${product.id}&productName=${encodeURIComponent(productName)}&productImage=${encodeURIComponent(productImage)}`;
+    
+    console.log('[Product Detail] 跳转URL:', targetUrl);
+    
     // 跳转到评论详情页，传递商品信息
     wx.navigateTo({
-      url: `/pages/comment-detail/index?productId=${product.id}&productName=${encodeURIComponent(product.name)}&productImage=${encodeURIComponent(product.images[0] || '')}`
+      url: targetUrl,
+      success: () => {
+        console.log('[Product Detail] 跳转成功');
+      },
+      fail: (error) => {
+        console.error('[Product Detail] 跳转失败:', error);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        });
+      }
     });
   },
 
