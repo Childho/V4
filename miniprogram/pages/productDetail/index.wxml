@@ -62,7 +62,6 @@
     <!-- 评价概览 -->
     <view class="comment-overview" wx:if="{{comments.total > 0}}">
       <view class="rating-score">
-        <text class="score">{{comments.averageRating || '5.0'}}</text>
         <view class="stars">
           <image wx:for="{{5}}" wx:key="index" 
                  src="{{index < Math.floor(comments.averageRating) ? '/assets/icons/star_filled.png' : '/assets/icons/star_empty.png'}}" 

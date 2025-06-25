@@ -462,13 +462,18 @@ Page({
    */
   navigateToComments() {
     const { product } = this.data;
-    wx.navigateTo({
-      url: `/pages/product-comments/index?productId=${product.id}`
-    }).catch(() => {
+    
+    if (!product.id) {
       wx.showToast({
-        title: '评论详情页开发中',
+        title: '商品信息异常',
         icon: 'none'
       });
+      return;
+    }
+    
+    // 跳转到评论详情页，传递商品信息
+    wx.navigateTo({
+      url: `/pages/comment-detail/index?productId=${product.id}&productName=${encodeURIComponent(product.name)}&productImage=${encodeURIComponent(product.images[0] || '')}`
     });
   },
 

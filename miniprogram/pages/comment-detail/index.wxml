@@ -1,0 +1,100 @@
+<view class="comment-detail-container">
+  <!-- 页面头部 -->
+  <view class="header-section">
+    <view class="product-summary">
+      <image class="product-thumb" src="{{product.coverImage}}" mode="aspectFill" />
+      <view class="product-info">
+        <text class="product-name">{{product.name}}</text>
+        <text class="comment-count">{{comments.total}}条评价</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评价筛选器 -->
+  <view class="filter-section">
+    <scroll-view scroll-x class="filter-scroll">
+      <view class="filter-item {{currentFilter === 'all' ? 'active' : ''}}" 
+            bindtap="filterComments" data-type="all">
+        全部({{comments.total}})
+      </view>
+      <view class="filter-item {{currentFilter === 'withImage' ? 'active' : ''}}" 
+            bindtap="filterComments" data-type="withImage">
+        有图({{comments.withImageCount}})
+      </view>
+      <view class="filter-item {{currentFilter === 'positive' ? 'active' : ''}}" 
+            bindtap="filterComments" data-type="positive">
+        好评({{comments.positiveCount}})
+      </view>
+      <view class="filter-item {{currentFilter === 'negative' ? 'active' : ''}}" 
+            bindtap="filterComments" data-type="negative">
+        差评({{comments.negativeCount}})
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 评论列表 -->
+  <view class="comment-list">
+    <view class="comment-item" wx:for="{{filteredComments}}" wx:key="id">
+      <!-- 用户信息 -->
+      <view class="user-section">
+        <image class="user-avatar" src="{{item.userAvatar || '/assets/icons/default_avatar.png'}}" mode="aspectFill" />
+        <view class="user-info">
+          <text class="username">{{item.username}}</text>
+          <view class="rating-stars">
+            <image wx:for="{{5}}" wx:key="starIndex" wx:for-index="starIndex"
+                   src="{{starIndex < item.rating ? '/assets/icons/star_filled.png' : '/assets/icons/star_empty.png'}}" 
+                   mode="aspectFit" class="star-icon" />
+          </view>
+        </view>
+        <text class="comment-date">{{item.createTime}}</text>
+      </view>
+
+      <!-- 评论内容 -->
+      <view class="comment-content">
+        <text class="comment-text">{{item.content}}</text>
+        
+        <!-- 评论图片 -->
+        <view class="comment-images" wx:if="{{item.images && item.images.length > 0}}">
+          <image wx:for="{{item.images}}" wx:key="imgIndex" wx:for-item="imgItem"
+                 src="{{imgItem}}" mode="aspectFill" class="comment-img" 
+                 bindtap="previewImage" data-url="{{imgItem}}" data-urls="{{item.images}}" />
+        </view>
+        
+        <!-- 规格信息 -->
+        <view class="comment-specs" wx:if="{{item.specs}}">
+          <text class="specs-text">规格：{{item.specs}}</text>
+        </view>
+      </view>
+
+      <!-- 店家回复 -->
+      <view class="reply-section" wx:if="{{item.reply}}">
+        <view class="reply-header">
+          <image src="/assets/icons/store.png" mode="aspectFit" class="store-icon" />
+          <text class="reply-label">店家回复</text>
+        </view>
+        <text class="reply-content">{{item.reply}}</text>
+      </view>
+
+      <!-- 互动操作 -->
+      <view class="interaction-section">
+        <view class="like-btn {{item.isLiked ? 'liked' : ''}}" 
+              bindtap="toggleLike" data-id="{{item.id}}" data-index="{{index}}">
+          <image src="{{item.isLiked ? '/assets/icons/heart_filled.png' : '/assets/icons/heart.png'}}" 
+                 mode="aspectFit" class="like-icon" />
+          <text class="like-text">{{item.likeCount > 0 ? item.likeCount : '赞'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore}}" bindtap="loadMoreComments">
+    <text class="load-text">{{loading ? '加载中...' : '点击加载更多'}}</text>
+  </view>
+
+  <!-- 无评论提示 -->
+  <view class="empty-state" wx:if="{{filteredComments.length === 0}}">
+    <image src="/assets/icons/no_comment.png" mode="aspectFit" class="empty-icon" />
+    <text class="empty-text">暂无相关评价</text>
+  </view>
+</view> 
