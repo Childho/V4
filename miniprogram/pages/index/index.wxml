@@ -71,12 +71,12 @@
         <text>积分兑换</text>
       </view>
       <!-- 客服服务 -->
-      <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
+      <button class="nav-item" open-type="contact" show-message-card="{{true}}" bindcontact="onContactButton">
         <view class="nav-icon">
           <image src="/assets/icons/service-headset.svg" class="nav-icon-image" mode="aspectFit"></image>
         </view>
         <text>客服服务</text>
-      </view>
+      </button>
     </view>
   </view>
   

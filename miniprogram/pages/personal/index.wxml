@@ -103,7 +103,8 @@
       <view class="task-item" bindtap="handleTaskClick" data-id="1">
         <view class="task-left">
           <view class="task-icon check-in">
-            <text class="iconfont icon-check-in"></text>
+            <!-- 每日签到图标 - 使用日历打勾图标 -->
+            <image class="task-icon-image" src="/assets/icons/calendar-check.svg" mode="aspectFit"></image>
           </view>
           <view class="task-info">
             <view class="task-name">每日签到</view>
@@ -119,7 +120,8 @@
       <view class="task-item" bindtap="handleTaskClick" data-id="2">
         <view class="task-left">
           <view class="task-icon share-icon">
-            <text class="iconfont icon-share"></text>
+            <!-- 分享小程序图标 - 使用分享图标 -->
+            <image class="task-icon-image" src="/assets/icons/share.svg" mode="aspectFit"></image>
           </view>
           <view class="task-info">
             <view class="task-name">分享小程序</view>
@@ -132,7 +134,8 @@
       <view class="task-item" bindtap="handleTaskClick" data-id="3">
         <view class="task-left">
           <view class="task-icon invite-icon">
-            <text class="iconfont icon-invite"></text>
+            <!-- 邀请好友图标 - 使用用户添加图标 -->
+            <image class="task-icon-image" src="/assets/icons/user-plus.svg" mode="aspectFit"></image>
           </view>
           <view class="task-info">
             <view class="task-name">邀请好友</view>

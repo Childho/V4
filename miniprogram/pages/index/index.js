@@ -156,14 +156,6 @@ Page({
     } else if (url === '/pages/stringing/index') {
       // 穿线服务功能，跳转到服务页面的穿线服务tab
       this.switchToServiceTab(0, '穿线服务')
-    } else if (url === '/pages/booking/index') {
-      // 客服服务功能 - 暂时不跳转，显示开发中提示
-      wx.showToast({
-        title: '客服功能开发中，敬请期待',
-        icon: 'none',
-        duration: 2000
-      })
-      console.log('首页客服服务 - 暂时不跳转，后续对接微信客服')
     } else if (url === '/pages/activity/index') {
       // 热门活动查看全部，跳转到活动页面的全部tab
       this.switchToActivityTab(0, '全部活动')  // 假设全部tab是第一个tab，索引为0
@@ -445,6 +437,33 @@ Page({
         });
       }
     });
+  },
+
+  /**
+   * 客服会话回调 - 用户点击客服按钮时触发
+   */
+  onContactButton(e) {
+    console.log('[首页] 用户点击客服按钮，准备进入客服会话');
+    console.log('[首页] 客服事件详情:', e.detail);
+    
+    // 记录客服使用统计（实际项目中可以调用API）
+    try {
+      // 可以在这里记录用户使用客服的统计信息
+      const customerServiceLog = {
+        userId: wx.getStorageSync('userId') || 'guest',
+        timestamp: Date.now(),
+        source: '首页导航',
+        action: 'contact_start'
+      };
+      
+      console.log('[首页] 客服使用统计:', customerServiceLog);
+      
+      // 实际项目中可以调用后端API记录
+      // this.recordCustomerServiceUsage(customerServiceLog);
+      
+    } catch (error) {
+      console.error('[首页] 记录客服统计失败:', error);
+    }
   },
 
   onShareAppMessage() {
