@@ -416,23 +416,24 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 120rpx; /* 增加高度以适应更好的视觉效果 */
+  height: 140rpx; /* 增加高度，给按钮更多垂直空间，解决紧贴问题 */
   background: #fff;
   display: flex;
   align-items: center;
   border-top: 1rpx solid #f1f1f1;
   z-index: 999;
   box-shadow: 0 -2rpx 20rpx rgba(0, 0, 0, 0.1);
-  padding: 16rpx 0; /* 添加上下内边距 */
-  padding-bottom: calc(16rpx + env(safe-area-inset-bottom)); /* 适配iPhone底部安全区域 */
+  padding: 24rpx 0; /* 调整上下内边距，留出额外空间 */
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom)); /* 适配iPhone底部安全区域 */
   box-sizing: border-box;
 }
 
 .left-actions {
   display: flex;
-  width: 40%;
+  width: 30%; /* 减少左侧宽度，只保留客服和购物车 */
   height: 100%;
   align-items: center; /* 确保垂直居中 */
+  padding-left: 16rpx; /* 添加左边距 */
 }
 
 .action-btn {
@@ -465,25 +466,38 @@
   color: #666;
 }
 
-.badge {
+/* 购物车按钮特殊样式 */
+.cart-btn {
+  position: relative;
+}
+
+.cart-btn text {
+  color: #333; /* 购物车文字颜色深一些 */
+  font-weight: 500;
+}
+
+/* 购物车徽章样式 */
+.cart-badge {
   position: absolute;
-  top: 2rpx; /* 调整位置 */
-  right: 20rpx;
+  top: -4rpx; /* 调整位置到图标右上角 */
+  right: 16rpx;
   min-width: 32rpx;
   height: 32rpx;
   line-height: 32rpx;
   border-radius: 16rpx;
   background: #ff4757;
   color: #fff;
-  font-size: 20rpx;
+  font-size: 18rpx;
   text-align: center;
   padding: 0 6rpx;
   box-sizing: border-box;
+  font-weight: 600;
+  box-shadow: 0 2rpx 8rpx rgba(255, 71, 87, 0.3);
 }
 
 .right-actions {
   display: flex;
-  width: 60%;
+  width: 70%; /* 增加右侧宽度，让按钮更宽 */
   height: 100%;
   padding: 0 24rpx; /* 调整内边距 */
   box-sizing: border-box;
@@ -492,16 +506,19 @@
 
 .add-cart-btn,
 .buy-now-btn {
-  flex: 1;
-  height: 68rpx;
-  line-height: 68rpx;
+  height: 72rpx; /* 增加按钮高度 */
+  line-height: 72rpx;
   text-align: center;
-  border-radius: 34rpx;
-  font-size: 28rpx;
-  font-weight: 500;
+  border-radius: 36rpx;
+  font-size: 30rpx; /* 增大字体 */
+  font-weight: 600; /* 加粗字体 */
   margin: 0;
   padding: 0;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease; /* 添加过渡效果 */
 }
 
 .add-cart-btn::after,
@@ -510,15 +527,35 @@
 }
 
 .add-cart-btn {
-  background: #fff2e8;
+  flex: 1.2; /* 加入购物车按钮稍宽一些 */
+  background: #fff;
   color: #ff4757;
-  border: 1rpx solid #ff4757;
-  margin-right: 20rpx;
+  border: 2rpx solid #ff4757;
+  margin-right: 16rpx;
+}
+
+.add-cart-btn image {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
 }
 
 .buy-now-btn {
-  background: #ff4757;
+  flex: 1;
+  background: linear-gradient(135deg, #ff4757, #ff3838); /* 渐变背景 */
   color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(255, 71, 87, 0.3); /* 添加阴影 */
+}
+
+/* 按钮按下效果 */
+.add-cart-btn:active {
+  background: #fff2e8;
+  transform: scale(0.98);
+}
+
+.buy-now-btn:active {
+  background: linear-gradient(135deg, #ff3838, #ff2727);
+  transform: scale(0.98);
 }
 
 /* 规格弹窗样式 */

@@ -4,7 +4,6 @@ import {
   getProductComments, 
   getRelatedProducts, 
   addToCart, 
-  toggleFavorite, 
   getCartCount,
   buyNow 
 } from '../../api/productApi';
@@ -32,7 +31,6 @@ Page({
       brand: '',
       salesCount: 0,
       shippingInfo: '24小时发货',
-      isFavorite: false,
       images: [
         // 设置默认占位图，避免轮播图显示异常
         'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWVhuWTgeWbvueJh+WKoOi9veS4rS4uLjwvdGV4dD48L3N2Zz4='
@@ -406,54 +404,25 @@ Page({
   },
 
   /**
-   * 添加/取消收藏
-   */
-  async handleAddFavorite() {
-    const { product } = this.data;
-    
-    try {
-      await toggleFavorite(product.id, product.isFavorite);
-      
-      // 更新收藏状态
-      this.setData({
-        'product.isFavorite': !product.isFavorite
-      });
-      
-      wx.showToast({
-        title: product.isFavorite ? '已取消收藏' : '已加入收藏',
-        icon: 'success'
-      });
-      
-    } catch (error) {
-      console.error('[Toggle Favorite Error]', error);
-      // 模拟成功操作（用于演示）
-      const newStatus = !product.isFavorite;
-      this.setData({
-        'product.isFavorite': newStatus
-      });
-      wx.showToast({
-        title: newStatus ? '已加入收藏' : '已取消收藏',
-        icon: 'success'
-      });
-    }
-  },
-
-  /**
    * 跳转到购物车
    */
   handleToCart() {
-    wx.switchTab({
-      url: '/pages/cart/index'
-    }).catch(() => {
-      // 如果switchTab失败，使用navigateTo
-      wx.navigateTo({
-        url: '/pages/cart/index'
-      }).catch(() => {
+    console.log('[Product Detail] 点击购物车按钮，准备跳转到购物车页面');
+    
+    // 直接跳转到购物车页面 - 使用正确的路径
+    wx.navigateTo({
+      url: '/pages/cart/cart',  // 确认为实际的购物车页面路径
+      success: () => {
+        console.log('[Product Detail] 成功跳转到购物车页面');
+      },
+      fail: (error) => {
+        console.error('[Product Detail] 跳转购物车页面失败:', error);
         wx.showToast({
-          title: '购物车页面开发中',
-          icon: 'none'
+          title: '购物车页面跳转失败',
+          icon: 'none',
+          duration: 2000
         });
-      });
+      }
     });
   },
 
@@ -519,7 +488,6 @@ Page({
       brand: 'YONEX',
       salesCount: 256,
       shippingInfo: '24小时发货',
-      isFavorite: false,
       images: [
         'https://img.alicdn.com/imgextra/i1/6000000003702/O1CN01XbWYnV1JjqS8vYm45_!!6000000003702-0-tps-800-800.jpg',
         'https://img.alicdn.com/imgextra/i2/6000000003702/O1CN01YvWJ8C1JjqS8vYm45_!!6000000003702-0-tps-800-800.jpg',

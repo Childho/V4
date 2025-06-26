@@ -138,29 +138,28 @@
 
   <!-- 底部操作栏 -->
   <view class="bottom-bar">
+    <!-- 左侧功能区 -->
     <view class="left-actions">
       <!-- 客服 -->
       <button class="action-btn" open-type="contact" show-message-card="{{true}}">
-        <image src="/assets/icons/service.png" mode="aspectFit" />
+        <image src="/assets/icons/service.svg" mode="aspectFit" />
         <text>客服</text>
       </button>
       
-      <!-- 收藏 -->
-      <view class="action-btn" bindtap="handleAddFavorite">
-        <image src="{{product.isFavorite ? '/assets/icons/heart_filled.png' : '/assets/icons/heart.png'}}" mode="aspectFit" />
-        <text>{{product.isFavorite ? '已收藏' : '收藏'}}</text>
-      </view>
-      
       <!-- 购物车 -->
-      <view class="action-btn" bindtap="handleToCart">
-        <image src="/assets/icons/cart.png" mode="aspectFit" />
+      <view class="action-btn cart-btn" bindtap="handleToCart">
+        <image src="/assets/icons/cart.svg" mode="aspectFit" />
         <text>购物车</text>
-        <view class="badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
+        <view class="cart-badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
       </view>
     </view>
     
+    <!-- 右侧购买按钮区 -->
     <view class="right-actions">
-      <button class="add-cart-btn" bindtap="handleAddToCart">加入购物车</button>
+      <button class="add-cart-btn" bindtap="handleAddToCart">
+        <image src="/assets/icons/cart.svg" mode="aspectFit" />
+        加入购物车
+      </button>
       <button class="buy-now-btn" bindtap="handleBuyNow">立即购买</button>
     </view>
   </view>

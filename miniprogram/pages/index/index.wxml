@@ -49,31 +49,31 @@
   <!-- 功能导航 - 使用更美观的图标 -->
   <view class="nav-container">
     <view class="nav-grid">
-      <!-- 推广返佣功能 - 使用emoji图标替代svg -->
+      <!-- 推广返佣功能 - 使用SVG图标替代emoji -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/promotion/index">
         <view class="nav-icon">
-          <text class="nav-emoji">💰</text>
+          <image src="/assets/icons/promotion.svg" class="nav-icon-image" mode="aspectFit"></image>
         </view>
         <text>推广返佣</text>
       </view>
       <!-- 穿线服务功能 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/stringing/index">
         <view class="nav-icon">
-          <text class="nav-emoji">🎾</text>
+          <image src="/assets/icons/stringing.svg" class="nav-icon-image" mode="aspectFit"></image>
         </view>
         <text>穿线服务</text>
       </view>
       <!-- 积分兑换 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/pointsExchange/index">
         <view class="nav-icon">
-          <text class="nav-emoji">🎁</text>
+          <image src="/assets/icons/points-exchange.svg" class="nav-icon-image" mode="aspectFit"></image>
         </view>
         <text>积分兑换</text>
       </view>
       <!-- 客服服务 -->
       <view class="nav-item" bindtap="navigateTo" data-url="/pages/booking/index">
         <view class="nav-icon">
-          <text class="nav-emoji">🎧</text>
+          <image src="/assets/icons/service-headset.svg" class="nav-icon-image" mode="aspectFit"></image>
         </view>
         <text>客服服务</text>
       </view>
