@@ -1,10 +1,11 @@
 {
-  "navigationBarTitleText": "",
+  "navigationBarTitleText": "活动中心",
   "navigationStyle": "custom",
   "navigationBarBackgroundColor": "#FFFFFF",
   "navigationBarTextStyle": "black",
   "backgroundColor": "#f8f8f8",
   "backgroundTextStyle": "light",
+  "enablePullDownRefresh": true,
   "usingComponents": {
     "navigation-bar": "/components/navigation-bar/navigation-bar"
   }

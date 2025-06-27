@@ -32,7 +32,7 @@
   <view class="fixed-filter-tabs">
     <view class="{{status === 'all' ? 'active' : ''}}" bindtap="changeStatus" data-status="all">全部</view>
     <view class="{{status === 'ongoing' ? 'active' : ''}}" bindtap="changeStatus" data-status="ongoing">进行中</view>
-    <view class="{{status === 'finished' ? 'active' : ''}}" bindtap="changeStatus" data-status="finished">即将开始</view>
+    <view class="{{status === 'coming' ? 'active' : ''}}" bindtap="changeStatus" data-status="coming">即将开始</view>
   </view>
   
   <!-- 可滚动内容区域 -->
@@ -55,8 +55,12 @@
               </view>
             </view>
             <view class="activity-btn-row" wx:if="{{item.status !== 'finished'}}">
-              <button class="activity-btn {{item.isFull ? 'disabled' : ''}}" catchtap="signup" data-id="{{item.id}}">
-                {{item.isFull ? '已满员' : '立即预约'}}
+              <button 
+                class="activity-btn {{item.isFull ? 'disabled' : (item.status === 'coming' ? 'detail-btn' : '')}}" 
+                catchtap="{{item.status === 'coming' ? 'goDetail' : 'signup'}}" 
+                data-id="{{item.id}}"
+              >
+                {{item.status === 'coming' ? '查看详情' : (item.isFull ? '已满员' : '立即报名')}}
               </button>
             </view>
           </view>

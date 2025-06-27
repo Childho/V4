@@ -278,6 +278,17 @@
   color: #999999;
 }
 
+/* 查看详情按钮样式 - 即将开始的活动使用不同的样式 */
+.activity-btn.detail-btn {
+  background-color: #fff;
+  color: #4169e1;
+  border: 2rpx solid #4169e1;
+}
+
+.activity-btn.detail-btn:active {
+  background-color: #f0f7ff;
+}
+
 /* 空状态 */
 .empty-state {
   display: flex;

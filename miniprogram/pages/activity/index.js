@@ -1,6 +1,6 @@
 Page({
   data: {
-    status: 'all', // 活动状态筛选：all-全部，ongoing-进行中，finished-已结束，coming-即将开始
+    status: 'all', // 活动状态筛选：all-全部，ongoing-进行中，coming-即将开始，finished-已结束
     activities: [], // 活动列表
     page: 1, // 当前页码
     pageSize: 10, // 每页数量
@@ -83,9 +83,9 @@ Page({
         title: '门店周年庆活动',
         description: '羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！',
         coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '6月18日',
-        endTime: '6月24日',
-        location: '羽你同行旗舰店',
+        startTime: '12月18日',
+        endTime: '12月24日',
+        location: '倍特爱运动专卖店',
         status: 'ongoing',
         isFull: false
       },
@@ -94,42 +94,53 @@ Page({
         title: '每周日BUFF',
         description: '每周日购买指定号码加价15元定制BUFF头巾',
         coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '6月18日',
-        endTime: '6月24日',
-        location: '线上活动',
+        startTime: '12月15日',
+        endTime: '12月31日',
+        location: '倍特爱运动专卖店',
         status: 'ongoing',
         isFull: false
       },
       {
         id: 3,
-        title: '暑期特训营',
-        description: '青少年羽毛球暑期特训营，专业教练一对一指导，提升球技好时机',
+        title: '2025年新年特训营',
+        description: '青少年羽毛球新年特训营，专业教练一对一指导，提升球技好时机',
         coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '7月1日',
-        endTime: '8月31日',
-        location: '市体育中心',
+        startTime: '1月5日',
+        endTime: '2月28日',
+        location: '倍特爱运动专卖店',
         status: 'coming',
         isFull: false
       },
       {
         id: 4,
-        title: '城市业余联赛',
-        description: '第三届城市业余羽毛球联赛报名开始，丰厚奖品等你来拿！',
+        title: '春季业余联赛',
+        description: '第四届春季业余羽毛球联赛报名开始，丰厚奖品等你来拿！',
         coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '7月15日',
-        endTime: '7月16日',
-        location: '奥体中心',
+        startTime: '3月15日',
+        endTime: '3月16日',
+        location: '倍特爱运动专卖店',
         status: 'coming',
         isFull: false
       },
       {
         id: 5,
+        title: '元旦跨年羽毛球赛',
+        description: '元旦期间跨年羽毛球友谊赛，与球友一起迎接新年！',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '12月31日',
+        endTime: '1月1日',
+        location: '倍特爱运动专卖店',
+        status: 'coming',
+        isFull: false
+      },
+      {
+        id: 6,
         title: '五一优惠活动',
         description: '五一期间，全场羽毛球装备8折优惠，买就送专业羽毛球一筒',
         coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
         startTime: '5月1日',
         endTime: '5月5日',
-        location: '线上线下同步',
+        location: '倍特爱运动专卖店',
         status: 'finished',
         isFull: false
       }
