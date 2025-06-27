@@ -103,17 +103,6 @@
     </view>
   </view>
 
-  <!-- 商品规格参数 -->
-  <view class="product-specs">
-    <view class="section-title">规格参数</view>
-    <view class="specs-list">
-      <view class="specs-item" wx:for="{{product.specs}}" wx:key="name">
-        <text class="specs-label">{{item.name}}</text>
-        <text class="specs-value">{{item.value}}</text>
-      </view>
-    </view>
-  </view>
-
   <!-- 相关推荐 -->
   <view class="related-products" wx:if="{{relatedProducts.length > 0}}">
     <view class="section-title">相关推荐</view>
@@ -126,6 +115,17 @@
         </view>
       </view>
     </scroll-view>
+  </view>
+
+  <!-- 商品规格参数 -->
+  <view class="product-specs">
+    <view class="section-title">规格参数</view>
+    <view class="specs-list">
+      <view class="specs-item" wx:for="{{product.specs}}" wx:key="name">
+        <text class="specs-label">{{item.name}}</text>
+        <text class="specs-value">{{item.value}}</text>
+      </view>
+    </view>
   </view>
 
   <!-- 商品详情图文 -->
@@ -208,6 +208,33 @@
           <input class="quantity-input" type="number" value="{{quantity}}" disabled />
           <view class="quantity-plus" bindtap="increaseQuantity">+</view>
         </view>
+      </view>
+      
+      <!-- 备注输入（可选） -->
+      <view class="popup-remark">
+        <view class="popup-remark-title">备注（可选）</view>
+        <textarea 
+          class="popup-remark-input" 
+          placeholder="您可以在此填写特殊要求或备注信息"
+          value="{{orderRemark}}"
+          bindinput="onRemarkInput"
+          maxlength="100"
+          show-confirm-bar="{{false}}"
+          auto-height
+        ></textarea>
+        <view class="remark-counter">{{orderRemark.length || 0}}/100</view>
+      </view>
+      
+      <!-- 发票服务提示 -->
+      <view class="popup-invoice-tip">
+        <view class="invoice-icon">📄</view>
+        <view class="invoice-text">
+          <text class="invoice-title">需要发票？</text>
+          <text class="invoice-desc">请联系客服开具发票</text>
+        </view>
+        <button class="invoice-contact-btn" open-type="contact" show-message-card="{{true}}">
+          联系客服
+        </button>
       </view>
       
       <!-- 确认按钮 -->

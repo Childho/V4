@@ -211,14 +211,16 @@ Page({
   },
 
   /**
-   * 备注输入处理
+   * 备注输入处理 - 用户输入订单备注信息
+   * @param {Event} e - 输入事件对象
    */
   onRemarkInput(e) {
     const remark = e.detail.value;
+    // 更新页面数据中的备注内容
     this.setData({
       remark: remark
     });
-    console.log('备注内容：', remark);
+    console.log('用户输入备注内容：', remark);
   },
 
   /**

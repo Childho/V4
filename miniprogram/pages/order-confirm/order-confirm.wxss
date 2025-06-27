@@ -199,16 +199,27 @@
 }
 
 /* 备注模块样式 */
+.optional-text {
+  font-size: 24rpx;
+  color: #999999;
+  margin-left: 8rpx;
+  font-weight: 400;
+}
+
 .remark-input {
   flex: 1;
   font-size: 28rpx;
   color: #333333;
   text-align: right;
   margin-left: 24rpx;
+  background: transparent;
+  border: none;
+  outline: none;
 }
 
 .remark-input::placeholder {
-  color: #999999;
+  color: #c8c9cc;
+  font-size: 28rpx;
 }
 
 /* 金额明细模块样式 */
@@ -243,42 +254,36 @@
   color: #4169e1;
 }
 
-/* 开发票提示样式 */
-.invoice-tip {
+/* 服务提示模块样式 */
+.service-tips {
+  margin: 0 24rpx 20rpx 24rpx;
+}
+
+.tip-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 24rpx;
-  margin: 0 24rpx 20rpx 24rpx;
-  background: linear-gradient(135deg, #f8fafb, #f1f5f9);
+  padding: 20rpx 24rpx;
+  background-color: #f8fafb;
   border-radius: 12rpx;
-  border: 1rpx solid #e2e8f0;
-  position: relative;
-  overflow: hidden;
+  border: 1rpx solid #eef1f6;
+  margin-bottom: 12rpx;
 }
 
-.invoice-tip::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, #4169e1, transparent);
-  opacity: 0.6;
+.tip-item:last-child {
+  margin-bottom: 0;
 }
 
-.invoice-icon {
-  font-size: 24rpx;
-  margin-right: 8rpx;
-  opacity: 0.8;
+.tip-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  opacity: 0.7;
 }
 
-.invoice-text {
-  font-size: 24rpx;
+.tip-text {
+  font-size: 26rpx;
   color: #64748b;
   font-weight: 400;
-  letter-spacing: 0.5rpx;
+  line-height: 1.4;
 }
 
 /* 底部操作区样式 */
@@ -363,12 +368,11 @@
     font-size: 32rpx;
   }
   
-  .invoice-tip {
+  .service-tips {
     margin: 0 20rpx 16rpx 20rpx;
-    padding: 20rpx;
   }
   
-  .invoice-text {
+  .tip-text {
     font-size: 22rpx;
   }
 }
@@ -403,4 +407,14 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* 移除旧的发票提示样式 */
+.invoice-tip {
+  display: none;
+}
+
+.invoice-icon,
+.invoice-text {
+  display: none;
 } 

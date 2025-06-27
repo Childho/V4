@@ -507,7 +507,6 @@
 .add-cart-btn,
 .buy-now-btn {
   height: 72rpx; /* 增加按钮高度 */
-  line-height: 72rpx;
   text-align: center;
   border-radius: 36rpx;
   font-size: 30rpx; /* 增大字体 */
@@ -518,6 +517,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
+  box-sizing: border-box;
   transition: all 0.3s ease; /* 添加过渡效果 */
 }
 
@@ -751,6 +752,104 @@
   border-right: none;
 }
 
+/* 备注输入框样式 */
+.popup-remark {
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.popup-remark-title {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.popup-remark-input {
+  width: 100%;
+  min-height: 80rpx;
+  max-height: 120rpx;
+  padding: 16rpx;
+  background: #f8f9fa;
+  border: 1rpx solid #e9ecef;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #333;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.popup-remark-input:focus {
+  border-color: #ff4757;
+  background: #fff;
+}
+
+.remark-counter {
+  margin-top: 8rpx;
+  text-align: right;
+  font-size: 20rpx;
+  color: #999;
+}
+
+/* 发票提示样式 */
+.popup-invoice-tip {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 32rpx;
+  background: #f8f9ff;
+  border-bottom: 1rpx solid #f5f5f5;
+  margin-bottom: 8rpx;
+}
+
+.invoice-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.invoice-text {
+  flex: 1;
+  margin-right: 16rpx;
+}
+
+.invoice-title {
+  display: block;
+  font-size: 26rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 4rpx;
+}
+
+.invoice-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #666;
+  line-height: 1.3;
+}
+
+.invoice-contact-btn {
+  width: 140rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  font-size: 22rpx;
+  color: #4285f4;
+  background: #fff;
+  border: 1rpx solid #4285f4;
+  border-radius: 28rpx;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.invoice-contact-btn::after {
+  border: none;
+}
+
+.invoice-contact-btn:active {
+  background: #f0f7ff;
+  transform: scale(0.98);
+}
+
 .popup-btns {
   display: flex;
   padding: 32rpx;
@@ -760,13 +859,19 @@
 .popup-buy-now-btn {
   flex: 1;
   height: 80rpx;
-  line-height: 80rpx;
-  text-align: center;
   border-radius: 40rpx;
   font-size: 32rpx;
   font-weight: 500;
   margin: 0;
+  padding: 0;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .popup-add-cart-btn::after,
@@ -784,6 +889,17 @@
 .popup-buy-now-btn {
   background: #ff4757;
   color: #fff;
+}
+
+/* 按钮按下效果 */
+.popup-add-cart-btn:active {
+  background: #f0f7ff;
+  transform: scale(0.98);
+}
+
+.popup-buy-now-btn:active {
+  background: #ff3838;
+  transform: scale(0.98);
 }
 
 /* 加载状态 */

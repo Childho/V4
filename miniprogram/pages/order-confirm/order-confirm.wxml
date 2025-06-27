@@ -65,13 +65,15 @@
       <view class="item-left">
         <text class="remark-icon">📝</text>
         <text class="item-title">备注</text>
+        <text class="optional-text">（选填）</text>
       </view>
       <input 
         class="remark-input" 
-        placeholder="可填写备注内容（选填）" 
+        placeholder="添加备注信息" 
         value="{{remark}}"
         bindinput="onRemarkInput"
         maxlength="100"
+        placeholder-style="color: #c8c9cc; font-size: 28rpx;"
       />
     </view>
   </view>
@@ -92,10 +94,13 @@
     </view>
   </view>
 
-  <!-- 开发票提示 -->
-  <view class="invoice-tip">
-    <text class="invoice-icon">📄</text>
-    <text class="invoice-text">开发票联系客服</text>
+  <!-- 服务提示模块 -->
+  <view class="service-tips">
+    <!-- 开发票提示 -->
+    <view class="tip-item">
+      <text class="tip-icon">📋</text>
+      <text class="tip-text">如需开发票，请联系客服</text>
+    </view>
   </view>
 
   <!-- 底部操作区 -->

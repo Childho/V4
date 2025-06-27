@@ -20,6 +20,7 @@ Page({
     selectedSpecs: '',            // 已选择的规格文本显示
     selectedOptions: {},          // 已选择的规格选项数据
     currentAction: '',            // 当前操作：'cart'加入购物车 或 'buy'立即购买
+    orderRemark: '',              // 订单备注信息
     
     // 商品信息 - 设置默认值避免页面空白
     product: {
@@ -208,7 +209,10 @@ Page({
    * 关闭规格选择弹窗
    */
   closeSpecsPopup() {
-    this.setData({ showSpecsPopup: false });
+    this.setData({ 
+      showSpecsPopup: false,
+      orderRemark: '' // 关闭弹窗时清空备注
+    });
   },
 
   /**
@@ -304,7 +308,7 @@ Page({
    * 确认添加到购物车
    */
   async confirmAddToCart() {
-    const { product, quantity, selectedOptions } = this.data;
+    const { product, quantity, selectedOptions, orderRemark } = this.data;
     
     try {
       wx.showLoading({ title: '添加中...' });
@@ -312,7 +316,8 @@ Page({
       await addToCart({
         productId: product.id,
         quantity,
-        specs: selectedOptions
+        specs: selectedOptions,
+        remark: orderRemark
       });
       
       wx.showToast({
@@ -323,8 +328,9 @@ Page({
       // 更新购物车数量
       this.updateCartCount();
       
-      // 关闭弹窗
+      // 关闭弹窗并清空备注
       this.closeSpecsPopup();
+      this.setData({ orderRemark: '' });
       
     } catch (error) {
       console.error('[Add To Cart Error]', error);
@@ -334,7 +340,7 @@ Page({
         icon: 'success'
       });
       const newCount = this.data.cartCount + 1;
-      this.setData({ cartCount: newCount });
+      this.setData({ cartCount: newCount, orderRemark: '' });
       this.closeSpecsPopup();
     } finally {
       wx.hideLoading();
@@ -345,7 +351,7 @@ Page({
    * 确认立即购买
    */
   async confirmBuyNow() {
-    const { product, quantity, selectedOptions } = this.data;
+    const { product, quantity, selectedOptions, orderRemark } = this.data;
     
     try {
       wx.showLoading({ title: '正在跳转...' });
@@ -353,11 +359,13 @@ Page({
       const orderData = await buyNow({
         productId: product.id,
         quantity,
-        specs: selectedOptions
+        specs: selectedOptions,
+        remark: orderRemark
       });
       
-      // 关闭弹窗
+      // 关闭弹窗并清空备注
       this.closeSpecsPopup();
+      this.setData({ orderRemark: '' });
       
       // 跳转到订单确认页
       wx.navigateTo({
@@ -607,5 +615,13 @@ Page({
       title: `${product.name} - 仅需¥${product.price}`,
       imageUrl: product.images[0] || ''
     };
+  },
+
+  /**
+   * 处理备注输入
+   */
+  onRemarkInput(e) {
+    const { value } = e.detail;
+    this.setData({ orderRemark: value });
   }
 }); 
