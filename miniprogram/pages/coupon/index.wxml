@@ -18,7 +18,7 @@
   <view class="coupon-list">
     <!-- 优惠券卡片 -->
     <view 
-      class="coupon-item {{item.status === 2 ? 'used' : ''}} {{item.status === 3 ? 'expired' : ''}}"
+      class="coupon-item {{item.status === 4 ? 'expiring' : ''}}"
       wx:for="{{couponList}}" 
       wx:key="id"
     >
@@ -63,9 +63,9 @@
           有效期：{{item.startTime}} 至 {{item.endTime}}
         </view>
         
-        <!-- 使用时间（已使用状态） -->
-        <view class="use-time" wx:if="{{item.status === 2}}">
-          使用时间：{{item.useTime}}
+        <!-- 即将过期提醒（即将过期状态显示） -->
+        <view class="expire-warning" wx:if="{{item.status === 4}}">
+          ⚠️ 即将过期，请尽快使用
         </view>
         
         <!-- 优惠券描述 -->
@@ -73,7 +73,7 @@
         
         <!-- 操作按钮 -->
         <view class="coupon-actions">
-          <!-- 从订单确认页面来的，显示选择按钮 -->
+          <!-- 从订单确认页面来的，可使用状态显示选择按钮 -->
           <view 
             wx:if="{{item.status === 1 && fromPage === 'order-confirm'}}" 
             class="select-btn"
@@ -81,6 +81,16 @@
             bindtap="selectCoupon"
           >
             选择
+          </view>
+          
+          <!-- 从订单确认页面来的，即将过期状态也可以选择 -->
+          <view 
+            wx:elif="{{item.status === 4 && fromPage === 'order-confirm'}}" 
+            class="select-btn warning"
+            data-index="{{index}}"
+            bindtap="selectCoupon"
+          >
+            选择使用
           </view>
           
           <!-- 可使用状态的按钮（非订单确认页面） -->
@@ -93,14 +103,19 @@
             立即使用
           </view>
           
-          <!-- 已使用状态的标签 -->
-          <view wx:elif="{{item.status === 2}}" class="status-tag used-tag">
-            已使用
+          <!-- 即将过期状态的按钮（非订单确认页面） -->
+          <view 
+            wx:elif="{{item.status === 4 && fromPage !== 'order-confirm'}}" 
+            class="use-btn warning"
+            data-index="{{index}}"
+            bindtap="showUseCouponModal"
+          >
+            赶紧使用
           </view>
           
-          <!-- 已过期状态的标签 -->
-          <view wx:else class="status-tag expired-tag">
-            已过期
+          <!-- 即将过期状态的标签（展示用） -->
+          <view wx:elif="{{item.status === 4}}" class="status-tag expiring-tag">
+            即将过期
           </view>
         </view>
       </view>
@@ -144,6 +159,11 @@
         
         <view class="confirm-text">
           确认要使用这张优惠券吗？使用后将无法撤销。
+        </view>
+        
+        <!-- 即将过期的特别提醒 -->
+        <view class="expire-confirm-warning" wx:if="{{currentCoupon.status === 4}}">
+          🔔 此优惠券即将过期，建议尽快使用！
         </view>
       </view>
       

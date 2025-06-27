@@ -29,7 +29,15 @@
     "uploadWithSourceMap": true,
     "nodeModules": false,
     "showShadowRootInWxmlPanel": false,
-    "ignoreDevUnusedFiles": true
+    "ignoreDevUnusedFiles": true,
+    "disableUseStrict": false,
+    "useStaticServer": true,
+    "checkUploadSize": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
   },
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
@@ -40,5 +48,14 @@
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
+  },
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
+  "watchOptions": {
+    "ignore": [
+      "node_modules/**/*"
+    ]
+  },
+  "debugOptions": {
+    "hidedInDevtools": []
   }
 }

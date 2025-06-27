@@ -2,11 +2,16 @@
 import { getSystemInfo } from './utils/systemInfo.js'
 // 引入浏览器兼容性处理工具
 import { setupBrowserCompatibility } from './utils/compatibility.js'
+// 引入错误处理工具
+import { setupGlobalErrorHandler } from './utils/errorHandler.js'
 
 App({
   onLaunch() {
     // 首先设置浏览器兼容性配置，解决各种开发环境警告
     setupBrowserCompatibility()
+    
+    // 设置全局错误处理器
+    setupGlobalErrorHandler()
     
     // 检查是否有新版本
     this.checkUpdate()

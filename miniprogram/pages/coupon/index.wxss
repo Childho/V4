@@ -218,36 +218,56 @@
 
 /* 使用按钮 */
 .use-btn {
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8f5a 100%);
-  color: #fff;
   padding: 12rpx 32rpx;
-  border-radius: 40rpx;
+  background: #4a90e2;
+  color: #fff;
   font-size: 24rpx;
+  border-radius: 24rpx;
+  text-align: center;
   font-weight: 500;
-  box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.3);
   transition: all 0.3s ease;
 }
 
-.use-btn:hover {
-  transform: translateY(-2rpx);
-  box-shadow: 0 6rpx 20rpx rgba(255, 107, 53, 0.4);
+.use-btn:active {
+  background: #357abd;
+  transform: scale(0.95);
+}
+
+/* 警告样式的使用按钮（即将过期） */
+.use-btn.warning {
+  background: #ff9500;
+  animation: pulse 2s infinite;
+}
+
+.use-btn.warning:active {
+  background: #e6851a;
 }
 
 /* 选择按钮 */
 .select-btn {
-  background: linear-gradient(135deg, #4169e1 0%, #6690ff 100%);
-  color: #fff;
   padding: 12rpx 32rpx;
-  border-radius: 40rpx;
+  background: #ff4757;
+  color: #fff;
   font-size: 24rpx;
+  border-radius: 24rpx;
+  text-align: center;
   font-weight: 500;
-  box-shadow: 0 4rpx 16rpx rgba(65, 105, 225, 0.3);
   transition: all 0.3s ease;
 }
 
-.select-btn:hover {
-  transform: translateY(-2rpx);
-  box-shadow: 0 6rpx 20rpx rgba(65, 105, 225, 0.4);
+.select-btn:active {
+  background: #ff3838;
+  transform: scale(0.95);
+}
+
+/* 警告样式的选择按钮（即将过期） */
+.select-btn.warning {
+  background: #ff9500;
+  animation: pulse 2s infinite;
+}
+
+.select-btn.warning:active {
+  background: #e6851a;
 }
 
 /* 状态标签 */
@@ -420,4 +440,63 @@
 .confirm-btn {
   color: #ff6b35;
   font-weight: 600;
+}
+
+/* 即将过期优惠券样式 */
+.coupon-item.expiring {
+  border-color: #ff9500;
+  background: linear-gradient(135deg, #fff9f0, #fff);
+}
+
+.coupon-item.expiring .coupon-left {
+  background: linear-gradient(135deg, #ff9500, #ffab00);
+}
+
+/* 即将过期警告文字 */
+.expire-warning {
+  font-size: 24rpx;
+  color: #ff9500;
+  margin-bottom: 8rpx;
+  padding: 8rpx 12rpx;
+  background: #fff9f0;
+  border: 1rpx solid #ffab00;
+  border-radius: 8rpx;
+  font-weight: 500;
+}
+
+/* 即将过期标签 */
+.expiring-tag {
+  background: #fff9f0;
+  color: #ff9500;
+  border: 1rpx solid #ffab00;
+  animation: pulse 2s infinite;
+}
+
+/* 呼吸动画效果 */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 即将过期确认弹窗中的警告提醒 */
+.expire-confirm-warning {
+  background: #fff9f0;
+  border: 1rpx solid #ffab00;
+  border-radius: 8rpx;
+  padding: 16rpx;
+  font-size: 24rpx;
+  color: #ff9500;
+  text-align: center;
+  margin-top: 16rpx;
+  animation: pulse 2s infinite;
 } 

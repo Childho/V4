@@ -324,28 +324,53 @@ Page({
     })
   },
 
-  // 页面跳转 - 通用的页面导航方法
+  // 处理导航跳转 - 通用跳转方法，支持页面路径参数
   navigateTo(e: any) {
-    // 处理直接传递URL字符串的情况
-    let url;
-    if (typeof e === 'string') {
-      url = e;
-    } else if (e && e.currentTarget && e.currentTarget.dataset) {
-      url = e.currentTarget.dataset.url;
-    } else {
-      console.error('跳转参数无效', e);
-      return;
-    }
-
+    const { url } = e.currentTarget.dataset;
     if (!url) {
-      console.error('跳转链接不存在');
+      console.error('跳转地址不能为空');
+      wx.showToast({
+        title: '页面地址错误',
+        icon: 'none'
+      });
       return;
     }
     
+    console.log('准备跳转到页面:', url);
+    
+    // 特殊处理：如果是跳转到我的服务，需要跳转到服务页面的"我的服务"tab
+    if (url === '/pages/myService/index') {
+      // 通过全局变量告知 booking 页面切换到 "我的服务" tab（索引 3）
+      const app = getApp();
+      if (app && app.globalData) {
+        app.globalData.targetTab = 3; // 0:穿线服务 1:积分兑换 2:推广返佣 3:我的服务
+      }
+
+      // 使用 switchTab 跳转到底栏 "服务" 页面，这样才能触发 tabBar 页面切换
+      wx.switchTab({
+        url: '/pages/booking/index',
+        success: () => {
+          console.log('成功跳转到服务页面-我的服务tab');
+        },
+        fail: (error) => {
+          console.error('跳转到服务页面失败:', error);
+          wx.showToast({
+            title: '页面跳转失败',
+            icon: 'none'
+          });
+        }
+      });
+      return;
+    }
+    
+    // 其他页面的正常跳转逻辑
     wx.navigateTo({
-      url,
-      fail: (err) => {
-        console.error('页面跳转失败', err);
+      url: url,
+      success: () => {
+        console.log('页面跳转成功:', url);
+      },
+      fail: (error) => {
+        console.error('页面跳转失败:', error);
         wx.showToast({
           title: '页面跳转失败',
           icon: 'none'
