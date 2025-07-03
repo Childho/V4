@@ -67,14 +67,16 @@ sequenceDiagram
 **请求方式：** GET
 
 ### 功能说明
-获取首页展示的热门活动数据，包含活动标题、描述、封面图、时间范围、地点等信息。活动按热度排序，首页只展示前2个热门活动。
+获取首页展示的热门活动数据，包含活动标题、描述、封面图、时间范围、地点等信息。**特别注意：首页展示的活动都是由后台运营人员在活动管理页面中手动精选并设置为"首页推荐"的活动，并非所有活动或按时间顺序的前两个活动。** 运营可以控制哪些活动在首页展示，以及展示的顺序。
 
 ```mermaid
 sequenceDiagram
     participant Client as 小程序客户端
     participant Server as 后端服务
     Client->>Server: 请求热门活动数据
-    Server-->>Client: 返回活动列表
+    Server->>Server: 查询标记为首页推荐的活动
+    Server->>Server: 按推荐排序权重排序
+    Server-->>Client: 返回精选活动列表
     Client->>Client: 渲染活动卡片
 ```
 
@@ -82,7 +84,8 @@ sequenceDiagram
 ```json
 {
   "limit": 2,
-  "isRecommended": true
+  "isRecommended": true,
+  "featured": true
 }
 ```
 
@@ -90,6 +93,7 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | limit | int | 否 | 返回数量限制（首页默认2） | 2 |
 | isRecommended | bool | 否 | 是否只返回推荐到首页的活动（默认true） | true |
+| featured | bool | 否 | 是否只返回精选活动（默认true，首页调用） | true |
 
 ### 响应参数
 ```json
@@ -106,9 +110,15 @@ sequenceDiagram
         "endTime": "2024-06-24T23:59:59Z",
         "location": "滨顺店",
         "organizer": "倍特爱体育",
-        "isPublished": true
+        "isPublished": true,
+        "isFeatured": true,
+        "featuredOrder": 1,
+        "featuredBy": "运营部",
+        "featuredTime": "2024-06-15T10:30:00Z"
       }
-    ]
+    ],
+    "totalFeaturedCount": 2,
+    "totalActivitiesCount": 15
   },
   "message": "获取热门活动成功",
   "success": true
@@ -129,8 +139,22 @@ sequenceDiagram
 | body.activities[].location | string | 是 | 活动地点 | 滨顺店 |
 | body.activities[].organizer | string | 是 | 主办方名称 | 倍特爱体育 |
 | body.activities[].isPublished | bool | 是 | 是否已发布 | true |
+| body.activities[].isFeatured | bool | 是 | 是否为首页精选活动 | true |
+| body.activities[].featuredOrder | int | 否 | 首页推荐排序（数字越小越靠前） | 1 |
+| body.activities[].featuredBy | string | 否 | 设置精选的运营人员 | 运营部 |
+| body.activities[].featuredTime | string | 否 | 设置为精选的时间 | 2024-06-15T10:30:00Z |
+| body.totalFeaturedCount | int | 是 | 当前首页精选活动总数 | 2 |
+| body.totalActivitiesCount | int | 是 | 当前所有活动总数 | 15 |
 | message | string | 是 | 响应消息 | 获取热门活动成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**字段说明：**
+- `isFeatured`: true表示该活动被设置为首页精选，false表示普通活动
+- `featuredOrder`: 首页精选活动的排序权重，数字越小在首页越靠前显示
+- `featuredBy`: 记录是哪个运营人员设置的精选，便于追溯管理
+- `featuredTime`: 记录设置为精选的时间，便于运营管理
+- `totalFeaturedCount`: 当前设置为首页精选的活动总数
+- `totalActivitiesCount`: 系统中所有活动的总数，用于运营数据统计
 
 ---
 
