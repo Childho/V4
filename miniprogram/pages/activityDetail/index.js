@@ -11,8 +11,7 @@ Page({
       content: '',
       rules: '',
       coverUrl: '',
-      isJoined: false,
-      participants: []
+      isJoined: false
     }
   },
   
@@ -61,19 +60,14 @@ Page({
               id: '1',
               title: '门店周年庆活动',
               description: '羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！快来参与我们的庆典活动吧！',
-              startTime: '2024年6月18日 10:00',
-              endTime: '2024年6月24日 18:00',
-              location: '羽你同行旗舰店（北京市朝阳区）',
-              organizer: '羽你同行体育用品',
-              content: '<p>🎉 为庆祝羽你同行实体店成立两周年，我们特举办盛大庆典活动！</p><p><strong>活动亮点：</strong></p><p>• 全场商品8折优惠</p><p>• 会员额外享受95折</p><p>• 购物满299元送精美礼品</p><p>• 现场抽奖有机会获得专业球拍</p><p><strong>活动地址：</strong>北京市朝阳区三里屯SOHO 2号楼</p>',
+              startTime: '2024年12月18日 10:00',
+              endTime: '2024年12月24日 18:00',
+              location: '倍特爱运动专卖店',
+              organizer: '倍特爱运动专卖店',
+              content: '<p>🎉 为庆祝倍特爱运动专卖店周年庆，我们特举办盛大庆典活动！</p><p><strong>活动亮点：</strong></p><p>• 全场商品8折优惠</p><p>• 会员额外享受95折</p><p>• 购物满299元送精美礼品</p><p>• 现场抽奖有机会获得专业球拍</p><p><strong>活动地址：</strong>倍特爱运动专卖店</p>',
               rules: '1. 活动期间每天限量100份礼品，先到先得\n2. 会员折扣与商品折扣可叠加使用\n3. 抽奖活动每人每天限参与一次\n4. 活动最终解释权归商家所有',
               coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-              isJoined: false,
-              participants: [
-                { id: 'user_1', nickName: '网球爱好者', avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop&crop=face' },
-                { id: 'user_2', nickName: '运动达人', avatarUrl: 'https://images.unsplash.com/photo-1494790108755-2616b2932d60?w=100&h=100&fit=crop&crop=face' },
-                { id: 'user_3', nickName: '小明', avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face' }
-              ]
+              isJoined: false
             },
             '2': {
               id: '2',
@@ -81,34 +75,51 @@ Page({
               description: '每周日购买指定号码加价15元定制BUFF头巾，个性化运动装备等你来！',
               startTime: '每周日 09:00',
               endTime: '每周日 17:00',
-              location: '线上活动 + 全国门店',
-              organizer: '羽你同行体育用品',
+              location: '倍特爱运动专卖店',
+              organizer: '倍特爱运动专卖店',
               content: '<p>🧢 专业运动头巾定制服务！</p><p><strong>定制说明：</strong></p><p>• 选择喜欢的号码图案</p><p>• 加价仅需15元</p><p>• 材质透气舒适</p><p>• 专业运动设计</p><p>• 一周内制作完成</p>',
               rules: '1. 每周日活动时间内下单有效\n2. 定制商品不支持退换货\n3. 制作周期为5-7个工作日\n4. 数字号码范围：0-99',
               coverUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-              isJoined: true,
-              participants: [
-                { id: 'user_4', nickName: '头巾收集者', avatarUrl: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop&crop=face' },
-                { id: 'user_5', nickName: '潮流运动家', avatarUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face' }
-              ]
+              isJoined: true
             },
             '3': {
               id: '3',
-              title: '暑期青少年特训营',
-              description: '专业教练一对一指导，提升球技的最佳时机！为青少年量身打造的专业训练课程。',
-              startTime: '2024年7月1日',
-              endTime: '2024年8月31日',
-              location: '市体育中心网球场',
-              organizer: '市体育中心 & 羽你同行',
-              content: '<p>🏆 专业青少年网球特训营开营啦！</p><p><strong>课程特色：</strong></p><p>• 专业教练1对1指导</p><p>• 分级训练，因材施教</p><p>• 全天候训练计划</p><p>• 比赛技巧专项训练</p><p>• 身体素质提升课程</p><p><strong>适合年龄：</strong>8-16岁青少年</p>',
+              title: '2025年新年特训营',
+              description: '青少年羽毛球新年特训营，专业教练一对一指导，提升球技好时机',
+              startTime: '2025年1月5日',
+              endTime: '2025年2月28日',
+              location: '倍特爱运动专卖店',
+              organizer: '倍特爱运动专卖店',
+              content: '<p>🏆 专业青少年羽毛球特训营开营啦！</p><p><strong>课程特色：</strong></p><p>• 专业教练1对1指导</p><p>• 分级训练，因材施教</p><p>• 全天候训练计划</p><p>• 比赛技巧专项训练</p><p>• 身体素质提升课程</p><p><strong>适合年龄：</strong>8-16岁青少年</p>',
               rules: '1. 需提供健康证明\n2. 训练期间需购买保险\n3. 请穿着专业运动装备\n4. 训练营不提供球拍，需自备\n5. 如遇恶劣天气将调整至室内场地',
               coverUrl: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
-              isJoined: false,
-              participants: [
-                { id: 'user_6', nickName: '未来网球星', avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face' },
-                { id: 'user_7', nickName: '小小运动员', avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face' },
-                { id: 'user_8', nickName: '网球小将', avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop&crop=face' }
-              ]
+              isJoined: false
+            },
+            '4': {
+              id: '4',
+              title: '春季业余联赛',
+              description: '第四届春季业余羽毛球联赛报名开始，丰厚奖品等你来拿！',
+              startTime: '2025年3月15日',
+              endTime: '2025年3月16日',
+              location: '倍特爱运动专卖店',
+              organizer: '倍特爱运动专卖店',
+              content: '<p>🏆 第四届春季业余羽毛球联赛即将开始！</p><p><strong>比赛信息：</strong></p><p>• 分组竞技，公平比赛</p><p>• 丰厚奖品等你来拿</p><p>• 专业裁判执法</p><p>• 免费提供比赛用球</p><p>• 现场直播精彩瞬间</p>',
+              rules: '1. 年满18岁即可报名参加\n2. 需自备球拍和运动装备\n3. 比赛采用三局两胜制\n4. 请提前30分钟到场签到\n5. 如有身体不适请及时告知',
+              coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+              isJoined: false
+            },
+            '5': {
+              id: '5',
+              title: '元旦跨年羽毛球赛',
+              description: '元旦期间跨年羽毛球友谊赛，与球友一起迎接新年！',
+              startTime: '2024年12月31日',
+              endTime: '2025年1月1日',
+              location: '倍特爱运动专卖店',
+              organizer: '倍特爱运动专卖店',
+              content: '<p>🎊 元旦跨年特别活动！</p><p><strong>活动内容：</strong></p><p>• 跨年友谊赛</p><p>• 新年祝福抽奖</p><p>• 免费提供热饮</p><p>• 精美纪念品</p><p>• 合影留念</p>',
+              rules: '1. 活动免费参加\n2. 请自备运动装备\n3. 注意保暖防寒\n4. 活动期间禁止吸烟\n5. 请爱护场地设施',
+              coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+              isJoined: false
             }
           };
           

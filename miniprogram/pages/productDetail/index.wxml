@@ -178,63 +178,111 @@
         </view>
         <view class="popup-close" bindtap="closeSpecsPopup">×</view>
       </view>
-      
-      <!-- 规格选择 -->
-      <view class="popup-specs">
-        <view class="popup-specs-item" wx:for="{{product.optionGroups}}" wx:key="name">
-          <view class="popup-specs-title">{{item.name}}</view>
-          <view class="popup-specs-options">
-            <view 
-              class="popup-specs-option {{optionItem.selected ? 'selected' : ''}} {{optionItem.disabled ? 'disabled' : ''}}" 
-              wx:for="{{item.options}}" 
-              wx:for-item="optionItem"
-              wx:key="value"
-              bindtap="selectOption"
-              data-group-index="{{index}}"
-              data-option-index="{{optionIndex}}"
-              wx:for-index="optionIndex"
-            >
-              {{optionItem.value}}
+
+      <!-- 地址选择模块（仅立即购买时显示，放在弹窗最上方） -->
+      <view class="popup-address-section" wx:if="{{currentAction === 'buy'}}" bindtap="navigateToAddress">
+        <view class="popup-address-container">
+          <view class="popup-address-content">
+            <view wx:if="{{defaultAddress}}" class="popup-address-info">
+              <view class="popup-consignee-line">
+                <text class="popup-consignee-name">{{defaultAddress.consignee}}</text>
+                <text class="popup-consignee-mobile">{{defaultAddress.mobile}}</text>
+              </view>
+              <view class="popup-address-line">
+                <text class="popup-address-detail">{{defaultAddress.province}}{{defaultAddress.city}}{{defaultAddress.district}}{{defaultAddress.detail}}</text>
+              </view>
             </view>
+            <view wx:else class="popup-no-address-info">
+              <text class="popup-add-address-text">请选择收货地址</text>
+              <text class="popup-add-address-tip">选择后可查看配送信息和运费</text>
+            </view>
+          </view>
+          <view class="popup-address-action">
+            <view class="popup-shipping-info">
+              <text class="popup-shipping-fee">{{shippingFee}}</text>
+            </view>
+            <image class="arrow-right" src="/assets/icons/arrow_right.png" mode="aspectFit" />
           </view>
         </view>
       </view>
-      
-      <!-- 数量选择 -->
-      <view class="popup-quantity">
-        <view class="popup-quantity-title">数量</view>
-        <view class="popup-quantity-control">
-          <view class="quantity-minus {{quantity <= 1 ? 'disabled' : ''}}" bindtap="decreaseQuantity">-</view>
-          <input class="quantity-input" type="number" value="{{quantity}}" disabled />
-          <view class="quantity-plus" bindtap="increaseQuantity">+</view>
+
+      <!-- 可滚动内容区域 -->
+      <view class="popup-scrollable-content">
+        <!-- 数量选择 -->
+        <view class="popup-quantity">
+          <view class="popup-quantity-title">数量</view>
+          <view class="popup-quantity-control">
+            <view class="quantity-minus {{quantity <= 1 ? 'disabled' : ''}}" bindtap="decreaseQuantity">-</view>
+            <input class="quantity-input" type="number" value="{{quantity}}" disabled />
+            <view class="quantity-plus" bindtap="increaseQuantity">+</view>
+          </view>
         </view>
-      </view>
-      
-      <!-- 备注输入（可选） -->
-      <view class="popup-remark">
-        <view class="popup-remark-title">备注（可选）</view>
-        <textarea 
-          class="popup-remark-input" 
-          placeholder="您可以在此填写特殊要求或备注信息"
-          value="{{orderRemark}}"
-          bindinput="onRemarkInput"
-          maxlength="100"
-          show-confirm-bar="{{false}}"
-          auto-height
-        ></textarea>
-        <view class="remark-counter">{{orderRemark.length || 0}}/100</view>
-      </view>
-      
-      <!-- 发票服务提示 -->
-      <view class="popup-invoice-tip">
-        <view class="invoice-icon">📄</view>
-        <view class="invoice-text">
-          <text class="invoice-title">需要发票？</text>
-          <text class="invoice-desc">请联系客服开具发票</text>
+
+        <!-- 规格选择 -->
+        <view class="popup-specs">
+          <view class="popup-specs-item" wx:for="{{product.optionGroups}}" wx:key="name">
+            <view class="popup-specs-title">{{item.name}}</view>
+            <view class="popup-specs-options">
+              <view 
+                class="popup-specs-option {{optionItem.selected ? 'selected' : ''}} {{optionItem.disabled ? 'disabled' : ''}}" 
+                wx:for="{{item.options}}" 
+                wx:for-item="optionItem"
+                wx:key="value"
+                bindtap="selectOption"
+                data-group-index="{{index}}"
+                data-option-index="{{optionIndex}}"
+                wx:for-index="optionIndex"
+              >
+                {{optionItem.value}}
+              </view>
+            </view>
+          </view>
         </view>
-        <button class="invoice-contact-btn" open-type="contact" show-message-card="{{true}}">
-          联系客服
-        </button>
+        
+        <!-- 优惠券选择（仅立即购买时显示） -->
+        <view class="popup-coupon-section" wx:if="{{currentAction === 'buy'}}">
+          <view class="popup-coupon-title">
+            <text>优惠券</text>
+            <text class="coupon-count">{{availableCouponCount > 0 ? '有' + availableCouponCount + '张可用' : '暂无可用'}}</text>
+          </view>
+          <view class="popup-coupon-selector" bindtap="handleSelectCoupon">
+            <view class="coupon-selected-info">
+              <view wx:if="{{selectedCoupon}}" class="coupon-info">
+                <text class="coupon-name">{{selectedCoupon.title}}</text>
+                <text class="coupon-discount">-¥{{selectedCoupon.amount}}</text>
+              </view>
+              <text wx:else class="coupon-placeholder">选择优惠券</text>
+            </view>
+            <image class="arrow-right" src="/assets/icons/arrow_right.png" mode="aspectFit" />
+          </view>
+        </view>
+        
+        <!-- 备注输入（仅立即购买时显示，加入购物车时隐藏） -->
+        <view class="popup-remark" wx:if="{{currentAction === 'buy'}}">
+          <view class="popup-remark-title">备注（可选）</view>
+          <textarea 
+            class="popup-remark-input" 
+            placeholder="您可以在此填写特殊要求或备注信息"
+            value="{{orderRemark}}"
+            bindinput="onRemarkInput"
+            maxlength="100"
+            show-confirm-bar="{{false}}"
+            auto-height
+          ></textarea>
+          <view class="remark-counter">{{orderRemark.length || 0}}/100</view>
+        </view>
+        
+        <!-- 发票服务提示（仅立即购买时显示） -->
+        <view class="popup-invoice-tip" wx:if="{{currentAction === 'buy'}}">
+          <view class="invoice-icon">📄</view>
+          <view class="invoice-text">
+            <text class="invoice-title">需要发票？</text>
+            <text class="invoice-desc">请联系客服开具发票</text>
+          </view>
+          <button class="invoice-contact-btn" open-type="contact" show-message-card="{{true}}">
+            联系客服
+          </button>
+        </view>
       </view>
       
       <!-- 确认按钮 -->

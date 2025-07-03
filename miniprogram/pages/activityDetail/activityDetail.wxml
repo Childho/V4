@@ -1,8 +1,0 @@
-<view class="activity-detail">
-  <view class="container">
-    <!-- 活动详情内容 -->
-    <view class="activity-content">
-      <text>活动详情页面</text>
-    </view>
-  </view>
-</view> 

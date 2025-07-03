@@ -8,6 +8,15 @@ import {
   buyNow 
 } from '../../api/productApi';
 
+// 引入优惠券相关API
+import { 
+  getCouponList, 
+  getAvailableCouponCount 
+} from '../../api/couponApi';
+
+// 引入地址相关API
+import { getAddressList } from '../../api/addressApi';
+
 Page({
   /**
    * 页面的初始数据
@@ -21,6 +30,14 @@ Page({
     selectedOptions: {},          // 已选择的规格选项数据
     currentAction: '',            // 当前操作：'cart'加入购物车 或 'buy'立即购买
     orderRemark: '',              // 订单备注信息
+    
+    // 优惠券相关数据
+    availableCouponCount: 0,      // 可用优惠券数量
+    selectedCoupon: null,         // 已选择的优惠券
+    
+    // 地址相关数据
+    defaultAddress: null,        // 默认收货地址对象
+    shippingFee: '包邮',         // 运费信息文本
     
     // 商品信息 - 设置默认值避免页面空白
     product: {
@@ -90,6 +107,17 @@ Page({
   onShow() {
     // 更新购物车数量
     this.updateCartCount();
+    
+    // 获取选中的优惠券（从优惠券页面返回时）
+    const selectedCoupon = wx.getStorageSync('selectedCoupon');
+    if (selectedCoupon) {
+      this.setData({ selectedCoupon });
+      // 清除本地存储中的优惠券数据，避免重复使用
+      wx.removeStorageSync('selectedCoupon');
+    }
+
+    // 加载默认收货地址
+    this.loadDefaultAddress();
   },
 
   /**
@@ -109,10 +137,11 @@ Page({
         console.log('[Product Detail] 商品数据加载成功:', productData);
       }
       
-      // 并行加载评论和购物车数量
-      const [commentsData, cartCountData] = await Promise.allSettled([
+      // 并行加载评论、购物车数量和优惠券数量
+      const [commentsData, cartCountData, couponCountData] = await Promise.allSettled([
         this.getProductComments(productId),
-        this.getCartCount()
+        this.getCartCount(),
+        this.getAvailableCouponCount()
       ]);
 
       // 处理评论数据
@@ -123,6 +152,11 @@ Page({
       // 处理购物车数量
       if (cartCountData.status === 'fulfilled' && cartCountData.value !== undefined) {
         this.setData({ cartCount: cartCountData.value });
+      }
+
+      // 处理优惠券数量
+      if (couponCountData.status === 'fulfilled' && couponCountData.value !== undefined) {
+        this.setData({ availableCouponCount: couponCountData.value });
       }
 
       // 加载相关推荐
@@ -195,6 +229,20 @@ Page({
     } catch (error) {
       console.error('[Get Cart Count Error]', error);
       return 2; // 返回一个默认值用于演示
+    }
+  },
+
+  /**
+   * 获取可用优惠券数量
+   */
+  async getAvailableCouponCount() {
+    try {
+      const result = await getAvailableCouponCount();
+      return result.availableCount || 0;
+    } catch (error) {
+      console.error('[Get Available Coupon Count Error]', error);
+      // 返回模拟数据用于演示
+      return 3;
     }
   },
 
@@ -497,9 +545,11 @@ Page({
       salesCount: 256,
       shippingInfo: '24小时发货',
       images: [
-        'https://img.alicdn.com/imgextra/i1/6000000003702/O1CN01XbWYnV1JjqS8vYm45_!!6000000003702-0-tps-800-800.jpg',
-        'https://img.alicdn.com/imgextra/i2/6000000003702/O1CN01YvWJ8C1JjqS8vYm45_!!6000000003702-0-tps-800-800.jpg',
-        'https://img.alicdn.com/imgextra/i3/6000000003702/O1CN01ZwXK9D1JjqS8vYm45_!!6000000003702-0-tps-800-800.jpg'
+        'https://picsum.photos/800/800?random=1&blur=0',  // 模拟商品主图1 - 800*800像素
+        'https://picsum.photos/800/800?random=2&blur=0',  // 模拟商品主图2 - 800*800像素  
+        'https://picsum.photos/800/800?random=3&blur=0',  // 模拟商品主图3 - 800*800像素
+        'https://picsum.photos/800/800?random=4&blur=0',  // 模拟商品主图4 - 800*800像素
+        'https://picsum.photos/800/800?random=5&blur=0'   // 模拟商品主图5 - 800*800像素
       ],
       specs: [
         { name: '材质', value: '碳素纤维' },
@@ -618,10 +668,73 @@ Page({
   },
 
   /**
-   * 处理备注输入
+   * 备注输入处理
    */
   onRemarkInput(e) {
-    const { value } = e.detail;
-    this.setData({ orderRemark: value });
-  }
+    const remark = e.detail.value;
+    this.setData({ orderRemark: remark });
+  },
+
+  /**
+   * 选择优惠券
+   */
+  handleSelectCoupon() {
+    const { product } = this.data;
+    
+    // 计算当前商品的预估订单金额
+    const orderAmount = parseFloat(product.price) * this.data.quantity;
+    
+    // 跳转到优惠券选择页面
+    wx.navigateTo({
+      url: `/pages/coupon/index?from=order-confirm&orderAmount=${orderAmount}&tab=1`,
+      success: () => {
+        console.log('[Product Detail] 跳转到优惠券选择页面成功');
+      },
+      fail: (error) => {
+        console.error('[Product Detail] 跳转优惠券页面失败:', error);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  /**
+   * 跳转到地址管理/选择页面
+   */
+  navigateToAddress() {
+    wx.navigateTo({
+      url: '/pages/address-list/index?from=order-confirm',
+      success: () => {
+        console.log('[Product Detail] 跳转到地址列表页面成功');
+      },
+      fail: (error) => {
+        console.error('[Product Detail] 跳转地址列表失败:', error);
+        wx.showToast({ title: '页面跳转失败', icon: 'none' });
+      }
+    });
+  },
+
+  /**
+   * 加载默认收货地址
+   */
+  async loadDefaultAddress() {
+    try {
+      // 先尝试从本地缓存读取
+      const cached = wx.getStorageSync('defaultAddress');
+      if (cached) {
+        this.setData({ defaultAddress: cached });
+      }
+      // 再从接口刷新，以确保数据最新
+      const list = await getAddressList();
+      if (Array.isArray(list) && list.length > 0) {
+        const def = list.find(item => item.isDefault) || list[0];
+        this.setData({ defaultAddress: def });
+        wx.setStorageSync('defaultAddress', def);
+      }
+    } catch (error) {
+      console.error('[Load Default Address Error]', error);
+    }
+  },
 }); 

@@ -40,17 +40,6 @@
     </view>
   </view>
   
-  <!-- 已报名用户 -->
-  <view class="participants-section" wx:if="{{activity.participants && activity.participants.length > 0}}">
-    <view class="section-title">已报名 ({{activity.participantsCount || activity.participants.length}})</view>
-    <view class="participants-list">
-      <view class="participant" wx:for="{{activity.participants}}" wx:key="id">
-        <image class="participant-avatar" src="{{item.avatarUrl}}" mode="aspectFill" />
-        <text class="participant-name">{{item.nickName}}</text>
-      </view>
-    </view>
-  </view>
-  
   <!-- 底部操作栏 -->
   <view class="bottom-bar">
     <view class="share-btn" bindtap="handleShare">

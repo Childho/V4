@@ -1,5 +1,118 @@
 /* 商品详情页面样式 */
 
+/* 弹窗地址选择模块样式 - 极简苹果美学优化 */
+.popup-address-section {
+  background: #fff;
+  margin: 0;
+  position: relative;
+  border-bottom: 1rpx solid #f0f0f0;
+  flex-shrink: 0;
+  z-index: 9;
+}
+
+.popup-address-section::before {
+  display: none;
+}
+
+.popup-address-container {
+  display: flex;
+  align-items: center;
+  padding: 32rpx;
+  position: relative;
+}
+
+.popup-address-icon {
+  display: none;
+}
+
+.popup-location-icon {
+  display: none;
+}
+
+.popup-address-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.popup-address-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-consignee-line {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.popup-consignee-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-right: 16rpx;
+}
+
+.popup-consignee-mobile {
+  font-size: 26rpx;
+  color: #86868b;
+  background: #f5f5f7;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+}
+
+.popup-address-line {
+  display: flex;
+  align-items: center;
+}
+
+.popup-address-detail {
+  font-size: 26rpx;
+  color: #515154;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popup-no-address-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-add-address-text {
+  font-size: 32rpx;
+  color: #007aff;
+  font-weight: 500;
+  margin-bottom: 4rpx;
+}
+
+.popup-add-address-tip {
+  font-size: 24rpx;
+  color: #86868b;
+}
+
+.popup-address-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 16rpx;
+}
+
+.popup-shipping-info {
+  margin-bottom: 8rpx;
+}
+
+.popup-shipping-fee {
+  font-size: 24rpx;
+  color: #34c759;
+  background: #f0f9ff;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  font-weight: 500;
+}
+
 /* 页面容器 */
 .product-detail-container {
   min-height: 100vh;
@@ -126,12 +239,6 @@
 .value {
   flex: 1;
   color: #333;
-}
-
-.arrow-right {
-  width: 24rpx;
-  height: 24rpx;
-  margin-left: 16rpx;
 }
 
 /* 评论区域 */
@@ -559,13 +666,13 @@
   transform: scale(0.98);
 }
 
-/* 规格弹窗样式 */
+/* 规格选择弹窗样式 - 固定头部区域优化 */
 .specs-popup {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
+  height: 100%;
   z-index: 1000;
 }
 
@@ -573,29 +680,34 @@
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .popup-content {
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
+  width: 100%;
   background: #fff;
-  border-top-left-radius: 24rpx;
-  border-top-right-radius: 24rpx;
-  padding-bottom: calc(32rpx + env(safe-area-inset-bottom)); /* 适配安全区域 */
-  max-height: 80vh;
-  overflow-y: auto;
+  border-radius: 24rpx 24rpx 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
+/* 固定区域：商品信息头部 */
 .popup-header {
   display: flex;
   padding: 32rpx;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid #f0f0f0;
   position: relative;
+  background: #fff;
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .popup-product-image {
@@ -618,13 +730,14 @@
 
 .popup-product-name {
   font-size: 28rpx;
-  color: #333;
+  color: #1d1d1f;
   margin-bottom: 12rpx;
+  font-weight: 500;
 }
 
 .popup-selected-specs {
   font-size: 24rpx;
-  color: #999;
+  color: #86868b;
 }
 
 .popup-close {
@@ -636,18 +749,209 @@
   line-height: 48rpx;
   text-align: center;
   font-size: 40rpx;
-  color: #999;
-  background: #f5f5f5;
+  color: #86868b;
+  background: #f5f5f7;
   border-radius: 50%;
 }
 
+/* 固定区域：地址选择模块 */
+.popup-address-section {
+  background: #fff;
+  margin: 0;
+  position: relative;
+  border-bottom: 1rpx solid #f0f0f0;
+  flex-shrink: 0;
+  z-index: 9;
+}
+
+/* 可滚动区域：包含规格选择、数量、优惠券等 */
+.popup-scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 固定区域：底部按钮 */
+.popup-btns {
+  display: flex;
+  padding: 32rpx;
+  background: #fff;
+  border-top: 1rpx solid #f0f0f0;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+/* 小屏幕优化 - 直接应用样式，不使用@media */
+.current-price-small {
+  font-size: 48rpx;
+}
+
+.popup-product-price-small {
+  font-size: 40rpx;
+}
+
+/* 动画效果 - 移除@keyframes，改用微信小程序支持的动画属性 */
+.specs-popup {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.specs-popup.show {
+  opacity: 1;
+}
+
+.specs-popup.hide {
+  opacity: 0;
+}
+
+.popup-content {
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.popup-content.show {
+  transform: translateY(0);
+}
+
+.popup-content.hide {
+  transform: translateY(100%);
+}
+
+/* 优惠券选择样式 */
+.popup-coupon-section {
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.popup-coupon-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.coupon-count {
+  font-size: 24rpx;
+  color: #ff4757;
+  font-weight: normal;
+}
+
+.popup-coupon-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 20rpx;
+  background: #f8f9fa;
+  border-radius: 12rpx;
+  border: 1rpx solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.popup-coupon-selector:active {
+  background: #e9ecef;
+  transform: scale(0.98);
+}
+
+.coupon-selected-info {
+  flex: 1;
+}
+
+.coupon-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.coupon-name {
+  font-size: 26rpx;
+  color: #333;
+  max-width: 400rpx;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.coupon-discount {
+  font-size: 24rpx;
+  color: #ff4757;
+  font-weight: 500;
+}
+
+.coupon-placeholder {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.arrow-right {
+  width: 24rpx;
+  height: 24rpx;
+  margin-left: 16rpx;
+  opacity: 0.6;
+}
+
+/* 地址选择模块样式 - 极简苹果美学优化 */
+.popup-address {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  background: #fff;
+}
+
+.address-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.consignee {
+  font-size: 32rpx;
+  color: #1d1d1f;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.address-detail {
+  font-size: 26rpx;
+  color: #515154;
+  line-height: 1.4;
+}
+
+.no-address .add-address-text {
+  font-size: 32rpx;
+  color: #007aff;
+  font-weight: 500;
+}
+
+.address-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 16rpx;
+}
+
+.shipping-fee {
+  font-size: 24rpx;
+  color: #34c759;
+  background: #f0f9ff;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  font-weight: 500;
+  margin-bottom: 8rpx;
+}
+
+/* 可滚动区域内的样式 */
 .popup-specs {
   padding: 0 32rpx;
 }
 
 .popup-specs-item {
   padding: 24rpx 0;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
 .popup-specs-item:last-child {
@@ -656,7 +960,8 @@
 
 .popup-specs-title {
   font-size: 28rpx;
-  color: #333;
+  color: #1d1d1f;
+  font-weight: 500;
   margin-bottom: 24rpx;
 }
 
@@ -672,8 +977,8 @@
   text-align: center;
   padding: 0 24rpx;
   font-size: 24rpx;
-  color: #333;
-  background: #f5f5f5;
+  color: #1d1d1f;
+  background: #f5f5f7;
   border-radius: 30rpx;
   margin-right: 20rpx;
   margin-bottom: 20rpx;
@@ -688,7 +993,7 @@
 }
 
 .popup-specs-option.disabled {
-  color: #ccc;
+  color: #86868b;
   background: #f9f9f9;
 }
 
@@ -697,12 +1002,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
 .popup-quantity-title {
   font-size: 28rpx;
-  color: #333;
+  color: #1d1d1f;
+  font-weight: 500;
 }
 
 .popup-quantity-control {
@@ -717,8 +1023,8 @@
   line-height: 60rpx;
   text-align: center;
   font-size: 36rpx;
-  background: #f5f5f5;
-  color: #333;
+  background: #f5f5f7;
+  color: #1d1d1f;
   border: 1rpx solid #e8e8e8;
 }
 
@@ -735,7 +1041,7 @@
 }
 
 .quantity-minus.disabled {
-  color: #ccc;
+  color: #86868b;
   background: #f9f9f9;
 }
 
@@ -745,8 +1051,8 @@
   line-height: 60rpx;
   text-align: center;
   font-size: 28rpx;
-  color: #333;
-  background: #f5f5f5;
+  color: #1d1d1f;
+  background: #f5f5f7;
   border: 1rpx solid #e8e8e8;
   border-left: none;
   border-right: none;
@@ -755,12 +1061,13 @@
 /* 备注输入框样式 */
 .popup-remark {
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
 .popup-remark-title {
   font-size: 28rpx;
-  color: #333;
+  color: #1d1d1f;
+  font-weight: 500;
   margin-bottom: 16rpx;
 }
 
@@ -771,15 +1078,15 @@
   padding: 16rpx;
   background: #f8f9fa;
   border: 1rpx solid #e9ecef;
-  border-radius: 8rpx;
+  border-radius: 12rpx;
   font-size: 24rpx;
-  color: #333;
+  color: #1d1d1f;
   line-height: 1.4;
   box-sizing: border-box;
 }
 
 .popup-remark-input:focus {
-  border-color: #ff4757;
+  border-color: #007aff;
   background: #fff;
 }
 
@@ -787,7 +1094,7 @@
   margin-top: 8rpx;
   text-align: right;
   font-size: 20rpx;
-  color: #999;
+  color: #86868b;
 }
 
 /* 发票提示样式 */
@@ -796,7 +1103,7 @@
   align-items: center;
   padding: 20rpx 32rpx;
   background: #f8f9ff;
-  border-bottom: 1rpx solid #f5f5f5;
+  border-bottom: 1rpx solid #f0f0f0;
   margin-bottom: 8rpx;
 }
 
@@ -814,7 +1121,7 @@
 .invoice-title {
   display: block;
   font-size: 26rpx;
-  color: #333;
+  color: #1d1d1f;
   font-weight: 500;
   margin-bottom: 4rpx;
 }
@@ -822,7 +1129,7 @@
 .invoice-desc {
   display: block;
   font-size: 22rpx;
-  color: #666;
+  color: #86868b;
   line-height: 1.3;
 }
 
@@ -831,9 +1138,9 @@
   height: 56rpx;
   line-height: 56rpx;
   font-size: 22rpx;
-  color: #4285f4;
+  color: #007aff;
   background: #fff;
-  border: 1rpx solid #4285f4;
+  border: 1rpx solid #007aff;
   border-radius: 28rpx;
   text-align: center;
   margin: 0;
@@ -848,11 +1155,6 @@
 .invoice-contact-btn:active {
   background: #f0f7ff;
   transform: scale(0.98);
-}
-
-.popup-btns {
-  display: flex;
-  padding: 32rpx;
 }
 
 .popup-add-cart-btn,
@@ -930,41 +1232,5 @@
 
 .loading-text {
   font-size: 28rpx;
-  color: #666;
-}
-
-/* 小屏幕优化 - 直接应用样式，不使用@media */
-.current-price-small {
-  font-size: 48rpx;
-}
-
-.popup-product-price-small {
-  font-size: 40rpx;
-}
-
-/* 动画效果 - 移除@keyframes，改用微信小程序支持的动画属性 */
-.specs-popup {
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-.specs-popup.show {
-  opacity: 1;
-}
-
-.specs-popup.hide {
-  opacity: 0;
-}
-
-.popup-content {
-  transform: translateY(0);
-  transition: transform 0.3s ease;
-}
-
-.popup-content.show {
-  transform: translateY(0);
-}
-
-.popup-content.hide {
-  transform: translateY(100%);
+  color: #86868b;
 } 
