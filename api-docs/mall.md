@@ -1,14 +1,14 @@
-# 商城页面接口文档
+# 商城页面接口文档（已对齐index.js字段，含详细注释）
 
 ## 获取轮播图数据
 
 **接口名称：** 获取商城首页轮播图数据
-**功能描述：** 获取商城首页轮播图的图片、标题、跳转链接等信息，用于首页banner展示
+**功能描述：** 获取商城首页轮播图的图片、跳转链接等信息，用于首页banner展示
 **接口地址：** /api/mall/banners
 **请求方式：** GET
 
 ### 功能说明
-获取商城首页轮播图数据，支持不同类型的跳转目标（活动详情页、商品详情页等），用于首页顶部轮播展示。每个banner包含图片、跳转链接、排序权重等信息。
+获取商城首页轮播图数据，支持不同类型的跳转目标（活动详情页、商品详情页等），用于首页顶部轮播展示。每个banner包含图片、跳转链接等信息。
 
 ```mermaid
 sequenceDiagram
@@ -27,17 +27,11 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "banners": [
+    "bannerList": [
       {
-        "id": "banner_1",
-        "imageUrl": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800",
-        "title": "夏季羽毛球装备特惠",
-        "subtitle": "专业装备，助力你的运动表现",
-        "targetType": "product",
-        "targetId": "product_1",
-        "link": "/pages/productDetail/index?id=1",
-        "sortOrder": 1,
-        "isActive": true
+        "id": 1, // 轮播图唯一ID
+        "imageUrl": "/assets/images/banner1.jpg", // 轮播图图片URL
+        "link": "/pages/activityDetail/index?id=1" // 跳转链接
       }
     ]
   },
@@ -49,19 +43,18 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.banners | array | 是 | 轮播图列表 | |
-| body.banners[].id | string | 是 | 轮播图唯一ID | banner_1 |
-| body.banners[].imageUrl | string | 是 | 轮播图图片URL | https://example.com/banner.jpg |
-| body.banners[].title | string | 是 | 轮播图主标题 | 夏季羽毛球装备特惠 |
-| body.banners[].subtitle | string | 否 | 轮播图副标题 | 专业装备，助力你的运动表现 |
-| body.banners[].targetType | string | 是 | 跳转类型（product商品/activity活动） | product |
-| body.banners[].targetId | string | 是 | 跳转目标ID | product_1 |
-| body.banners[].link | string | 是 | 跳转链接 | /pages/productDetail/index?id=1 |
-| body.banners[].sortOrder | int | 是 | 排序权重（数字越小越靠前） | 1 |
-| body.banners[].isActive | bool | 是 | 是否启用 | true |
+| body | object | 是 | 响应数据 |  |
+| body.bannerList | array | 是 | 轮播图列表 |  |
+| body.bannerList[].id | int | 是 | 轮播图唯一ID | 1 |
+| body.bannerList[].imageUrl | string | 是 | 轮播图图片URL | /assets/images/banner1.jpg |
+| body.bannerList[].link | string | 是 | 跳转链接 | /pages/activityDetail/index?id=1 |
 | message | string | 是 | 响应消息 | 获取轮播图数据成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 轮播图主键为id，所有字段与index.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 
 ---
 
@@ -73,60 +66,22 @@ sequenceDiagram
 **请求方式：** GET
 
 ### 功能说明
-获取当前时间段正在进行秒杀的商品列表，包含原价、秒杀价、结束时间等信息。系统会自动判断秒杀状态，只返回正在进行中的秒杀商品。**特别注意：商城首页展示的秒杀商品都是由后台运营人员在秒杀管理页面中手动精选的商品，并非所有秒杀商品都会在首页展示。**
-
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    Client->>Server: 请求秒杀商品数据
-    Server->>Server: 检查秒杀时间状态
-    Server->>Server: 筛选进行中的秒杀商品
-    Server->>Server: 筛选标记为首页精选的商品
-    Server-->>Client: 返回精选秒杀商品列表
-    Client->>Client: 渲染秒杀商品和倒计时
-```
-
-### 请求参数
-```json
-{
-  "limit": 10,
-  "featured": true
-}
-```
-
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| limit | int | 否 | 返回商品数量限制（默认10） | 10 |
-| featured | bool | 否 | 是否只返回精选商品（默认true，首页调用） | true |
+获取当前时间段正在进行秒杀的商品列表，包含原价、秒杀价等信息。系统会自动判断秒杀状态，只返回正在进行中的秒杀商品。
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "seckillInfo": {
-      "currentSessionName": "12点档",
-      "endTime": "2024-12-18T16:00:00Z",
-      "remainingSeconds": 14196
-    },
-    "products": [
+    "seckillProducts": [
       {
-        "productId": "product_101",
-        "title": "YONEX尤尼克斯羽毛球拍",
-        "imageUrl": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400",
-        "originalPrice": 899,
-        "seckillPrice": 599,
-        "brand": "YONEX",
-        "salesCount": 268,
-        "stock": 50,
-        "maxBuyCount": 2,
-        "isFeatured": true,
-        "featuredOrder": 1
+        "id": 1, // 商品唯一ID
+        "title": "YONEX尤尼克斯羽毛球拍", // 商品标题
+        "imageUrl": "/assets/images/racket1.jpg", // 商品主图URL
+        "originalPrice": 899, // 商品原价
+        "seckillPrice": 599 // 秒杀价格
       }
-    ],
-    "totalSeckillCount": 45,
-    "featuredCount": 8
+    ]
   },
   "message": "获取秒杀商品成功",
   "success": true
@@ -136,27 +91,20 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.seckillInfo | object | 是 | 秒杀场次信息 | |
-| body.seckillInfo.currentSessionName | string | 是 | 当前场次名称 | 12点档 |
-| body.seckillInfo.endTime | string | 是 | 秒杀结束时间 | 2024-12-18T16:00:00Z |
-| body.seckillInfo.remainingSeconds | int | 是 | 剩余秒数 | 14196 |
-| body.products | array | 是 | 秒杀商品列表 | |
-| body.products[].productId | string | 是 | 商品唯一ID | product_101 |
-| body.products[].title | string | 是 | 商品标题 | YONEX尤尼克斯羽毛球拍 |
-| body.products[].imageUrl | string | 是 | 商品主图URL | https://example.com/product.jpg |
-| body.products[].originalPrice | number | 是 | 商品原价 | 899 |
-| body.products[].seckillPrice | number | 是 | 秒杀价格 | 599 |
-| body.products[].brand | string | 是 | 商品品牌 | YONEX |
-| body.products[].salesCount | int | 是 | 已售数量 | 268 |
-| body.products[].stock | int | 是 | 剩余库存 | 50 |
-| body.products[].maxBuyCount | int | 是 | 单次最大购买数量 | 2 |
-| body.products[].isFeatured | bool | 是 | 是否为首页精选商品 | true |
-| body.products[].featuredOrder | int | 否 | 首页精选排序（数字越小越靠前） | 1 |
-| body.totalSeckillCount | int | 是 | 当前总秒杀商品数量 | 45 |
-| body.featuredCount | int | 是 | 当前精选秒杀商品数量 | 8 |
+| body | object | 是 | 响应数据 |  |
+| body.seckillProducts | array | 是 | 秒杀商品列表 |  |
+| body.seckillProducts[].id | int | 是 | 商品唯一ID | 1 |
+| body.seckillProducts[].title | string | 是 | 商品标题 | YONEX尤尼克斯羽毛球拍 |
+| body.seckillProducts[].imageUrl | string | 是 | 商品主图URL | /assets/images/racket1.jpg |
+| body.seckillProducts[].originalPrice | number | 是 | 商品原价 | 899 |
+| body.seckillProducts[].seckillPrice | number | 是 | 秒杀价格 | 599 |
 | message | string | 是 | 响应消息 | 获取秒杀商品成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 秒杀商品主键为id，所有字段与index.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 
 ---
 
@@ -168,33 +116,7 @@ sequenceDiagram
 **请求方式：** GET
 
 ### 功能说明
-获取商城首页展示的商品分组数据，每个分组包含分组名称、描述和该分组下的推荐商品列表。商品按热度和推荐度排序，每个分组最多展示4个商品。**用户点击"查看更多"时，会跳转到搜索结果页面并自动勾选对应的品类筛选条件。**
-
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    Client->>Server: 请求商品分组数据
-    Server->>Server: 查询各分组推荐商品
-    Server->>Server: 按热度排序商品
-    Server-->>Client: 返回分组商品数据
-    Client->>Client: 渲染商品分组卡片
-    alt 用户点击"查看更多"
-        Client->>Client: 跳转到搜索结果页面
-        Note over Client: 携带参数category预选品类
-    end
-```
-
-### 请求参数
-```json
-{
-  "limit": 4
-}
-```
-
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| limit | int | 否 | 每个分组返回商品数量（默认4） | 4 |
+获取商城首页展示的商品分组数据，每个分组包含分组名称、描述和该分组下的推荐商品列表。商品按热度和推荐度排序，每个分组最多展示4个商品。
 
 ### 响应参数
 ```json
@@ -203,24 +125,17 @@ sequenceDiagram
   "body": {
     "productGroups": [
       {
-        "groupId": "racket",
-        "groupName": "羽毛球拍",
-        "groupDesc": "专业球拍，助你提升球技",
-        "iconUrl": "https://example.com/icon-racket.png",
-        "sortOrder": 1,
-        "categoryCode": "racket",
-        "moreLink": "/pages/search-result/index?category=racket",
+        "groupId": "racket", // 分组唯一ID
+        "groupName": "羽毛球拍", // 分组名称
+        "groupDesc": "专业球拍，助你提升球技", // 分组描述
         "products": [
           {
-            "productId": "product_101",
-            "name": "YONEX尤尼克斯ARC-11羽毛球拍",
-            "imageUrl": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300",
-            "price": 899,
-            "originalPrice": 1099,
-            "salesCount": 268,
-            "tag": "热销",
-            "brand": "YONEX",
-            "category": "羽毛球拍"
+            "id": 101, // 商品唯一ID
+            "name": "YONEX尤尼克斯ARC-11羽毛球拍", // 商品名称
+            "imageUrl": "/assets/images/racket1.jpg", // 商品主图URL
+            "price": 899, // 当前价格
+            "salesCount": 268, // 销量
+            "tag": "热销" // 商品标签
           }
         ]
       }
@@ -234,32 +149,25 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.productGroups | array | 是 | 商品分组列表 | |
+| body | object | 是 | 响应数据 |  |
+| body.productGroups | array | 是 | 商品分组列表 |  |
 | body.productGroups[].groupId | string | 是 | 分组唯一ID | racket |
 | body.productGroups[].groupName | string | 是 | 分组名称 | 羽毛球拍 |
 | body.productGroups[].groupDesc | string | 是 | 分组描述 | 专业球拍，助你提升球技 |
-| body.productGroups[].iconUrl | string | 否 | 分组图标URL | https://example.com/icon.png |
-| body.productGroups[].sortOrder | int | 是 | 分组排序权重 | 1 |
-| body.productGroups[].categoryCode | string | 是 | 品类代码（用于搜索页筛选） | racket |
-| body.productGroups[].moreLink | string | 是 | "查看更多"跳转链接 | /pages/search-result/index?category=racket |
-| body.productGroups[].products | array | 是 | 分组商品列表 | |
-| body.productGroups[].products[].productId | string | 是 | 商品唯一ID | product_101 |
+| body.productGroups[].products | array | 是 | 分组商品列表 |  |
+| body.productGroups[].products[].id | int | 是 | 商品唯一ID | 101 |
 | body.productGroups[].products[].name | string | 是 | 商品名称 | YONEX尤尼克斯ARC-11羽毛球拍 |
-| body.productGroups[].products[].imageUrl | string | 是 | 商品主图URL | https://example.com/product.jpg |
+| body.productGroups[].products[].imageUrl | string | 是 | 商品主图URL | /assets/images/racket1.jpg |
 | body.productGroups[].products[].price | number | 是 | 当前价格 | 899 |
-| body.productGroups[].products[].originalPrice | number | 否 | 原价（用于显示划线价） | 1099 |
 | body.productGroups[].products[].salesCount | int | 是 | 销量 | 268 |
-| body.productGroups[].products[].tag | string | 否 | 商品标签（热销/新品/专业等） | 热销 |
-| body.productGroups[].products[].brand | string | 是 | 商品品牌 | YONEX |
-| body.productGroups[].products[].category | string | 是 | 商品分类 | 羽毛球拍 |
+| body.productGroups[].products[].tag | string | 否 | 商品标签 | 热销 |
 | message | string | 是 | 响应消息 | 获取商品分组成功 |
 | success | bool | 是 | 是否成功 | true |
 
-**业务逻辑说明：**
-- `categoryCode`: 与搜索结果页的category参数对应，确保筛选逻辑一致
-- `moreLink`: 包含完整的跳转路径和参数，前端直接使用wx.navigateTo跳转
-- 跳转到搜索结果页后，会自动在类目导航中勾选对应的品类，并显示该品类下的商品列表
+**注释：**
+- 商品分组主键为groupId，商品主键为id，所有字段与index.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 
 ---
 
@@ -273,29 +181,12 @@ sequenceDiagram
 ### 功能说明
 获取当前登录用户购物车中的商品总数量，用于在商城页面右下角的悬浮购物车按钮上显示数量角标。
 
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    participant DB as 数据库
-    Client->>Server: 请求购物车数量
-    Server->>DB: 查询用户购物车商品
-    DB-->>Server: 返回商品数量
-    Server-->>Client: 返回购物车数量
-    Client->>Client: 更新角标显示
-```
-
-### 请求参数
-无需传入参数（需要用户登录态）
-
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "cartCount": 3,
-    "totalAmount": 1797,
-    "lastUpdated": "2024-12-18T15:30:00Z"
+    "cartCount": 3 // 购物车商品数量
   },
   "message": "获取购物车数量成功",
   "success": true
@@ -305,12 +196,15 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
-| body | object | 是 | 响应数据 | |
+| body | object | 是 | 响应数据 |  |
 | body.cartCount | int | 是 | 购物车商品数量 | 3 |
-| body.totalAmount | number | 是 | 购物车商品总金额 | 1797 |
-| body.lastUpdated | string | 是 | 最后更新时间 | 2024-12-18T15:30:00Z |
 | message | string | 是 | 响应消息 | 获取购物车数量成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 购物车数量字段为cartCount，所有字段与index.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 
 ---
 
@@ -324,35 +218,16 @@ sequenceDiagram
 ### 功能说明
 在商城页面顶部搜索栏进行商品搜索，支持商品名称、品牌、分类等多字段模糊匹配。搜索结果按相关度排序，支持分页加载。
 
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    Client->>Server: 提交搜索关键词
-    Server->>Server: 多字段模糊匹配
-    Server->>Server: 按相关度排序
-    Server-->>Client: 返回搜索结果
-    alt 结果为空
-        Client->>Client: 跳转到搜索结果页
-    else 有结果
-        Client->>Client: 显示搜索建议
-    end
-```
-
 ### 请求参数
 ```json
 {
-  "keyword": "羽毛球拍",
-  "page": 1,
-  "pageSize": 10
+  "keyword": "羽毛球拍"
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | keyword | string | 是 | 搜索关键词 | 羽毛球拍 |
-| page | int | 否 | 页码（默认1） | 1 |
-| pageSize | int | 否 | 每页数量（默认10） | 10 |
 
 ### 响应参数
 ```json
@@ -361,29 +236,13 @@ sequenceDiagram
   "body": {
     "products": [
       {
-        "productId": "product_101",
-        "name": "YONEX尤尼克斯ARC-11羽毛球拍",
-        "imageUrl": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300",
-        "price": 899,
-        "originalPrice": 1099,
-        "salesCount": 268,
-        "brand": "YONEX",
-        "category": "羽毛球拍",
-        "relevanceScore": 95
+        "id": 101, // 商品唯一ID
+        "name": "YONEX尤尼克斯ARC-11羽毛球拍", // 商品名称
+        "imageUrl": "/assets/images/racket1.jpg", // 商品主图URL
+        "price": 899, // 当前价格
+        "salesCount": 268 // 销量
       }
-    ],
-    "pagination": {
-      "page": 1,
-      "pageSize": 10,
-      "total": 15,
-      "totalPages": 2,
-      "hasMore": true
-    },
-    "searchSummary": {
-      "keyword": "羽毛球拍",
-      "totalMatched": 15,
-      "searchTime": 89
-    }
+    ]
   },
   "message": "搜索商品成功",
   "success": true
@@ -393,29 +252,20 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.products | array | 是 | 搜索结果商品列表 | |
-| body.products[].productId | string | 是 | 商品唯一ID | product_101 |
+| body | object | 是 | 响应数据 |  |
+| body.products | array | 是 | 搜索结果商品列表 |  |
+| body.products[].id | int | 是 | 商品唯一ID | 101 |
 | body.products[].name | string | 是 | 商品名称 | YONEX尤尼克斯ARC-11羽毛球拍 |
-| body.products[].imageUrl | string | 是 | 商品主图URL | https://example.com/product.jpg |
+| body.products[].imageUrl | string | 是 | 商品主图URL | /assets/images/racket1.jpg |
 | body.products[].price | number | 是 | 当前价格 | 899 |
-| body.products[].originalPrice | number | 否 | 原价 | 1099 |
 | body.products[].salesCount | int | 是 | 销量 | 268 |
-| body.products[].brand | string | 是 | 商品品牌 | YONEX |
-| body.products[].category | string | 是 | 商品分类 | 羽毛球拍 |
-| body.products[].relevanceScore | int | 否 | 相关度分数 | 95 |
-| body.pagination | object | 是 | 分页信息 | |
-| body.pagination.page | int | 是 | 当前页码 | 1 |
-| body.pagination.pageSize | int | 是 | 每页数量 | 10 |
-| body.pagination.total | int | 是 | 总记录数 | 15 |
-| body.pagination.totalPages | int | 是 | 总页数 | 2 |
-| body.pagination.hasMore | bool | 是 | 是否有更多数据 | true |
-| body.searchSummary | object | 是 | 搜索汇总信息 | |
-| body.searchSummary.keyword | string | 是 | 搜索关键词 | 羽毛球拍 |
-| body.searchSummary.totalMatched | int | 是 | 匹配商品总数 | 15 |
-| body.searchSummary.searchTime | int | 是 | 搜索耗时（毫秒） | 89 |
 | message | string | 是 | 响应消息 | 搜索商品成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 搜索结果商品主键为id，所有字段与index.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 
 ---
 
@@ -517,7 +367,7 @@ sequenceDiagram
 | body.products | array | 是 | 秒杀商品列表 | |
 | body.products[].productId | string | 是 | 商品唯一ID | product_101 |
 | body.products[].title | string | 是 | 商品标题 | YONEX尤尼克斯羽毛球拍 |
-| body.products[].imageUrl | string | 是 | 商品主图URL | https://example.com/product.jpg |
+| body.products[].imageUrl | string | 是 | 商品主图URL | https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400 |
 | body.products[].originalPrice | number | 是 | 商品原价 | 899 |
 | body.products[].seckillPrice | number | 是 | 秒杀价格 | 599 |
 | body.products[].discountPercent | int | 是 | 折扣百分比 | 33 |

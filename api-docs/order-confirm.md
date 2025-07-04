@@ -1,4 +1,4 @@
-# 订单确认页面接口文档
+# 订单确认页面接口文档（已对齐order-confirm.js字段，含详细注释）
 
 ## 获取订单预览信息
 
@@ -37,24 +37,19 @@ sequenceDiagram
 {
   "goods": [
     {
-      "goodsId": "goods_001",
-      "quantity": 1,
-      "specInfo": {
-        "颜色": "蓝色",
-        "尺码": "L"
-      }
+      "id": 1, // 商品ID
+      "quantity": 1 // 购买数量
     }
   ],
-  "source": "cart"
+  "source": "cart" // 来源（cart购物车/detail商品详情）
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| goods | array | 是 | 商品列表 | |
-| goods[].goodsId | string | 是 | 商品ID | goods_001 |
+| goods | array | 是 | 商品列表 |  |
+| goods[].id | int | 是 | 商品ID | 1 |
 | goods[].quantity | int | 是 | 购买数量 | 1 |
-| goods[].specInfo | object | 否 | 规格信息 | {"颜色": "蓝色"} |
 | source | string | 是 | 来源（cart购物车/detail商品详情） | cart |
 
 ### 响应参数
@@ -62,32 +57,26 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "orderPreview": {
-      "goods": [
-        {
-          "goodsId": "goods_001",
-          "name": "NCS#75速【多啦A梦黄】【3只装】",
-          "image": "https://example.com/goods.jpg",
-          "spec": "黄色 3只装",
-          "price": 15.00,
-          "quantity": 1,
-          "subtotal": 15.00
-        }
-      ],
-      "address": {
-        "addressId": "addr_001",
-        "name": "张三",
-        "phone": "138****5678",
-        "address": "广东省深圳市南山区科技园南区"
-      },
-      "availableCoupons": 3,
-      "amounts": {
-        "goodsAmount": 15.00,
-        "shippingFee": 0.00,
-        "discountAmount": 0.00,
-        "finalAmount": 15.00
+    "orderGoods": [
+      {
+        "id": 1, // 商品ID
+        "name": "NCS#75速【多啦A梦黄】【3只装】", // 商品名称
+        "image": "https://via.placeholder.com/120x120/ff9800/fff?text=商品", // 商品图片
+        "spec": "黄色 3只装", // 规格描述
+        "price": 15.00, // 单价
+        "quantity": 1 // 数量
       }
-    }
+    ],
+    "addressInfo": {
+      "id": "addr_001", // 地址ID
+      "name": "张三", // 收件人姓名
+      "phone": "138****5678", // 联系电话
+      "address": "广东省深圳市南山区科技园南区" // 完整地址
+    },
+    "availableCoupons": 3, // 可用优惠券数量
+    "totalGoodsAmount": 15.00, // 商品总金额
+    "shippingFee": 0.00, // 运费
+    "finalAmount": 15.00 // 最终应付金额
   },
   "message": "获取订单预览成功",
   "success": true
@@ -97,29 +86,30 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.orderPreview | object | 是 | 订单预览信息 | |
-| body.orderPreview.goods | array | 是 | 商品列表 | |
-| body.orderPreview.goods[].goodsId | string | 是 | 商品ID | goods_001 |
-| body.orderPreview.goods[].name | string | 是 | 商品名称 | NCS#75速【多啦A梦黄】 |
-| body.orderPreview.goods[].image | string | 是 | 商品图片 | https://example.com/goods.jpg |
-| body.orderPreview.goods[].spec | string | 否 | 规格描述 | 黄色 3只装 |
-| body.orderPreview.goods[].price | number | 是 | 单价 | 15.00 |
-| body.orderPreview.goods[].quantity | int | 是 | 数量 | 1 |
-| body.orderPreview.goods[].subtotal | number | 是 | 小计 | 15.00 |
-| body.orderPreview.address | object | 否 | 默认收货地址 | |
-| body.orderPreview.address.addressId | string | 是 | 地址ID | addr_001 |
-| body.orderPreview.address.name | string | 是 | 收件人姓名 | 张三 |
-| body.orderPreview.address.phone | string | 是 | 联系电话 | 138****5678 |
-| body.orderPreview.address.address | string | 是 | 完整地址 | 广东省深圳市南山区科技园南区 |
-| body.orderPreview.availableCoupons | int | 是 | 可用优惠券数量 | 3 |
-| body.orderPreview.amounts | object | 是 | 金额信息 | |
-| body.orderPreview.amounts.goodsAmount | number | 是 | 商品总金额 | 15.00 |
-| body.orderPreview.amounts.shippingFee | number | 是 | 运费 | 0.00 |
-| body.orderPreview.amounts.discountAmount | number | 是 | 优惠金额 | 0.00 |
-| body.orderPreview.amounts.finalAmount | number | 是 | 最终应付金额 | 15.00 |
+| body | object | 是 | 响应数据 |  |
+| body.orderGoods | array | 是 | 商品列表 |  |
+| body.orderGoods[].id | int | 是 | 商品ID | 1 |
+| body.orderGoods[].name | string | 是 | 商品名称 | NCS#75速【多啦A梦黄】 |
+| body.orderGoods[].image | string | 是 | 商品图片 | https://via.placeholder.com/120x120/ff9800/fff?text=商品 |
+| body.orderGoods[].spec | string | 否 | 规格描述 | 黄色 3只装 |
+| body.orderGoods[].price | number | 是 | 单价 | 15.00 |
+| body.orderGoods[].quantity | int | 是 | 数量 | 1 |
+| body.addressInfo | object | 否 | 默认收货地址 |  |
+| body.addressInfo.id | string | 是 | 地址ID | addr_001 |
+| body.addressInfo.name | string | 是 | 收件人姓名 | 张三 |
+| body.addressInfo.phone | string | 是 | 联系电话 | 138****5678 |
+| body.addressInfo.address | string | 是 | 完整地址 | 广东省深圳市南山区科技园南区 |
+| body.availableCoupons | int | 是 | 可用优惠券数量 | 3 |
+| body.totalGoodsAmount | number | 是 | 商品总金额 | 15.00 |
+| body.shippingFee | number | 是 | 运费 | 0.00 |
+| body.finalAmount | number | 是 | 最终应付金额 | 15.00 |
 | message | string | 是 | 响应消息 | 获取订单预览成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 商品主键为id，所有字段与order-confirm.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 
 ---
 
@@ -133,32 +123,13 @@ sequenceDiagram
 ### 功能说明
 在订单确认页面加载时检查所有商品的库存状态，防止下单时出现库存不足的情况。如果库存不足，需要提示用户并阻止下单。
 
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    participant DB as 数据库
-    Client->>Server: 请求检查库存
-    Server->>DB: 查询商品库存
-    DB-->>Server: 返回库存信息
-    alt 库存充足
-        Server-->>Client: 返回库存充足
-    else 库存不足
-        Server-->>Client: 返回库存不足信息
-        Client->>Client: 提示用户并阻止下单
-    end
-```
-
 ### 请求参数
 ```json
 {
   "goods": [
     {
-      "goodsId": "goods_001",
-      "quantity": 1,
-      "specInfo": {
-        "颜色": "蓝色"
-      }
+      "id": 1, // 商品ID
+      "quantity": 1 // 购买数量
     }
   ]
 }
@@ -166,27 +137,24 @@ sequenceDiagram
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| goods | array | 是 | 需要检查的商品列表 | |
-| goods[].goodsId | string | 是 | 商品ID | goods_001 |
+| goods | array | 是 | 需要检查的商品列表 |  |
+| goods[].id | int | 是 | 商品ID | 1 |
 | goods[].quantity | int | 是 | 购买数量 | 1 |
-| goods[].specInfo | object | 否 | 规格信息 | {"颜色": "蓝色"} |
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "stockCheck": {
-      "allInStock": true,
-      "details": [
-        {
-          "goodsId": "goods_001",
-          "inStock": true,
-          "availableStock": 50,
-          "requestedQuantity": 1
-        }
-      ]
-    }
+    "allInStock": true, // 是否全部有库存
+    "details": [
+      {
+        "id": 1, // 商品ID
+        "inStock": true, // 是否有库存
+        "availableStock": 50, // 可用库存数量
+        "requestedQuantity": 1 // 请求数量
+      }
+    ]
   },
   "message": "库存检查完成",
   "success": true
@@ -196,16 +164,20 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.stockCheck | object | 是 | 库存检查结果 | |
-| body.stockCheck.allInStock | bool | 是 | 是否全部有库存 | true |
-| body.stockCheck.details | array | 是 | 各商品库存详情 | |
-| body.stockCheck.details[].goodsId | string | 是 | 商品ID | goods_001 |
-| body.stockCheck.details[].inStock | bool | 是 | 是否有库存 | true |
-| body.stockCheck.details[].availableStock | int | 是 | 可用库存数量 | 50 |
-| body.stockCheck.details[].requestedQuantity | int | 是 | 请求数量 | 1 |
+| body | object | 是 | 响应数据 |  |
+| body.allInStock | bool | 是 | 是否全部有库存 | true |
+| body.details | array | 是 | 各商品库存详情 |  |
+| body.details[].id | int | 是 | 商品ID | 1 |
+| body.details[].inStock | bool | 是 | 是否有库存 | true |
+| body.details[].availableStock | int | 是 | 可用库存数量 | 50 |
+| body.details[].requestedQuantity | int | 是 | 请求数量 | 1 |
 | message | string | 是 | 响应消息 | 库存检查完成 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 商品主键为id，所有字段与order-confirm.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 
 ---
 
@@ -432,73 +404,62 @@ sequenceDiagram
 ### 功能说明
 用户在订单确认页面填写完所有信息后，提交订单创建新的订单记录。需要验证库存、优惠券有效性等，成功后返回订单ID供支付使用。**此接口需要用户登录状态。**
 
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    participant Auth as 认证服务
-    participant DB as 数据库
-    Client->>Server: 提交订单
-    Server->>Auth: 验证用户登录状态
-    Server->>DB: 再次检查商品库存
-    Server->>DB: 验证优惠券有效性
-    Server->>DB: 创建订单记录
-    Server->>DB: 扣减商品库存
-    Server->>DB: 标记优惠券已使用
-    Server-->>Client: 返回订单ID
-    Client->>Client: 跳转到支付页面
-```
-
 ### 请求参数
 ```json
 {
   "goods": [
     {
-      "goodsId": "goods_001",
-      "quantity": 1,
-      "price": 15.00,
-      "specInfo": {
-        "颜色": "黄色",
-        "规格": "3只装"
-      }
+      "id": 1, // 商品ID
+      "name": "NCS#75速【多啦A梦黄】【3只装】", // 商品名称
+      "image": "https://via.placeholder.com/120x120/ff9800/fff?text=商品", // 商品图片
+      "spec": "黄色 3只装", // 规格描述
+      "price": 15.00, // 单价
+      "quantity": 1 // 数量
     }
   ],
   "address": {
-    "addressId": "addr_001",
-    "name": "张三",
-    "phone": "13800138000",
-    "address": "广东省深圳市南山区科技园南区深圳软件园"
+    "id": "addr_001", // 地址ID
+    "name": "张三", // 收件人姓名
+    "phone": "138****5678", // 联系电话
+    "address": "广东省深圳市南山区科技园南区" // 完整地址
   },
-  "couponId": "coupon_001",
-  "remark": "请小心包装",
+  "coupon": {
+    "id": 101, // 优惠券ID
+    "title": "新球友专享大礼包", // 优惠券标题
+    "discount": 10 // 优惠金额
+  },
+  "remark": "请小心包装", // 订单备注
   "amounts": {
-    "goodsAmount": 15.00,
-    "shippingFee": 0.00,
-    "discountAmount": 5.00,
-    "finalAmount": 10.00
+    "goodsAmount": 15.00, // 商品总金额
+    "shippingFee": 0.00, // 运费
+    "finalAmount": 15.00 // 最终应付金额
   }
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| goods | array | 是 | 订单商品列表 | |
-| goods[].goodsId | string | 是 | 商品ID | goods_001 |
-| goods[].quantity | int | 是 | 购买数量 | 1 |
+| goods | array | 是 | 订单商品列表 |  |
+| goods[].id | int | 是 | 商品ID | 1 |
+| goods[].name | string | 是 | 商品名称 | NCS#75速【多啦A梦黄】 |
+| goods[].image | string | 是 | 商品图片 | https://via.placeholder.com/120x120/ff9800/fff?text=商品 |
+| goods[].spec | string | 否 | 规格描述 | 黄色 3只装 |
 | goods[].price | number | 是 | 单价 | 15.00 |
-| goods[].specInfo | object | 否 | 规格信息 | {"颜色": "黄色"} |
-| address | object | 是 | 收货地址信息 | |
-| address.addressId | string | 是 | 地址ID | addr_001 |
+| goods[].quantity | int | 是 | 数量 | 1 |
+| address | object | 是 | 收货地址信息 |  |
+| address.id | string | 是 | 地址ID | addr_001 |
 | address.name | string | 是 | 收件人姓名 | 张三 |
-| address.phone | string | 是 | 联系电话 | 13800138000 |
-| address.address | string | 是 | 完整地址 | 广东省深圳市南山区科技园南区深圳软件园 |
-| couponId | string | 否 | 使用的优惠券ID | coupon_001 |
+| address.phone | string | 是 | 联系电话 | 138****5678 |
+| address.address | string | 是 | 完整地址 | 广东省深圳市南山区科技园南区 |
+| coupon | object | 否 | 优惠券信息 |  |
+| coupon.id | int | 是 | 优惠券ID | 101 |
+| coupon.title | string | 是 | 优惠券标题 | 新球友专享大礼包 |
+| coupon.discount | number | 是 | 优惠金额 | 10 |
 | remark | string | 否 | 订单备注 | 请小心包装 |
-| amounts | object | 是 | 金额信息 | |
+| amounts | object | 是 | 金额信息 |  |
 | amounts.goodsAmount | number | 是 | 商品总金额 | 15.00 |
 | amounts.shippingFee | number | 是 | 运费 | 0.00 |
-| amounts.discountAmount | number | 是 | 优惠金额 | 5.00 |
-| amounts.finalAmount | number | 是 | 最终应付金额 | 10.00 |
+| amounts.finalAmount | number | 是 | 最终应付金额 | 15.00 |
 
 ### 响应参数
 ```json
@@ -506,12 +467,12 @@ sequenceDiagram
   "error": 0,
   "body": {
     "order": {
-      "orderId": "order_20241215001",
-      "orderNo": "ORD202412150001",
-      "status": "pending_payment",
-      "totalAmount": 10.00,
-      "createTime": "2024-12-15 14:30:00",
-      "payDeadline": "2024-12-15 16:30:00"
+      "orderId": "order_20241215001", // 订单ID
+      "orderNo": "ORD202412150001", // 订单号
+      "status": "pending_payment", // 订单状态
+      "totalAmount": 15.00, // 订单总金额
+      "createTime": "2024-12-15 14:30:00", // 创建时间
+      "payDeadline": "2024-12-15 16:30:00" // 支付截止时间
     }
   },
   "message": "订单创建成功",
@@ -522,14 +483,19 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录/400参数错误 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.order | object | 是 | 订单信息 | |
+| body | object | 是 | 响应数据 |  |
+| body.order | object | 是 | 订单信息 |  |
 | body.order.orderId | string | 是 | 订单ID | order_20241215001 |
 | body.order.orderNo | string | 是 | 订单号 | ORD202412150001 |
 | body.order.status | string | 是 | 订单状态 | pending_payment |
-| body.order.totalAmount | number | 是 | 订单总金额 | 10.00 |
+| body.order.totalAmount | number | 是 | 订单总金额 | 15.00 |
 | body.order.createTime | string | 是 | 创建时间 | 2024-12-15 14:30:00 |
 | body.order.payDeadline | string | 是 | 支付截止时间 | 2024-12-15 16:30:00 |
 | message | string | 是 | 响应消息 | 订单创建成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 商品主键为id，所有字段与order-confirm.js完全一致。
+- 只保留JS实际用到的字段。
+- 每个字段后均有注释，便于理解。
 </rewritten_file> 

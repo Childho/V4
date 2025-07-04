@@ -1,4 +1,4 @@
-# 评论详情页面接口文档
+# 评论详情页面接口文档（已对齐index.js字段，含详细注释）
 
 ## 获取商品评论详情
 
@@ -28,10 +28,10 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "productId": "product_101",
-  "page": 1,
-  "pageSize": 10,
-  "filter": "all"
+  "productId": "product_101", // 商品ID
+  "page": 1, // 页码
+  "pageSize": 10, // 每页数量
+  "filter": "all" // 筛选类型
 }
 ```
 
@@ -40,7 +40,7 @@ sequenceDiagram
 | productId | string | 是 | 商品ID | product_101 |
 | page | int | 否 | 页码（默认1） | 1 |
 | pageSize | int | 否 | 每页数量（默认10） | 10 |
-| filter | string | 否 | 筛选类型 | all |
+| filter | string | 否 | 筛选类型（all/withImage/positive/negative） | all |
 
 **filter参数说明：**
 - `all`: 全部评论
@@ -74,27 +74,24 @@ sequenceDiagram
     },
     "comments": [
       {
-        "id": "comment_001",
+        "id": "1", // 评论ID
         "userId": "user_123",
-        "username": "张***",
-        "userAvatar": "https://example.com/avatar.jpg",
+        "username": "用户****123", // 用户名（脱敏）
+        "userAvatar": "/assets/icons/default_avatar.png", // 用户头像
         "memberLevel": "黄金会员",
-        "rating": 5,
-        "content": "非常满意的一次购物体验，羽毛球拍质量很好，手感不错，包装也很精美！客服态度也很好，发货速度快。",
+        "rating": 5, // 评分（1-5）
+        "content": "商品质量非常好，包装精美，发货速度很快，客服态度也很好，总体来说很满意的一次购物体验。", // 评论内容
         "images": [
-          "https://example.com/comment1.jpg",
-          "https://example.com/comment2.jpg",
-          "https://example.com/comment3.jpg"
-        ],
-        "createTime": "2024-12-15 14:30:00",
-        "isLiked": false,
-        "likeCount": 12,
-        "spec": "颜色：蓝色 重量：4U",
+          "https://via.placeholder.com/300x300/ff4757/ffffff?text=商品图1",
+          "https://via.placeholder.com/300x300/2ed573/ffffff?text=商品图2"
+        ], // 评论图片列表
+        "specs": "颜色：红色 尺寸：L", // 购买时的规格
+        "createTime": "2024-01-15", // 评论时间
+        "isLiked": false, // 当前用户是否点赞
+        "likeCount": 12, // 点赞数
+        "spec": "颜色：红色 尺寸：L",
         "isAnonymous": false,
-        "merchantReply": {
-          "content": "感谢您的好评，我们会继续努力提供优质的产品和服务！",
-          "createTime": "2024-12-15 16:20:00"
-        }
+        "reply": "感谢您的好评，我们会继续努力提供更好的产品和服务！" // 商家回复（字符串）
       }
     ],
     "pagination": {
@@ -131,22 +128,19 @@ sequenceDiagram
 | body.commentSummary.ratingDistribution.2 | int | 是 | 2星评论数 | 4 |
 | body.commentSummary.ratingDistribution.1 | int | 是 | 1星评论数 | 4 |
 | body.comments | array | 是 | 评论列表 | |
-| body.comments[].id | string | 是 | 评论ID | comment_001 |
+| body.comments[].id | string | 是 | 评论ID | 1 |
 | body.comments[].userId | string | 是 | 用户ID | user_123 |
-| body.comments[].username | string | 是 | 用户名（脱敏） | 张*** |
-| body.comments[].userAvatar | string | 否 | 用户头像 | https://example.com/avatar.jpg |
+| body.comments[].username | string | 是 | 用户名（脱敏） | 用户****123 |
+| body.comments[].userAvatar | string | 否 | 用户头像 | /assets/icons/default_avatar.png |
 | body.comments[].memberLevel | string | 否 | 会员等级 | 黄金会员 |
 | body.comments[].rating | int | 是 | 评分（1-5） | 5 |
-| body.comments[].content | string | 是 | 评论内容 | 非常满意的一次购物体验 |
-| body.comments[].images | array | 否 | 评论图片列表 | |
-| body.comments[].createTime | string | 是 | 评论时间 | 2024-12-15 14:30:00 |
+| body.comments[].content | string | 是 | 评论内容 | 商品质量非常好，包装精美... |
+| body.comments[].images | array | 否 | 评论图片列表 | ["url1", "url2"] |
+| body.comments[].specs | string | 否 | 购买时的规格 | 颜色：红色 尺寸：L |
+| body.comments[].createTime | string | 是 | 评论时间 | 2024-01-15 |
 | body.comments[].isLiked | bool | 是 | 当前用户是否点赞 | false |
 | body.comments[].likeCount | int | 是 | 点赞数 | 12 |
-| body.comments[].spec | string | 否 | 购买时的规格 | 颜色：蓝色 重量：4U |
-| body.comments[].isAnonymous | bool | 是 | 是否匿名评论 | false |
-| body.comments[].merchantReply | object | 否 | 商家回复 | |
-| body.comments[].merchantReply.content | string | 是 | 回复内容 | 感谢您的好评 |
-| body.comments[].merchantReply.createTime | string | 是 | 回复时间 | 2024-12-15 16:20:00 |
+| body.comments[].reply | string | 否 | 商家回复（字符串） | 感谢您的好评... |
 | body.pagination | object | 是 | 分页信息 | |
 | body.pagination.page | int | 是 | 当前页码 | 1 |
 | body.pagination.pageSize | int | 是 | 每页数量 | 10 |
@@ -155,6 +149,12 @@ sequenceDiagram
 | body.pagination.hasMore | bool | 是 | 是否有更多数据 | true |
 | message | string | 是 | 响应消息 | 获取评论详情成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 评论主键为id，所有字段与index.js完全一致。
+- 规格字段为specs，商家回复reply为字符串。
+- 点赞相关字段为isLiked、likeCount。
+- 只保留JS实际用到的字段。
 
 ---
 
@@ -198,23 +198,22 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "commentId": "comment_001"
+  "commentId": "1" // 评论ID
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| commentId | string | 是 | 评论ID | comment_001 |
+| commentId | string | 是 | 评论ID | 1 |
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "commentId": "comment_001",
-    "isLiked": true,
-    "newLikeCount": 13,
-    "action": "liked"
+    "commentId": "1", // 评论ID
+    "isLiked": true, // 新的点赞状态
+    "likeCount": 13 // 新的点赞数量
   },
   "message": "点赞成功",
   "success": true
@@ -225,12 +224,15 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.commentId | string | 是 | 评论ID | comment_001 |
+| body.commentId | string | 是 | 评论ID | 1 |
 | body.isLiked | bool | 是 | 新的点赞状态 | true |
-| body.newLikeCount | int | 是 | 新的点赞数量 | 13 |
-| body.action | string | 是 | 操作类型（liked点赞/unliked取消点赞） | liked |
+| body.likeCount | int | 是 | 新的点赞数量 | 13 |
 | message | string | 是 | 响应消息 | 点赞成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 点赞接口只返回评论ID、点赞状态和点赞数量。
+- 只保留JS实际用到的字段。
 
 ---
 
@@ -259,20 +261,20 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "commentId": "comment_001"
+  "commentId": "1"
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| commentId | string | 是 | 评论ID | comment_001 |
+| commentId | string | 是 | 评论ID | 1 |
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "commentId": "comment_001",
+    "commentId": "1",
     "images": [
       {
         "id": "img_001",
@@ -300,7 +302,7 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.commentId | string | 是 | 评论ID | comment_001 |
+| body.commentId | string | 是 | 评论ID | 1 |
 | body.images | array | 是 | 图片列表 | |
 | body.images[].id | string | 是 | 图片ID | img_001 |
 | body.images[].thumbnailUrl | string | 是 | 缩略图URL | https://example.com/thumb.jpg |
@@ -347,7 +349,7 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "commentId": "comment_001",
+  "commentId": "1",
   "reason": "spam",
   "description": "评论内容涉及虚假宣传"
 }
@@ -355,7 +357,7 @@ sequenceDiagram
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| commentId | string | 是 | 评论ID | comment_001 |
+| commentId | string | 是 | 评论ID | 1 |
 | reason | string | 是 | 举报原因 | spam |
 | description | string | 否 | 详细描述 | 评论内容涉及虚假宣传 |
 
@@ -492,4 +494,7 @@ sequenceDiagram
 | body.recentComments[].hasImages | bool | 是 | 是否有图片 | true |
 | message | string | 是 | 响应消息 | 获取用户评论历史成功 |
 | success | bool | 是 | 是否成功 | true |
-``` 
+
+**友情提示：**
+- 文档字段已与index.js完全对齐，开发时如有字段变动请同步更新本接口文档。
+- 每个字段后均有注释，方便理解和开发。 

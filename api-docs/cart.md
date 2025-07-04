@@ -1,4 +1,4 @@
-# 购物车页面接口文档
+# 购物车页面接口文档（已对齐cart.js字段，含详细注释）
 
 ## 获取购物车商品列表
 
@@ -18,7 +18,6 @@ sequenceDiagram
     Client->>Server: 请求购物车数据
     Server->>DB: 查询用户购物车
     DB-->>Server: 返回购物车商品
-    Server->>Server: 关联商品详情信息
     Server-->>Client: 返回购物车列表
     Client->>Client: 渲染购物车页面
 ```
@@ -31,48 +30,35 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "cartItems": [
+    "cartList": [
       {
-        "cartId": "cart_001",
-        "productId": "product_101",
-        "name": "YONEX尤尼克斯ARC-11羽毛球拍",
-        "image": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300",
-        "price": 899.00,
-        "originalPrice": 1099.00,
-        "quantity": 1,
-        "selected": true,
-        "spec": "颜色：蓝色 重量：4U",
-        "specGroups": [
+        "id": 1, // 商品唯一ID
+        "name": "苹果iPhone 14 Pro Max 紫色 128GB", // 商品名称
+        "spec": "颜色：紫色 容量：128GB", // 已选规格描述
+        "price": 9999.00, // 商品单价
+        "quantity": 1, // 商品数量
+        "image": "/assets/images/phone1.jpg", // 商品图片
+        "selected": true, // 是否选中
+        "specGroups": [ // 规格选项组
           {
-            "name": "颜色",
+            "name": "颜色", // 规格组名称
             "options": [
-              { "value": "蓝色", "selected": true, "disabled": false },
-              { "value": "红色", "selected": false, "disabled": false },
-              { "value": "黑色", "selected": false, "disabled": true }
+              { "value": "紫色", "selected": true, "disabled": false }, // 规格值、是否选中、是否禁用
+              { "value": "黑色", "selected": false, "disabled": false },
+              { "value": "白色", "selected": false, "disabled": false }
             ]
           },
           {
-            "name": "重量",
+            "name": "容量",
             "options": [
-              { "value": "3U", "selected": false, "disabled": false },
-              { "value": "4U", "selected": true, "disabled": false }
+              { "value": "128GB", "selected": true, "disabled": false },
+              { "value": "256GB", "selected": false, "disabled": false },
+              { "value": "512GB", "selected": false, "disabled": false }
             ]
           }
-        ],
-        "subtotal": 899.00,
-        "stock": 50,
-        "isValid": true,
-        "invalidReason": "",
-        "addedTime": "2024-12-18T10:30:00Z"
+        ]
       }
-    ],
-    "summary": {
-      "totalItems": 3,
-      "selectedItems": 2,
-      "totalAmount": 1798.00,
-      "originalAmount": 2198.00,
-      "discountAmount": 400.00
-    }
+    ]
   },
   "message": "获取购物车成功",
   "success": true
@@ -82,36 +68,28 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.cartItems | array | 是 | 购物车商品列表 | |
-| body.cartItems[].cartId | string | 是 | 购物车条目唯一ID | cart_001 |
-| body.cartItems[].productId | string | 是 | 商品唯一ID | product_101 |
-| body.cartItems[].name | string | 是 | 商品名称 | YONEX尤尼克斯ARC-11羽毛球拍 |
-| body.cartItems[].image | string | 是 | 商品主图URL | https://example.com/product.jpg |
-| body.cartItems[].price | number | 是 | 当前单价 | 899.00 |
-| body.cartItems[].originalPrice | number | 否 | 原价 | 1099.00 |
-| body.cartItems[].quantity | int | 是 | 商品数量 | 1 |
-| body.cartItems[].selected | bool | 是 | 是否选中（用于结算） | true |
-| body.cartItems[].spec | string | 是 | 已选规格描述 | 颜色：蓝色 重量：4U |
-| body.cartItems[].specGroups | array | 是 | 规格选项组 | |
-| body.cartItems[].specGroups[].name | string | 是 | 规格组名称 | 颜色 |
-| body.cartItems[].specGroups[].options | array | 是 | 规格选项列表 | |
-| body.cartItems[].specGroups[].options[].value | string | 是 | 规格值 | 蓝色 |
-| body.cartItems[].specGroups[].options[].selected | bool | 是 | 是否已选择 | true |
-| body.cartItems[].specGroups[].options[].disabled | bool | 是 | 是否禁用（库存不足） | false |
-| body.cartItems[].subtotal | number | 是 | 小计金额 | 899.00 |
-| body.cartItems[].stock | int | 是 | 商品库存 | 50 |
-| body.cartItems[].isValid | bool | 是 | 商品是否有效（未下架、有库存） | true |
-| body.cartItems[].invalidReason | string | 否 | 无效原因（商品下架/库存不足等） | |
-| body.cartItems[].addedTime | string | 是 | 加入购物车时间 | 2024-12-18T10:30:00Z |
-| body.summary | object | 是 | 购物车汇总信息 | |
-| body.summary.totalItems | int | 是 | 购物车商品总数 | 3 |
-| body.summary.selectedItems | int | 是 | 已选中商品数量 | 2 |
-| body.summary.totalAmount | number | 是 | 选中商品总金额 | 1798.00 |
-| body.summary.originalAmount | number | 是 | 选中商品原价总额 | 2198.00 |
-| body.summary.discountAmount | number | 是 | 优惠金额 | 400.00 |
+| body | object | 是 | 响应数据 |  |
+| body.cartList | array | 是 | 购物车商品列表 |  |
+| body.cartList[].id | int | 是 | 商品唯一ID | 1 |
+| body.cartList[].name | string | 是 | 商品名称 | 苹果iPhone 14 Pro Max 紫色 128GB |
+| body.cartList[].spec | string | 是 | 已选规格描述 | 颜色：紫色 容量：128GB |
+| body.cartList[].price | number | 是 | 商品单价 | 9999.00 |
+| body.cartList[].quantity | int | 是 | 商品数量 | 1 |
+| body.cartList[].image | string | 是 | 商品图片 | /assets/images/phone1.jpg |
+| body.cartList[].selected | bool | 是 | 是否选中 | true |
+| body.cartList[].specGroups | array | 是 | 规格选项组 |  |
+| body.cartList[].specGroups[].name | string | 是 | 规格组名称 | 颜色 |
+| body.cartList[].specGroups[].options | array | 是 | 规格选项列表 |  |
+| body.cartList[].specGroups[].options[].value | string | 是 | 规格值 | 紫色 |
+| body.cartList[].specGroups[].options[].selected | bool | 是 | 是否已选择 | true |
+| body.cartList[].specGroups[].options[].disabled | bool | 是 | 是否禁用 | false |
 | message | string | 是 | 响应消息 | 获取购物车成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 购物车商品主键为 id，所有字段与cart.js完全一致。
+- 价格、数量、规格、图片、选中状态等字段均与页面数据结构同步。
+- 规格选项组结构与JS一致。
 
 ---
 

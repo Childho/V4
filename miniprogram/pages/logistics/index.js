@@ -310,49 +310,6 @@ Page({
   },
 
   /**
-   * 联系客服
-   * 可跳转到客服页面或拨打客服电话
-   */
-  contactService() {
-    wx.showActionSheet({
-      itemList: ['在线客服', '拨打客服电话'],
-      success: (res) => {
-        if (res.tapIndex === 0) {
-          // 跳转到在线客服页面（如果有的话）
-          console.log('[客服] 跳转在线客服');
-          wx.showToast({
-            title: '客服功能开发中',
-            icon: 'none'
-          });
-        } else if (res.tapIndex === 1) {
-          // 拨打客服电话
-          this.callServicePhone();
-        }
-      }
-    });
-  },
-
-  /**
-   * 拨打客服电话
-   */
-  callServicePhone() {
-    const servicePhone = '400-123-4567'; // 这里应该是实际的客服电话
-    wx.makePhoneCall({
-      phoneNumber: servicePhone,
-      success: () => {
-        console.log('[电话] 拨打客服电话成功');
-      },
-      fail: (error) => {
-        console.error('[电话] 拨打失败:', error);
-        wx.showToast({
-          title: '拨打失败',
-          icon: 'none'
-        });
-      }
-    });
-  },
-
-  /**
    * 拨打物流公司电话
    */
   callCompany() {

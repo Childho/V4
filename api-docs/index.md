@@ -31,10 +31,10 @@ sequenceDiagram
       {
         "id": "banner_1",
         "imageUrl": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800",
-        "targetType": "product",
-        "targetId": "product_1",
-        "title": "夏季羽毛球装备",
-        "subtitle": "专业装备，助力你的运动表现"
+        "type": "activity",
+        "linkId": "activity_1",
+        "title": "夏季网球训练营",
+        "subtitle": "专业教练指导，提升你的网球技能"
       }
     ]
   },
@@ -50,10 +50,10 @@ sequenceDiagram
 | body.banners | array | 是 | 轮播图列表 | |
 | body.banners[].id | string | 是 | 轮播图ID | banner_1 |
 | body.banners[].imageUrl | string | 是 | 轮播图图片URL | https://example.com/image.jpg |
-| body.banners[].targetType | string | 是 | 跳转类型（product商品/event活动） | product |
-| body.banners[].targetId | string | 是 | 跳转目标ID | product_1 |
-| body.banners[].title | string | 是 | 轮播图主标题 | 夏季羽毛球装备 |
-| body.banners[].subtitle | string | 是 | 轮播图副标题 | 专业装备，助力你的运动表现 |
+| body.banners[].type | string | 是 | 跳转类型（product商品/activity活动） | activity |
+| body.banners[].linkId | string | 是 | 跳转目标ID | activity_1 |
+| body.banners[].title | string | 是 | 轮播图主标题 | 夏季网球训练营 |
+| body.banners[].subtitle | string | 是 | 轮播图副标题 | 专业教练指导，提升你的网球技能 |
 | message | string | 是 | 响应消息 | 获取轮播图数据成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -102,19 +102,12 @@ sequenceDiagram
   "body": {
     "activities": [
       {
-        "eventId": "event_1",
+        "id": "activity_1",
         "title": "门店周年庆活动",
-        "brief": "全场商品8折，会员额外95折，还有精美礼品赠送",
-        "coverImage": "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400",
-        "startTime": "2024-06-18T00:00:00Z",
-        "endTime": "2024-06-24T23:59:59Z",
-        "location": "滨顺店",
-        "organizer": "倍特爱体育",
-        "isPublished": true,
-        "isFeatured": true,
-        "featuredOrder": 1,
-        "featuredBy": "运营部",
-        "featuredTime": "2024-06-15T10:30:00Z"
+        "description": "全场商品8折，会员额外95折，还有精美礼品赠送。专业网球装备一应俱全，品质保证。",
+        "coverUrl": "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400",
+        "timeRange": "6月18日-6月24日",
+        "location": "滨顺店"
       }
     ],
     "totalFeaturedCount": 2,
@@ -130,29 +123,24 @@ sequenceDiagram
 | error | int | 是 | 错误码，0表示成功 | 0 |
 | body | object | 是 | 响应数据 | |
 | body.activities | array | 是 | 活动列表 | |
-| body.activities[].eventId | string | 是 | 活动ID | event_1 |
+| body.activities[].id | string | 是 | 活动ID | activity_1 |
 | body.activities[].title | string | 是 | 活动标题 | 门店周年庆活动 |
-| body.activities[].brief | string | 是 | 活动简介 | 全场商品8折，会员额外95折 |
-| body.activities[].coverImage | string | 是 | 活动封面图URL | https://example.com/cover.jpg |
-| body.activities[].startTime | string | 是 | 活动开始时间（ISO 8601格式） | 2024-06-18T00:00:00Z |
-| body.activities[].endTime | string | 是 | 活动结束时间（ISO 8601格式） | 2024-06-24T23:59:59Z |
+| body.activities[].description | string | 是 | 活动详细描述 | 全场商品8折，会员额外95折，还有精美礼品赠送 |
+| body.activities[].coverUrl | string | 是 | 活动封面图URL | https://example.com/cover.jpg |
+| body.activities[].timeRange | string | 是 | 活动时间范围 | 6月18日-6月24日 |
 | body.activities[].location | string | 是 | 活动地点 | 滨顺店 |
-| body.activities[].organizer | string | 是 | 主办方名称 | 倍特爱体育 |
-| body.activities[].isPublished | bool | 是 | 是否已发布 | true |
-| body.activities[].isFeatured | bool | 是 | 是否为首页精选活动 | true |
-| body.activities[].featuredOrder | int | 否 | 首页推荐排序（数字越小越靠前） | 1 |
-| body.activities[].featuredBy | string | 否 | 设置精选的运营人员 | 运营部 |
-| body.activities[].featuredTime | string | 否 | 设置为精选的时间 | 2024-06-15T10:30:00Z |
 | body.totalFeaturedCount | int | 是 | 当前首页精选活动总数 | 2 |
 | body.totalActivitiesCount | int | 是 | 当前所有活动总数 | 15 |
 | message | string | 是 | 响应消息 | 获取热门活动成功 |
 | success | bool | 是 | 是否成功 | true |
 
 **字段说明：**
-- `isFeatured`: true表示该活动被设置为首页精选，false表示普通活动
-- `featuredOrder`: 首页精选活动的排序权重，数字越小在首页越靠前显示
-- `featuredBy`: 记录是哪个运营人员设置的精选，便于追溯管理
-- `featuredTime`: 记录设置为精选的时间，便于运营管理
+- `id`: 活动的唯一标识符
+- `title`: 活动标题，用于页面展示
+- `description`: 活动的详细描述信息
+- `coverUrl`: 活动封面图片URL
+- `timeRange`: 活动时间范围的文字描述
+- `location`: 活动举办地点
 - `totalFeaturedCount`: 当前设置为首页精选的活动总数
 - `totalActivitiesCount`: 系统中所有活动的总数，用于运营数据统计
 
@@ -180,14 +168,14 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "limit": 6,
+  "limit": 4,
   "isFeatured": true
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| limit | int | 否 | 返回数量限制（首页默认6） | 6 |
+| limit | int | 否 | 返回数量限制（首页默认4） | 4 |
 | isFeatured | bool | 否 | 是否只返回精选商品（默认true） | true |
 
 ### 响应参数
@@ -195,16 +183,14 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "equipment": [
+    "featuredEquipment": [
       {
-        "productId": "product_1",
-        "title": "YONEX尤尼克斯ARC-11羽毛球拍",
-        "imageUrl": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300",
+        "id": "equipment_1",
+        "name": "YONEX尤尼克斯ARC-11羽毛球拍",
+        "tag": "热销",
         "price": "899",
-        "originalPrice": "1099",
-        "salesCount": 268,
-        "category": "羽毛球拍",
-        "brand": "YONEX"
+        "sales": "销量268",
+        "imageUrl": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300"
       }
     ]
   },
@@ -217,17 +203,23 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.equipment | array | 是 | 装备商品列表 | |
-| body.equipment[].productId | string | 是 | 商品ID | product_1 |
-| body.equipment[].title | string | 是 | 商品标题 | YONEX尤尼克斯ARC-11羽毛球拍 |
-| body.equipment[].imageUrl | string | 是 | 商品主图URL | https://example.com/product.jpg |
-| body.equipment[].price | string | 是 | 当前价格 | 899 |
-| body.equipment[].originalPrice | string | 否 | 原价（用于显示折扣） | 1099 |
-| body.equipment[].salesCount | int | 是 | 销量 | 268 |
-| body.equipment[].category | string | 是 | 商品分类 | 羽毛球拍 |
-| body.equipment[].brand | string | 是 | 品牌名称 | YONEX |
+| body.featuredEquipment | array | 是 | 精选装备商品列表 | |
+| body.featuredEquipment[].id | string | 是 | 商品ID | equipment_1 |
+| body.featuredEquipment[].name | string | 是 | 商品名称 | YONEX尤尼克斯ARC-11羽毛球拍 |
+| body.featuredEquipment[].tag | string | 是 | 商品标签（热销/新品/爆款/推荐） | 热销 |
+| body.featuredEquipment[].price | string | 是 | 商品价格 | 899 |
+| body.featuredEquipment[].sales | string | 是 | 销量信息 | 销量268 |
+| body.featuredEquipment[].imageUrl | string | 是 | 商品主图URL | https://example.com/product.jpg |
 | message | string | 是 | 响应消息 | 获取精选装备成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**字段说明：**
+- `id`: 装备商品的唯一标识符
+- `name`: 商品的完整名称，包含品牌和型号
+- `tag`: 商品推荐标签，用于页面展示（热销、新品、爆款、推荐）
+- `price`: 商品价格，字符串格式便于前端显示
+- `sales`: 销量信息，包含"销量"文字前缀的完整描述
+- `imageUrl`: 商品图片URL，用于页面展示
 
 ---
 
@@ -239,7 +231,7 @@ sequenceDiagram
 **请求方式：** GET
 
 ### 功能说明
-获取当前登录用户的基本信息，用于首页展示用户会员等级、积分余额等个人信息。需要在请求头中携带用户token。
+获取当前登录用户的基本信息，用于首页展示用户会员等级、积分余额等个人信息。需要在请求头中携带用户token。根据index.js中的checkLoginStatus方法，当前主要用于检查登录状态。
 
 ```mermaid
 sequenceDiagram
@@ -278,7 +270,8 @@ sequenceDiagram
     "pointsToNextLevel": 720,
     "isVip": false,
     "phone": "138****5678",
-    "registeredDate": "2023-01-15"
+    "registeredDate": "2023-01-15",
+    "isLoggedIn": true
   },
   "message": "获取用户信息成功",
   "success": true
@@ -299,6 +292,7 @@ sequenceDiagram
 | body.isVip | bool | 是 | 是否VIP会员 | false |
 | body.phone | string | 否 | 用户手机号（脱敏显示） | 138****5678 |
 | body.registeredDate | string | 是 | 注册日期 | 2023-01-15 |
+| body.isLoggedIn | bool | 是 | 是否已登录 | true |
 | message | string | 是 | 响应消息 | 获取用户信息成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -312,7 +306,7 @@ sequenceDiagram
 **请求方式：** GET
 
 ### 功能说明
-根据用户输入的关键词搜索商品，支持按商品标题和品牌名进行模糊匹配。用于首页搜索栏功能。
+根据用户输入的关键词搜索商品，支持按商品标题和品牌名进行模糊匹配。用于首页搜索栏功能。根据index.js中的onSearchConfirm方法实现，搜索成功后跳转到搜索结果页面。
 
 **重要的兜底逻辑：**
 - 无论关键词输入是否精准匹配，都会返回商品数据，确保用户能正常跳转到搜索结果页
@@ -325,7 +319,7 @@ sequenceDiagram
     participant Client as 小程序客户端
     participant Server as 后端服务
     participant Search as 搜索引擎
-    Client->>Server: 发送搜索请求
+    Client->>Server: 发送搜索请求（关键词+type=product）
     Server->>Search: 执行搜索查询
     alt 有匹配商品
         Search-->>Server: 返回相关商品（按相关度排序）
@@ -333,12 +327,14 @@ sequenceDiagram
         Search-->>Server: 返回全部商品（按默认排序）
     end
     Server-->>Client: 返回商品列表（确保有数据）
+    Client->>Client: 跳转到搜索结果页面
 ```
 
 ### 请求参数
 ```json
 {
   "keyword": "羽毛球拍",
+  "type": "product",
   "page": 1,
   "pageSize": 10,
   "sortBy": "relevance"
@@ -348,6 +344,7 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | keyword | string | 是 | 搜索关键词（搜索商品标题和品牌名，可为空字符串） | 羽毛球拍 |
+| type | string | 是 | 搜索类型（product商品搜索） | product |
 | page | int | 否 | 页码（默认1） | 1 |
 | pageSize | int | 否 | 每页数量（默认10） | 10 |
 | sortBy | string | 否 | 排序方式（relevance相关度/sales销量/price价格，默认relevance） | relevance |
@@ -374,7 +371,9 @@ sequenceDiagram
     "pageSize": 10,
     "totalPages": 16,
     "hasExactMatch": true,
-    "searchStrategy": "exact_match"
+    "searchStrategy": "exact_match",
+    "searchKeyword": "羽毛球拍",
+    "searchType": "product"
   },
   "message": "搜索成功",
   "success": true
@@ -400,6 +399,8 @@ sequenceDiagram
 | body.totalPages | int | 是 | 总页数 | 16 |
 | body.hasExactMatch | bool | 是 | 是否有精确匹配的商品 | true |
 | body.searchStrategy | string | 是 | 搜索策略（exact_match精确匹配/fallback_all兜底全部） | exact_match |
+| body.searchKeyword | string | 是 | 搜索关键词（原样返回） | 羽毛球拍 |
+| body.searchType | string | 是 | 搜索类型（原样返回） | product |
 | message | string | 是 | 响应消息 | 搜索成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -409,6 +410,8 @@ sequenceDiagram
   - `exact_match`: 有精确匹配，商品按相关度排序
   - `fallback_all`: 无匹配商品，返回全部商品按默认排序
 - `relevanceScore`: 仅在有匹配商品时返回，表示与搜索关键词的相关度
+- `searchKeyword`: 返回原始搜索关键词，便于搜索结果页面展示
+- `searchType`: 返回搜索类型，便于结果页面处理
 
 ---
 
@@ -420,7 +423,7 @@ sequenceDiagram
 **请求方式：** POST
 
 ### 功能说明
-当用户点击首页客服按钮时，记录使用统计信息，包括用户ID、时间戳、来源页面等，用于分析用户使用客服的行为模式。
+当用户点击首页客服按钮时，记录使用统计信息，包括用户ID、时间戳、来源页面等，用于分析用户使用客服的行为模式。根据index.js中的onContactButton方法实现。
 
 ```mermaid
 sequenceDiagram

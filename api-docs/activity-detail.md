@@ -8,7 +8,7 @@
 **请求方式：** GET
 
 ### 功能说明
-获取指定活动的详细信息，包含活动的完整描述、HTML格式的活动内容、活动规则、报名信息等。用户可根据活动详情决定是否参与报名。
+获取指定活动的详细信息，包含活动的完整描述、HTML格式的活动内容、活动规则、报名信息等。用户可根据活动详情决定是否参与报名。根据activityDetail/index.js中的实际实现，活动详情数据结构已简化为核心字段。
 
 ```mermaid
 sequenceDiagram
@@ -26,56 +26,30 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "eventId": "event_1"
+  "id": "1"
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| eventId | string | 是 | 活动唯一ID | event_1 |
+| id | string | 是 | 活动唯一ID | 1 |
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "eventId": "event_1",
+    "id": "1",
     "title": "门店周年庆活动",
     "description": "羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！快来参与我们的庆典活动吧！",
-    "startTime": "2024-12-18T10:00:00Z",
-    "endTime": "2024-12-24T18:00:00Z",
+    "startTime": "2024年12月18日 10:00",
+    "endTime": "2024年12月24日 18:00",
     "location": "倍特爱运动专卖店",
     "organizer": "倍特爱运动专卖店",
     "content": "<p>🎉 为庆祝倍特爱运动专卖店周年庆，我们特举办盛大庆典活动！</p><p><strong>活动亮点：</strong></p><p>• 全场商品8折优惠</p><p>• 会员额外享受95折</p><p>• 购物满299元送精美礼品</p><p>• 现场抽奖有机会获得专业球拍</p><p><strong>活动地址：</strong>倍特爱运动专卖店</p>",
     "rules": "1. 活动期间每天限量100份礼品，先到先得\n2. 会员折扣与商品折扣可叠加使用\n3. 抽奖活动每人每天限参与一次\n4. 活动最终解释权归商家所有",
-    "coverImage": "https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?w=800",
-    "maxParticipants": 100,
-    "currentParticipants": 38,
-    "signupDeadline": "2024-12-23T18:00:00Z",
-    "isPublished": true,
-    "status": "ongoing",
-    "userSignupStatus": {
-      "isJoined": false,
-      "canSignup": true,
-      "signupId": null,
-      "signupTime": null
-    },
-    "signupRequiredFields": [
-      {
-        "fieldName": "name",
-        "fieldType": "text",
-        "label": "真实姓名",
-        "required": true,
-        "placeholder": "请输入您的真实姓名"
-      },
-      {
-        "fieldName": "phone",
-        "fieldType": "phone",
-        "label": "联系电话",
-        "required": true,
-        "placeholder": "请输入手机号码"
-      }
-    ]
+    "coverUrl": "https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?w=800",
+    "isJoined": false
   },
   "message": "获取活动详情成功",
   "success": true
@@ -86,34 +60,31 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0表示成功 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.eventId | string | 是 | 活动唯一ID | event_1 |
+| body.id | string | 是 | 活动唯一ID | 1 |
 | body.title | string | 是 | 活动标题 | 门店周年庆活动 |
 | body.description | string | 是 | 活动详细描述 | 羽你同行实体店两周年店庆... |
-| body.startTime | string | 是 | 活动开始时间（ISO 8601格式） | 2024-12-18T10:00:00Z |
-| body.endTime | string | 是 | 活动结束时间（ISO 8601格式） | 2024-12-24T18:00:00Z |
+| body.startTime | string | 是 | 活动开始时间（格式化字符串） | 2024年12月18日 10:00 |
+| body.endTime | string | 是 | 活动结束时间（格式化字符串） | 2024年12月24日 18:00 |
 | body.location | string | 是 | 活动地点 | 倍特爱运动专卖店 |
 | body.organizer | string | 是 | 主办方名称 | 倍特爱运动专卖店 |
 | body.content | string | 是 | 活动内容（HTML格式） | <p>🎉 为庆祝倍特爱运动专卖店周年庆... |
 | body.rules | string | 是 | 活动规则（换行符分隔） | 1. 活动期间每天限量100份礼品... |
-| body.coverImage | string | 是 | 活动封面图URL | https://example.com/cover.jpg |
-| body.maxParticipants | int | 是 | 最大报名人数 | 100 |
-| body.currentParticipants | int | 是 | 当前报名人数 | 38 |
-| body.signupDeadline | string | 是 | 报名截止时间 | 2024-12-23T18:00:00Z |
-| body.isPublished | bool | 是 | 是否已发布 | true |
-| body.status | string | 是 | 活动状态 | ongoing |
-| body.userSignupStatus | object | 是 | 用户报名状态 | |
-| body.userSignupStatus.isJoined | bool | 是 | 是否已报名 | false |
-| body.userSignupStatus.canSignup | bool | 是 | 是否可以报名 | true |
-| body.userSignupStatus.signupId | string | 否 | 报名记录ID（已报名时返回） | signup_123 |
-| body.userSignupStatus.signupTime | string | 否 | 报名时间（已报名时返回） | 2024-12-18T14:30:00Z |
-| body.signupRequiredFields | array | 是 | 报名所需字段配置 | |
-| body.signupRequiredFields[].fieldName | string | 是 | 字段名称 | name |
-| body.signupRequiredFields[].fieldType | string | 是 | 字段类型 | text |
-| body.signupRequiredFields[].label | string | 是 | 字段标签 | 真实姓名 |
-| body.signupRequiredFields[].required | bool | 是 | 是否必填 | true |
-| body.signupRequiredFields[].placeholder | string | 是 | 输入提示 | 请输入您的真实姓名 |
+| body.coverUrl | string | 是 | 活动封面图片URL | https://example.com/cover.jpg |
+| body.isJoined | bool | 是 | 是否已报名 | false |
 | message | string | 是 | 响应消息 | 获取活动详情成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**字段说明：**
+- `id`: 活动的唯一标识符，为字符串类型
+- `title`: 活动标题，用于页面展示
+- `description`: 活动的详细描述信息
+- `startTime/endTime`: 活动时间，使用格式化的日期时间字符串
+- `location`: 活动举办地点
+- `organizer`: 活动主办方
+- `content`: 活动内容的HTML格式文本，用于富文本展示
+- `rules`: 活动规则文本，使用换行符分隔不同条目
+- `coverUrl`: 活动封面图片URL
+- `isJoined`: 当前用户是否已报名该活动
 
 ---
 
@@ -125,41 +96,41 @@ sequenceDiagram
 **请求方式：** POST
 
 ### 功能说明
-用户填写报名表单并提交报名申请。系统会检查报名条件（是否超过人数限制、是否已截止报名、用户是否已报名等），通过验证后创建报名记录。
+用户点击报名按钮参加活动。根据activityDetail/index.js中的handleJoin方法实现，系统会检查登录状态，验证报名条件后创建报名记录。如果用户未登录，会跳转到登录页面。
 
 ```mermaid
 sequenceDiagram
     participant Client as 小程序客户端
     participant Server as 后端服务
+    participant Auth as 认证服务
     participant DB as 数据库
-    Client->>Server: 提交报名信息
-    Server->>Server: 验证报名条件
-    alt 条件满足
-        Server->>DB: 创建报名记录
-        DB-->>Server: 返回报名成功
-        Server-->>Client: 报名成功响应
-    else 条件不满足
-        Server-->>Client: 返回错误信息
+    Client->>Server: 提交报名请求
+    Server->>Auth: 验证用户登录状态
+    alt 未登录
+        Server-->>Client: 返回未登录错误
+        Client->>Client: 跳转到登录页面
+    else 已登录
+        Server->>Server: 验证报名条件
+        alt 条件满足
+            Server->>DB: 创建报名记录
+            DB-->>Server: 返回报名成功
+            Server-->>Client: 报名成功响应
+        else 条件不满足
+            Server-->>Client: 返回错误信息
+        end
     end
 ```
 
 ### 请求参数
 ```json
 {
-  "eventId": "event_1",
-  "signupData": {
-    "name": "张三",
-    "phone": "13812345678"
-  }
+  "id": "1"
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| eventId | string | 是 | 活动唯一ID | event_1 |
-| signupData | object | 是 | 报名信息 | |
-| signupData.name | string | 是 | 报名人姓名 | 张三 |
-| signupData.phone | string | 是 | 联系电话 | 13812345678 |
+| id | string | 是 | 活动唯一ID | 1 |
 
 ### 响应参数
 ```json
@@ -167,11 +138,10 @@ sequenceDiagram
   "error": 0,
   "body": {
     "signupId": "signup_123456",
-    "eventId": "event_1",
+    "activityId": "1",
     "signupTime": "2024-12-18T14:30:00Z",
     "status": "confirmed",
-    "qrCode": "https://api.qrserver.com/v1/create-qr-code/?data=signup_123456",
-    "message": "报名成功！请保存好报名二维码，活动当天凭此码参与活动。"
+    "message": "报名成功！"
   },
   "message": "活动报名成功",
   "success": true
@@ -183,31 +153,29 @@ sequenceDiagram
 | error | int | 是 | 错误码，0表示成功 | 0 |
 | body | object | 是 | 响应数据 | |
 | body.signupId | string | 是 | 报名记录唯一ID | signup_123456 |
-| body.eventId | string | 是 | 活动ID | event_1 |
+| body.activityId | string | 是 | 活动ID | 1 |
 | body.signupTime | string | 是 | 报名成功时间 | 2024-12-18T14:30:00Z |
 | body.status | string | 是 | 报名状态 | confirmed |
-| body.qrCode | string | 是 | 报名二维码URL | https://api.qrserver.com/... |
-| body.message | string | 是 | 报名成功提示信息 | 报名成功！请保存好报名二维码... |
+| body.message | string | 是 | 报名成功提示信息 | 报名成功！ |
 | message | string | 是 | 响应消息 | 活动报名成功 |
 | success | bool | 是 | 是否成功 | true |
 
 ### 错误响应示例
 ```json
 {
-  "error": 1001,
+  "error": 1003,
   "body": null,
-  "message": "报名人数已满，无法继续报名",
+  "message": "你已报名此活动",
   "success": false
 }
 ```
 
 **常见错误码说明：**
+- `401`：用户未登录，需要跳转登录页面
+- `1003`：用户已报名该活动
 - `1001`：报名人数已满
 - `1002`：报名已截止
-- `1003`：用户已报名该活动
 - `1004`：活动不存在或已下线
-- `1005`：用户信息验证失败
-- `1006`：活动状态不允许报名
 
 ---
 
@@ -331,15 +299,15 @@ sequenceDiagram
     "signups": [
       {
         "signupId": "signup_123456",
-        "eventId": "event_1",
-        "eventTitle": "门店周年庆活动",
-        "eventCoverImage": "https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?w=400",
-        "eventStartTime": "2024-12-18T10:00:00Z",
-        "eventEndTime": "2024-12-24T18:00:00Z",
-        "eventLocation": "倍特爱运动专卖店",
+        "activityId": "1",
+        "activityTitle": "门店周年庆活动",
+        "activityCoverUrl": "https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?w=400",
+        "activityStartTime": "2024年12月18日 10:00",
+        "activityEndTime": "2024年12月24日 18:00",
+        "activityLocation": "倍特爱运动专卖店",
         "signupTime": "2024-12-18T14:30:00Z",
         "status": "confirmed",
-        "qrCode": "https://api.qrserver.com/v1/create-qr-code/?data=signup_123456"
+        "isJoined": true
       }
     ],
     "pagination": {
@@ -361,15 +329,15 @@ sequenceDiagram
 | body | object | 是 | 响应数据 | |
 | body.signups | array | 是 | 报名记录列表 | |
 | body.signups[].signupId | string | 是 | 报名记录ID | signup_123456 |
-| body.signups[].eventId | string | 是 | 活动ID | event_1 |
-| body.signups[].eventTitle | string | 是 | 活动标题 | 门店周年庆活动 |
-| body.signups[].eventCoverImage | string | 是 | 活动封面图 | https://example.com/cover.jpg |
-| body.signups[].eventStartTime | string | 是 | 活动开始时间 | 2024-12-18T10:00:00Z |
-| body.signups[].eventEndTime | string | 是 | 活动结束时间 | 2024-12-24T18:00:00Z |
-| body.signups[].eventLocation | string | 是 | 活动地点 | 倍特爱运动专卖店 |
+| body.signups[].activityId | string | 是 | 活动ID | 1 |
+| body.signups[].activityTitle | string | 是 | 活动标题 | 门店周年庆活动 |
+| body.signups[].activityCoverUrl | string | 是 | 活动封面图 | https://example.com/cover.jpg |
+| body.signups[].activityStartTime | string | 是 | 活动开始时间 | 2024年12月18日 10:00 |
+| body.signups[].activityEndTime | string | 是 | 活动结束时间 | 2024年12月24日 18:00 |
+| body.signups[].activityLocation | string | 是 | 活动地点 | 倍特爱运动专卖店 |
 | body.signups[].signupTime | string | 是 | 报名时间 | 2024-12-18T14:30:00Z |
 | body.signups[].status | string | 是 | 报名状态 | confirmed |
-| body.signups[].qrCode | string | 否 | 报名二维码（confirmed状态时返回） | https://api.qrserver.com/... |
+| body.signups[].isJoined | bool | 是 | 是否已报名 | true |
 | body.pagination | object | 是 | 分页信息 | |
 | body.pagination.page | int | 是 | 当前页码 | 1 |
 | body.pagination.pageSize | int | 是 | 每页数量 | 10 |

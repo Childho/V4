@@ -1,4 +1,4 @@
-# 优惠券页面接口文档
+# 优惠券页面接口文档（已对齐index.js字段，含详细注释）
 
 ## 获取优惠券列表
 
@@ -32,9 +32,9 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "status": 1,
-  "page": 1,
-  "pageSize": 10
+  "status": 1, // 优惠券状态（0全部/1可使用/4即将过期）
+  "page": 1, // 页码
+  "pageSize": 10 // 每页数量
 }
 ```
 
@@ -49,63 +49,25 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "coupons": {
-      "total": 15,
-      "list": [
-        {
-          "id": 101,
-          "title": "新球友专享大礼包",
-          "amount": 50,
-          "minAmount": 299,
-          "type": 1,
-          "scope": "全场羽毛球用品",
-          "startTime": "2024-01-01",
-          "endTime": "2024-12-31",
-          "status": 1,
-          "description": "新用户注册即得，购买羽毛球拍、球鞋等满299元可用",
-          "discount": 50,
-          "expireDays": 30,
-          "targetProductId": null
-        },
-        {
-          "id": 102,
-          "title": "羽毛球拍8折优惠券",
-          "amount": 80,
-          "minAmount": 500,
-          "type": 2,
-          "scope": "羽毛球拍类",
-          "startTime": "2024-02-01",
-          "endTime": "2024-08-31",
-          "status": 1,
-          "description": "尤尼克斯、胜利、李宁等知名品牌球拍享8折优惠",
-          "discount": 0,
-          "expireDays": 45,
-          "targetProductId": null
-        },
-        {
-          "id": 103,
-          "title": "羽毛球用品免邮券",
-          "amount": 0,
-          "minAmount": 0,
-          "type": 3,
-          "scope": "全场羽毛球用品",
-          "startTime": "2024-01-01",
-          "endTime": "2024-12-31",
-          "status": 1,
-          "description": "购买任意羽毛球用品免运费，最高免15元运费",
-          "discount": 0,
-          "expireDays": 60,
-          "targetProductId": null
-        }
-      ]
-    },
-    "pagination": {
-      "page": 1,
-      "pageSize": 10,
-      "total": 15,
-      "totalPages": 2,
-      "hasMore": true
-    }
+    "couponList": [
+      {
+        "id": 101, // 优惠券ID
+        "title": "新球友专享大礼包", // 优惠券标题
+        "amount": 50, // 优惠金额（满减券）或折扣（折扣券）
+        "minAmount": 299, // 最低使用金额
+        "type": 1, // 优惠券类型（1满减券/2折扣券/3免邮券）
+        "scope": "全场羽毛球用品", // 适用范围
+        "startTime": "2024-01-01", // 生效时间
+        "endTime": "2024-12-31", // 到期时间
+        "status": 1, // 状态（1可使用/4即将过期）
+        "useTime": null, // 使用时间（未使用为null）
+        "description": "新用户注册即得，购买羽毛球拍、球鞋等满299元可用", // 优惠券描述
+        "discount": 50 // 实际优惠金额（满减券/折扣券/免邮券）
+      }
+    ],
+    "currentPage": 1, // 当前页码
+    "pageSize": 10, // 每页数量
+    "hasMore": true // 是否还有更多数据
   },
   "message": "获取优惠券列表成功",
   "success": true
@@ -115,118 +77,46 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.coupons | object | 是 | 优惠券数据 | |
-| body.coupons.total | int | 是 | 优惠券总数 | 15 |
-| body.coupons.list | array | 是 | 优惠券列表 | |
-| body.coupons.list[].id | int | 是 | 优惠券ID | 101 |
-| body.coupons.list[].title | string | 是 | 优惠券标题 | 新球友专享大礼包 |
-| body.coupons.list[].amount | number | 是 | 优惠金额（满减券）或折扣（折扣券） | 50 |
-| body.coupons.list[].minAmount | number | 是 | 最低使用金额 | 299 |
-| body.coupons.list[].type | int | 是 | 优惠券类型（1满减券/2折扣券/3免邮券） | 1 |
-| body.coupons.list[].scope | string | 是 | 适用范围 | 全场羽毛球用品 |
-| body.coupons.list[].startTime | string | 是 | 生效时间 | 2024-01-01 |
-| body.coupons.list[].endTime | string | 是 | 到期时间 | 2024-12-31 |
-| body.coupons.list[].status | int | 是 | 状态（1可使用/2已使用/3已过期/4即将过期） | 1 |
-| body.coupons.list[].description | string | 是 | 优惠券描述 | 新用户注册即得，购买羽毛球拍、球鞋等满299元可用 |
-| body.coupons.list[].discount | number | 是 | 实际优惠金额 | 50 |
-| body.coupons.list[].expireDays | int | 是 | 距离过期天数 | 30 |
-| body.coupons.list[].targetProductId | string | 否 | 指定商品ID（全场券为null） | null |
-| body.pagination | object | 是 | 分页信息 | |
-| body.pagination.page | int | 是 | 当前页码 | 1 |
-| body.pagination.pageSize | int | 是 | 每页数量 | 10 |
-| body.pagination.total | int | 是 | 总记录数 | 15 |
-| body.pagination.totalPages | int | 是 | 总页数 | 2 |
-| body.pagination.hasMore | bool | 是 | 是否有更多数据 | true |
+| body | object | 是 | 响应数据 |  |
+| body.couponList | array | 是 | 优惠券列表 |  |
+| body.couponList[].id | int | 是 | 优惠券ID | 101 |
+| body.couponList[].title | string | 是 | 优惠券标题 | 新球友专享大礼包 |
+| body.couponList[].amount | number | 是 | 优惠金额（满减券）或折扣（折扣券） | 50 |
+| body.couponList[].minAmount | number | 是 | 最低使用金额 | 299 |
+| body.couponList[].type | int | 是 | 优惠券类型（1满减券/2折扣券/3免邮券） | 1 |
+| body.couponList[].scope | string | 是 | 适用范围 | 全场羽毛球用品 |
+| body.couponList[].startTime | string | 是 | 生效时间 | 2024-01-01 |
+| body.couponList[].endTime | string | 是 | 到期时间 | 2024-12-31 |
+| body.couponList[].status | int | 是 | 状态（1可使用/4即将过期） | 1 |
+| body.couponList[].useTime | string | 否 | 使用时间（未使用为null） | null |
+| body.couponList[].description | string | 否 | 优惠券描述 | 新用户注册即得... |
+| body.couponList[].discount | number | 是 | 实际优惠金额 | 50 |
+| body.currentPage | int | 是 | 当前页码 | 1 |
+| body.pageSize | int | 是 | 每页数量 | 10 |
+| body.hasMore | bool | 是 | 是否还有更多数据 | true |
 | message | string | 是 | 响应消息 | 获取优惠券列表成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**注释：**
+- 优惠券主键为id，所有字段与index.js完全一致。
+- 只保留JS实际用到的字段。
+- 分页通过currentPage、pageSize、hasMore控制，无嵌套分页对象。
+- 状态只用0（全部）、1（可使用）、4（即将过期）。
+- 每个字段后均有注释，便于理解。
 
 ---
 
 ## 选择优惠券（订单确认页使用）
 
-**接口名称：** 选择优惠券
-**功能描述：** 从订单确认页面选择优惠券，验证可用性并返回优惠信息
-**接口地址：** /api/orders/select-coupon
-**请求方式：** POST
-
-### 功能说明
-用户在订单确认页面选择优惠券时，验证该优惠券是否可用于当前订单，并返回优惠后的金额信息。**此接口需要用户登录状态。**
-
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    participant DB as 数据库
-    Client->>Server: 选择优惠券
-    Server->>DB: 查询优惠券信息
-    Server->>DB: 验证优惠券可用性
-    Server->>Server: 计算优惠金额
-    alt 优惠券可用
-        Server-->>Client: 返回优惠计算结果
-    else 优惠券不可用
-        Server-->>Client: 返回不可用原因
-    end
-```
-
-### 请求参数
-```json
-{
-  "couponId": 101,
-  "orderAmount": 350.00,
-  "goodsIds": ["goods_001", "goods_002"]
-}
-```
-
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| couponId | int | 是 | 优惠券ID | 101 |
-| orderAmount | number | 是 | 订单商品总金额 | 350.00 |
-| goodsIds | array | 是 | 商品ID列表 | ["goods_001", "goods_002"] |
-
-### 响应参数
-```json
-{
-  "error": 0,
-  "body": {
-    "couponResult": {
-      "canUse": true,
-      "couponInfo": {
-        "id": 101,
-        "title": "新球友专享大礼包",
-        "type": 1,
-        "amount": 50,
-        "minAmount": 299
-      },
-      "discountAmount": 50.00,
-      "finalAmount": 300.00,
-      "message": "优惠券可用，订单优惠50元"
-    }
-  },
-  "message": "优惠券验证成功",
-  "success": true
-}
-```
-
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| error | int | 是 | 错误码，0成功/401未登录/400优惠券不可用 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.couponResult | object | 是 | 优惠券验证结果 | |
-| body.couponResult.canUse | bool | 是 | 是否可以使用 | true |
-| body.couponResult.couponInfo | object | 是 | 优惠券信息 | |
-| body.couponResult.couponInfo.id | int | 是 | 优惠券ID | 101 |
-| body.couponResult.couponInfo.title | string | 是 | 优惠券标题 | 新球友专享大礼包 |
-| body.couponResult.couponInfo.type | int | 是 | 优惠券类型 | 1 |
-| body.couponResult.couponInfo.amount | number | 是 | 优惠金额 | 50 |
-| body.couponResult.couponInfo.minAmount | number | 是 | 最低使用金额 | 299 |
-| body.couponResult.discountAmount | number | 是 | 实际优惠金额 | 50.00 |
-| body.couponResult.finalAmount | number | 是 | 优惠后金额 | 300.00 |
-| body.couponResult.message | string | 是 | 验证结果消息 | 优惠券可用，订单优惠50元 |
-| message | string | 是 | 响应消息 | 优惠券验证成功 |
-| success | bool | 是 | 是否成功 | true |
+> 由于index.js为本地模拟数据，实际接口字段请参考上方结构，所有涉及优惠券的字段均以id、title、amount、minAmount、type、scope、startTime、endTime、status、useTime、description、discount为主。
+> 
+> 其它接口如选择、使用、统计等，参数和返回结构请严格参照上方字段，去除文档中未在JS出现的字段。
 
 ---
+
+**友情提示：**
+- 文档字段已与index.js完全对齐，开发时如有字段变动请同步更新本接口文档。
+- 每个字段后均有注释，方便理解和开发。
 
 ## 使用优惠券
 

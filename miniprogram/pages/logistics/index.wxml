@@ -72,15 +72,8 @@
       <view class="error-title">暂未查询到物流信息</view>
       <view class="error-desc">
         物流信息可能存在延迟更新，请稍后重试
-        <text class="error-highlight">或联系客服咨询</text>
       </view>
       <button class="retry-btn" bindtap="refreshLogistics">重新查询</button>
-    </view>
-
-    <!-- 底部操作区域 -->
-    <view class="bottom-actions">
-      <button class="action-btn secondary" bindtap="contactService">联系客服</button>
-      <button class="action-btn primary" bindtap="refreshLogistics">刷新物流</button>
     </view>
   </view>
 

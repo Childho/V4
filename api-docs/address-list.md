@@ -8,7 +8,7 @@
 **请求方式：** GET
 
 ### 功能说明
-获取用户的所有收货地址列表，用于地址管理页面展示和订单确认页面地址选择。默认地址排在列表首位。**此接口需要用户登录状态。**
+获取用户的所有收货地址列表，用于地址管理页面展示和订单确认页面地址选择。根据address-list/index.js中的loadAddressList方法实现，默认地址排在列表首位，每个地址会添加selected字段用于编辑模式的多选功能。**此接口需要用户登录状态。**
 
 ```mermaid
 sequenceDiagram
@@ -36,32 +36,24 @@ sequenceDiagram
 ```json
 {
   "error": 0,
-  "body": {
-    "addresses": [
-      {
-        "id": "addr_001",
-        "consignee": "张三",
-        "mobile": "13812345678",
-        "region": "广东省 深圳市 南山区",
-        "detail": "科技园南区深圳软件园二期东座1002室",
-        "isDefault": true,
-        "createTime": "2024-01-10 14:30:00",
-        "updateTime": "2024-01-15 16:20:00"
-      },
-      {
-        "id": "addr_002",
-        "consignee": "张三",
-        "mobile": "13812345678",
-        "region": "广东省 深圳市 福田区",
-        "detail": "华强北街道振兴路120号赛格广场3楼",
-        "isDefault": false,
-        "createTime": "2024-01-08 10:15:00",
-        "updateTime": "2024-01-08 10:15:00"
-      }
-    ],
-    "total": 2,
-    "defaultAddressId": "addr_001"
-  },
+  "body": [
+    {
+      "id": 1,
+      "consignee": "张三",
+      "mobile": "13812345678",
+      "region": "广东省 深圳市 南山区",
+      "detail": "科技园南区深圳软件园二期东座1002室",
+      "isDefault": true
+    },
+    {
+      "id": 2,
+      "consignee": "张三",
+      "mobile": "13812345678",
+      "region": "广东省 深圳市 福田区",
+      "detail": "华强北街道振兴路120号赛格广场3楼",
+      "isDefault": false
+    }
+  ],
   "message": "获取地址列表成功",
   "success": true
 }
@@ -70,20 +62,21 @@ sequenceDiagram
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.addresses | array | 是 | 地址列表 | |
-| body.addresses[].id | string | 是 | 地址ID | addr_001 |
-| body.addresses[].consignee | string | 是 | 收件人姓名 | 张三 |
-| body.addresses[].mobile | string | 是 | 收件人手机号 | 13812345678 |
-| body.addresses[].region | string | 是 | 省市区信息 | 广东省 深圳市 南山区 |
-| body.addresses[].detail | string | 是 | 详细地址 | 科技园南区深圳软件园二期东座1002室 |
-| body.addresses[].isDefault | bool | 是 | 是否为默认地址 | true |
-| body.addresses[].createTime | string | 是 | 创建时间 | 2024-01-10 14:30:00 |
-| body.addresses[].updateTime | string | 是 | 更新时间 | 2024-01-15 16:20:00 |
-| body.total | int | 是 | 地址总数 | 2 |
-| body.defaultAddressId | string | 否 | 默认地址ID | addr_001 |
+| body | array | 是 | 地址列表数组 | |
+| body[].id | int | 是 | 地址ID（数字类型） | 1 |
+| body[].consignee | string | 是 | 收件人姓名 | 张三 |
+| body[].mobile | string | 是 | 收件人手机号 | 13812345678 |
+| body[].region | string | 是 | 省市区信息（空格分隔） | 广东省 深圳市 南山区 |
+| body[].detail | string | 是 | 详细地址 | 科技园南区深圳软件园二期东座1002室 |
+| body[].isDefault | bool | 是 | 是否为默认地址 | true |
 | message | string | 是 | 响应消息 | 获取地址列表成功 |
 | success | bool | 是 | 是否成功 | true |
+
+**字段说明：**
+- `body`: 直接返回地址数组，而非嵌套在addresses字段中，对应JS代码中的`await getAddressList()`
+- `id`: 地址的唯一标识符，为数字类型，对应JS代码中的地址选择和操作逻辑
+- `region`: 地区信息，使用空格分隔格式，对应JS代码中的地区显示
+- 每个地址项在前端会自动添加`selected: false`字段用于编辑模式的多选功能
 
 ---
 
@@ -95,7 +88,7 @@ sequenceDiagram
 **请求方式：** DELETE
 
 ### 功能说明
-删除用户指定的收货地址。如果删除的是默认地址，系统会自动将第一个地址设为默认地址。**此接口需要用户登录状态。**
+删除用户指定的收货地址。根据address-list/index.js中的deleteAddress方法实现，如果删除的是默认地址，系统会自动将第一个地址设为默认地址。删除前会显示确认弹窗。**此接口需要用户登录状态。**
 
 ```mermaid
 sequenceDiagram
@@ -118,26 +111,22 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "addressId": "addr_002"
+  "addressId": 2
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| addressId | string | 是 | 地址ID | addr_002 |
+| addressId | int | 是 | 地址ID（数字类型） | 2 |
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "deleteResult": {
-      "addressId": "addr_002",
-      "deleted": true,
-      "wasDefault": false,
-      "newDefaultAddressId": null,
-      "message": "地址删除成功"
-    }
+    "addressId": 2,
+    "deleted": true,
+    "message": "地址删除成功"
   },
   "message": "地址删除成功",
   "success": true
@@ -148,12 +137,9 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录/404地址不存在 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.deleteResult | object | 是 | 删除结果 | |
-| body.deleteResult.addressId | string | 是 | 被删除的地址ID | addr_002 |
-| body.deleteResult.deleted | bool | 是 | 是否删除成功 | true |
-| body.deleteResult.wasDefault | bool | 是 | 被删除地址是否为默认地址 | false |
-| body.deleteResult.newDefaultAddressId | string | 否 | 新的默认地址ID（如果删除的是默认地址） | null |
-| body.deleteResult.message | string | 是 | 删除结果消息 | 地址删除成功 |
+| body.addressId | int | 是 | 被删除的地址ID（数字类型） | 2 |
+| body.deleted | bool | 是 | 是否删除成功 | true |
+| body.message | string | 是 | 删除结果消息 | 地址删除成功 |
 | message | string | 是 | 响应消息 | 地址删除成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -167,7 +153,7 @@ sequenceDiagram
 **请求方式：** DELETE
 
 ### 功能说明
-批量删除用户选中的多个收货地址。如果删除的地址中包含默认地址，系统会自动设置剩余的第一个地址为默认地址。**此接口需要用户登录状态。**
+批量删除用户选中的多个收货地址。根据address-list/index.js中的batchDelete和confirmDelete方法实现，如果删除的地址中包含默认地址，系统会自动设置剩余的第一个地址为默认地址。操作完成后会退出编辑模式。**此接口需要用户登录状态。**
 
 ```mermaid
 sequenceDiagram
@@ -191,28 +177,23 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "addressIds": ["addr_002", "addr_003", "addr_004"]
+  "addressIds": [2, 3, 4]
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| addressIds | array | 是 | 要删除的地址ID数组 | ["addr_002", "addr_003", "addr_004"] |
+| addressIds | array | 是 | 要删除的地址ID数组（数字类型） | [2, 3, 4] |
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "batchDeleteResult": {
-      "requestedCount": 3,
-      "deletedCount": 3,
-      "deletedIds": ["addr_002", "addr_003", "addr_004"],
-      "failedIds": [],
-      "defaultAddressDeleted": false,
-      "newDefaultAddressId": null,
-      "message": "成功删除3个地址"
-    }
+    "requestedCount": 3,
+    "deletedCount": 3,
+    "deletedIds": [2, 3, 4],
+    "message": "成功删除3个地址"
   },
   "message": "批量删除地址成功",
   "success": true
@@ -223,14 +204,10 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录/400请求参数错误 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.batchDeleteResult | object | 是 | 批量删除结果 | |
-| body.batchDeleteResult.requestedCount | int | 是 | 请求删除的地址数量 | 3 |
-| body.batchDeleteResult.deletedCount | int | 是 | 实际删除的地址数量 | 3 |
-| body.batchDeleteResult.deletedIds | array | 是 | 成功删除的地址ID数组 | ["addr_002", "addr_003", "addr_004"] |
-| body.batchDeleteResult.failedIds | array | 是 | 删除失败的地址ID数组 | [] |
-| body.batchDeleteResult.defaultAddressDeleted | bool | 是 | 是否删除了默认地址 | false |
-| body.batchDeleteResult.newDefaultAddressId | string | 否 | 新的默认地址ID（如果删除了默认地址） | null |
-| body.batchDeleteResult.message | string | 是 | 批量删除结果消息 | 成功删除3个地址 |
+| body.requestedCount | int | 是 | 请求删除的地址数量 | 3 |
+| body.deletedCount | int | 是 | 实际删除的地址数量 | 3 |
+| body.deletedIds | array | 是 | 成功删除的地址ID数组（数字类型） | [2, 3, 4] |
+| body.message | string | 是 | 批量删除结果消息 | 成功删除3个地址 |
 | message | string | 是 | 响应消息 | 批量删除地址成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -244,7 +221,7 @@ sequenceDiagram
 **请求方式：** POST
 
 ### 功能说明
-将用户指定的地址设置为默认收货地址，系统会自动取消之前的默认地址。**此接口需要用户登录状态。**
+将用户指定的地址设置为默认收货地址。根据address-list/index.js中的setAsDefault方法实现，系统会自动取消之前的默认地址。操作完成后会重新加载地址列表。**此接口需要用户登录状态。**
 
 ```mermaid
 sequenceDiagram
@@ -265,31 +242,22 @@ sequenceDiagram
 ### 请求参数
 ```json
 {
-  "addressId": "addr_002"
+  "addressId": 2
 }
 ```
 
 | 参数名 | 类型 | 必填 | 说明 | 示例值 |
 |----|---|-----|---|-----|
-| addressId | string | 是 | 要设为默认的地址ID | addr_002 |
+| addressId | int | 是 | 要设为默认的地址ID（数字类型） | 2 |
 
 ### 响应参数
 ```json
 {
   "error": 0,
   "body": {
-    "setDefaultResult": {
-      "addressId": "addr_002",
-      "setAsDefault": true,
-      "previousDefaultId": "addr_001",
-      "addressInfo": {
-        "consignee": "张三",
-        "mobile": "13812345678",
-        "region": "广东省 深圳市 福田区",
-        "detail": "华强北街道振兴路120号赛格广场3楼"
-      },
-      "message": "默认地址设置成功"
-    }
+    "addressId": 2,
+    "setAsDefault": true,
+    "message": "默认地址设置成功"
   },
   "message": "默认地址设置成功",
   "success": true
@@ -300,210 +268,64 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录/404地址不存在 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.setDefaultResult | object | 是 | 设置结果 | |
-| body.setDefaultResult.addressId | string | 是 | 设为默认的地址ID | addr_002 |
-| body.setDefaultResult.setAsDefault | bool | 是 | 是否设置成功 | true |
-| body.setDefaultResult.previousDefaultId | string | 否 | 之前的默认地址ID | addr_001 |
-| body.setDefaultResult.addressInfo | object | 是 | 地址信息 | |
-| body.setDefaultResult.addressInfo.consignee | string | 是 | 收件人姓名 | 张三 |
-| body.setDefaultResult.addressInfo.mobile | string | 是 | 收件人手机号 | 13812345678 |
-| body.setDefaultResult.addressInfo.region | string | 是 | 省市区信息 | 广东省 深圳市 福田区 |
-| body.setDefaultResult.addressInfo.detail | string | 是 | 详细地址 | 华强北街道振兴路120号赛格广场3楼 |
-| body.setDefaultResult.message | string | 是 | 设置结果消息 | 默认地址设置成功 |
+| body.addressId | int | 是 | 设为默认的地址ID（数字类型） | 2 |
+| body.setAsDefault | bool | 是 | 是否设置成功 | true |
+| body.message | string | 是 | 设置结果消息 | 默认地址设置成功 |
 | message | string | 是 | 响应消息 | 默认地址设置成功 |
 | success | bool | 是 | 是否成功 | true |
 
 ---
 
-## 新增地址
+## 页面模式和交互逻辑
 
-**接口名称：** 新增地址
-**功能描述：** 添加新的收货地址
-**接口地址：** /api/user/addresses/add
-**请求方式：** POST
+### 页面模式说明
+根据address-list/index.js中的onLoad方法实现，地址列表页面支持两种模式：
 
-### 功能说明
-为用户添加新的收货地址。如果是用户的第一个地址，会自动设为默认地址。**此接口需要用户登录状态。**
+#### 地址管理模式（默认）
+- **来源参数**：`fromPage` 为空或 `"manage"`
+- **页面标题**："地址管理"
+- **功能特性**：
+  - 支持编辑模式：长按进入编辑模式，可多选删除
+  - 支持单个操作：编辑、删除单个地址
+  - 支持新增地址：跳转到地址表单页面
+  - 点击地址卡片无操作（管理模式下不设置默认地址）
 
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    participant DB as 数据库
-    Client->>Server: 请求新增地址
-    Server->>DB: 验证地址信息
-    Server->>DB: 检查用户地址数量
-    alt 地址信息有效
-        Server->>DB: 创建新地址记录
-        alt 用户第一个地址
-            Server->>DB: 设为默认地址
-        end
-        Server-->>Client: 返回新增成功
-    else 地址信息无效
-        Server-->>Client: 返回新增失败
-    end
-```
+#### 地址选择模式
+- **来源参数**：`fromPage` 为 `"order"` 或 `"order-confirm"`
+- **页面标题**："选择收货地址"
+- **功能特性**：
+  - 点击地址卡片直接选择并返回
+  - 通过`onAddressSelected`回调或存储方式传递选中地址
+  - 自动执行`wx.navigateBack()`返回上一页
 
-### 请求参数
-```json
-{
-  "consignee": "李四",
-  "mobile": "13987654321",
-  "region": "北京市 朝阳区",
-  "detail": "建国门外大街1号国贸大厦A座20层",
-  "isDefault": false
-}
-```
+### 编辑模式功能
+根据JS代码实现的编辑模式功能：
 
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| consignee | string | 是 | 收件人姓名 | 李四 |
-| mobile | string | 是 | 收件人手机号 | 13987654321 |
-| region | string | 是 | 省市区信息 | 北京市 朝阳区 |
-| detail | string | 是 | 详细地址 | 建国门外大街1号国贸大厦A座20层 |
-| isDefault | bool | 否 | 是否设为默认地址（默认false） | false |
+#### 进入编辑模式
+- **触发方式**：长按地址卡片或点击编辑按钮
+- **反馈提示**：显示"已进入编辑模式"Toast和轻震动反馈
+- **页面状态**：`isEditMode: true`
 
-### 响应参数
-```json
-{
-  "error": 0,
-  "body": {
-    "addResult": {
-      "addressId": "addr_005",
-      "created": true,
-      "addressInfo": {
-        "id": "addr_005",
-        "consignee": "李四",
-        "mobile": "13987654321",
-        "region": "北京市 朝阳区",
-        "detail": "建国门外大街1号国贸大厦A座20层",
-        "isDefault": false,
-        "createTime": "2024-01-16 10:30:00"
-      },
-      "isFirstAddress": false,
-      "message": "地址添加成功"
-    }
-  },
-  "message": "地址添加成功",
-  "success": true
-}
-```
+#### 多选功能
+- **选中状态**：每个地址添加`selected`字段
+- **全选功能**：支持全选/取消全选操作
+- **选中计数**：实时更新`selectedIds`数组
 
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| error | int | 是 | 错误码，0成功/401未登录/400参数错误 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.addResult | object | 是 | 添加结果 | |
-| body.addResult.addressId | string | 是 | 新增的地址ID | addr_005 |
-| body.addResult.created | bool | 是 | 是否创建成功 | true |
-| body.addResult.addressInfo | object | 是 | 地址详细信息 | |
-| body.addResult.addressInfo.id | string | 是 | 地址ID | addr_005 |
-| body.addResult.addressInfo.consignee | string | 是 | 收件人姓名 | 李四 |
-| body.addResult.addressInfo.mobile | string | 是 | 收件人手机号 | 13987654321 |
-| body.addResult.addressInfo.region | string | 是 | 省市区信息 | 北京市 朝阳区 |
-| body.addResult.addressInfo.detail | string | 是 | 详细地址 | 建国门外大街1号国贸大厦A座20层 |
-| body.addResult.addressInfo.isDefault | bool | 是 | 是否为默认地址 | false |
-| body.addResult.addressInfo.createTime | string | 是 | 创建时间 | 2024-01-16 10:30:00 |
-| body.addResult.isFirstAddress | bool | 是 | 是否为用户第一个地址 | false |
-| body.addResult.message | string | 是 | 添加结果消息 | 地址添加成功 |
-| message | string | 是 | 响应消息 | 地址添加成功 |
-| success | bool | 是 | 是否成功 | true |
+#### 退出编辑模式
+- **清空选中**：自动清空所有选中状态
+- **恢复正常**：返回正常浏览模式
 
----
+### 地址操作功能
 
-## 编辑地址
+#### 新增地址
+- **跳转路径**：`/pages/address-form/index?action=add`
+- **页面刷新**：`onShow`时自动重新加载地址列表
 
-**接口名称：** 编辑地址
-**功能描述：** 修改指定的收货地址信息
-**接口地址：** /api/user/addresses/edit
-**请求方式：** PUT
+#### 编辑地址
+- **跳转路径**：`/pages/address-form/index?id=${id}&action=edit`
+- **参数传递**：地址ID为数字类型
 
-### 功能说明
-修改用户指定的收货地址信息，包括收件人、手机号、地址等。**此接口需要用户登录状态。**
-
-```mermaid
-sequenceDiagram
-    participant Client as 小程序客户端
-    participant Server as 后端服务
-    participant DB as 数据库
-    Client->>Server: 请求编辑地址
-    Server->>DB: 查询地址信息
-    alt 地址存在且属于用户
-        Server->>DB: 更新地址信息
-        alt 修改默认地址设置
-            Server->>DB: 处理默认地址变更
-        end
-        Server-->>Client: 返回编辑成功
-    else 地址不存在或无权限
-        Server-->>Client: 返回编辑失败
-    end
-```
-
-### 请求参数
-```json
-{
-  "addressId": "addr_002",
-  "consignee": "张三丰",
-  "mobile": "13812345678",
-  "region": "广东省 深圳市 福田区",
-  "detail": "华强北街道振兴路120号赛格广场5楼",
-  "isDefault": true
-}
-```
-
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| addressId | string | 是 | 地址ID | addr_002 |
-| consignee | string | 是 | 收件人姓名 | 张三丰 |
-| mobile | string | 是 | 收件人手机号 | 13812345678 |
-| region | string | 是 | 省市区信息 | 广东省 深圳市 福田区 |
-| detail | string | 是 | 详细地址 | 华强北街道振兴路120号赛格广场5楼 |
-| isDefault | bool | 否 | 是否设为默认地址 | true |
-
-### 响应参数
-```json
-{
-  "error": 0,
-  "body": {
-    "editResult": {
-      "addressId": "addr_002",
-      "updated": true,
-      "addressInfo": {
-        "id": "addr_002",
-        "consignee": "张三丰",
-        "mobile": "13812345678",
-        "region": "广东省 深圳市 福田区",
-        "detail": "华强北街道振兴路120号赛格广场5楼",
-        "isDefault": true,
-        "updateTime": "2024-01-16 11:00:00"
-      },
-      "defaultChanged": true,
-      "previousDefaultId": "addr_001",
-      "message": "地址修改成功"
-    }
-  },
-  "message": "地址修改成功",
-  "success": true
-}
-```
-
-| 参数名 | 类型 | 必填 | 说明 | 示例值 |
-|----|---|-----|---|-----|
-| error | int | 是 | 错误码，0成功/401未登录/404地址不存在 | 0 |
-| body | object | 是 | 响应数据 | |
-| body.editResult | object | 是 | 编辑结果 | |
-| body.editResult.addressId | string | 是 | 编辑的地址ID | addr_002 |
-| body.editResult.updated | bool | 是 | 是否更新成功 | true |
-| body.editResult.addressInfo | object | 是 | 更新后的地址信息 | |
-| body.editResult.addressInfo.id | string | 是 | 地址ID | addr_002 |
-| body.editResult.addressInfo.consignee | string | 是 | 收件人姓名 | 张三丰 |
-| body.editResult.addressInfo.mobile | string | 是 | 收件人手机号 | 13812345678 |
-| body.editResult.addressInfo.region | string | 是 | 省市区信息 | 广东省 深圳市 福田区 |
-| body.editResult.addressInfo.detail | string | 是 | 详细地址 | 华强北街道振兴路120号赛格广场5楼 |
-| body.editResult.addressInfo.isDefault | bool | 是 | 是否为默认地址 | true |
-| body.editResult.addressInfo.updateTime | string | 是 | 更新时间 | 2024-01-16 11:00:00 |
-| body.editResult.defaultChanged | bool | 是 | 默认地址是否发生变更 | true |
-| body.editResult.previousDefaultId | string | 否 | 之前的默认地址ID | addr_001 |
-| body.editResult.message | string | 是 | 编辑结果消息 | 地址修改成功 |
-| message | string | 是 | 响应消息 | 地址修改成功 |
-| success | bool | 是 | 是否成功 | true | 
+#### 删除确认
+- **弹窗提示**：根据是否默认地址显示不同提示信息
+- **默认地址提示**：`确定要删除默认地址"${address.consignee}"吗？`
+- **普通地址提示**：`确定要删除"${address.consignee}"的地址吗？` 
