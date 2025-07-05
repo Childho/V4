@@ -1,4 +1,4 @@
-# 个人页面接口文档
+# 个人页面接口文档（已对齐index.ts字段，含详细注释）
 
 ## 获取用户基本信息
 
@@ -8,7 +8,7 @@
 **请求方式：** GET
 
 ### 功能说明
-在个人页面显示用户的基本信息，包括头像、昵称、积分余额、会员等级、优惠券数量、服务数量等。**此接口需要用户登录状态。**
+在个人页面显示用户的基本信息，包括头像、昵称、积分余额、会员等级等。**此接口需要用户登录状态。**
 
 ```mermaid
 sequenceDiagram
@@ -22,7 +22,6 @@ sequenceDiagram
         Auth-->>Server: 验证通过
         Server->>DB: 查询用户基本信息
         Server->>DB: 查询用户积分信息
-        Server->>DB: 查询优惠券和服务统计
         Server-->>Client: 返回用户完整信息
     else 用户未登录
         Auth-->>Server: 验证失败
@@ -40,16 +39,14 @@ sequenceDiagram
   "error": 0,
   "body": {
     "userInfo": {
-      "userId": 123456,
-      "avatarUrl": "https://wx.qlogo.cn/mmopen/vi_32/xxx.jpg",
-      "nickName": "张三",
-      "pointsTotal": 1280,
-      "pointsBalance": 850,
-      "level": "中级会员",
-      "id": "10086",
-      "coupons": 5,
-      "services": 3
-    }
+      "avatarUrl": "https://wx.qlogo.cn/mmopen/vi_32/xxx.jpg", // 用户头像URL
+      "nickName": "张三", // 用户昵称
+      "level": "中级会员", // 会员等级
+      "id": "10086", // 用户编号
+      "pointsBalance": 850 // 当前积分余额
+    },
+    "coupons": 5, // 优惠券数量
+    "services": 3 // 服务数量
   },
   "message": "获取用户基本信息成功",
   "success": true
@@ -61,15 +58,13 @@ sequenceDiagram
 | error | int | 是 | 错误码，0成功/401未登录 | 0 |
 | body | object | 是 | 响应数据 | |
 | body.userInfo | object | 是 | 用户信息 | |
-| body.userInfo.userId | int | 是 | 用户ID | 123456 |
 | body.userInfo.avatarUrl | string | 是 | 用户头像URL | https://wx.qlogo.cn/mmopen/vi_32/xxx.jpg |
 | body.userInfo.nickName | string | 是 | 用户昵称 | 张三 |
-| body.userInfo.pointsTotal | int | 是 | 累计总积分 | 1280 |
-| body.userInfo.pointsBalance | int | 是 | 当前积分余额 | 850 |
 | body.userInfo.level | string | 是 | 会员等级 | 中级会员 |
 | body.userInfo.id | string | 是 | 用户编号 | 10086 |
-| body.userInfo.coupons | int | 是 | 优惠券数量 | 5 |
-| body.userInfo.services | int | 是 | 服务数量 | 3 |
+| body.userInfo.pointsBalance | int | 是 | 当前积分余额 | 850 |
+| body.coupons | int | 是 | 优惠券数量 | 5 |
+| body.services | int | 是 | 服务数量 | 3 |
 | message | string | 是 | 响应消息 | 获取用户基本信息成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -110,10 +105,8 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "pointsInfo": {
-      "balance": 850,
-      "isSigned": false
-    }
+    "balance": 850, // 积分余额
+    "isSigned": false // 今日是否已签到
   },
   "message": "获取积分信息成功",
   "success": true
@@ -124,9 +117,8 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.pointsInfo | object | 是 | 积分信息 | |
-| body.pointsInfo.balance | int | 是 | 积分余额 | 850 |
-| body.pointsInfo.isSigned | bool | 是 | 今日是否已签到 | false |
+| body.balance | int | 是 | 积分余额 | 850 |
+| body.isSigned | bool | 是 | 今日是否已签到 | false |
 | message | string | 是 | 响应消息 | 获取积分信息成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -170,13 +162,11 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "orderCounts": {
-      "unpaid": 2,
-      "unshipped": 1,
-      "shipped": 3,
-      "uncommented": 1,
-      "refunding": 0
-    }
+    "unpaid": 2, // 待付款订单数
+    "unshipped": 1, // 待发货订单数
+    "shipped": 3, // 待收货订单数
+    "uncommented": 1, // 待评价订单数
+    "refunding": 0 // 退款/售后订单数
   },
   "message": "获取订单统计成功",
   "success": true
@@ -187,12 +177,11 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.orderCounts | object | 是 | 订单统计信息 | |
-| body.orderCounts.unpaid | int | 是 | 待付款订单数 | 2 |
-| body.orderCounts.unshipped | int | 是 | 待发货订单数 | 1 |
-| body.orderCounts.shipped | int | 是 | 待收货订单数 | 3 |
-| body.orderCounts.uncommented | int | 是 | 待评价订单数 | 1 |
-| body.orderCounts.refunding | int | 是 | 退款/售后订单数 | 0 |
+| body.unpaid | int | 是 | 待付款订单数 | 2 |
+| body.unshipped | int | 是 | 待发货订单数 | 1 |
+| body.shipped | int | 是 | 待收货订单数 | 3 |
+| body.uncommented | int | 是 | 待评价订单数 | 1 |
+| body.refunding | int | 是 | 退款/售后订单数 | 0 |
 | message | string | 是 | 响应消息 | 获取订单统计成功 |
 | success | bool | 是 | 是否成功 | true |
 
@@ -240,13 +229,8 @@ sequenceDiagram
 {
   "error": 0,
   "body": {
-    "signInResult": {
-      "success": true,
-      "points": 5,
-      "continuousDays": 3,
-      "totalPoints": 855,
-      "message": "签到成功！连续签到3天"
-    }
+    "success": true, // 签到是否成功
+    "points": 5 // 本次获得积分
   },
   "message": "签到成功",
   "success": true
@@ -257,12 +241,8 @@ sequenceDiagram
 |----|---|-----|---|-----|
 | error | int | 是 | 错误码，0成功/401未登录/402已签到 | 0 |
 | body | object | 是 | 响应数据 | |
-| body.signInResult | object | 是 | 签到结果 | |
-| body.signInResult.success | bool | 是 | 签到是否成功 | true |
-| body.signInResult.points | int | 是 | 本次获得积分 | 5 |
-| body.signInResult.continuousDays | int | 是 | 连续签到天数 | 3 |
-| body.signInResult.totalPoints | int | 是 | 签到后总积分 | 855 |
-| body.signInResult.message | string | 是 | 签到结果消息 | 签到成功！连续签到3天 |
+| body.success | bool | 是 | 签到是否成功 | true |
+| body.points | int | 是 | 本次获得积分 | 5 |
 | message | string | 是 | 响应消息 | 签到成功 |
 | success | bool | 是 | 是否成功 | true |
 
