@@ -4,43 +4,82 @@ const { api } = require('../../api/utils/request')
 
 // 获取积分信息
 const getPoints = () => {
-  return api.post('/points/info', {});
+  return api.post('/api/points/info', {});
 };
 
 // 签到
 const signIn = () => {
-  return api.post('/points/signIn', {});
+  return api.post('/api/points/signIn', {});
 };
 
 // 获取签到记录
 const getSignInRecord = () => {
-  return api.post('/points/signInRecord', {});
+  return api.post('/api/points/signInRecord', {});
+};
+
+// 签到奖励配置 - 根据连续签到天数获得不同积分
+const getSignInReward = (continuousDays) => {
+  const rewards = {
+    1: 5,   // 第1天：5积分
+    2: 10,  // 第2天：10积分
+    3: 15,  // 第3天：15积分
+    4: 20,  // 第4天：20积分
+    5: 25,  // 第5天：25积分
+    6: 30,  // 第6天：30积分
+    7: 50   // 第7天：50积分（大奖励）
+  };
+  return rewards[continuousDays] || 5; // 默认5积分
 };
 
 Page({
   data: {
     userInfo: {
-      nickName: '张小燕',
-      pointsBalance: 280
+      nickName: '微信用户',
+      pointsBalance: 0
     },
     today: '',
     weekday: '',
     signedToday: false,
-    continuousDays: 7,
+    continuousDays: 0,
     currentMonth: '',
     signDays: [], // 本月已签到的日期数组
     daysInMonth: [], // 本月的所有天数
+    // 签到奖励展示
+    signRewards: [
+      { day: 1, reward: 5, status: 'pending' },
+      { day: 2, reward: 10, status: 'pending' },
+      { day: 3, reward: 15, status: 'pending' },
+      { day: 4, reward: 20, status: 'pending' },
+      { day: 5, reward: 25, status: 'pending' },
+      { day: 6, reward: 30, status: 'pending' },
+      { day: 7, reward: 50, status: 'pending' }
+    ],
     tasks: [
-      { id: 1, name: '每日签到', desc: '连续签到7天额外奖励30积分', icon: 'check-in', status: 0 },
+      { id: 1, name: '每日签到', desc: '每日签到获得积分奖励', icon: 'check-in', status: 0 },
       { id: 2, name: '分享小程序', desc: '分享给好友获得5积分', icon: 'share', status: 0 },
       { id: 3, name: '邀请好友', desc: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
     ],
-    loading: false
+    loading: false,
+    // 签到统计信息
+    signStats: {
+      totalDays: 0,      // 总签到天数
+      maxContinuous: 0,  // 最大连续签到天数
+      currentStreak: 0   // 当前连续签到天数
+    },
+    // 签到动画控制
+    showSignAnimation: false,
+    signAnimationReward: 0
   },
 
   onLoad() {
     this.initCalendar();
     this.getUserInfo();
+    this.getSignInStatus();
+    this.getSignInRecord();
+  },
+
+  // 页面显示时刷新数据
+  onShow() {
     this.getSignInStatus();
     this.getSignInRecord();
   },
@@ -112,10 +151,28 @@ Page({
       if (!token) return;
       
       const record = await getSignInRecord();
-      if (record && record.days) {
+      if (record) {
+        const continuousDays = record.continuousDays || 0;
+        const signDays = record.days || [];
+        
+        // 更新签到奖励状态
+        const signRewards = this.data.signRewards.map(item => {
+          const dayIndex = continuousDays >= item.day ? 1 : 0;
+          return {
+            ...item,
+            status: dayIndex ? 'received' : 'pending'
+          };
+        });
+        
         this.setData({
-          signDays: record.days || [], // 已签到的日期
-          continuousDays: record.continuousDays || 0
+          signDays: signDays,
+          continuousDays: continuousDays,
+          signRewards: signRewards,
+          signStats: {
+            totalDays: record.totalDays || 0,
+            maxContinuous: record.maxContinuous || 0,
+            currentStreak: continuousDays
+          }
         });
       }
     } catch (error) {
@@ -125,7 +182,7 @@ Page({
     }
   },
 
-  // 签到功能
+  // 签到功能 - 增强版
   async handleSignIn() {
     if (this.data.signedToday) {
       wx.showToast({
@@ -139,19 +196,31 @@ Page({
       this.setData({ loading: true });
       const token = wx.getStorageSync('token');
       if (!token) {
-        wx.navigateTo({
-          url: '/pages/login/index'
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
         });
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
         return;
       }
       
       const result = await signIn();
       if (result && result.success) {
+        const newContinuousDays = this.data.continuousDays + 1;
+        const rewardPoints = result.points || getSignInReward(newContinuousDays);
+        
         // 更新签到状态
         this.setData({
           signedToday: true,
           'tasks[0].status': 1,
-          'userInfo.pointsBalance': this.data.userInfo.pointsBalance + (result.points || 5)
+          'userInfo.pointsBalance': this.data.userInfo.pointsBalance + rewardPoints,
+          continuousDays: newContinuousDays,
+          signAnimationReward: rewardPoints,
+          showSignAnimation: true
         });
         
         // 更新签到记录
@@ -159,15 +228,24 @@ Page({
         if (!signDays.includes(this.data.today)) {
           signDays.push(this.data.today);
         }
-        this.setData({ 
-          signDays,
-          continuousDays: this.data.continuousDays + 1
-        });
+        this.setData({ signDays });
         
-        wx.showToast({
-          title: `签到成功 +${result.points || 5}积分`,
-          icon: 'success'
+        // 更新签到奖励状态
+        const signRewards = this.data.signRewards.map(item => {
+          return {
+            ...item,
+            status: newContinuousDays >= item.day ? 'received' : 'pending'
+          };
         });
+        this.setData({ signRewards });
+        
+        // 显示签到成功动画
+        this.showSignSuccess(rewardPoints, newContinuousDays);
+        
+        // 3秒后隐藏动画
+        setTimeout(() => {
+          this.setData({ showSignAnimation: false });
+        }, 3000);
       }
     } catch (error) {
       console.error('[签到失败]', error);
@@ -178,6 +256,27 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  // 显示签到成功动画和提示
+  showSignSuccess(points, continuousDays) {
+    let title = `签到成功 +${points}积分`;
+    
+    // 连续签到特殊提示
+    if (continuousDays === 7) {
+      title = `连续签到7天！获得${points}积分大奖！`;
+    } else if (continuousDays >= 3) {
+      title = `连续签到${continuousDays}天！获得${points}积分`;
+    }
+    
+    wx.showToast({
+      title: title,
+      icon: 'success',
+      duration: 2000
+    });
+    
+    // 振动反馈
+    wx.vibrateShort();
   },
 
   // 分享小程序
@@ -217,21 +316,16 @@ Page({
   onShareAppMessage() {
     return {
       title: '一起来打卡，赚取积分换好礼！',
-      path: '/pages/index/index',
+      path: '/pages/dailyCheck/index',
       imageUrl: '/assets/icons/share.svg'
     };
   },
 
-  // 页面跳转处理（新增）
+  // 页面跳转处理
   navigateTo(e) {
-    // 获取跳转URL，可能来自事件对象的dataset或直接传入的字符串
     const url = e.currentTarget?.dataset?.url || e;
     
-    console.log('准备跳转到页面：', url); // 添加调试信息
-    
-    // 检查URL是否有效
     if (!url) {
-      console.error('跳转URL无效：', url);
       wx.showToast({
         title: '页面路径无效',
         icon: 'none'
@@ -239,27 +333,22 @@ Page({
       return;
     }
     
-    // 特殊处理：如果是跳转到积分页面，改为跳转到服务页面的积分兑换tab
+    // 特殊处理：如果是跳转到积分页面
     if (url.includes('/pages/myPoints/myPoints')) {
-      console.log('检测到积分页面跳转，转向服务页面的积分兑换tab');
-      
-      // 使用全局变量传递目标tab信息
       const app = getApp();
       app.globalData = app.globalData || {};
-      app.globalData.targetTab = 1; // 1对应积分兑换tab
+      app.globalData.targetTab = 1; // 积分兑换tab
       
-      // 跳转到服务页面
       wx.switchTab({
         url: '/pages/booking/index',
         success: () => {
-          console.log('成功跳转到服务页面，目标tab: 积分兑换');
           wx.showToast({
             title: '已跳转到积分兑换',
             icon: 'success'
           });
         },
         fail: (error) => {
-          console.error('跳转到服务页面失败：', error);
+          console.error('跳转失败：', error);
           wx.showToast({
             title: '跳转失败，请重试',
             icon: 'none'
@@ -269,28 +358,18 @@ Page({
       return;
     }
     
-    // 显示加载中
-    wx.showLoading({
-      title: '正在跳转...',
-      mask: true
+    wx.navigateTo({
+      url,
+      success: () => {
+        console.log('页面跳转成功：', url);
+      },
+      fail: (error) => {
+        console.error('页面跳转失败：', error);
+        wx.showToast({
+          title: '页面跳转失败，请重试',
+          icon: 'none'
+        });
+      }
     });
-    
-    // 执行页面跳转
-    setTimeout(() => {
-      wx.hideLoading();
-      wx.navigateTo({
-        url,
-        success: () => {
-          console.log('页面跳转成功：', url); // 跳转成功的调试信息
-        },
-        fail: (error) => {
-          console.error('页面跳转失败：', url, error); // 跳转失败的调试信息
-          wx.showToast({
-            title: '页面跳转失败，请重试',
-            icon: 'none'
-          });
-        }
-      });
-    }, 300);
   }
 }); 

@@ -384,8 +384,20 @@ Page({
     const { id } = e.currentTarget.dataset
     
     switch(parseInt(id)) {
-      case 1: // 签到任务
-        this.handleSignIn()
+      case 1: // 签到任务 - 跳转到签到页面
+        wx.navigateTo({
+          url: '/pages/dailyCheck/index',
+          success: () => {
+            console.log('成功跳转到签到页面')
+          },
+          fail: (error) => {
+            console.error('跳转签到页面失败:', error)
+            wx.showToast({
+              title: '页面跳转失败',
+              icon: 'none'
+            })
+          }
+        })
         break
       case 2: // 分享任务
         this.handleShare()

@@ -1,16 +1,28 @@
 /* 每日打卡页面样式 */
 .daily-check-container {
   min-height: 100vh;
-  background-color: #f5f7fa;
-  padding-bottom: 40rpx;
+  background: linear-gradient(135deg, #4169e1 0%, #1e3c72 100%);
+  color: #333;
 }
 
 /* 头部区域 */
 .check-header {
-  background-color: #4169e1;
-  color: #ffffff;
-  padding: 40rpx 30rpx;
-  border-radius: 0 0 30rpx 30rpx;
+  padding: 40rpx 30rpx 30rpx;
+  background: linear-gradient(135deg, #4169e1 0%, #1e3c72 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.check-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="80" cy="30" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="70" r="1.5" fill="white" opacity="0.1"/><circle cx="90" cy="80" r="1" fill="white" opacity="0.1"/></svg>');
+  pointer-events: none;
 }
 
 .header-content {
@@ -18,274 +30,484 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30rpx;
+  position: relative;
+  z-index: 1;
 }
 
 .greeting-text {
   font-size: 36rpx;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 10rpx;
 }
 
 .greeting-sub {
-  font-size: 26rpx;
+  font-size: 24rpx;
   opacity: 0.8;
+  color: #e8f4ff;
 }
 
 .calendar-info {
-  text-align: right;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20rpx;
+  border-radius: 16rpx;
+  backdrop-filter: blur(10rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
 }
 
 .calendar-day {
   font-size: 48rpx;
-  font-weight: bold;
-  line-height: 1;
+  font-weight: 700;
+  margin-bottom: 5rpx;
 }
 
 .calendar-weekday {
-  font-size: 26rpx;
-  opacity: 0.8;
-  margin-top: 8rpx;
+  font-size: 24rpx;
+  opacity: 0.9;
 }
 
-.sign-info {
+/* 签到统计信息 */
+.sign-stats {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.1);
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.1);
   padding: 20rpx;
   border-radius: 16rpx;
+  backdrop-filter: blur(10rpx);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
 }
 
-.continuous-days {
-  font-size: 30rpx;
+.stat-item {
+  text-align: center;
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fff;
   margin-bottom: 8rpx;
 }
 
-.day-count {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #ffeb3b;
+.stat-label {
+  font-size: 24rpx;
+  opacity: 0.8;
+  color: #e8f4ff;
 }
 
-.rewards-info {
+/* 签到奖励展示 */
+.rewards-section {
+  background: white;
+  margin: 20rpx;
+  padding: 30rpx;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.rewards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  justify-content: space-between;
+}
+
+.reward-item {
+  width: calc(25% - 11rpx);
+  background: #f8f9ff;
+  padding: 20rpx 10rpx;
+  border-radius: 12rpx;
+  text-align: center;
+  border: 2rpx solid #e8f0ff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.reward-item.received {
+  background: linear-gradient(135deg, #4169e1 0%, #1e3c72 100%);
+  color: white;
+  border-color: #4169e1;
+  transform: scale(1.05);
+}
+
+.reward-item.received::before {
+  content: '✓';
+  position: absolute;
+  top: 5rpx;
+  right: 8rpx;
+  font-size: 20rpx;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.reward-day {
+  font-size: 20rpx;
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+.reward-points {
   font-size: 24rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.reward-status {
+  font-size: 18rpx;
+  opacity: 0.8;
+}
+
+/* 签到按钮区域 */
+.sign-button-section {
+  padding: 30rpx;
+  text-align: center;
+}
+
+.sign-button {
+  width: 100%;
+  height: 100rpx;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+  color: white;
+  border: none;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 8rpx 20rpx rgba(255, 107, 107, 0.4);
+}
+
+.sign-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s ease;
+}
+
+.sign-button:active::before {
+  width: 300rpx;
+  height: 300rpx;
+}
+
+.sign-button.signed {
+  background: #e0e0e0;
+  color: #999;
+  box-shadow: none;
+}
+
+.sign-button.signed::before {
+  display: none;
+}
+
+.sign-hint {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 15rpx;
   opacity: 0.8;
 }
 
 /* 日历区域 */
 .calendar-section {
-  margin: -20rpx 30rpx 30rpx;
-  background-color: #ffffff;
-  border-radius: 16rpx;
+  background: white;
+  margin: 20rpx;
   padding: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
 
 .calendar-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
   margin-bottom: 20rpx;
-  color: #333333;
+  text-align: center;
 }
 
 .weekdays {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-bottom: 20rpx;
+  padding: 0 10rpx;
 }
 
 .weekday {
-  flex: 1;
+  font-size: 24rpx;
+  color: #666;
+  font-weight: 500;
+  width: 60rpx;
   text-align: center;
-  font-size: 26rpx;
-  color: #999999;
 }
 
 .calendar-days {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  gap: 10rpx;
 }
 
 .day {
-  width: 14.28%;
-  height: 80rpx;
+  width: calc(14.28% - 10rpx);
+  height: 60rpx;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 28rpx;
-  color: #333333;
+  justify-content: center;
+  font-size: 26rpx;
+  border-radius: 12rpx;
   position: relative;
-  margin-bottom: 10rpx;
+  transition: all 0.3s ease;
+  margin: 5rpx 0;
 }
 
-.day.signed::after {
-  content: '';
-  position: absolute;
-  width: 10rpx;
-  height: 10rpx;
-  background-color: #4169e1;
-  border-radius: 50%;
-  bottom: 8rpx;
+.day.signed {
+  background: linear-gradient(135deg, #4169e1 0%, #1e3c72 100%);
+  color: white;
+  font-weight: 600;
+  transform: scale(1.1);
 }
 
 .day.today {
-  color: #4169e1;
-  font-weight: bold;
+  background: #fff2e6;
+  color: #ff8c00;
+  font-weight: 600;
+  border: 2rpx solid #ff8c00;
 }
 
 .day.today-signed {
-  background-color: #4169e1;
-  color: #ffffff;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+  color: white;
+  font-weight: 600;
+  transform: scale(1.1);
+}
+
+.sign-dot {
+  position: absolute;
+  bottom: 5rpx;
+  right: 5rpx;
+  width: 8rpx;
+  height: 8rpx;
+  background: #4169e1;
   border-radius: 50%;
-  font-weight: bold;
-}
-
-/* 签到按钮 */
-.sign-button-section {
-  margin: 0 30rpx 30rpx;
-  display: flex;
-  justify-content: center;
-}
-
-.sign-button {
-  width: 100%;
-  height: 90rpx;
-  line-height: 90rpx;
-  background-color: #4169e1;
-  color: #ffffff;
-  font-size: 32rpx;
-  font-weight: bold;
-  border-radius: 45rpx;
-  text-align: center;
-}
-
-.sign-button.signed {
-  background-color: #e6e6e6;
-  color: #999999;
 }
 
 /* 任务列表 */
 .tasks-section {
-  margin: 0 30rpx 30rpx;
-  background-color: #ffffff;
-  border-radius: 16rpx;
+  background: white;
+  margin: 20rpx;
   padding: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-}
-
-.section-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  margin-bottom: 20rpx;
-  color: #333333;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
 
 .task-list {
-  
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
 }
 
 .task-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20rpx 0;
-  border-bottom: 1rpx solid #f0f0f0;
+  justify-content: space-between;
+  padding: 20rpx;
+  background: #f8f9ff;
+  border-radius: 16rpx;
+  border: 1rpx solid #e8f0ff;
+  transition: all 0.3s ease;
 }
 
-.task-item:last-child {
-  border-bottom: none;
+.task-item:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
 .task-info {
   display: flex;
   align-items: center;
+  flex: 1;
 }
 
 .task-icon {
-  width: 60rpx;
-  height: 60rpx;
-  background-color: #f5f7fa;
+  width: 80rpx;
+  height: 80rpx;
+  background: linear-gradient(135deg, #4169e1 0%, #1e3c72 100%);
   border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   margin-right: 20rpx;
 }
 
 .task-icon image {
   width: 40rpx;
   height: 40rpx;
+  filter: brightness(0) invert(1);
 }
 
 .task-details {
-  
+  flex: 1;
 }
 
 .task-name {
   font-size: 28rpx;
-  font-weight: 500;
-  color: #333333;
+  font-weight: 600;
+  color: #333;
   margin-bottom: 8rpx;
 }
 
 .task-desc {
   font-size: 24rpx;
-  color: #999999;
+  color: #666;
+  opacity: 0.8;
 }
 
 .task-status {
   padding: 10rpx 20rpx;
-  background-color: #4169e1;
-  color: #ffffff;
+  border-radius: 20rpx;
   font-size: 24rpx;
-  border-radius: 30rpx;
+  font-weight: 500;
+  background: #4169e1;
+  color: white;
+  transition: all 0.3s ease;
 }
 
 .task-status.completed {
-  background-color: #e6e6e6;
-  color: #999999;
+  background: #e0e0e0;
+  color: #999;
 }
 
 /* 积分记录 */
 .points-section {
-  margin: 0 30rpx 30rpx;
-  background-color: #ffffff;
-  border-radius: 16rpx;
+  background: white;
+  margin: 20rpx;
   padding: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
 
 .points-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20rpx;
+  background: linear-gradient(135deg, #4169e1 0%, #1e3c72 100%);
+  border-radius: 16rpx;
+  color: white;
 }
 
 .current-points {
   font-size: 28rpx;
-  color: #333333;
+  font-weight: 600;
 }
 
 .points-link {
-  font-size: 26rpx;
-  color: #4169e1;
+  font-size: 24rpx;
+  opacity: 0.9;
+  padding: 8rpx 16rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20rpx;
+  transition: all 0.3s ease;
 }
 
-/* 加载样式 */
-.loading {
+.points-link:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 签到成功动画 */
+.sign-success-animation {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.5s ease;
+}
+
+.sign-success-animation.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.animation-content {
+  background: white;
+  padding: 60rpx;
+  border-radius: 30rpx;
+  text-align: center;
+  transform: scale(0.8);
+  transition: all 0.5s ease;
+  box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.2);
+}
+
+.sign-success-animation.show .animation-content {
+  transform: scale(1);
+}
+
+.success-icon {
+  font-size: 100rpx;
+  color: #4169e1;
+  margin-bottom: 20rpx;
+  animation: bounce 1s ease-in-out infinite alternate;
+}
+
+@keyframes bounce {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+.success-text {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.success-reward {
+  font-size: 28rpx;
+  color: #4169e1;
+  font-weight: 600;
+}
+
+/* 加载动画 */
+.loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
   z-index: 999;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40rpx;
+  border-radius: 20rpx;
+  backdrop-filter: blur(10rpx);
 }
 
 .loading-spinner {
@@ -295,15 +517,58 @@
   border-top: 4rpx solid #4169e1;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-}
-
-.loading-text {
-  margin-top: 20rpx;
-  font-size: 28rpx;
-  color: #666666;
+  margin: 0 auto 20rpx;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .reward-item {
+    width: calc(33.33% - 10rpx);
+  }
+  
+  .rewards-grid {
+    gap: 10rpx;
+  }
+}
+
+/* 暗黑模式适配 */
+@media (prefers-color-scheme: dark) {
+  .daily-check-container {
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+  }
+  
+  .rewards-section,
+  .calendar-section,
+  .tasks-section,
+  .points-section {
+    background: #2c3e50;
+    color: white;
+  }
+  
+  .section-title {
+    color: white;
+  }
+  
+  .task-item {
+    background: #34495e;
+    border-color: #4a5f7a;
+  }
+  
+  .task-name {
+    color: white;
+  }
+  
+  .task-desc {
+    color: #bdc3c7;
+  }
 } 

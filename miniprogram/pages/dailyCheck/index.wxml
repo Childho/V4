@@ -4,22 +4,63 @@
     <view class="header-content">
       <view class="greeting">
         <view class="greeting-text">嗨，{{userInfo.nickName}}</view>
-        <view class="greeting-sub">今日已打卡</view>
+        <view class="greeting-sub">{{signedToday ? '今日已打卡' : '今日未打卡'}}</view>
       </view>
       <view class="calendar-info">
         <view class="calendar-day">{{today}}</view>
         <view class="calendar-weekday">星期{{weekday}}</view>
       </view>
     </view>
-    <view class="sign-info">
-      <view class="continuous-days">已连续签到 <text class="day-count">{{continuousDays}}</text> 天</view>
-      <view class="rewards-info">连续签到7天可额外获得30积分哦！</view>
+    
+    <!-- 签到统计信息 -->
+    <view class="sign-stats">
+      <view class="stat-item">
+        <view class="stat-number">{{signStats.totalDays}}</view>
+        <view class="stat-label">累计签到</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{signStats.currentStreak}}</view>
+        <view class="stat-label">连续签到</view>
+      </view>
+      <view class="stat-item">
+        <view class="stat-number">{{signStats.maxContinuous}}</view>
+        <view class="stat-label">最高连续</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 签到奖励展示 -->
+  <view class="rewards-section">
+    <view class="section-title">连续签到奖励</view>
+    <view class="rewards-grid">
+      <view class="reward-item {{item.status === 'received' ? 'received' : ''}}" 
+            wx:for="{{signRewards}}" 
+            wx:key="day">
+        <view class="reward-day">第{{item.day}}天</view>
+        <view class="reward-points">{{item.reward}}积分</view>
+        <view class="reward-status">
+          <text wx:if="{{item.status === 'received'}}">已领取</text>
+          <text wx:else>{{item.reward}}积分</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 签到按钮 -->
+  <view class="sign-button-section">
+    <button class="sign-button {{signedToday ? 'signed' : ''}}" 
+            bindtap="handleSignIn"
+            disabled="{{signedToday}}">
+      {{signedToday ? '今日已签到' : '立即签到'}}
+    </button>
+    <view class="sign-hint" wx:if="{{!signedToday}}">
+      签到可获得积分奖励，连续签到奖励更丰厚！
     </view>
   </view>
   
   <!-- 日历区域 -->
   <view class="calendar-section">
-    <view class="calendar-title">{{currentMonth}}</view>
+    <view class="calendar-title">{{currentMonth}} 签到记录</view>
     <view class="weekdays">
       <view class="weekday" wx:for="{{['日', '一', '二', '三', '四', '五', '六']}}" wx:key="*this">{{item}}</view>
     </view>
@@ -29,15 +70,9 @@
         wx:for="{{daysInMonth}}" 
         wx:key="*this">
         {{item}}
+        <view class="sign-dot" wx:if="{{signDays.includes(item)}}"></view>
       </view>
     </view>
-  </view>
-  
-  <!-- 签到按钮 -->
-  <view class="sign-button-section">
-    <button class="sign-button {{signedToday ? 'signed' : ''}}" bindtap="handleSignIn">
-      {{signedToday ? '今日已签到' : '立即签到 +5积分'}}
-    </button>
   </view>
   
   <!-- 任务列表 -->
@@ -64,11 +99,20 @@
   
   <!-- 积分记录 -->
   <view class="points-section">
-    <view class="section-title">积分记录</view>
+    <view class="section-title">我的积分</view>
     
     <view class="points-info">
       <view class="current-points">当前积分：{{userInfo.pointsBalance}}</view>
       <view class="points-link" bindtap="navigateTo" data-url="/pages/myPoints/myPoints">查看详情 ></view>
+    </view>
+  </view>
+  
+  <!-- 签到成功动画 -->
+  <view class="sign-success-animation {{showSignAnimation ? 'show' : ''}}" wx:if="{{showSignAnimation}}">
+    <view class="animation-content">
+      <view class="success-icon">✓</view>
+      <view class="success-text">签到成功！</view>
+      <view class="success-reward">+{{signAnimationReward}}积分</view>
     </view>
   </view>
   

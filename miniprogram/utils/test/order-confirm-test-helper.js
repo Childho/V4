@@ -1,12 +1,21 @@
 /**
  * 订单确认页面测试辅助工具
  * 用于快速设置测试数据和测试各种场景
+ * 注意：此文件仅用于开发测试，生产环境请删除
  */
+
+// 环境判断 - 只在开发环境启用
+const isDev = process.env.NODE_ENV === 'development' || __wxConfig.envVersion === 'develop';
 
 /**
  * 设置测试收货地址
  */
 export function setTestAddress() {
+  if (!isDev) {
+    console.warn('测试功能仅限开发环境使用');
+    return null;
+  }
+  
   const testAddress = {
     id: 'addr_001',
     name: '张三',
@@ -29,6 +38,11 @@ export function setTestAddress() {
  * 设置测试优惠券
  */
 export function setTestCoupon() {
+  if (!isDev) {
+    console.warn('测试功能仅限开发环境使用');
+    return null;
+  }
+  
   const testCoupon = {
     id: 'coupon_001',
     name: '新用户优惠券',
@@ -52,6 +66,11 @@ export function setTestCoupon() {
  * 生成测试商品数据
  */
 export function generateTestGoods(count = 2) {
+  if (!isDev) {
+    console.warn('测试功能仅限开发环境使用');
+    return [];
+  }
+  
   const testGoods = [];
   
   for (let i = 1; i <= count; i++) {
@@ -75,6 +94,11 @@ export function generateTestGoods(count = 2) {
  * 快速跳转到订单确认页面（用于开发测试）
  */
 export function quickNavigateToOrderConfirm(goodsCount = 2) {
+  if (!isDev) {
+    console.warn('测试功能仅限开发环境使用');
+    return;
+  }
+  
   const testGoods = generateTestGoods(goodsCount);
   
   wx.navigateTo({
@@ -96,6 +120,11 @@ export function quickNavigateToOrderConfirm(goodsCount = 2) {
  * 清除所有测试数据
  */
 export function clearTestData() {
+  if (!isDev) {
+    console.warn('测试功能仅限开发环境使用');
+    return;
+  }
+  
   try {
     wx.removeStorageSync('selectedAddress');
     wx.removeStorageSync('selectedCoupon');
@@ -119,6 +148,10 @@ export function clearTestData() {
 export const testScenarios = {
   // 场景1：有地址有优惠券
   withAddressAndCoupon: () => {
+    if (!isDev) {
+      console.warn('测试功能仅限开发环境使用');
+      return;
+    }
     setTestAddress();
     setTestCoupon();
     quickNavigateToOrderConfirm(2);
@@ -126,18 +159,30 @@ export const testScenarios = {
   
   // 场景2：无地址无优惠券
   withoutAddressAndCoupon: () => {
+    if (!isDev) {
+      console.warn('测试功能仅限开发环境使用');
+      return;
+    }
     clearTestData();
     quickNavigateToOrderConfirm(1);
   },
   
   // 场景3：多商品测试
   withManyGoods: () => {
+    if (!isDev) {
+      console.warn('测试功能仅限开发环境使用');
+      return;
+    }
     setTestAddress();
     quickNavigateToOrderConfirm(5);
   },
   
   // 场景4：单商品测试
   withSingleGood: () => {
+    if (!isDev) {
+      console.warn('测试功能仅限开发环境使用');
+      return;
+    }
     setTestAddress();
     setTestCoupon();
     quickNavigateToOrderConfirm(1);
@@ -145,9 +190,14 @@ export const testScenarios = {
 };
 
 /**
- * 在控制台显示测试菜单
+ * 在控制台显示测试菜单（仅开发环境）
  */
 export function showTestMenu() {
+  if (!isDev) {
+    console.warn('测试功能仅限开发环境使用');
+    return;
+  }
+  
   console.log(`
 === 订单确认页面测试菜单 ===
 
@@ -173,5 +223,7 @@ export function showTestMenu() {
 `);
 }
 
-// 自动显示测试菜单
-showTestMenu(); 
+// 仅在开发环境自动显示测试菜单
+if (isDev) {
+  showTestMenu();
+} 
