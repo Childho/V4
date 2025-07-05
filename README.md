@@ -9,33 +9,43 @@
 
 ## 项目结构
 ```
-miniprogram/
-├── pages/                    # 页面目录
-│   ├── index/               # 首页
-│   ├── activity/            # 活动页面
-│   ├── mall/                # 商城页面（已重构）
-│   ├── cart/                # 购物车页面（新增）⭐
-│   ├── booking/             # 服务页面（已重构）
-│   ├── personal/            # 个人中心
-│   ├── login/               # 登录页面
-│   ├── pointsExchange/      # 积分兑换
-│   ├── address-list/        # 地址管理页面（新增）⭐
-│   ├── address-form/        # 地址新增/编辑页面（新增）⭐
-│   ├── productDetail/       # 商品详情页
-│   └── comment-detail/      # 评论详情页
-├── components/              # 公共组件
-├── utils/                   # 工具函数
-├── api/                     # 接口封装
-│   ├── mallApi.js          # 商城接口（新增）
-│   ├── cartApi.js          # 购物车接口（新增）⭐
-│   ├── addressApi.js       # 地址管理接口（新增）⭐
-│   └── ...
-├── assets/                  # 静态资源
-│   ├── icons/              # 图标文件
-│   ├── images/             # 图片资源
-│   └── tabbar/             # 底部导航图标
-├── app.js                   # 应用入口
-├── app.json                 # 应用配置
+V4/
+├── miniprogram/                 # 小程序主目录
+│   ├── pages/                  # 页面文件
+│   │   ├── index/             # 首页
+│   │   ├── login/             # 登录页
+│   │   ├── personal/          # 个人中心
+│   │   ├── activity/          # 活动页面
+│   │   ├── mall/              # 商城页面
+│   │   ├── cart/              # 购物车
+│   │   ├── order-confirm/     # 订单确认
+│   │   ├── order-list/        # 订单列表
+│   │   ├── refund-detail/     # 退款详情
+│   │   ├── order-evaluate/    # 订单评价
+│   │   ├── logistics/         # 物流信息
+│   │   ├── booking/           # 服务预订（包含积分兑换）
+│   │   ├── seckill/           # 秒杀活动
+│   │   ├── activityDetail/    # 活动详情
+│   │   ├── productDetail/     # 商品详情
+│   │   ├── comment-detail/    # 评论详情
+│   │   ├── dailyCheck/        # 每日签到
+│   │   ├── search-result/     # 搜索结果
+│   │   ├── address-list/      # 地址列表
+│   │   ├── address-form/      # 地址表单
+│   │   └── coupon/            # 优惠券
+│   ├── components/              # 公共组件
+│   ├── utils/                   # 工具函数
+│   ├── api/                     # 接口封装
+│   │   ├── mallApi.js          # 商城接口（新增）
+│   │   ├── cartApi.js          # 购物车接口（新增）⭐
+│   │   ├── addressApi.js       # 地址管理接口（新增）⭐
+│   │   └── ...
+│   ├── assets/                  # 静态资源
+│   │   ├── icons/              # 图标文件
+│   │   ├── images/             # 图片资源
+│   │   └── tabbar/             # 底部导航图标
+│   ├── app.js                   # 应用入口
+│   └── app.json                 # 应用配置
 └── app.wxss                 # 全局样式
 ```
 
