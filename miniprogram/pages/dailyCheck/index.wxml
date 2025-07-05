@@ -11,22 +11,6 @@
         <view class="calendar-weekday">星期{{weekday}}</view>
       </view>
     </view>
-    
-    <!-- 签到统计信息 -->
-    <view class="sign-stats">
-      <view class="stat-item">
-        <view class="stat-number">{{signStats.totalDays}}</view>
-        <view class="stat-label">累计签到</view>
-      </view>
-      <view class="stat-item">
-        <view class="stat-number">{{signStats.currentStreak}}</view>
-        <view class="stat-label">连续签到</view>
-      </view>
-      <view class="stat-item">
-        <view class="stat-number">{{signStats.maxContinuous}}</view>
-        <view class="stat-label">最高连续</view>
-      </view>
-    </view>
   </view>
   
   <!-- 签到奖励展示 -->
@@ -64,7 +48,6 @@
     <view class="weekdays">
       <view class="weekday" wx:for="{{['日', '一', '二', '三', '四', '五', '六']}}" wx:key="*this">{{item}}</view>
     </view>
-    
     <view class="calendar-days">
       <view class="day {{signDays.includes(item) ? 'signed' : ''}} {{item === today && !signedToday ? 'today' : ''}} {{item === today && signedToday ? 'today-signed' : ''}}" 
         wx:for="{{daysInMonth}}" 
@@ -75,32 +58,9 @@
     </view>
   </view>
   
-  <!-- 任务列表 -->
-  <view class="tasks-section">
-    <view class="section-title">每日任务</view>
-    
-    <view class="task-list">
-      <view class="task-item" wx:for="{{tasks}}" wx:key="id" bindtap="handleTaskClick" data-id="{{item.id}}">
-        <view class="task-info">
-          <view class="task-icon">
-            <image src="/assets/icons/{{item.icon}}.svg" mode="aspectFit"></image>
-          </view>
-          <view class="task-details">
-            <view class="task-name">{{item.name}}</view>
-            <view class="task-desc">{{item.desc}}</view>
-          </view>
-        </view>
-        <view class="task-status {{item.status === 1 ? 'completed' : ''}}">
-          {{item.status === 1 ? '已完成' : '去完成'}}
-        </view>
-      </view>
-    </view>
-  </view>
-  
   <!-- 积分记录 -->
   <view class="points-section">
     <view class="section-title">我的积分</view>
-    
     <view class="points-info">
       <view class="current-points">当前积分：{{userInfo.pointsBalance}}</view>
       <view class="points-link" bindtap="navigateTo" data-url="/pages/myPoints/myPoints">查看详情 ></view>

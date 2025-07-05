@@ -54,11 +54,6 @@ Page({
       { day: 6, reward: 30, status: 'pending' },
       { day: 7, reward: 50, status: 'pending' }
     ],
-    tasks: [
-      { id: 1, name: '每日签到', desc: '每日签到获得积分奖励', icon: 'check-in', status: 0 },
-      { id: 2, name: '分享小程序', desc: '分享给好友获得5积分', icon: 'share', status: 0 },
-      { id: 3, name: '邀请好友', desc: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
-    ],
     loading: false,
     // 签到统计信息
     signStats: {

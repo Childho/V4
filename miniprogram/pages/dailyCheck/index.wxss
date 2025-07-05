@@ -176,58 +176,69 @@
 
 /* 签到按钮区域 */
 .sign-button-section {
-  padding: 30rpx;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 0 0 0;
 }
 
 .sign-button {
-  width: 100%;
+  min-width: 340rpx;
+  max-width: 90vw;
+  width: auto;
+  padding: 0 60rpx;
   height: 100rpx;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-  color: white;
+  background: linear-gradient(90deg, #ff7e5f 0%, #feb47b 100%);
+  color: #fff;
   border: none;
-  border-radius: 50rpx;
-  font-size: 32rpx;
-  font-weight: 600;
+  border-radius: 60rpx;
+  font-size: 36rpx;
+  font-weight: 700;
+  letter-spacing: 2rpx;
+  box-shadow: 0 8rpx 32rpx 0 rgba(255, 126, 95, 0.25), 0 2rpx 8rpx 0 rgba(0,0,0,0.08);
+  transition: all 0.2s cubic-bezier(.4,0,.2,1);
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 8rpx 20rpx rgba(255, 107, 107, 0.4);
+  outline: none;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.sign-button::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.6s ease;
-}
-
-.sign-button:active::before {
-  width: 300rpx;
-  height: 300rpx;
+.sign-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 2rpx 8rpx 0 rgba(255, 126, 95, 0.18);
 }
 
 .sign-button.signed {
-  background: #e0e0e0;
+  background: linear-gradient(90deg, #e0e0e0 0%, #cccccc 100%);
   color: #999;
   box-shadow: none;
 }
 
-.sign-button.signed::before {
-  display: none;
+/* 按钮高光效果 */
+.sign-button::after {
+  content: '';
+  position: absolute;
+  left: 20rpx;
+  top: 18rpx;
+  width: 60%;
+  height: 30rpx;
+  background: linear-gradient(90deg,rgba(255,255,255,0.35),rgba(255,255,255,0));
+  border-radius: 30rpx;
+  pointer-events: none;
 }
 
+/* 优化提示文字颜色和间距 */
 .sign-hint {
-  font-size: 24rpx;
-  color: #666;
-  margin-top: 15rpx;
-  opacity: 0.8;
+  font-size: 26rpx;
+  color: #ffe0b2;
+  margin-top: 22rpx;
+  opacity: 0.95;
+  text-align: center;
+  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.08);
 }
 
 /* 日历区域 */
