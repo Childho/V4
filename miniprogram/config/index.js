@@ -4,7 +4,7 @@ const environments = {
   development: {
     apiBaseUrl: 'http://localhost:5000',  // 开发环境API地址
     timeout: 10000,                             // 请求超时时间(毫秒)
-    enableMock: false,                          // 是否启用Mock数据
+    enableMock: false,                          // 是否启用Mock数据 - 修改为false以发起真实API请求
     debug: true                                 // 是否开启调试模式
   },
   
@@ -74,4 +74,4 @@ module.exports = {
   config,
   environments,
   currentEnv
-} 
+}

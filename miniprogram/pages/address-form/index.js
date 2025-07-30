@@ -1,8 +1,8 @@
-// 地址编辑页面逻辑
+// 地址编辑页面逻辑 - 使用真实API接口替换静态数据
 import { 
-  addAddress, 
-  updateAddress, 
-  getAddressDetail 
+  addAddress,      // 新增地址接口
+  updateAddress,   // 编辑地址接口
+  getAddressDetail // 获取地址详情接口
 } from '../../api/addressApi.js';
 
 /**
@@ -40,7 +40,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    console.log('地址编辑页面加载，参数：', options);
+    console.log('🚀 地址编辑页面加载，参数：', options);
     
     const { action = 'add', id } = options;
     
@@ -49,6 +49,9 @@ Page({
       addressId: id ? parseInt(id) : null
     });
     
+    console.log('📝 页面模式：', action === 'add' ? '新增地址' : '编辑地址');
+    console.log('🆔 地址ID：', id ? parseInt(id) : '无（新增模式）');
+    
     // 设置页面标题
     wx.setNavigationBarTitle({
       title: action === 'add' ? '新增地址' : '编辑地址'
@@ -56,7 +59,10 @@ Page({
     
     // 如果是编辑模式，加载地址详情
     if (action === 'edit' && id) {
+      console.log('🔄 编辑模式：开始加载地址详情，ID：', parseInt(id));
       this.loadAddressDetail(parseInt(id));
+    } else {
+      console.log('➕ 新增模式：无需加载地址详情');
     }
     
     // 初始验证表单状态（新增）
@@ -73,60 +79,71 @@ Page({
 
   /**
    * 加载地址详情（编辑模式使用）
+   * 调用真实API接口获取地址详情数据
    */
   async loadAddressDetail(addressId) {
     try {
       this.setData({ isLoading: true });
       wx.showLoading({ title: '加载中...' });
       
-      // 这里先从addressList中模拟获取数据
-      // 实际项目中应该调用 getAddressDetail(addressId)
-      const mockAddress = {
-        id: addressId,
-        consignee: '张三',
-        mobile: '13812345678',
-        region: '广东省,深圳市,南山区',
-        detail: '科技园南区深南大道9988号',
-        isDefault: true
-      };
+      console.log('🚀 开始调用地址详情API，参数：', { addressId }); // 调试日志：打印请求参数
+      
+      // 调用真实API接口获取地址详情
+      const response = await getAddressDetail(addressId);
+      
+      console.log('✅ API返回的地址详情：', response); // 调试用：打印API返回数据
+      
+      // 检查API响应格式是否正确
+      if (!response || response.error !== 0 || !response.body || !response.body.address) {
+        throw new Error(response?.message || '获取地址详情失败');
+      }
+      
+      const addressData = response.body.address;
       
       // 解析地区字符串为数组
       // 支持两种格式：'广东省,深圳市,南山区' 和 '广东省 深圳市 南山区'
       let regionArray = [];
-      if (mockAddress.region) {
-        if (mockAddress.region.includes(',')) {
-          regionArray = mockAddress.region.split(','); // 逗号分隔的格式
+      if (addressData.region) {
+        if (addressData.region.includes(',')) {
+          regionArray = addressData.region.split(','); // 逗号分隔的格式
         } else {
-          regionArray = mockAddress.region.split(' '); // 空格分隔的格式
+          regionArray = addressData.region.split(' '); // 空格分隔的格式
         }
+        // 去除数组元素的空格
+        regionArray = regionArray.map(item => item.trim()).filter(item => item);
       }
       
       console.log('解析的地区数组：', regionArray); // 调试用：打印解析结果
       
+      // 使用接口返回的数据更新页面状态，确保字段名与接口文档一致
       this.setData({
         formData: {
-          consignee: mockAddress.consignee || '',
-          mobile: mockAddress.mobile || '',
-          region: mockAddress.region || '',
-          detail: mockAddress.detail || '',
-          isDefault: mockAddress.isDefault || false
+          consignee: addressData.consignee || '', // 收件人姓名
+          mobile: addressData.mobile || '',       // 收件人手机号
+          region: addressData.region || '',       // 地区信息
+          detail: addressData.detail || '',       // 详细地址
+          isDefault: addressData.isDefault || false // 是否为默认地址
         },
         regionArray
       });
       
-      console.log('加载地址详情成功：', mockAddress);
+      console.log('加载地址详情成功，数据来源：真实API接口');
       
     } catch (error) {
       console.error('加载地址详情失败：', error);
+      
+      // 显示具体的错误信息
+      const errorMessage = error.message || '加载失败，请重试';
       wx.showToast({
-        title: '加载失败',
-        icon: 'none'
+        title: errorMessage,
+        icon: 'none',
+        duration: 2000
       });
       
       // 加载失败返回上一页
       setTimeout(() => {
         wx.navigateBack();
-      }, 1000);
+      }, 2000);
       
     } finally {
       this.setData({ isLoading: false });
@@ -260,6 +277,7 @@ Page({
 
   /**
    * 保存地址
+   * 调用真实API接口保存地址数据，确保数据格式与接口文档一致
    */
   async saveAddress() {
     // 再次验证表单
@@ -276,59 +294,85 @@ Page({
       
       const { formData, action, addressId } = this.data;
       
-      // 构造提交数据
+      // 构造提交数据，确保字段名与接口文档完全一致
       const submitData = {
-        consignee: formData.consignee.trim(),
-        mobile: formData.mobile.trim(),
-        region: formData.region,
-        detail: formData.detail.trim(),
-        isDefault: formData.isDefault
+        consignee: formData.consignee.trim(),  // 收件人姓名（2-20字符）
+        mobile: formData.mobile.trim(),        // 收件人手机号（11位，以1开头）
+        region: formData.region,               // 完整地区信息（空格分隔）
+        detail: formData.detail.trim(),        // 详细地址（5-200字符）
+        isDefault: formData.isDefault          // 是否设为默认地址
       };
       
       // 分离省市区 - 优先使用regionArray数组，确保数据准确
       const { regionArray } = this.data;
       if (regionArray && regionArray.length >= 3) {
-        submitData.province = regionArray[0]; // 省份
-        submitData.city = regionArray[1];     // 城市  
-        submitData.district = regionArray[2]; // 区县
+        submitData.province = regionArray[0]; // 省份（从regionArray自动提取）
+        submitData.city = regionArray[1];     // 城市（从regionArray自动提取）  
+        submitData.district = regionArray[2]; // 区县（从regionArray自动提取）
       } else {
         // 备用方案：从字符串中分离（支持空格或逗号分隔）
         const parts = formData.region.includes(' ') 
           ? formData.region.split(' ') 
           : formData.region.split(',');
-        submitData.province = parts[0] || '';
-        submitData.city = parts[1] || '';
-        submitData.district = parts[2] || '';
+        submitData.province = (parts[0] || '').trim();
+        submitData.city = (parts[1] || '').trim();
+        submitData.district = (parts[2] || '').trim();
       }
       
-      console.log('提交的地址数据：', submitData); // 调试用：打印提交的完整数据
+      console.log('🚀 提交的地址数据（符合接口文档格式）：', submitData); // 调试用：打印提交的完整数据
       
-      let result;
+      let response;
       
       if (action === 'edit' && addressId) {
-        // 编辑地址
-        submitData.id = addressId;
-        result = await updateAddress(submitData);
-        console.log('编辑地址成功：', result);
+        // 编辑地址 - 调用编辑接口
+        submitData.id = addressId; // 地址ID（数字类型）
+        console.log('🔄 开始调用编辑地址API，接口：/api/user/addresses/update，参数：', submitData);
+        response = await updateAddress(submitData);
+        console.log('✅ 编辑地址API响应：', response);
+        
+        // 检查编辑接口响应格式
+        if (!response || response.error !== 0) {
+          throw new Error(response?.message || '编辑地址失败');
+        }
+        
       } else {
-        // 新增地址
-        result = await addAddress(submitData);
-        console.log('新增地址成功：', result);
+        // 新增地址 - 调用新增接口
+        console.log('🆕 开始调用新增地址API，接口：/api/user/addresses/add，参数：', submitData);
+        response = await addAddress(submitData);
+        console.log('✅ 新增地址API响应：', response);
+        
+        // 检查新增接口响应格式
+        if (!response || response.error !== 0) {
+          throw new Error(response?.message || '新增地址失败');
+        }
       }
       
+      // 显示成功提示
+      const successMessage = response.message || '保存成功';
       wx.showToast({
-        title: '保存成功',
-        icon: 'success'
+        title: successMessage,
+        icon: 'success',
+        duration: 1500
       });
+      
+      console.log('地址保存成功，数据来源：真实API接口');
       
       // 延迟返回上一页
       setTimeout(() => {
         wx.navigateBack();
-      }, 1000);
+      }, 1500);
       
     } catch (error) {
       console.error('保存地址失败：', error);
-      // 错误提示已在API层处理，这里不需要额外处理
+      
+      // 显示具体的错误信息
+      const errorMessage = error.message || '保存失败，请重试';
+      wx.showToast({
+        title: errorMessage,
+        icon: 'none',
+        duration: 2000
+      });
+      
     } finally {
       wx.hideLoading();
     }
@@ -343,4 +387,4 @@ Page({
       path: '/pages/address-form/index'
     };
   }
-}); 
+});

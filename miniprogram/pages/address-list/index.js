@@ -62,10 +62,17 @@ Page({
    */
   async loadAddressList() {
     try {
+      console.log('开始加载地址列表');
       wx.showLoading({ title: '加载中...' });
       
       const addressList = await getAddressList();
-      console.log('获取到地址列表：', addressList);
+      console.log('获取到地址列表API响应：', addressList);
+      
+      // 确保addressList是数组
+      if (!Array.isArray(addressList)) {
+        console.error('地址列表数据格式错误，期望数组，实际：', typeof addressList, addressList);
+        throw new Error('地址列表数据格式错误');
+      }
       
       // 为每个地址添加选中状态字段
       const listWithSelection = addressList.map(item => ({
@@ -73,14 +80,18 @@ Page({
         selected: false  // 默认未选中
       }));
       
+      console.log('处理后的地址列表：', listWithSelection);
+      
       this.setData({
         addressList: listWithSelection
       });
       
+      console.log('地址列表加载完成，共', listWithSelection.length, '条地址');
+      
     } catch (error) {
       console.error('加载地址列表失败：', error);
       wx.showToast({
-        title: '加载失败，请重试',
+        title: error.message || '加载失败，请重试',
         icon: 'none'
       });
     } finally {
@@ -239,9 +250,11 @@ Page({
    */
   async setAsDefault(addressId) {
     try {
+      console.log('开始设置默认地址，addressId：', addressId);
       wx.showLoading({ title: '设置中...' });
       
-      await setDefaultAddress(addressId);
+      const result = await setDefaultAddress(addressId);
+      console.log('设置默认地址API响应：', result);
       
       wx.showToast({
         title: '设置成功',
@@ -253,6 +266,10 @@ Page({
       
     } catch (error) {
       console.error('设置默认地址失败：', error);
+      wx.showToast({
+        title: error.message || '设置失败，请重试',
+        icon: 'none'
+      });
     } finally {
       wx.hideLoading();
     }
@@ -356,14 +373,20 @@ Page({
     const { pendingDeleteIds } = this.data;
     
     try {
+      console.log('开始删除地址，待删除ID：', pendingDeleteIds);
       wx.showLoading({ title: '删除中...' });
       
+      let result;
       if (pendingDeleteIds.length === 1) {
         // 删除单个地址
-        await deleteAddress(pendingDeleteIds[0]);
+        console.log('调用单个删除API，addressId：', pendingDeleteIds[0]);
+        result = await deleteAddress(pendingDeleteIds[0]);
+        console.log('单个删除API响应：', result);
       } else {
         // 批量删除地址
-        await batchDeleteAddress(pendingDeleteIds);
+        console.log('调用批量删除API，addressIds：', pendingDeleteIds);
+        result = await batchDeleteAddress(pendingDeleteIds);
+        console.log('批量删除API响应：', result);
       }
       
       wx.showToast({
@@ -384,6 +407,10 @@ Page({
       
     } catch (error) {
       console.error('删除地址失败：', error);
+      wx.showToast({
+        title: error.message || '删除失败，请重试',
+        icon: 'none'
+      });
     } finally {
       wx.hideLoading();
     }
@@ -398,4 +425,4 @@ Page({
       path: '/pages/address-list/index'
     };
   }
-}); 
+});

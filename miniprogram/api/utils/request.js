@@ -194,6 +194,256 @@ const mockData = {
     throw new Error('地址不存在');
   },
 
+  // 新的地址接口路径 - 符合接口文档规范
+  '/api/user/addresses/list': (data) => {
+    // 获取地址列表 - 符合接口文档响应格式
+    // 默认地址排在前面
+    const sortedAddresses = [...mockAddressList].sort((a, b) => {
+      if (a.isDefault && !b.isDefault) return -1;
+      if (!a.isDefault && b.isDefault) return 1;
+      return 0;
+    });
+    
+    return {
+      error: 0,
+      body: sortedAddresses.map(addr => ({
+        id: addr.id,
+        consignee: addr.consignee,
+        mobile: addr.mobile,
+        region: addr.region,
+        detail: addr.detail,
+        isDefault: addr.isDefault
+      })),
+      message: '获取地址列表成功',
+      success: true
+    };
+  },
+
+  '/api/user/addresses/delete': (data) => {
+    // 删除单个地址 - 符合接口文档响应格式
+    const addressId = data.addressId;
+    const index = mockAddressList.findIndex(addr => addr.id === addressId);
+    
+    if (index !== -1) {
+      const deletedAddress = mockAddressList[index];
+      mockAddressList.splice(index, 1);
+      
+      // 如果删除的是默认地址，将第一个地址设为默认
+      if (deletedAddress.isDefault && mockAddressList.length > 0) {
+        mockAddressList[0].isDefault = true;
+      }
+      
+      return {
+        error: 0,
+        body: {
+          addressId: addressId,
+          deleted: true,
+          message: '地址删除成功'
+        },
+        message: '地址删除成功',
+        success: true
+      };
+    } else {
+      return {
+        error: 404,
+        body: null,
+        message: '地址不存在',
+        success: false
+      };
+    }
+  },
+
+  '/api/user/addresses/batch-delete': (data) => {
+    // 批量删除地址 - 符合接口文档响应格式
+    const addressIds = data.addressIds || [];
+    const deletedIds = [];
+    let hasDefaultDeleted = false;
+    
+    addressIds.forEach(id => {
+      const index = mockAddressList.findIndex(addr => addr.id === id);
+      if (index !== -1) {
+        if (mockAddressList[index].isDefault) {
+          hasDefaultDeleted = true;
+        }
+        mockAddressList.splice(index, 1);
+        deletedIds.push(id);
+      }
+    });
+    
+    // 如果删除的地址中包含默认地址，将剩余的第一个地址设为默认
+    if (hasDefaultDeleted && mockAddressList.length > 0) {
+      mockAddressList[0].isDefault = true;
+    }
+    
+    return {
+      error: 0,
+      body: {
+        requestedCount: addressIds.length,
+        deletedCount: deletedIds.length,
+        deletedIds: deletedIds,
+        message: `成功删除${deletedIds.length}个地址`
+      },
+      message: '批量删除地址成功',
+      success: true
+    };
+  },
+
+  '/api/user/addresses/set-default': (data) => {
+    // 设置默认地址 - 符合接口文档响应格式
+    const addressId = data.addressId;
+    const targetAddress = mockAddressList.find(addr => addr.id === addressId);
+    
+    if (targetAddress) {
+      // 取消所有地址的默认状态
+      mockAddressList.forEach(addr => {
+        addr.isDefault = false;
+      });
+      // 设置目标地址为默认
+      targetAddress.isDefault = true;
+      
+      return {
+        error: 0,
+        body: {
+          addressId: addressId,
+          setAsDefault: true,
+          message: '默认地址设置成功'
+        },
+        message: '默认地址设置成功',
+        success: true
+      };
+    } else {
+      return {
+        error: 404,
+        body: null,
+        message: '地址不存在',
+        success: false
+      };
+    }
+  },
+
+  '/api/user/addresses/detail': (data) => {
+    // 获取地址详情 - 符合接口文档响应格式
+    const addressId = data.addressId;
+    const address = mockAddressList.find(addr => addr.id === addressId);
+    
+    if (address) {
+      return {
+        error: 0,
+        body: {
+          address: {
+            id: address.id,
+            consignee: address.consignee,
+            mobile: address.mobile,
+            region: address.region,
+            detail: address.detail,
+            isDefault: address.isDefault
+          }
+        },
+        message: '获取地址详情成功',
+        success: true
+      };
+    } else {
+      return {
+        error: 404,
+        body: null,
+        message: '地址不存在',
+        success: false
+      };
+    }
+  },
+
+  '/api/user/addresses/add': (data) => {
+    // 新增地址 - 符合接口文档响应格式
+    const newAddress = {
+      id: Date.now(), // 使用时间戳作为ID
+      consignee: data.consignee,
+      mobile: data.mobile,
+      region: data.region,
+      detail: data.detail,
+      isDefault: data.isDefault || false
+    };
+    
+    // 如果设为默认地址，需要将其他地址的默认状态取消
+    if (newAddress.isDefault) {
+      mockAddressList.forEach(addr => {
+        addr.isDefault = false;
+      });
+    }
+    
+    mockAddressList.push(newAddress);
+    
+    return {
+      error: 0,
+      body: {
+        addressId: newAddress.id,
+        created: true,
+        addressInfo: {
+          id: newAddress.id,
+          consignee: newAddress.consignee,
+          mobile: newAddress.mobile,
+          region: newAddress.region,
+          detail: newAddress.detail,
+          isDefault: newAddress.isDefault
+        },
+        message: '地址添加成功'
+      },
+      message: '地址添加成功',
+      success: true
+    };
+  },
+
+  '/api/user/addresses/update': (data) => {
+    // 编辑地址 - 符合接口文档响应格式
+    const index = mockAddressList.findIndex(addr => addr.id === data.id);
+    
+    if (index !== -1) {
+      // 如果设为默认地址，需要将其他地址的默认状态取消
+      if (data.isDefault) {
+        mockAddressList.forEach(addr => {
+          addr.isDefault = false;
+        });
+      }
+      
+      // 更新地址信息
+      const updatedAddress = {
+        ...mockAddressList[index],
+        consignee: data.consignee,
+        mobile: data.mobile,
+        region: data.region,
+        detail: data.detail,
+        isDefault: data.isDefault
+      };
+      
+      mockAddressList[index] = updatedAddress;
+      
+      return {
+        error: 0,
+        body: {
+          addressId: updatedAddress.id,
+          updated: true,
+          addressInfo: {
+            id: updatedAddress.id,
+            consignee: updatedAddress.consignee,
+            mobile: updatedAddress.mobile,
+            region: updatedAddress.region,
+            detail: updatedAddress.detail,
+            isDefault: updatedAddress.isDefault
+          },
+          message: '地址修改成功'
+        },
+        message: '地址修改成功',
+        success: true
+      };
+    } else {
+      return {
+        error: 404,
+        body: null,
+        message: '地址不存在',
+        success: false
+      };
+    }
+  },
+
   // 活动相关mock数据 - 严格按照接口文档规范
   '/api/activities/list': (data) => {
     // 模拟活动数据 - 完全符合接口文档的ActivityItem结构
@@ -390,17 +640,536 @@ const mockData = {
     };
   },
 
-  '/api/activities/signup': (data) => {
-    // 模拟报名操作
-    console.log('模拟活动报名，活动ID:', data.activityId);
+  '/api/activities/detail': (data) => {
+    // 模拟活动详情数据 - 严格按照接口文档规范
+    const mockActivityDetails = {
+      '1': {
+        id: '1',
+        title: '门店周年庆活动',
+        description: '羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！快来参与我们的庆典活动吧！',
+        startTime: '2024年12月18日 10:00',
+        endTime: '2024年12月24日 18:00',
+        location: '倍特爱运动专卖店',
+        organizer: '倍特爱运动专卖店',
+        content: '<p>🎉 为庆祝倍特爱运动专卖店周年庆，我们特举办盛大庆典活动！</p><p><strong>活动亮点：</strong></p><p>• 全场商品8折优惠</p><p>• 会员额外享受95折</p><p>• 购物满299元送精美礼品</p><p>• 现场抽奖有机会获得专业球拍</p><p><strong>活动地址：</strong>倍特爱运动专卖店</p>',
+        rules: '1. 活动期间每天限量100份礼品，先到先得\n2. 会员折扣与商品折扣可叠加使用\n3. 抽奖活动每人每天限参与一次\n4. 活动最终解释权归商家所有',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?w=800',
+        isJoined: false
+      },
+      '2': {
+        id: '2',
+        title: '每周日BUFF头巾定制',
+        description: '每周日购买指定号码加价15元定制BUFF头巾，个性化运动装备等你来！',
+        startTime: '每周日 09:00',
+        endTime: '每周日 17:00',
+        location: '倍特爱运动专卖店',
+        organizer: '倍特爱运动专卖店',
+        content: '<p>🧢 专业运动头巾定制服务！</p><p><strong>定制说明：</strong></p><p>• 选择喜欢的号码图案</p><p>• 加价仅需15元</p><p>• 材质透气舒适</p><p>• 专业运动设计</p><p>• 一周内制作完成</p>',
+        rules: '1. 每周日活动时间内下单有效\n2. 定制商品不支持退换货\n3. 制作周期为5-7个工作日\n4. 数字号码范围：0-99',
+        coverUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+        isJoined: true
+      },
+      '3': {
+        id: '3',
+        title: '2025年新年特训营',
+        description: '青少年羽毛球新年特训营，专业教练一对一指导，提升球技好时机',
+        startTime: '2025年1月5日',
+        endTime: '2025年2月28日',
+        location: '倍特爱运动专卖店',
+        organizer: '倍特爱运动专卖店',
+        content: '<p>🏆 专业青少年羽毛球特训营开营啦！</p><p><strong>课程特色：</strong></p><p>• 专业教练1对1指导</p><p>• 分级训练，因材施教</p><p>• 全天候训练计划</p><p>• 比赛技巧专项训练</p><p>• 身体素质提升课程</p><p><strong>适合年龄：</strong>8-16岁青少年</p>',
+        rules: '1. 需提供健康证明\n2. 训练期间需购买保险\n3. 请穿着专业运动装备\n4. 训练营不提供球拍，需自备\n5. 如遇恶劣天气将调整至室内场地',
+        coverUrl: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+        isJoined: false
+      },
+      '4': {
+        id: '4',
+        title: '春季业余联赛',
+        description: '第四届春季业余羽毛球联赛报名开始，丰厚奖品等你来拿！',
+        startTime: '2025年3月15日',
+        endTime: '2025年3月16日',
+        location: '倍特爱运动专卖店',
+        organizer: '倍特爱运动专卖店',
+        content: '<p>🏆 第四届春季业余羽毛球联赛即将开始！</p><p><strong>比赛信息：</strong></p><p>• 分组竞技，公平比赛</p><p>• 丰厚奖品等你来拿</p><p>• 专业裁判执法</p><p>• 免费提供比赛用球</p><p>• 现场直播精彩瞬间</p>',
+        rules: '1. 年满18岁即可报名参加\n2. 需自备球拍和运动装备\n3. 比赛采用三局两胜制\n4. 请提前30分钟到场签到\n5. 如有身体不适请及时告知',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        isJoined: false
+      },
+      '5': {
+        id: '5',
+        title: '元旦跨年羽毛球赛',
+        description: '元旦期间跨年羽毛球友谊赛，与球友一起迎接新年！',
+        startTime: '2024年12月31日',
+        endTime: '2025年1月1日',
+        location: '倍特爱运动专卖店',
+        organizer: '倍特爱运动专卖店',
+        content: '<p>🎊 元旦跨年特别活动！</p><p><strong>活动内容：</strong></p><p>• 跨年友谊赛</p><p>• 新年祝福抽奖</p><p>• 免费提供热饮</p><p>• 精美纪念品</p><p>• 合影留念</p>',
+        rules: '1. 活动免费参加\n2. 请自备运动装备\n3. 注意保暖防寒\n4. 活动期间禁止吸烟\n5. 请爱护场地设施',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        isJoined: false
+      }
+    };
+
+    const activityId = data.id;
+    const activityDetail = mockActivityDetails[activityId] || mockActivityDetails['1'];
     
-    // 简单的成功逻辑（实际应该检查活动状态、是否已满等）
-    const success = Math.random() > 0.1; // 90% 成功率
+    // 返回符合接口文档的数据结构
+    return activityDetail;
+  },
+
+  '/api/activities/signup': (data) => {
+    // 模拟报名操作 - 严格按照接口文档规范
+    console.log('模拟活动报名，活动ID:', data.id);
+    
+    // 模拟各种业务错误场景
+    const random = Math.random();
+    
+    if (random < 0.05) {
+      // 5% 概率模拟已报名错误
+      throw {
+        error: 1003,
+        message: '你已报名此活动',
+        body: null
+      };
+    } else if (random < 0.1) {
+      // 5% 概率模拟报名已满错误
+      throw {
+        error: 1001,
+        message: '报名人数已满',
+        body: null
+      };
+    } else if (random < 0.15) {
+      // 5% 概率模拟报名截止错误
+      throw {
+        error: 1002,
+        message: '报名已截止',
+        body: null
+      };
+    }
+    
+    // 85% 概率模拟成功
+    return {
+      signupId: `signup_${Date.now()}`,
+      activityId: data.id,
+      signupTime: new Date().toISOString(),
+      status: 'confirmed',
+      message: '报名成功！'
+    };
+  },
+
+  '/api/activities/cancel-signup': (data) => {
+    // 模拟取消报名操作
+    console.log('模拟取消报名，活动ID:', data.eventId, '报名ID:', data.signupId);
     
     return {
-      success: success,
-      message: success ? '报名成功！' : '报名失败，活动可能已满或已结束'
+      eventId: data.eventId,
+      signupId: data.signupId,
+      cancelTime: new Date().toISOString(),
+      refundAmount: 0,
+      message: '取消报名成功'
     };
+  },
+
+  '/api/activities/my-signups': (data) => {
+    // 模拟用户报名记录
+    const mockSignups = [
+      {
+        signupId: 'signup_123456',
+        activityId: '1',
+        activityTitle: '门店周年庆活动',
+        activityCoverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?w=400',
+        activityStartTime: '2024年12月18日 10:00',
+        activityEndTime: '2024年12月24日 18:00',
+        activityLocation: '倍特爱运动专卖店',
+        signupTime: '2024-12-18T14:30:00Z',
+        status: 'confirmed',
+        isJoined: true
+      },
+      {
+        signupId: 'signup_234567',
+        activityId: '2',
+        activityTitle: '每周日BUFF头巾定制',
+        activityCoverUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
+        activityStartTime: '每周日 09:00',
+        activityEndTime: '每周日 17:00',
+        activityLocation: '倍特爱运动专卖店',
+        signupTime: '2024-12-15T10:20:00Z',
+        status: 'completed',
+        isJoined: true
+      }
+    ];
+
+    // 状态筛选
+    let filteredSignups = mockSignups;
+    if (data.status && data.status !== 'all') {
+      filteredSignups = mockSignups.filter(item => item.status === data.status);
+    }
+
+    // 分页处理
+    const page = data.page || 1;
+    const pageSize = data.pageSize || 10;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const pageSignups = filteredSignups.slice(start, end);
+
+    return {
+      signups: pageSignups,
+      pagination: {
+        page: page,
+        pageSize: pageSize,
+        total: filteredSignups.length,
+        totalPages: Math.ceil(filteredSignups.length / pageSize),
+        hasMore: end < filteredSignups.length
+      }
+    };
+  },
+
+  // 服务页面相关mock数据 - 严格按照接口文档规范
+  '/api/strings/list': (data) => {
+    // 模拟线材品牌和线材数据 - 完全符合接口文档
+    const mockBrands = [
+      { id: 'all', name: '全部' },
+      { id: 'yonex', name: 'YONEX' },
+      { id: 'victor', name: 'VICTOR' },
+      { id: 'li_ning', name: '李宁' },
+      { id: 'gosen', name: 'GOSEN' }
+    ];
+
+    const mockStrings = [
+      { 
+        id: 'BG65', 
+        name: 'BG-65', 
+        brand: 'yonex',
+        description: '经典耐用，适合初学者',
+        price: 35 
+      },
+      { 
+        id: 'BG80', 
+        name: 'BG-80 Power', 
+        brand: 'yonex',
+        description: '高弹性，进攻型选手首选',
+        price: 45 
+      },
+      { 
+        id: 'VBS63', 
+        name: 'VBS-63', 
+        brand: 'victor',
+        description: '控制性佳，防守型球员推荐',
+        price: 38 
+      },
+      { 
+        id: 'LN_NO7', 
+        name: 'No.7线', 
+        brand: 'li_ning',
+        description: '均衡型线材，适合各类打法',
+        price: 32 
+      },
+      { 
+        id: 'GOSEN_G_TONE', 
+        name: 'G-TONE 9', 
+        brand: 'gosen',
+        description: '日本进口专业线材，手感佳',
+        price: 48 
+      },
+      { 
+        id: 'GOSEN_PRO', 
+        name: 'Pro 88', 
+        brand: 'gosen',
+        description: '专业比赛级线材，控制精准',
+        price: 55 
+      }
+    ];
+
+    // 根据品牌筛选
+    let filteredStrings = mockStrings;
+    if (data.brand && data.brand !== 'all') {
+      filteredStrings = mockStrings.filter(item => item.brand === data.brand);
+    }
+
+    return {
+      brands: mockBrands,
+      strings: filteredStrings
+    };
+  },
+
+  '/api/string-service/create': (data) => {
+    // 模拟穿线订单创建 - 严格按照接口文档规范
+    console.log('模拟创建穿线订单:', data);
+
+    // 模拟业务错误场景
+    const random = Math.random();
+    
+    if (random < 0.05) {
+      // 5% 概率模拟未登录错误
+      throw {
+        error: 401,
+        message: '请先登录',
+        body: null
+      };
+    } else if (random < 0.1) {
+      // 5% 概率模拟参数错误
+      throw {
+        error: 400,
+        message: '参数错误，请检查订单信息',
+        body: null
+      };
+    }
+
+    // 查找线材信息
+    const stringInfo = {
+      'BG65': { name: 'BG-65', price: 35 },
+      'BG80': { name: 'BG-80 Power', price: 45 },
+      'VBS63': { name: 'VBS-63', price: 38 },
+      'LN_NO7': { name: 'No.7线', price: 32 },
+      'GOSEN_G_TONE': { name: 'G-TONE 9', price: 48 },
+      'GOSEN_PRO': { name: 'Pro 88', price: 55 }
+    }[data.string_id] || { name: '未知线材', price: 30 };
+
+    // 90% 概率模拟成功
+    return {
+      orderId: `string_${Date.now()}`,
+      orderNo: `STR${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}${String(new Date().getDate()).padStart(2, '0')}${String(Math.floor(Math.random() * 9999) + 1).padStart(4, '0')}`,
+      racket_brand: data.racket_brand,
+      pounds: data.pounds,
+      string_name: stringInfo.name,
+      total_price: stringInfo.price,
+      status: 'pending',
+      status_text: '待接单',
+      estimated_time: '2-3个工作日',
+      create_time: new Date().toLocaleString('zh-CN', { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+      })
+    };
+  },
+
+  '/api/points/exchange-info': (data) => {
+    // 模拟积分兑换信息 - 严格按照接口文档规范
+    console.log('模拟获取积分兑换信息');
+
+    return {
+      user_points: 2580,
+      goods: [
+        {
+          id: 101,
+          name: '羽毛球拍',
+          img: '/assets/images/racket.jpg',
+          points: 2200,
+          stock: 5
+        },
+        {
+          id: 102,
+          name: '专业羽毛球鞋',
+          img: '/assets/images/shoes.jpg',
+          points: 1800,
+          stock: 3
+        },
+        {
+          id: 103,
+          name: '手胶套装',
+          img: '/assets/images/grip.jpg',
+          points: 300,
+          stock: 10
+        }
+      ],
+      recent_exchanges: [
+        {
+          goods_name: '专业羽毛球鞋',
+          points: 1800,
+          date: '2024-06-01'
+        },
+        {
+          goods_name: '手胶套装',
+          points: 300,
+          date: '2024-05-28'
+        }
+      ]
+    };
+  },
+
+  '/api/points/exchange': (data) => {
+    // 模拟积分商品兑换
+    console.log('模拟积分兑换:', data);
+
+    // 模拟业务错误场景
+    const random = Math.random();
+    
+    if (random < 0.1) {
+      // 10% 概率模拟积分不足
+      throw {
+        error: 1001,
+        message: '积分不足',
+        body: null
+      };
+    } else if (random < 0.15) {
+      // 5% 概率模拟库存不足
+      throw {
+        error: 1002,
+        message: '商品库存不足',
+        body: null
+      };
+    }
+
+    return {
+      exchangeId: `ex_${Date.now()}`,
+      goodsId: data.goodsId,
+      points: data.points,
+      exchangeTime: new Date().toISOString(),
+      status: 'success',
+      message: '兑换成功'
+    };
+  },
+
+  '/api/promotion/info': (data) => {
+    // 模拟推广返佣信息 - 严格按照接口文档规范
+    console.log('模拟获取推广返佣信息');
+
+    return {
+      total_earnings: 158,
+      invited_users: 6,
+      this_month_earnings: 45,
+      today_earnings: 8,
+      account_balance: 245,
+      invite_code: 'PROMO001',
+      invite_link: 'https://miniprogram.com/invite?code=PROMO001',
+      qr_code_url: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://miniprogram.com/invite?code=PROMO001',
+      commission_records: [
+        {
+          desc: '邀请好友注册奖励',
+          amount: 20,
+          date: '2024-06-08',
+          status: '已到账',
+          type: 'invite'
+        },
+        {
+          desc: '好友消费返佣',
+          amount: 15,
+          date: '2024-06-07',
+          status: '已到账',
+          type: 'commission'
+        },
+        {
+          desc: '邀请好友注册奖励',
+          amount: 20,
+          date: '2024-06-05',
+          status: '已到账',
+          type: 'invite'
+        },
+        {
+          desc: '好友消费返佣',
+          amount: 8,
+          date: '2024-06-03',
+          status: '已到账',
+          type: 'commission'
+        }
+      ],
+      withdraw_records: [
+        {
+          amount: 100,
+          date: '2024-06-01',
+          status: '已到账',
+          order_no: 'WD202406010001'
+        },
+        {
+          amount: 50,
+          date: '2024-05-25',
+          status: '已到账',
+          order_no: 'WD202405250001'
+        }
+      ]
+    };
+  },
+
+  '/api/promotion/withdraw': (data) => {
+    // 模拟提现申请
+    console.log('模拟提现申请:', data);
+
+    // 模拟业务错误场景
+    const random = Math.random();
+    
+    if (random < 0.05) {
+      // 5% 概率模拟余额不足
+      throw {
+        error: 1001,
+        message: '账户余额不足',
+        body: null
+      };
+    } else if (random < 0.1) {
+      // 5% 概率模拟提现金额不符合要求
+      throw {
+        error: 1002,
+        message: '提现金额不符合要求',
+        body: null
+      };
+    }
+
+    return {
+      withdrawId: `wd_${Date.now()}`,
+      amount: data.amount,
+      orderNo: `WD${new Date().getTime()}`,
+      applyTime: new Date().toISOString(),
+      status: 'processing',
+      message: '提现申请已提交，预计1-3个工作日到账'
+    };
+  },
+
+  '/api/user/service-records': (data) => {
+    // 模拟我的服务记录 - 严格按照接口文档规范
+    console.log('模拟获取服务记录:', data);
+
+    const mockServiceRecords = [
+      {
+        service_type: '穿线进度',
+        racket: 'YONEX BG-65',
+        status: '穿线中',
+        progress: 60,
+        detail: '主线24磅，横线23磅，预计6月10日完成'
+      },
+      {
+        service_type: '奖品物流',
+        goods: '专业手胶套装',
+        logistics: [
+          { desc: '已发货', time: '2024-06-06 15:00' },
+          { desc: '运输中', time: '2024-06-06 18:00' },
+          { desc: '派送中', time: '2024-06-07 09:00' }
+        ],
+        express_number: 'SF1234567890'
+      },
+      {
+        service_type: '返佣记录',
+        amount: 20,
+        desc: '邀请好友下单奖励',
+        date: '2024-06-02',
+        status: '已到账'
+      },
+      {
+        service_type: '穿线进度',
+        racket: 'VICTOR VBS-63',
+        status: '已完成',
+        progress: 100,
+        detail: '主线26磅，横线25磅，已完成待取'
+      }
+    ];
+
+    // 根据类型筛选
+    let filteredRecords = mockServiceRecords;
+    if (data.type && data.type !== 'all') {
+      filteredRecords = mockServiceRecords.filter(item => item.service_type === data.type);
+    }
+
+    // 分页处理
+    const page = data.page || 1;
+    const pageSize = data.pageSize || 10;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const pageRecords = filteredRecords.slice(start, end);
+
+    // 直接返回数组，符合接口文档中body字段是array的定义
+    return pageRecords;
   },
 
   // 搜索相关mock数据
@@ -1359,9 +2128,9 @@ const request = async (options) => {
     console.log('[API请求]', options.url, options.data);
     console.log('[环境配置]', config.env);
     
-    // 开发环境使用mock数据
-    if (config.env === 'development' && mockData[options.url]) {
-      console.log('[使用模拟数据]', options.url, options.data);
+    // 根据配置决定是否使用mock数据
+    if (config.enableMock && mockData[options.url]) {
+      console.log('🎭 [使用模拟数据]', options.url, options.data);
       
       // 模拟网络延迟
       await new Promise(resolve => setTimeout(resolve, 500));
@@ -1371,32 +2140,50 @@ const request = async (options) => {
       // 如果是函数，则调用并传入请求数据
       if (typeof mockResult === 'function') {
         const result = mockResult(options.data);
-        console.log('[模拟数据返回]', result);
+        console.log('🎭 [模拟数据返回]', result);
         return result;
       }
       
-      console.log('[模拟数据返回]', mockResult);
+      console.log('🎭 [模拟数据返回]', mockResult);
       return mockResult;
     }
     
+    console.log('🌐 [发起真实API请求]', options.url, '配置enableMock:', config.enableMock);
+    
     // 应用请求拦截器
     const requestConfig = requestInterceptor(options);
+    
+    const fullUrl = `${BASE_URL}${options.url}`;
+    const method = options.method || 'POST';
+    
+    console.log('🚀 [发起网络请求]', {
+      url: fullUrl,
+      method: method,
+      data: requestConfig.data,
+      header: requestConfig.header
+    });
     
     // 发起请求
     const response = await new Promise((resolve, reject) => {
       wx.request({
         ...requestConfig,
-        url: `${BASE_URL}${options.url}`,
-        method: options.method || 'POST', // 默认使用POST方法
+        url: fullUrl,
+        method: method,
         success: (res) => {
+          console.log('✅ [网络请求成功]', {
+            statusCode: res.statusCode,
+            data: res.data
+          });
+          
           if (!res.data || typeof res.data.error === 'undefined') {
+            console.error('❌ [接口返回格式错误]', res.data);
             reject(new Error('接口返回格式错误'));
             return;
           }
           resolve(res.data);
         },
         fail: (error) => {
-          console.error('网络请求失败:', error);
+          console.error('❌ [网络请求失败]', error);
           wx.showToast({
             title: '网络请求失败，请检查网络连接',
             icon: 'none',
@@ -1416,6 +2203,17 @@ const request = async (options) => {
 };
 
 /**
+ * API请求函数 - 兼容现有代码
+ * @param {string} url - 请求URL
+ * @param {Object} data - 请求数据
+ * @param {string} method - 请求方法
+ * @returns {Promise<any>} 响应结果
+ */
+const apiRequest = async (url, data = {}, method = 'POST') => {
+  return request({ url, data, method });
+};
+
+/**
  * API工具对象，提供常用的请求方法
  */
 const api = {
@@ -1428,5 +2226,6 @@ const api = {
 
 module.exports = {
   request,
-  api
-}; 
+  api,
+  apiRequest
+};

@@ -72,42 +72,61 @@ const mockAddressList = [
  * 获取用户地址列表
  * @returns {Promise} 返回地址列表数据
  */
-export function getAddressList() {
-  // 模拟异步请求，返回测试数据
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('模拟获取地址列表成功');
-      resolve([...mockAddressList]); // 返回拷贝的数据，避免直接修改原数组
-    }, 500); // 模拟网络延迟
-  });
+export async function getAddressList() {
+  console.log('调用获取地址列表API');
   
-  // 真实项目中使用以下代码：
-  // return apiRequest('/api/address/list', {}, 'POST');
+  try {
+    const response = await apiRequest('/api/user/addresses/list', {}, 'GET');
+    console.log('获取地址列表API响应：', response);
+    
+    // 根据接口文档，响应格式为 { error: 0, body: [...], message: string, success: true }
+    if (response && response.success && response.body) {
+      return response.body; // 直接返回地址数组
+    } else {
+      console.error('获取地址列表失败：', response);
+      throw new Error(response?.message || '获取地址列表失败');
+    }
+  } catch (error) {
+    console.error('获取地址列表API调用失败：', error);
+    throw error;
+  }
 }
 
 /**
  * 添加新地址
  * @param {Object} addressData 地址信息
- * @param {string} addressData.name 收件人姓名
- * @param {string} addressData.phone 收件人电话
- * @param {string} addressData.province 省份
- * @param {string} addressData.city 城市
- * @param {string} addressData.district 区县
- * @param {string} addressData.detail 详细地址
- * @param {boolean} addressData.isDefault 是否为默认地址
+ * @param {string} addressData.consignee 收件人姓名（2-20字符）
+ * @param {string} addressData.mobile 收件人手机号（11位，以1开头）
+ * @param {string} addressData.region 完整地区信息（空格分隔）
+ * @param {string} addressData.detail 详细地址（5-200字符）
+ * @param {boolean} addressData.isDefault 是否设为默认地址（默认false）
+ * @param {string} addressData.province 省份（从regionArray自动提取）
+ * @param {string} addressData.city 城市（从regionArray自动提取）
+ * @param {string} addressData.district 区县（从regionArray自动提取）
  * @returns {Promise} 返回添加结果
  */
 export function addAddress(addressData) {
-  return apiRequest('/api/address/add', addressData, 'POST');
+  // 调用新增地址接口，接口地址：/api/user/addresses/add，请求方式：POST
+  return apiRequest('/api/user/addresses/add', addressData, 'POST');
 }
 
 /**
  * 更新地址信息
  * @param {Object} addressData 地址信息（包含id）
+ * @param {number} addressData.id 地址ID（数字类型）
+ * @param {string} addressData.consignee 收件人姓名（2-20字符）
+ * @param {string} addressData.mobile 收件人手机号（11位，以1开头）
+ * @param {string} addressData.region 完整地区信息（空格分隔）
+ * @param {string} addressData.detail 详细地址（5-200字符）
+ * @param {boolean} addressData.isDefault 是否设为默认地址
+ * @param {string} addressData.province 省份（从regionArray自动提取）
+ * @param {string} addressData.city 城市（从regionArray自动提取）
+ * @param {string} addressData.district 区县（从regionArray自动提取）
  * @returns {Promise} 返回更新结果
  */
 export function updateAddress(addressData) {
-  return apiRequest('/api/address/update', addressData, 'POST');
+  // 调用编辑地址接口，接口地址：/api/user/addresses/update，请求方式：PUT
+  return apiRequest('/api/user/addresses/update', addressData, 'PUT');
 }
 
 /**
@@ -115,24 +134,24 @@ export function updateAddress(addressData) {
  * @param {number} addressId 地址ID
  * @returns {Promise} 返回删除结果
  */
-export function deleteAddress(addressId) {
-  // 模拟删除操作
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const index = mockAddressList.findIndex(item => item.id === addressId);
-      if (index !== -1) {
-        mockAddressList.splice(index, 1); // 从数组中删除
-        console.log(`模拟删除地址成功，ID: ${addressId}`);
-        resolve({ success: true, message: '删除成功' });
-      } else {
-        console.error(`地址不存在，ID: ${addressId}`);
-        reject({ success: false, message: '地址不存在' });
-      }
-    }, 300); // 模拟网络延迟
-  });
+export async function deleteAddress(addressId) {
+  console.log('调用删除地址API，ID：', addressId);
   
-  // 真实项目中使用以下代码：
-  // return apiRequest('/api/address/delete', { id: addressId }, 'POST');
+  try {
+    const response = await apiRequest('/api/user/addresses/delete', { addressId }, 'DELETE');
+    console.log('删除地址API响应：', response);
+    
+    // 根据接口文档，响应格式为 { error: 0, body: {...}, message: string, success: true }
+    if (response && response.success) {
+      return response;
+    } else {
+      console.error('删除地址失败：', response);
+      throw new Error(response?.message || '删除地址失败');
+    }
+  } catch (error) {
+    console.error('删除地址API调用失败：', error);
+    throw error;
+  }
 }
 
 /**
@@ -140,31 +159,24 @@ export function deleteAddress(addressId) {
  * @param {Array} addressIds 地址ID数组
  * @returns {Promise} 返回批量删除结果
  */
-export function batchDeleteAddress(addressIds) {
-  // 模拟批量删除操作
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      let deletedCount = 0;
-      addressIds.forEach(id => {
-        const index = mockAddressList.findIndex(item => item.id === id);
-        if (index !== -1) {
-          mockAddressList.splice(index, 1);
-          deletedCount++;
-        }
-      });
-      
-      if (deletedCount > 0) {
-        console.log(`模拟批量删除地址成功，删除了 ${deletedCount} 个地址`);
-        resolve({ success: true, message: `删除了 ${deletedCount} 个地址`, deletedCount });
-      } else {
-        console.error('没有找到要删除的地址');
-        reject({ success: false, message: '没有找到要删除的地址' });
-      }
-    }, 500); // 模拟网络延迟
-  });
+export async function batchDeleteAddress(addressIds) {
+  console.log('调用批量删除地址API，IDs：', addressIds);
   
-  // 真实项目中使用以下代码：
-  // return apiRequest('/api/address/batchDelete', { ids: addressIds }, 'POST');
+  try {
+    const response = await apiRequest('/api/user/addresses/batch-delete', { addressIds }, 'DELETE');
+    console.log('批量删除地址API响应：', response);
+    
+    // 根据接口文档，响应格式为 { error: 0, body: {...}, message: string, success: true }
+    if (response && response.success) {
+      return response;
+    } else {
+      console.error('批量删除地址失败：', response);
+      throw new Error(response?.message || '批量删除地址失败');
+    }
+  } catch (error) {
+    console.error('批量删除地址API调用失败：', error);
+    throw error;
+  }
 }
 
 /**
@@ -172,39 +184,47 @@ export function batchDeleteAddress(addressIds) {
  * @param {number} addressId 地址ID
  * @returns {Promise} 返回设置结果
  */
-export function setDefaultAddress(addressId) {
-  // 模拟设置默认地址操作
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const targetAddress = mockAddressList.find(item => item.id === addressId);
-      
-      if (targetAddress) {
-        // 先取消所有地址的默认状态
-        mockAddressList.forEach(item => {
-          item.isDefault = false;
-        });
-        
-        // 设置目标地址为默认
-        targetAddress.isDefault = true;
-        
-        console.log(`模拟设置默认地址成功，ID: ${addressId}`);
-        resolve({ success: true, message: '设置默认地址成功' });
-      } else {
-        console.error(`地址不存在，ID: ${addressId}`);
-        reject({ success: false, message: '地址不存在' });
-      }
-    }, 300); // 模拟网络延迟
-  });
+export async function setDefaultAddress(addressId) {
+  console.log('调用设置默认地址API，ID：', addressId);
   
-  // 真实项目中使用以下代码：
-  // return apiRequest('/api/address/setDefault', { id: addressId }, 'POST');
+  try {
+    const response = await apiRequest('/api/user/addresses/set-default', { addressId }, 'POST');
+    console.log('设置默认地址API响应：', response);
+    
+    // 根据接口文档，响应格式为 { error: 0, body: {...}, message: string, success: true }
+    if (response && response.success) {
+      return response;
+    } else {
+      console.error('设置默认地址失败：', response);
+      throw new Error(response?.message || '设置默认地址失败');
+    }
+  } catch (error) {
+    console.error('设置默认地址API调用失败：', error);
+    throw error;
+  }
 }
 
 /**
  * 根据ID获取地址详情
- * @param {number} addressId 地址ID
+ * @param {number} addressId 地址ID（数字类型）
  * @returns {Promise} 返回地址详情
+ * 响应格式：{
+ *   error: 0,
+ *   body: {
+ *     address: {
+ *       id: number,
+ *       consignee: string,
+ *       mobile: string,
+ *       region: string, // 支持逗号或空格分隔
+ *       detail: string,
+ *       isDefault: boolean
+ *     }
+ *   },
+ *   message: string,
+ *   success: boolean
+ * }
  */
 export function getAddressDetail(addressId) {
-  return apiRequest('/api/address/detail', { id: addressId }, 'POST');
-} 
+  // 调用获取地址详情接口，接口地址：/api/user/addresses/detail，请求方式：GET
+  return apiRequest('/api/user/addresses/detail', { addressId }, 'GET');
+}

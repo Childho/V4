@@ -1,10 +1,21 @@
+// 引入服务页面API接口 - 注意：使用编译后的JS文件
+const { 
+  getStringsList, 
+  createStringOrder, 
+  getPointsExchangeInfo, 
+  exchangeGoods: exchangeGoodsApi, 
+  getPromotionInfo, 
+  applyWithdraw, 
+  getServiceRecords 
+} = require('../../api/bookingApi');
+
 Page({
   /**
    * 页面的初始数据
    * 包含所有tab页面需要的数据和状态管理
    */
   data: {
-    // 当前激活的主tab页面 (0: 穿线服务, 1: 积分兑换, 2: 我的服务)
+    // 当前激活的主tab页面 (0: 穿线服务, 1: 积分兑换, 2: 推广返佣, 3: 我的服务)
     currentTab: 0,
     
     // 当前激活的子tab页面 (用于"我的服务"页面)
@@ -15,75 +26,27 @@ Page({
     
     // 下单成功弹窗显示状态
     showOrderModal: false,
+    
+    // 订单详情数据（用于下单成功弹窗）
+    orderDetails: {},
 
     // === Tab1: 穿线服务数据 ===
     stringService: {
       racket_brand: '',       // 球拍品牌与型号
-      main_pounds: 24,        // 主线磅数（保留用于兼容性）
-      cross_pounds: 23,       // 横线磅数（保留用于兼容性）
-      pounds: 24,             // 统一磅数（新增）
+      pounds: 24,             // 统一磅数
       string_id: '',          // 选中的线材ID
       remark: '',             // 备注信息
       total_price: 0          // 总价格
     },
     
-    // 线材品牌列表 (mock数据)
-    stringBrands: [
-      { id: 'all', name: '全部' },
-      { id: 'yonex', name: 'YONEX' },
-      { id: 'victor', name: 'VICTOR' },
-      { id: 'li_ning', name: '李宁' },
-      { id: 'gosen', name: 'GOSEN' }
-    ],
+    // 线材品牌列表 - 从API获取
+    stringBrands: [],
     
     // 当前选中的品牌
     selectedBrand: 'all',
     
-    // 线材列表 (mock数据)
-    stringList: [
-      { 
-        id: 'BG65', 
-        name: 'BG-65', 
-        brand: 'yonex',
-        description: '经典耐用，适合初学者',
-        price: 35 
-      },
-      { 
-        id: 'BG80', 
-        name: 'BG-80 Power', 
-        brand: 'yonex',
-        description: '高弹性，进攻型选手首选',
-        price: 45 
-      },
-      { 
-        id: 'VBS63', 
-        name: 'VBS-63', 
-        brand: 'victor',
-        description: '控制性佳，防守型球员推荐',
-        price: 38 
-      },
-      { 
-        id: 'LN_NO7', 
-        name: 'No.7线', 
-        brand: 'li_ning',
-        description: '均衡型线材，适合各类打法',
-        price: 32 
-      },
-      { 
-        id: 'GOSEN_G_TONE', 
-        name: 'G-TONE 9', 
-        brand: 'gosen',
-        description: '日本进口专业线材，手感佳',
-        price: 48 
-      },
-      { 
-        id: 'GOSEN_PRO', 
-        name: 'Pro 88', 
-        brand: 'gosen',
-        description: '专业比赛级线材，控制精准',
-        price: 55 
-      }
-    ],
+    // 线材列表 - 从API获取
+    stringList: [],
     
     // 根据品牌筛选后的线材列表
     filteredStrings: [],
@@ -93,102 +56,26 @@ Page({
 
     // === Tab2: 积分兑换数据 ===
     pointsData: {
-      user_points: 2580,      // 用户当前积分
-      goods: [                // 可兑换商品列表
-        {
-          id: 101,
-          name: '羽毛球拍',
-          img: '/assets/images/racket.jpg',
-          points: 2200,
-          stock: 5
-        },
-        {
-          id: 102,
-          name: '专业羽毛球鞋',
-          img: '/assets/images/shoes.jpg',
-          points: 1800,
-          stock: 3
-        },
-        {
-          id: 103,
-          name: '手胶套装',
-          img: '/assets/images/grip.jpg',
-          points: 300,
-          stock: 10
-        }
-      ],
-      recent_exchanges: [      // 最近兑换记录
-        {
-          goods_name: '专业羽毛球鞋',
-          points: 1800,
-          date: '2024-06-01'
-        },
-        {
-          goods_name: '手胶套装',
-          points: 300,
-          date: '2024-05-28'
-        }
-      ]
+      user_points: 0,         // 用户当前积分
+      goods: [],              // 可兑换商品列表
+      recent_exchanges: []     // 最近兑换记录
     },
 
     // === Tab3: 推广返佣数据 ===
     promotionData: {
-      total_earnings: 158,       // 累计收益
-      invited_users: 6,          // 累计邀请人数
-      this_month_earnings: 45,   // 本月收益
-      today_earnings: 8,         // 今日收益（新增）
-      account_balance: 245,      // 账户余额（新增）
-      invite_code: 'PROMO001',   // 邀请码
-      invite_link: 'https://miniprogram.com/invite?code=PROMO001', // 邀请链接（新增）
-      qr_code_url: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://miniprogram.com/invite?code=PROMO001', // 推广二维码URL（新增）
-      commission_records: [      // 佣金明细记录
-        {
-          desc: '邀请好友注册奖励',
-          amount: 20,
-          date: '2024-06-08',
-          status: '已到账',
-          type: 'invite'
-        },
-        {
-          desc: '好友消费返佣',
-          amount: 15,
-          date: '2024-06-07',
-          status: '已到账',
-          type: 'commission'
-        },
-        {
-          desc: '邀请好友注册奖励',
-          amount: 20,
-          date: '2024-06-05',
-          status: '已到账',
-          type: 'invite'
-        },
-        {
-          desc: '好友消费返佣',
-          amount: 8,
-          date: '2024-06-03',
-          status: '已到账',
-          type: 'commission'
-        }
-      ],
-      // 提现记录（新增）
-      withdraw_records: [
-        {
-          amount: 100,
-          date: '2024-06-01',
-          status: '已到账',
-          order_no: 'WD202406010001'
-        },
-        {
-          amount: 50,
-          date: '2024-05-25',
-          status: '已到账',
-          order_no: 'WD202405250001'
-        }
-      ]
+      total_earnings: 0,       // 累计收益
+      invited_users: 0,        // 累计邀请人数
+      this_month_earnings: 0,  // 本月收益
+      today_earnings: 0,       // 今日收益
+      account_balance: 0,      // 账户余额
+      invite_code: '',         // 邀请码
+      invite_link: '',         // 邀请链接
+      qr_code_url: '',         // 推广二维码URL
+      commission_records: [],  // 佣金明细记录
+      withdraw_records: []     // 提现记录
     },
 
-    // 提现相关数据（新增）
+    // 提现相关数据
     withdrawData: {
       show_withdraw_modal: false,    // 显示提现弹窗
       withdraw_amount: '',           // 提现金额
@@ -205,40 +92,8 @@ Page({
       { id: '返佣记录', name: '返佣记录' }
     ],
     
-    // 服务记录列表 (mock数据)
-    serviceList: [
-      {
-        service_type: '穿线进度',
-        racket: 'YONEX BG-65',
-        status: '穿线中',
-        progress: 60,
-        detail: '主线24磅，横线23磅，预计6月10日完成'
-      },
-      {
-        service_type: '奖品物流',
-        goods: '专业手胶套装',
-        logistics: [
-          { desc: '已发货', time: '2024-06-06 15:00' },
-          { desc: '运输中', time: '2024-06-06 18:00' },
-          { desc: '派送中', time: '2024-06-07 09:00' }
-        ],
-        express_number: 'SF1234567890'
-      },
-      {
-        service_type: '返佣记录',
-        amount: 20,
-        desc: '邀请好友下单奖励',
-        date: '2024-06-02',
-        status: '已到账'
-      },
-      {
-        service_type: '穿线进度',
-        racket: 'VICTOR VBS-63',
-        status: '已完成',
-        progress: 100,
-        detail: '主线26磅，横线25磅，已完成待取'
-      }
-    ],
+    // 服务记录列表 - 从API获取
+    serviceList: [],
     
     // 根据子tab筛选后的服务记录
     filteredServiceList: []
@@ -334,29 +189,48 @@ Page({
    * 初始化页面数据
    */
   initData: function() {
-    // 初始化线材筛选
-    this.filterStrings();
-    
-    // 初始化服务记录筛选
-    this.filterServiceList();
+    // 初始化线材数据
+    this.loadStringsData();
     
     // 检查订单提交条件
     this.checkCanSubmitOrder();
   },
 
   /**
-   * 加载页面数据 (模拟接口请求)
+   * 加载页面数据 - 使用真实API接口
    */
   loadData: function() {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       this.setData({ loading: true });
       
-      // 模拟接口请求延迟
-      setTimeout(() => {
-        console.log('模拟数据加载完成');
+      try {
+        // 根据当前tab加载对应数据
+        switch (this.data.currentTab) {
+          case 0: // 穿线服务
+            await this.loadStringsData();
+            break;
+          case 1: // 积分兑换
+            await this.loadPointsData();
+            break;
+          case 2: // 推广返佣
+            await this.loadPromotionData();
+            break;
+          case 3: // 我的服务
+            await this.loadServiceRecords();
+            break;
+        }
+        
+        console.log('数据加载完成');
+      } catch (error) {
+        console.error('数据加载失败:', error);
+        wx.showToast({
+          title: '数据加载失败',
+          icon: 'none'
+        });
+      } finally {
         this.setData({ loading: false });
         resolve();
-      }, 1000);
+      }
     });
   },
 
@@ -374,10 +248,8 @@ Page({
       currentTab: index
     });
     
-    // 切换到"我的服务"时刷新数据（现在是索引3）
-    if (index === 3) {
-      this.filterServiceList();
-    }
+    // 切换tab时加载对应数据
+    this.loadData();
   },
 
   /**
@@ -399,6 +271,52 @@ Page({
   // =============== Tab1: 穿线服务相关方法 ===============
 
   /**
+   * 加载线材数据 - 使用真实API接口
+   */
+  async loadStringsData() {
+    try {
+      const stringsData = await getStringsList({
+        brand: this.data.selectedBrand
+      });
+      
+      console.log('线材数据加载成功:', stringsData);
+      
+      // 确保数据结构安全，使用默认值避免页面报错
+      const safeStringsData = {
+        brands: stringsData.brands || [],
+        strings: stringsData.strings || []
+      };
+      
+      this.setData({
+        stringBrands: safeStringsData.brands,
+        stringList: safeStringsData.strings,
+        filteredStrings: safeStringsData.strings
+      });
+      
+      // 如果已选择线材，更新价格
+      if (this.data.stringService.string_id) {
+        this.updateStringPrice();
+      }
+      
+    } catch (error) {
+      console.error('加载线材数据失败:', error);
+      
+      if (error.error === 401) {
+        // 未登录错误处理
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+      } else {
+        wx.showToast({
+          title: '获取线材数据失败',
+          icon: 'none'
+        });
+      }
+    }
+  },
+
+  /**
    * 球拍信息输入处理
    * @param {Object} e 输入事件对象
    */
@@ -411,7 +329,7 @@ Page({
   },
 
   /**
-   * 磅数调整处理（新版统一磅数）
+   * 磅数调整处理
    * @param {Object} e 点击事件对象
    */
   changePounds: function(e) {
@@ -428,11 +346,8 @@ Page({
     // 限制磅数范围 18-30
     newValue = Math.max(18, Math.min(30, newValue));
     
-    // 更新统一磅数，同时保持主线横线同步（用于后端兼容）
     this.setData({
-      'stringService.pounds': newValue,
-      'stringService.main_pounds': newValue,
-      'stringService.cross_pounds': newValue
+      'stringService.pounds': newValue
     });
     
     console.log('磅数调整:', action, newValue);
@@ -479,16 +394,26 @@ Page({
    */
   selectString: function(e) {
     const stringId = e.currentTarget.dataset.string;
-    const selectedString = this.data.stringList.find(item => item.id === stringId);
-    
-    console.log('选择线材:', selectedString);
     
     this.setData({
-      'stringService.string_id': stringId,
+      'stringService.string_id': stringId
+    });
+    
+    this.updateStringPrice();
+    this.checkCanSubmitOrder();
+  },
+
+  /**
+   * 更新线材价格
+   */
+  updateStringPrice: function() {
+    const selectedString = this.data.stringList.find(item => item.id === this.data.stringService.string_id);
+    
+    this.setData({
       'stringService.total_price': selectedString ? selectedString.price : 0
     });
     
-    this.checkCanSubmitOrder();
+    console.log('选择线材:', selectedString);
   },
 
   /**
@@ -517,9 +442,9 @@ Page({
   },
 
   /**
-   * 提交穿线订单
+   * 提交穿线订单 - 使用真实API接口
    */
-  submitOrder: function() {
+  async submitOrder() {
     if (!this.data.canSubmitOrder) {
       wx.showToast({
         title: '请完善订单信息',
@@ -528,40 +453,131 @@ Page({
       return;
     }
     
+    // 检查登录状态
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      
+      setTimeout(() => {
+        wx.navigateTo({
+          url: '/pages/login/index'
+        });
+      }, 1500);
+      return;
+    }
+    
     console.log('提交穿线订单:', this.data.stringService);
     
     // 显示加载状态
     this.setData({ loading: true });
     
-    // 模拟提交订单接口
-    setTimeout(() => {
+    try {
+      // 调用创建订单API - 严格按照接口文档规范
+      const orderResult = await createStringOrder({
+        racket_brand: this.data.stringService.racket_brand,
+        pounds: this.data.stringService.pounds,
+        string_id: this.data.stringService.string_id,
+        remark: this.data.stringService.remark
+      });
+      
+      console.log('订单创建成功:', orderResult);
+      
+      // 显示订单成功弹窗
       this.setData({ 
         loading: false,
-        showOrderModal: true
+        showOrderModal: true,
+        orderDetails: orderResult
       });
       
       // 重置表单数据
       this.setData({
         'stringService.racket_brand': '',
         'stringService.pounds': 24,
-        'stringService.main_pounds': 24,
-        'stringService.cross_pounds': 24,
         'stringService.string_id': '',
         'stringService.remark': '',
         'stringService.total_price': 0
       });
       this.checkCanSubmitOrder();
       
-    }, 1500);
+    } catch (error) {
+      console.error('提交订单失败:', error);
+      this.setData({ loading: false });
+      
+      let errorMessage = '订单提交失败';
+      
+      if (error.error === 401) {
+        errorMessage = '请先登录';
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
+      } else if (error.error === 400) {
+        errorMessage = '订单信息有误，请检查';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      wx.showToast({
+        title: errorMessage,
+        icon: 'none',
+        duration: 2000
+      });
+    }
   },
 
   // =============== Tab2: 积分兑换相关方法 ===============
 
   /**
-   * 商品兑换处理
+   * 加载积分兑换数据 - 使用真实API接口
+   */
+  async loadPointsData() {
+    try {
+      const pointsInfo = await getPointsExchangeInfo();
+      
+      console.log('积分数据加载成功:', pointsInfo);
+      
+      // 确保数据结构安全，使用默认值避免页面报错
+      const safePointsData = {
+        user_points: pointsInfo.user_points || 0,
+        goods: pointsInfo.goods || [],
+        recent_exchanges: pointsInfo.recent_exchanges || []
+      };
+      
+      this.setData({
+        pointsData: safePointsData
+      });
+      
+    } catch (error) {
+      console.error('加载积分数据失败:', error);
+      
+      if (error.error === 401) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
+      } else {
+        wx.showToast({
+          title: '获取积分信息失败',
+          icon: 'none'
+        });
+      }
+    }
+  },
+
+  /**
+   * 商品兑换处理 - 使用真实API接口
    * @param {Object} e 点击事件对象
    */
-  exchangeGoods: function(e) {
+  async exchangeGoods(e) {
     const goods = e.currentTarget.dataset.goods;
     const { pointsData } = this.data;
     
@@ -584,68 +600,129 @@ Page({
     }
     
     // 确认兑换
-    wx.showModal({
-      title: '确认兑换',
-      content: `确定要用${goods.points}积分兑换${goods.name}吗？`,
-      success: (res) => {
-        if (res.confirm) {
-          this.performExchange(goods);
+    const confirmResult = await new Promise(resolve => {
+      wx.showModal({
+        title: '确认兑换',
+        content: `确定要用${goods.points}积分兑换${goods.name}吗？`,
+        success: (res) => {
+          resolve(res.confirm);
+        },
+        fail: () => {
+          resolve(false);
         }
-      }
+      });
     });
-  },
-
-  /**
-   * 执行兑换操作
-   * @param {Object} goods 商品信息
-   */
-  performExchange: function(goods) {
+    
+    if (!confirmResult) {
+      return;
+    }
+    
     this.setData({ loading: true });
     
-    // 模拟兑换接口
-    setTimeout(() => {
-      const { pointsData } = this.data;
+         try {
+       // 调用兑换API
+       const exchangeResult = await exchangeGoodsApi({
+         goodsId: goods.id,
+         points: goods.points
+       });
       
-      // 更新积分和库存
-      const newUserPoints = pointsData.user_points - goods.points;
-      const newGoods = pointsData.goods.map(item => {
-        if (item.id === goods.id) {
-          return { ...item, stock: item.stock - 1 };
-        }
-        return item;
-      });
+      console.log('兑换成功:', exchangeResult);
       
-      // 添加兑换记录
-      const newRecord = {
-        goods_name: goods.name,
-        points: goods.points,
-        date: new Date().toISOString().split('T')[0]
-      };
-      
-      this.setData({
-        'pointsData.user_points': newUserPoints,
-        'pointsData.goods': newGoods,
-        'pointsData.recent_exchanges': [newRecord, ...pointsData.recent_exchanges],
-        loading: false
-      });
+      // 重新加载积分数据
+      await this.loadPointsData();
       
       wx.showToast({
         title: '兑换成功',
         icon: 'success'
       });
       
-      console.log('兑换完成，剩余积分:', newUserPoints);
+    } catch (error) {
+      console.error('兑换失败:', error);
       
-    }, 1000);
+      let errorMessage = '兑换失败';
+      
+      if (error.error === 1001) {
+        errorMessage = '积分不足';
+      } else if (error.error === 1002) {
+        errorMessage = '商品库存不足';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      wx.showToast({
+        title: errorMessage,
+        icon: 'none'
+      });
+      
+    } finally {
+      this.setData({ loading: false });
+    }
   },
 
   // =============== Tab3: 推广返佣相关方法 ===============
 
   /**
-   * 保存推广二维码到相册（新增）
+   * 加载推广返佣数据 - 使用真实API接口
+   */
+  async loadPromotionData() {
+    try {
+      const promotionInfo = await getPromotionInfo();
+      
+      console.log('推广数据加载成功:', promotionInfo);
+      
+      // 确保数据结构安全，使用默认值避免页面报错
+      const safePromotionData = {
+        total_earnings: promotionInfo.total_earnings || 0,
+        invited_users: promotionInfo.invited_users || 0,
+        this_month_earnings: promotionInfo.this_month_earnings || 0,
+        today_earnings: promotionInfo.today_earnings || 0,
+        account_balance: promotionInfo.account_balance || 0,
+        invite_code: promotionInfo.invite_code || '',
+        invite_link: promotionInfo.invite_link || '',
+        qr_code_url: promotionInfo.qr_code_url || '',
+        commission_records: promotionInfo.commission_records || [],
+        withdraw_records: promotionInfo.withdraw_records || []
+      };
+      
+      this.setData({
+        promotionData: safePromotionData
+      });
+      
+    } catch (error) {
+      console.error('加载推广数据失败:', error);
+      
+      if (error.error === 401) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
+      } else {
+        wx.showToast({
+          title: '获取推广信息失败',
+          icon: 'none'
+        });
+      }
+    }
+  },
+
+  /**
+   * 保存推广二维码到相册
    */
   saveQrCode: function() {
     const { promotionData } = this.data;
+    
+    if (!promotionData.qr_code_url) {
+      wx.showToast({
+        title: '二维码获取失败',
+        icon: 'none'
+      });
+      return;
+    }
     
     wx.showLoading({
       title: '保存中...',
@@ -695,10 +772,18 @@ Page({
   },
 
   /**
-   * 复制邀请链接（新增）
+   * 复制邀请链接
    */
   copyInviteLink: function() {
     const { promotionData } = this.data;
+    
+    if (!promotionData.invite_link) {
+      wx.showToast({
+        title: '邀请链接获取失败',
+        icon: 'none'
+      });
+      return;
+    }
     
     wx.setClipboardData({
       data: promotionData.invite_link,
@@ -720,7 +805,7 @@ Page({
   },
 
   /**
-   * 显示提现弹窗（新增）
+   * 显示提现弹窗
    */
   showWithdrawModal: function() {
     const { promotionData } = this.data;
@@ -740,7 +825,7 @@ Page({
   },
 
   /**
-   * 隐藏提现弹窗（新增）
+   * 隐藏提现弹窗
    */
   hideWithdrawModal: function() {
     this.setData({
@@ -750,7 +835,7 @@ Page({
   },
 
   /**
-   * 提现金额输入处理（新增）
+   * 提现金额输入处理
    */
   onWithdrawAmountInput: function(e) {
     const value = parseFloat(e.detail.value) || 0;
@@ -760,9 +845,9 @@ Page({
   },
 
   /**
-   * 确认提现（新增）
+   * 确认提现 - 使用真实API接口
    */
-  confirmWithdraw: function() {
+  async confirmWithdraw() {
     const { withdrawData, promotionData } = this.data;
     const amount = parseFloat(withdrawData.withdraw_amount);
     
@@ -792,57 +877,117 @@ Page({
     }
     
     // 确认提现
-    wx.showModal({
-      title: '确认提现',
-      content: `确定要提现${amount}元吗？预计1-3个工作日到账`,
-      success: (res) => {
-        if (res.confirm) {
-          this.performWithdraw(amount);
+    const confirmResult = await new Promise(resolve => {
+      wx.showModal({
+        title: '确认提现',
+        content: `确定要提现${amount}元吗？预计1-3个工作日到账`,
+        success: (res) => {
+          resolve(res.confirm);
+        },
+        fail: () => {
+          resolve(false);
         }
-      }
+      });
     });
-  },
-
-  /**
-   * 执行提现操作（新增）
-   */
-  performWithdraw: function(amount) {
+    
+    if (!confirmResult) {
+      return;
+    }
+    
     this.setData({ loading: true });
     
-    // 模拟提现接口调用
-    setTimeout(() => {
-      const { promotionData } = this.data;
-      const newBalance = promotionData.account_balance - amount;
-      const orderNo = 'WD' + new Date().getTime();
-      
-      // 创建提现记录
-      const newWithdrawRecord = {
-        amount: amount,
-        date: new Date().toISOString().split('T')[0],
-        status: '处理中',
-        order_no: orderNo
-      };
-      
-      // 更新数据
-      this.setData({
-        'promotionData.account_balance': newBalance,
-        'promotionData.withdraw_records': [newWithdrawRecord, ...promotionData.withdraw_records],
-        'withdrawData.show_withdraw_modal': false,
-        'withdrawData.withdraw_amount': '',
-        loading: false
+    try {
+      // 调用提现API
+      const withdrawResult = await applyWithdraw({
+        amount: amount
       });
+      
+      console.log('提现申请成功:', withdrawResult);
+      
+      // 隐藏弹窗
+      this.setData({
+        'withdrawData.show_withdraw_modal': false,
+        'withdrawData.withdraw_amount': ''
+      });
+      
+      // 重新加载推广数据
+      await this.loadPromotionData();
       
       wx.showToast({
         title: '提现申请已提交',
         icon: 'success'
       });
       
-      console.log('提现成功:', amount, '订单号:', orderNo);
+    } catch (error) {
+      console.error('提现申请失败:', error);
       
-    }, 1500);
+      let errorMessage = '提现申请失败';
+      
+      if (error.error === 1001) {
+        errorMessage = '账户余额不足';
+      } else if (error.error === 1002) {
+        errorMessage = '提现金额不符合要求';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      wx.showToast({
+        title: errorMessage,
+        icon: 'none'
+      });
+      
+    } finally {
+      this.setData({ loading: false });
+    }
   },
 
   // =============== Tab4: 我的服务相关方法 ===============
+
+  /**
+   * 加载服务记录数据 - 使用真实API接口
+   */
+  async loadServiceRecords() {
+    try {
+      const serviceData = await getServiceRecords({
+        type: this.data.currentSubTab,
+        page: 1,
+        pageSize: 10
+      });
+      
+             console.log('服务记录加载成功:', serviceData);
+       
+       // 确保数据结构安全，使用默认值避免页面报错
+       // 接口文档显示直接返回数组
+       const safeServiceData = Array.isArray(serviceData) ? serviceData : [];
+       
+       this.setData({
+         serviceList: safeServiceData
+       });
+      
+      // 重新筛选服务记录
+      this.filterServiceList();
+      
+    } catch (error) {
+      console.error('加载服务记录失败:', error);
+      
+      if (error.error === 401) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
+      } else {
+        wx.showToast({
+          title: '获取服务记录失败',
+          icon: 'none'
+        });
+      }
+    }
+  },
 
   /**
    * 根据子tab筛选服务记录
