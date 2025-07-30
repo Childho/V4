@@ -1,7 +1,10 @@
+// 引入活动API接口 - 注意：由于小程序不直接支持TS，需要编译后的JS文件
+const { getActivityList, searchActivities, getActivityStats, signupActivity } = require('../../api/activityApi');
+
 Page({
   data: {
     status: 'all', // 活动状态筛选：all-全部，ongoing-进行中，coming-即将开始，finished-已结束
-    activities: [], // 活动列表
+    activities: [], // 活动列表 - 符合接口文档 ActivityItem[] 格式
     page: 1, // 当前页码
     pageSize: 10, // 每页数量
     hasMore: true, // 是否有更多数据
@@ -12,10 +15,12 @@ Page({
   },
   
   onLoad: function (options) {
+    // 页面加载时获取活动列表
     this.getActivities();
   },
   
   onPullDownRefresh: function () {
+    // 下拉刷新：重置分页数据并重新加载
     this.setData({
       page: 1,
       activities: [],
@@ -37,114 +42,44 @@ Page({
     this.getActivities();
   },
   
-  // 获取活动列表
+  // 获取活动列表 - 使用真实API接口
   getActivities: function () {
     if (!this.data.hasMore || this.data.loading) return;
     
     this.setData({ loading: true });
     
-    // 模拟API请求，实际开发中应替换为真实的API调用
-    setTimeout(() => {
-      const mockActivities = this.getMockActivities();
-      
-      // 根据状态筛选
-      let filteredActivities = mockActivities;
-      if (this.data.status !== 'all') {
-        filteredActivities = mockActivities.filter(item => item.status === this.data.status);
-      }
-      
-      // 根据关键词搜索
-      if (this.data.searchKeyword) {
-        const keyword = this.data.searchKeyword.toLowerCase();
-        filteredActivities = filteredActivities.filter(item => 
-          item.title.toLowerCase().includes(keyword) || 
-          item.description.toLowerCase().includes(keyword)
-        );
-      }
-      
-      // 分页处理
-      const start = (this.data.page - 1) * this.data.pageSize;
-      const end = start + this.data.pageSize;
-      const pageActivities = filteredActivities.slice(start, end);
-
-      this.setData({
-        activities: this.data.page === 1 ? pageActivities : this.data.activities.concat(pageActivities),
-        hasMore: end < filteredActivities.length,
-        loading: false
+    // 构建符合接口文档的请求参数
+    const requestParams = {
+      page: this.data.page,
+      pageSize: this.data.pageSize,
+      status: this.data.status,
+      searchKeyword: this.data.searchKeyword
+    };
+    
+    // 调用活动列表API - 严格按照接口文档规范
+    getActivityList(requestParams)
+      .then(response => {
+        // 响应数据结构：{ activities: ActivityItem[], pagination: PaginationInfo }
+        const { activities, pagination } = response;
+        
+        this.setData({
+          // 如果是第一页，直接替换；否则追加到现有列表
+          activities: this.data.page === 1 ? activities : this.data.activities.concat(activities),
+          hasMore: pagination.hasMore,
+          loading: false
+        });
+      })
+      .catch(error => {
+        console.error('获取活动列表失败:', error);
+        this.setData({ loading: false });
+        
+        // 统一错误提示（apiRequest已经处理了错误提示，这里主要是兜底）
+        wx.showToast({
+          title: '获取活动列表失败',
+          icon: 'none',
+          duration: 2000
+        });
       });
-    }, 800);
-  },
-  
-  // 模拟活动数据
-  getMockActivities: function() {
-    return [
-      {
-        id: 1,
-        title: '门店周年庆活动',
-        description: '羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！',
-        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '12月18日',
-        endTime: '12月24日',
-        location: '倍特爱运动专卖店',
-        status: 'ongoing',
-        isFull: false
-      },
-      {
-        id: 2,
-        title: '每周日BUFF',
-        description: '每周日购买指定号码加价15元定制BUFF头巾',
-        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '12月15日',
-        endTime: '12月31日',
-        location: '倍特爱运动专卖店',
-        status: 'ongoing',
-        isFull: false
-      },
-      {
-        id: 3,
-        title: '2025年新年特训营',
-        description: '青少年羽毛球新年特训营，专业教练一对一指导，提升球技好时机',
-        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '1月5日',
-        endTime: '2月28日',
-        location: '倍特爱运动专卖店',
-        status: 'coming',
-        isFull: false
-      },
-      {
-        id: 4,
-        title: '春季业余联赛',
-        description: '第四届春季业余羽毛球联赛报名开始，丰厚奖品等你来拿！',
-        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '3月15日',
-        endTime: '3月16日',
-        location: '倍特爱运动专卖店',
-        status: 'coming',
-        isFull: false
-      },
-      {
-        id: 5,
-        title: '元旦跨年羽毛球赛',
-        description: '元旦期间跨年羽毛球友谊赛，与球友一起迎接新年！',
-        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '12月31日',
-        endTime: '1月1日',
-        location: '倍特爱运动专卖店',
-        status: 'coming',
-        isFull: false
-      },
-      {
-        id: 6,
-        title: '五一优惠活动',
-        description: '五一期间，全场羽毛球装备8折优惠，买就送专业羽毛球一筒',
-        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
-        startTime: '5月1日',
-        endTime: '5月5日',
-        location: '倍特爱运动专卖店',
-        status: 'finished',
-        isFull: false
-      }
-    ];
   },
   
   // 滚动加载更多
@@ -203,7 +138,7 @@ Page({
     }
   },
   
-  // 搜索输入框内容变化 - 新增方法适配商场页面样式
+  // 搜索输入框内容变化
   onSearchInput: function(e) {
     const searchKeyword = e.detail.value || '';
     this.setData({
@@ -211,7 +146,7 @@ Page({
     });
   },
   
-  // 搜索确认 - 新增方法适配商场页面样式  
+  // 搜索确认 - 使用搜索API接口
   onSearchConfirm: function() {
     const searchKeyword = this.data.searchKeyword.trim();
     
@@ -222,17 +157,55 @@ Page({
       hasMore: true
     });
     
-    // 执行搜索
-    this.getActivities();
-    
-    // 搜索反馈
+    // 如果有搜索关键词，调用搜索接口；否则调用普通列表接口
     if (searchKeyword) {
-      wx.showToast({
-        title: '搜索中...',
-        icon: 'loading',
-        duration: 800
-      });
+      this.performSearch(searchKeyword);
+    } else {
+      this.getActivities();
     }
+  },
+  
+  // 执行搜索 - 使用真实搜索API
+  performSearch: function(searchKeyword) {
+    this.setData({ loading: true });
+    
+    // 构建符合接口文档的搜索参数
+    const searchParams = {
+      searchKeyword: searchKeyword,
+      page: this.data.page,
+      pageSize: this.data.pageSize,
+      status: this.data.status
+    };
+    
+    // 调用搜索API - 严格按照接口文档规范
+    searchActivities(searchParams)
+      .then(response => {
+        // 响应数据结构：{ activities: ActivityItem[], pagination: PaginationInfo, searchSummary: SearchSummary }
+        const { activities, pagination, searchSummary } = response;
+        
+        this.setData({
+          activities: this.data.page === 1 ? activities : this.data.activities.concat(activities),
+          hasMore: pagination.hasMore,
+          loading: false
+        });
+        
+        // 显示搜索结果反馈
+        wx.showToast({
+          title: `找到${searchSummary.totalMatched}个相关活动`,
+          icon: 'success',
+          duration: 1500
+        });
+      })
+      .catch(error => {
+        console.error('搜索活动失败:', error);
+        this.setData({ loading: false });
+        
+        wx.showToast({
+          title: '搜索失败，请重试',
+          icon: 'none',
+          duration: 2000
+        });
+      });
   },
   
   // 搜索框聚焦时添加高亮样式 - 产品级交互优化
@@ -281,22 +254,12 @@ Page({
       hasMore: true
     });
     
-    // 延迟执行搜索，模拟真实搜索体验
+    // 执行搜索
+    this.performSearch(searchKeyword);
+    
+    // 隐藏加载提示
     setTimeout(() => {
-      this.getActivities();
       wx.hideLoading();
-      
-      // 产品级反馈：搜索完成提示
-      wx.showToast({
-        title: `找到相关活动`,
-        icon: 'success',
-        duration: 1000
-      });
-      
-      // 轻微震动反馈
-      wx.vibrateShort({
-        type: 'light'
-      });
     }, 500);
   },
   
@@ -307,20 +270,50 @@ Page({
     });
   },
   
-  // 活动报名
+  // 活动报名 - 使用真实API接口
   signup: function(e) {
     const id = e.currentTarget.dataset.id;
-    // 阻止冒泡，防止触发goDetail
+    
+    // 确认报名弹窗
     wx.showModal({
       title: '活动报名',
       content: '确认报名参加该活动吗？',
       success: (res) => {
         if (res.confirm) {
-          wx.showToast({
-            title: '报名成功',
-            icon: 'success',
-            duration: 2000
-          });
+          // 调用报名API - 严格按照接口文档规范
+          signupActivity(id)
+            .then(response => {
+              // 响应数据结构：{ success: boolean, message: string }
+              if (response.success) {
+                wx.showToast({
+                  title: response.message || '报名成功',
+                  icon: 'success',
+                  duration: 2000
+                });
+                
+                // 报名成功后，刷新活动列表
+                this.setData({
+                  page: 1,
+                  activities: [],
+                  hasMore: true
+                });
+                this.getActivities();
+              } else {
+                wx.showToast({
+                  title: response.message || '报名失败',
+                  icon: 'none',
+                  duration: 2000
+                });
+              }
+            })
+            .catch(error => {
+              console.error('活动报名失败:', error);
+              wx.showToast({
+                title: '报名失败，请重试',
+                icon: 'none',
+                duration: 2000
+              });
+            });
         }
       }
     });

@@ -26,9 +26,17 @@
     "ignoreDevUnusedFiles": true,
     "disableUseStrict": false,
     "useApiHook": true,
-    "useApiHostProcess": true
+    "useApiHostProcess": true,
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false,
+    "preloadBackgroundData": false,
+    "autoAudits": false,
+    "useStaticServer": true,
+    "useLanDebug": false,
+    "showES6CompileOption": false,
+    "bigPackageSizeSupport": false
   },
   "libVersion": "3.8.7",
   "condition": {},
-  "appid": "wxb6b057aa968add78"
+  "appid": "touristappid"
 }

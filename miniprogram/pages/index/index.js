@@ -5,94 +5,41 @@ const app = getApp()
 // 引入系统信息工具函数
 import { getStatusBarHeight } from '../../utils/systemInfo.js'
 
+// 引入常量配置
+const { API_CONSTANTS } = require('../../config/constants.js')
+
+// 引入统一请求工具
+const { get, post } = require('../../utils/request.js')
+const request = require('../../utils/request.js')
+console.log('get',get)
+console.log('reqeust',request)
+
 Page({
   data: {
     statusBarHeight: 0,
     searchKeyword: '', // 搜索关键词数据
-    // 优化后的轮播图数据 - 添加更美观的图片和文案
-    banners: [
-      {
-        id: 'banner_1',
-        imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800', // 网球主题图片
-        type: 'activity',
-        linkId: 'activity_1',
-        title: '夏季网球训练营',
-        subtitle: '专业教练指导，提升你的网球技能'
-      },
-      {
-        id: 'banner_2', 
-        imageUrl: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=800', // 网球装备图片
-        type: 'product',
-        linkId: 'product_1',
-        title: '精选网球装备',
-        subtitle: '专业器材，助力你的运动表现'
-      },
-      {
-        id: 'banner_3',
-        imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800', // 运动场地图片
-        type: 'activity',
-        linkId: 'activity_2',
-        title: '会员专享福利',
-        subtitle: '全场8折优惠，更多惊喜等你发现'
-      }
-    ],
-    // 活动数据 - 使用更美观的图片
-    activities: [
-      {
-        id: 'activity_1',
-        title: '门店周年庆活动',
-        description: '全场商品8折，会员额外95折，还有精美礼品赠送。专业网球装备一应俱全，品质保证。',
-        coverUrl: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400', // 庆祝活动图片
-        timeRange: '6月18日-6月24日',
-        location: '滨顺店'
-      },
-      {
-        id: 'activity_2',
-        title: '实体店免费体验课',
-        description: '专业教练指导，提升你的网球技能，适合各年龄段球友。小班授课，个性化指导。',
-        coverUrl: 'https://images.unsplash.com/photo-1622163642998-1ea32b0bbc42?w=400', // 网球教学图片
-        timeRange: '6月25日-7月15日',
-        location: '中心店'
-      }
-    ],
-    // 精选装备数据 - 使用更美观的商品图片
-    featuredEquipment: [
-      {
-        id: 'equipment_1',
-        name: 'YONEX尤尼克斯ARC-11羽毛球拍',
-        tag: '热销',
-        price: '899',
-        sales: '销量268',
-        imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300' // 网球拍图片
-      },
-      {
-        id: 'equipment_2',
-        name: 'Victor胜利挑战者9500羽毛球拍',
-        tag: '新品',
-        price: '599',
-        sales: '销量156',
-        imageUrl: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=300' // 网球拍图片
-      },
-      {
-        id: 'equipment_3',
-        name: 'LI-NING李宁风动9000超轻球拍',
-        tag: '爆款',
-        price: '1280',
-        sales: '销量189',
-        imageUrl: 'https://images.unsplash.com/photo-1544963150-889b086b6cb5?w=300' // 网球拍图片
-      },
-      {
-        id: 'equipment_4',
-        name: 'KAWASAKI川崎羽毛球拍碳纤维',
-        tag: '推荐',
-        price: '458',
-        sales: '销量342',
-        imageUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300' // 网球拍图片
-      }
-    ]
+    // 轮播图数据 - 将通过API获取
+    banners: [],
+    // 活动数据 - 将通过API获取
+    activities: [],
+    // 精选装备数据 - 将通过API获取
+    featuredEquipment: [],
+    // 用户信息数据
+    userInfo: null,
+    // 加载状态
+    isLoading: {
+      banners: false,
+      activities: false,
+      featuredEquipment: false,
+      userInfo: false
+    }
   },
 
   onLoad() {
+    console.log('🏠 ===========================================')
+    console.log('🏠 首页开始加载')
+    console.log('🏠 ===========================================')
+    
     // 获取系统状态栏高度 - 使用新的API替代已弃用的wx.getSystemInfoSync
     try {
       const statusBarHeight = getStatusBarHeight()
@@ -100,45 +47,63 @@ Page({
       this.setData({
         statusBarHeight: statusBarHeight + 20
       })
-      console.log('状态栏高度+安全边距:', statusBarHeight + 20)
+      console.log('📐 状态栏高度+安全边距:', statusBarHeight + 20)
     } catch (e) {
       // 使用固定的安全值，兼容旧设备
       this.setData({
         statusBarHeight: 64  // 增加默认安全高度
       })
-      console.error('获取系统信息失败', e)
+      console.error('❌ 获取系统信息失败', e)
     }
     
-    // 打印初始数据状态，便于调试
-    console.log('页面onLoad - 初始精选装备数据:', this.data.featuredEquipment)
+    console.log('🚀 开始获取首页数据...')
     
     // 页面加载时获取数据
-    this.fetchBanners()
-    this.fetchActivities()
+    console.log('1️⃣ 准备获取轮播图数据...')
+    this.fetchBanners()        // 获取轮播图数据
+    
+    console.log('2️⃣ 准备获取活动数据...')
+    this.fetchActivities()     // 获取活动数据  
+    
+    console.log('3️⃣ 准备获取精选装备数据...')
     this.fetchFeaturedEquipment() // 获取精选装备数据
-    this.checkLoginStatus()
+    
+    console.log('4️⃣ 准备检查登录状态...')
+    this.checkLoginStatus()    // 检查登录状态并获取用户信息
+    
+    console.log('🏠 ===========================================')
   },
 
   // 页面显示时也检查数据，确保数据完整性
   onShow() {
-    console.log('页面onShow - 当前精选装备数据:', this.data.featuredEquipment)
-    // 如果数据为空，重新设置
+    console.log('页面onShow - 检查数据完整性')
+    // 如果关键数据为空，重新获取
+    if (!this.data.banners || this.data.banners.length === 0) {
+      console.log('轮播图数据为空，重新获取')
+      this.fetchBanners()
+    }
+    if (!this.data.activities || this.data.activities.length === 0) {
+      console.log('活动数据为空，重新获取')
+      this.fetchActivities()
+    }
     if (!this.data.featuredEquipment || this.data.featuredEquipment.length === 0) {
-      console.log('数据为空，重新初始化')
-      this.testRefreshEquipment()
+      console.log('精选装备数据为空，重新获取')
+      this.fetchFeaturedEquipment()
     }
   },
 
   // 检查登录状态并获取会员信息
   checkLoginStatus() {
-    const token = wx.getStorageSync('token')
+    const token = wx.getStorageSync(API_CONSTANTS.STORAGE_KEYS.TOKEN)
     if (token) {
       // 获取用户信息、会员等级
-      // 实际开发中这里应该调用API获取数据
-      console.log('获取用户信息')
+      this.fetchUserInfo()
     } else {
-      // 未登录，可以展示默认信息或引导登录
+      // 未登录，清空用户信息
       console.log('用户未登录')
+      this.setData({
+        userInfo: null
+      })
     }
   },
 
@@ -291,65 +256,209 @@ Page({
     })
   },
 
-  // 获取轮播图数据
+  // 获取轮播图数据 - 使用新的请求工具
   fetchBanners() {
-    // 实际开发中这里应该调用API获取数据
-    console.log('获取轮播图数据')
-    // 模拟API请求
-    /*
-    wx.request({
-      url: 'https://api.example.com/banners',
-      success: (res) => {
-        this.setData({
-          banners: res.data.banners
-        })
-      }
-    })
-    */
-  },
-
-  // 获取活动数据
-  fetchActivities() {
-    // 实际开发中这里应该调用API获取数据
-    console.log('获取活动数据')
-    // 模拟API请求
-    /*
-    wx.request({
-      url: 'https://api.example.com/activities',
-      success: (res) => {
-        this.setData({
-          activities: res.data.activities
-        })
-      }
-    })
-    */
-  },
-
-  // 获取精选装备数据 - 新增方法
-  fetchFeaturedEquipment() {
-    // 实际开发中这里应该调用API获取数据
-    console.log('获取精选装备数据')
+    console.log('🎠 开始获取轮播图数据...')
     
-    // 当前使用本地数据，确保数据正确设置
-    // 重新设置精选装备数据，确保渲染
+    // 设置加载状态
     this.setData({
-      featuredEquipment: this.data.featuredEquipment
-    }, () => {
-      console.log('精选装备数据设置完成:', this.data.featuredEquipment)
-      console.log('精选装备数量:', this.data.featuredEquipment ? this.data.featuredEquipment.length : 0)
+      [API_CONSTANTS.LOADING_FIELDS.BANNERS]: true
     })
+    console.log('⏳ 轮播图加载状态已设置为true')
     
-    // 模拟API请求
-    /*
-    wx.request({
-      url: 'https://api.example.com/featured-equipment',
-      success: (res) => {
-        this.setData({
-          featuredEquipment: res.data.equipment
-        })
+    // 使用统一请求工具
+    get('/api/banners', {}, {
+      showLoading: false  // 使用自己的加载状态，不显示系统loading
+    })
+    .then((data) => {
+      console.log('✅ 轮播图数据获取成功!')
+      console.log('🎠 轮播图原始数据:', data)
+      
+      // 解析响应数据，符合接口文档格式
+      const banners = data.banners || []
+      console.log('🎠 解析后的轮播图数据:', banners)
+      console.log('🎠 轮播图数量:', banners.length)
+      
+      this.setData({
+        banners: banners
+      })
+      console.log('✅ 轮播图数据已更新到页面')
+    })
+    .catch((error) => {
+      console.error('❌ 获取轮播图失败:', error)
+      // 错误处理已在request工具中统一处理
+    })
+    .finally(() => {
+      // 取消加载状态
+      this.setData({
+        [API_CONSTANTS.LOADING_FIELDS.BANNERS]: false
+      })
+      console.log('⏳ 轮播图加载状态已设置为false')
+    })
+  },
+
+  // 获取活动数据 - 使用新的请求工具
+  fetchActivities() {
+    console.log('🎉 开始获取热门活动数据...')
+    
+    // 设置加载状态
+    this.setData({
+      [API_CONSTANTS.LOADING_FIELDS.ACTIVITIES]: true
+    })
+    console.log('⏳ 活动加载状态已设置为true')
+    
+    // 使用统一请求工具
+    get('/api/activities', {
+      limit: 2,           // 首页只显示2个活动
+      isRecommended: true, // 只获取推荐到首页的活动
+      featured: true      // 只获取精选活动
+    }, {
+      showLoading: false
+    })
+    .then((data) => {
+      console.log('✅ 活动数据获取成功!')
+      console.log('🎉 活动原始数据:', data)
+      
+      // 解析响应数据，符合接口文档格式
+      const activities = data.activities || []
+      console.log('🎉 解析后的活动数据:', activities)
+      console.log('🎉 活动数量:', activities.length)
+      console.log('🎉 精选活动总数:', data.totalFeaturedCount)
+      console.log('🎉 所有活动总数:', data.totalActivitiesCount)
+      
+      this.setData({
+        activities: activities
+      })
+      console.log('✅ 活动数据已更新到页面')
+    })
+    .catch((error) => {
+      console.error('❌ 获取活动失败:', error)
+      // 错误处理已在request工具中统一处理
+    })
+    .finally(() => {
+      // 取消加载状态
+      this.setData({
+        [API_CONSTANTS.LOADING_FIELDS.ACTIVITIES]: false
+      })
+      console.log('⏳ 活动加载状态已设置为false')
+    })
+  },
+
+  // 获取精选装备数据 - 使用新的请求工具
+  fetchFeaturedEquipment() {
+    console.log('🏸 开始获取精选装备数据...')
+    
+    // 设置加载状态
+    this.setData({
+      [API_CONSTANTS.LOADING_FIELDS.FEATURED_EQUIPMENT]: true
+    })
+    console.log('⏳ 精选装备加载状态已设置为true')
+    
+    // 使用统一请求工具
+    get('/api/featured-equipment', {
+      limit: 4,         // 首页显示4个精选装备
+      isFeatured: true  // 只获取精选商品
+    }, {
+      showLoading: false
+    })
+    .then((data) => {
+      console.log('✅ 精选装备数据获取成功!')
+      console.log('🏸 精选装备原始数据:', data)
+      
+      // 解析响应数据，符合接口文档格式
+      const featuredEquipment = data.featuredEquipment || []
+      console.log('🏸 解析后的精选装备数据:', featuredEquipment)
+      console.log('🏸 精选装备数量:', featuredEquipment.length)
+      
+      this.setData({
+        featuredEquipment: featuredEquipment
+      })
+      console.log('✅ 精选装备数据已更新到页面')
+    })
+    .catch((error) => {
+      console.error('❌ 获取精选装备失败:', error)
+      // 错误处理已在request工具中统一处理
+    })
+    .finally(() => {
+      // 取消加载状态
+      this.setData({
+        [API_CONSTANTS.LOADING_FIELDS.FEATURED_EQUIPMENT]: false
+      })
+      console.log('⏳ 精选装备加载状态已设置为false')
+    })
+  },
+
+  // 获取用户基本信息 - 使用新的请求工具
+  fetchUserInfo() {
+    console.log('👤 开始获取用户信息...')
+    
+    // 设置加载状态
+    this.setData({
+      [API_CONSTANTS.LOADING_FIELDS.USER_INFO]: true
+    })
+    console.log('⏳ 用户信息加载状态已设置为true')
+    
+    // 使用统一请求工具，需要认证
+    get('/api/user/info', {}, {
+      needAuth: true,     // 需要认证
+      showLoading: false
+    })
+    .then((data) => {
+      console.log('✅ 用户信息获取成功!')
+      console.log('👤 用户信息原始数据:', data)
+      
+      this.setData({
+        userInfo: data
+      })
+      console.log('✅ 用户信息已更新到页面')
+      
+      // 保存用户ID到本地存储
+      if (data.userId) {
+        wx.setStorageSync(API_CONSTANTS.STORAGE_KEYS.USER_ID, data.userId)
+        console.log('💾 用户ID已保存到本地存储:', data.userId)
       }
     })
-    */
+    .catch((error) => {
+      console.error('❌ 获取用户信息失败:', error)
+      
+      // 如果是认证失败，清空用户信息
+      if (error.error === API_CONSTANTS.UNAUTHORIZED) {
+        this.setData({
+          userInfo: null
+        })
+        console.log('🔐 认证失败，已清空用户信息')
+      }
+    })
+    .finally(() => {
+      // 取消加载状态
+      this.setData({
+        [API_CONSTANTS.LOADING_FIELDS.USER_INFO]: false
+      })
+      console.log('⏳ 用户信息加载状态已设置为false')
+    })
+  },
+
+  // 记录客服使用统计 - 使用新的请求工具
+  recordCustomerServiceUsage(logData) {
+    console.log('记录客服使用统计:', logData)
+    
+    // 使用统一请求工具
+    post('/api/analytics/customer-service', {
+      userId: logData.userId,
+      timestamp: logData.timestamp,
+      source: logData.source,
+      action: logData.action,
+      sessionId: logData.sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    }, {
+      showLoading: false  // 统计不显示loading
+    })
+    .then((data) => {
+      console.log('客服使用统计记录成功:', data)
+    })
+    .catch((error) => {
+      console.error('记录客服统计失败:', error)
+      // 统计失败不影响用户体验，静默处理
+    })
   },
 
   // 处理轮播图点击
@@ -359,11 +468,11 @@ Page({
     
     if (!banner) return
     
-    if (type === 'activity') {
+    if (type === API_CONSTANTS.BANNER.TYPE_ACTIVITY) {
       wx.navigateTo({
         url: `/pages/activityDetail/index?id=${banner.linkId}`
       })
-    } else if (type === 'product') {
+    } else if (type === API_CONSTANTS.BANNER.TYPE_PRODUCT) {
       wx.navigateTo({
         url: `/pages/productDetail/index?id=${banner.linkId}`
       })
@@ -392,7 +501,7 @@ Page({
     });
   },
 
-  // 搜索确认处理（点击键盘搜索按钮）
+  // 搜索确认处理（点击键盘搜索按钮）- 根据接口文档实现
   onSearchConfirm(e) {
     console.log('首页 - 搜索确认事件触发', e);
     
@@ -408,20 +517,12 @@ Page({
       console.log('从数据对象获取关键词:', keyword);
     }
     
-    if (!keyword) {
-      console.log('首页 - 搜索关键词为空');
-      wx.showToast({
-        title: '请输入搜索关键词',
-        icon: 'none'
-      });
-      return;
-    }
+    // 允许空关键词搜索，根据接口文档兜底逻辑
+    console.log('首页 - 准备跳转到搜索结果页，关键词：', keyword || '(空)');
     
-    console.log('首页 - 准备跳转到搜索结果页，关键词：', keyword);
-    
-    // 跳转到搜索结果页面，注明搜索类型为商品
+    // 跳转到搜索结果页面，符合接口文档参数格式
     wx.navigateTo({
-      url: `/pages/search-result/search-result?keyword=${encodeURIComponent(keyword)}&type=product`,
+      url: `/pages/search-result/search-result?keyword=${encodeURIComponent(keyword)}&type=${API_CONSTANTS.SEARCH.TYPE_PRODUCT}&page=${API_CONSTANTS.SEARCH.DEFAULT_PAGE}&pageSize=${API_CONSTANTS.SEARCH.DEFAULT_PAGE_SIZE}&sortBy=${API_CONSTANTS.SEARCH.DEFAULT_SORT}`,
       success: (res) => {
         console.log('首页 - 成功跳转到搜索结果页', res);
         // 清空搜索框
@@ -440,26 +541,25 @@ Page({
   },
 
   /**
-   * 客服会话回调 - 用户点击客服按钮时触发
+   * 客服会话回调 - 用户点击客服按钮时触发，根据接口文档实现
    */
   onContactButton(e) {
     console.log('[首页] 用户点击客服按钮，准备进入客服会话');
     console.log('[首页] 客服事件详情:', e.detail);
     
-    // 记录客服使用统计（实际项目中可以调用API）
+    // 记录客服使用统计，符合接口文档格式
     try {
-      // 可以在这里记录用户使用客服的统计信息
       const customerServiceLog = {
-        userId: wx.getStorageSync('userId') || 'guest',
+        userId: wx.getStorageSync(API_CONSTANTS.STORAGE_KEYS.USER_ID) || 'guest',
         timestamp: Date.now(),
-        source: '首页导航',
-        action: 'contact_start'
+        source: API_CONSTANTS.CUSTOMER_SERVICE.SOURCE_INDEX,
+        action: API_CONSTANTS.CUSTOMER_SERVICE.ACTION_START
       };
       
       console.log('[首页] 客服使用统计:', customerServiceLog);
       
-      // 实际项目中可以调用后端API记录
-      // this.recordCustomerServiceUsage(customerServiceLog);
+      // 调用后端API记录统计
+      this.recordCustomerServiceUsage(customerServiceLog);
       
     } catch (error) {
       console.error('[首页] 记录客服统计失败:', error);
@@ -471,50 +571,5 @@ Page({
       title: '倍特爱小程序',
       path: '/pages/index/index'
     }
-  },
-
-  // 测试方法 - 重新设置精选装备数据（调试用）
-  testRefreshEquipment() {
-    console.log('测试刷新精选装备数据')
-    
-    // 重新设置数据
-    this.setData({
-      featuredEquipment: [
-        {
-          id: 'equipment_1',
-          name: 'YONEX尤尼克斯ARC-11羽毛球拍',
-          tag: '热销',
-          price: '899',
-          sales: '销量268',
-          imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300'
-        },
-        {
-          id: 'equipment_2',
-          name: 'Victor胜利挑战者9500羽毛球拍',
-          tag: '新品',
-          price: '599',
-          sales: '销量156',
-          imageUrl: 'https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=300'
-        },
-        {
-          id: 'equipment_3',
-          name: 'LI-NING李宁风动9000超轻球拍',
-          tag: '爆款',
-          price: '1280',
-          sales: '销量189',
-          imageUrl: 'https://images.unsplash.com/photo-1544963150-889b086b6cb5?w=300'
-        },
-        {
-          id: 'equipment_4',
-          name: 'KAWASAKI川崎羽毛球拍碳纤维',
-          tag: '推荐',
-          price: '458',
-          sales: '销量342',
-          imageUrl: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300'
-        }
-      ]
-    })
-    
-    console.log('精选装备数据已刷新:', this.data.featuredEquipment)
   }
-}) 
+})

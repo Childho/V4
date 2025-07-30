@@ -5,7 +5,7 @@
  * 导入通用API请求函数
  * 根据@api.mdc规范，后端返回统一格式：{error, body, message}
  */
-const { apiRequest } = require('../../api/request');
+const { request } = require('../../api/request');
 
 Page({
   /**

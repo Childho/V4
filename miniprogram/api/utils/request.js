@@ -193,6 +193,216 @@ const mockData = {
     }
     throw new Error('地址不存在');
   },
+
+  // 活动相关mock数据 - 严格按照接口文档规范
+  '/api/activities/list': (data) => {
+    // 模拟活动数据 - 完全符合接口文档的ActivityItem结构
+    const mockActivities = [
+      {
+        id: 1,
+        title: '门店周年庆活动',
+        description: '羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '12月18日',
+        endTime: '12月24日',
+        location: '倍特爱运动专卖店',
+        status: 'ongoing',
+        isFull: false
+      },
+      {
+        id: 2,
+        title: '每周日BUFF',
+        description: '每周日购买指定号码加价15元定制BUFF头巾',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '12月15日',
+        endTime: '12月31日',
+        location: '倍特爱运动专卖店',
+        status: 'ongoing',
+        isFull: false
+      },
+      {
+        id: 3,
+        title: '2025年新年特训营',
+        description: '青少年羽毛球新年特训营，专业教练一对一指导，提升球技好时机',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '1月5日',
+        endTime: '2月28日',
+        location: '倍特爱运动专卖店',
+        status: 'coming',
+        isFull: false
+      },
+      {
+        id: 4,
+        title: '春季业余联赛',
+        description: '第四届春季业余羽毛球联赛报名开始，丰厚奖品等你来拿！',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '3月15日',
+        endTime: '3月16日',
+        location: '倍特爱运动专卖店',
+        status: 'coming',
+        isFull: false
+      },
+      {
+        id: 5,
+        title: '元旦跨年羽毛球赛',
+        description: '元旦期间跨年羽毛球友谊赛，与球友一起迎接新年！',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '12月31日',
+        endTime: '1月1日',
+        location: '倍特爱运动专卖店',
+        status: 'coming',
+        isFull: false
+      },
+      {
+        id: 6,
+        title: '五一优惠活动',
+        description: '五一期间，全场羽毛球装备8折优惠，买就送专业羽毛球一筒',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '5月1日',
+        endTime: '5月5日',
+        location: '倍特爱运动专卖店',
+        status: 'finished',
+        isFull: false
+      }
+    ];
+
+    // 根据状态筛选
+    let filteredActivities = mockActivities;
+    if (data.status && data.status !== 'all') {
+      filteredActivities = mockActivities.filter(item => item.status === data.status);
+    }
+
+    // 根据关键词搜索
+    if (data.searchKeyword) {
+      const keyword = data.searchKeyword.toLowerCase();
+      filteredActivities = filteredActivities.filter(item => 
+        item.title.toLowerCase().includes(keyword) || 
+        item.description.toLowerCase().includes(keyword)
+      );
+    }
+
+    // 分页处理
+    const page = data.page || 1;
+    const pageSize = data.pageSize || 10;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const pageActivities = filteredActivities.slice(start, end);
+
+    // 返回符合接口文档的数据结构
+    return {
+      activities: pageActivities,
+      pagination: {
+        page: page,
+        pageSize: pageSize,
+        hasMore: end < filteredActivities.length,
+        loading: false
+      }
+    };
+  },
+
+  '/api/activities/search': (data) => {
+    // 搜索活动的逻辑与列表相同，但返回格式包含搜索汇总
+    const mockActivities = [
+      {
+        id: 1,
+        title: '门店周年庆活动',
+        description: '羽你同行实体店两周年店庆，全场商品8折，会员额外95折，还有精美礼品赠送！',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '12月18日',
+        endTime: '12月24日',
+        location: '倍特爱运动专卖店',
+        status: 'ongoing',
+        isFull: false
+      },
+      {
+        id: 4,
+        title: '春季业余联赛',
+        description: '第四届春季业余羽毛球联赛报名开始，丰厚奖品等你来拿！',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '3月15日',
+        endTime: '3月16日',
+        location: '倍特爱运动专卖店',
+        status: 'coming',
+        isFull: false
+      },
+      {
+        id: 5,
+        title: '元旦跨年羽毛球赛',
+        description: '元旦期间跨年羽毛球友谊赛，与球友一起迎接新年！',
+        coverUrl: 'https://images.unsplash.com/photo-1626224583764-f87db24ac5e4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+        startTime: '12月31日',
+        endTime: '1月1日',
+        location: '倍特爱运动专卖店',
+        status: 'coming',
+        isFull: false
+      }
+    ];
+
+    const keyword = data.searchKeyword ? data.searchKeyword.toLowerCase() : '';
+    let searchResults = mockActivities;
+    
+    if (keyword) {
+      searchResults = mockActivities.filter(item => 
+        item.title.toLowerCase().includes(keyword) || 
+        item.description.toLowerCase().includes(keyword)
+      );
+    }
+
+    // 状态筛选
+    if (data.status && data.status !== 'all') {
+      searchResults = searchResults.filter(item => item.status === data.status);
+    }
+
+    // 分页处理
+    const page = data.page || 1;
+    const pageSize = data.pageSize || 10;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const pageActivities = searchResults.slice(start, end);
+
+    // 返回符合接口文档的搜索数据结构
+    return {
+      activities: pageActivities,
+      pagination: {
+        page: page,
+        pageSize: pageSize,
+        hasMore: end < searchResults.length,
+        loading: false
+      },
+      searchSummary: {
+        searchKeyword: data.searchKeyword || '',
+        totalMatched: searchResults.length,
+        searchTime: 800
+      }
+    };
+  },
+
+  '/api/activities/stats': () => {
+    // 返回符合接口文档的统计数据结构
+    return {
+      stats: {
+        all: 6,
+        ongoing: 2,
+        coming: 3,
+        finished: 1
+      },
+      lastUpdated: new Date().toISOString()
+    };
+  },
+
+  '/api/activities/signup': (data) => {
+    // 模拟报名操作
+    console.log('模拟活动报名，活动ID:', data.activityId);
+    
+    // 简单的成功逻辑（实际应该检查活动状态、是否已满等）
+    const success = Math.random() > 0.1; // 90% 成功率
+    
+    return {
+      success: success,
+      message: success ? '报名成功！' : '报名失败，活动可能已满或已结束'
+    };
+  },
+
   // 搜索相关mock数据
   '/api/search/products': {
     list: [
