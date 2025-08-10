@@ -7,6 +7,79 @@ import { apiRequest } from './utils/request';
  */
 
 /**
+ * 获取订单预览信息
+ * @param {Object} params 请求参数
+ * @param {Array} params.goods 商品列表 [{ id: 1, quantity: 1 }]
+ * @param {String} params.source 来源（cart购物车/detail商品详情）
+ * @returns {Promise} 返回订单预览数据
+ */
+export function getOrderPreview(params) {
+  console.log('获取订单预览信息，参数：', params);
+  
+  return apiRequest('/api/orders/preview', {
+    goods: params.goods,
+    source: params.source || 'cart'
+  }, 'POST');
+}
+
+/**
+ * 检查商品库存
+ * @param {Array} goods 商品列表 [{ goodsId: 1, quantity: 1 }]
+ * @returns {Promise} 返回库存检查结果
+ */
+export function checkStock(goods) {
+  console.log('检查商品库存，商品：', goods);
+  
+  return apiRequest('/api/goods/check-stock', {
+    goods: goods
+  }, 'POST');
+}
+
+/**
+ * 计算订单金额
+ * @param {Object} params 计算参数
+ * @param {Array} params.goods 商品列表 [{ goodsId: "goods_001", quantity: 1, price: 15.00 }]
+ * @param {String} params.addressId 地址ID
+ * @param {String} params.couponId 优惠券ID（可选）
+ * @returns {Promise} 返回计算结果
+ */
+export function calculateOrderAmount(params) {
+  console.log('计算订单金额，参数：', params);
+  
+  return apiRequest('/api/orders/calculate-amount', {
+    goods: params.goods,
+    addressId: params.addressId,
+    couponId: params.couponId || null
+  }, 'POST');
+}
+
+/**
+ * 获取用户默认收货地址
+ * @returns {Promise} 返回默认地址信息
+ */
+export function getUserDefaultAddress() {
+  console.log('获取用户默认收货地址');
+  
+  return apiRequest('/api/user/address/default', {}, 'GET');
+}
+
+/**
+ * 获取可用优惠券数量
+ * @param {Object} params 查询参数
+ * @param {Number} params.orderAmount 订单商品总金额
+ * @param {Array} params.goodsIds 商品ID列表
+ * @returns {Promise} 返回可用优惠券数量
+ */
+export function getAvailableCoupons(params) {
+  console.log('获取可用优惠券数量，参数：', params);
+  
+  return apiRequest('/api/user/coupons/available', {
+    orderAmount: params.orderAmount,
+    goodsIds: params.goodsIds
+  }, 'GET');
+}
+
+/**
  * 创建订单接口
  * @param {Object} orderData 订单数据
  * @param {Array} orderData.goods 商品列表
@@ -19,12 +92,12 @@ import { apiRequest } from './utils/request';
 export function createOrder(orderData) {
   console.log('调用创建订单接口，参数：', orderData);
   
-  return apiRequest('/api/order/create', {
+  return apiRequest('/api/orders/create', {
     goods: orderData.goods,
-    addressId: orderData.address.id,
-    couponId: orderData.coupon ? orderData.coupon.id : null,
+    address: orderData.address,
+    coupon: orderData.coupon || null,
     remark: orderData.remark || '',
-    totalAmount: orderData.amounts.finalAmount
+    amounts: orderData.amounts
   }, 'POST');
 }
 
@@ -107,45 +180,55 @@ export function requestRefund(orderId, reason, images = []) {
 }
 
 /**
+ * 订单支付
+ * @param {String} orderId 订单ID
+ * @param {String} paymentMethod 支付方式（默认wechat）
+ * @returns {Promise} 返回支付参数
+ */
+export function payOrder(orderId, paymentMethod = 'wechat') {
+  console.log('订单支付，订单ID：', orderId, '支付方式：', paymentMethod);
+  
+  return apiRequest('/api/order/pay', {
+    orderId: orderId,
+    paymentMethod: paymentMethod
+  }, 'POST');
+}
+
+/**
+ * 催发货
+ * @param {String} orderId 订单ID
+ * @returns {Promise} 返回催发货结果
+ */
+export function urgeShipping(orderId) {
+  console.log('催发货，订单ID：', orderId);
+  
+  return apiRequest('/api/order/urge-shipping', {
+    orderId: orderId
+  }, 'POST');
+}
+
+/**
+ * 删除订单
+ * @param {String} orderId 订单ID
+ * @returns {Promise} 返回删除结果
+ */
+export function deleteOrder(orderId) {
+  console.log('删除订单，订单ID：', orderId);
+  
+  return apiRequest('/api/order/delete', {
+    orderId: orderId
+  }, 'DELETE');
+}
+
+/**
  * 获取物流信息
  * @param {String} orderId 订单ID
  * @returns {Promise} 返回物流信息
  */
-export function getLogistics(orderId) {
+export function getOrderLogistics(orderId) {
   console.log('获取物流信息，订单ID：', orderId);
   
   return apiRequest('/api/order/logistics', {
     orderId: orderId
   }, 'GET');
-}
-
-/**
- * 计算订单金额（下单前预计算）
- * @param {Object} params 计算参数
- * @param {Array} params.goods 商品列表
- * @param {String} params.addressId 地址ID
- * @param {String} params.couponId 优惠券ID（可选）
- * @returns {Promise} 返回计算结果
- */
-export function calculateOrderAmount(params) {
-  console.log('计算订单金额，参数：', params);
-  
-  return apiRequest('/api/order/calculate', {
-    goods: params.goods,
-    addressId: params.addressId,
-    couponId: params.couponId || null
-  }, 'POST');
-}
-
-/**
- * 检查商品库存（下单前检查）
- * @param {Array} goods 商品列表，包含商品ID和数量
- * @returns {Promise} 返回库存检查结果
- */
-export function checkStock(goods) {
-  console.log('检查商品库存，商品：', goods);
-  
-  return apiRequest('/api/order/check-stock', {
-    goods: goods
-  }, 'POST');
 } 

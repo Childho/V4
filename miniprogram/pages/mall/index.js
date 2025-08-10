@@ -1,4 +1,7 @@
 // 商城页面的主要逻辑文件
+// 引入商城API接口
+const mallApi = require('../../api/mallApi');
+
 Page({
   
   /**
@@ -18,184 +21,20 @@ Page({
       seconds: '56'
     },
     
-    // 秒杀商品列表（mock数据，后期替换为接口数据）
-    seckillProducts: [
-      {
-        id: 1,
-        title: 'YONEX尤尼克斯羽毛球拍',
-        imageUrl: '/assets/images/racket1.jpg',
-        originalPrice: 899,
-        seckillPrice: 599
-      },
-      {
-        id: 2,
-        title: 'Victor胜利羽毛球鞋',
-        imageUrl: '/assets/images/shoes1.jpg',
-        originalPrice: 699,
-        seckillPrice: 399
-      },
-      {
-        id: 3,
-        title: 'RSL亚狮龙羽毛球',
-        imageUrl: '/assets/images/ball1.jpg',
-        originalPrice: 89,
-        seckillPrice: 59
-      },
-      {
-        id: 4,
-        title: 'MIZUNO美津浓运动服',
-        imageUrl: '/assets/images/clothes1.jpg',
-        originalPrice: 299,
-        seckillPrice: 199
-      },
-      {
-        id: 5,
-        title: 'KAWASAKI川崎羽毛球包',
-        imageUrl: '/assets/images/bag1.jpg',
-        originalPrice: 189,
-        seckillPrice: 129
-      }
-    ],
+    // 秒杀商品列表（使用API获取，不再使用静态数据）
+    seckillProducts: [],
     
-    // 轮播Banner数据（mock数据，后期替换为接口数据）
-    bannerList: [
-      {
-        id: 1,
-        imageUrl: '/assets/images/banner1.jpg',
-        link: '/pages/activityDetail/index?id=1'
-      },
-      {
-        id: 2,
-        imageUrl: '/assets/images/banner2.jpg',
-        link: '/pages/activityDetail/index?id=2'
-      },
-      {
-        id: 3,
-        imageUrl: '/assets/images/banner3.jpg',
-        link: '/pages/productDetail/index?id=10'
-      }
-    ],
+    // 轮播Banner数据（使用API获取，不再使用静态数据）
+    bannerList: [],
     
-    // 商品分组数据（mock数据，后期替换为接口数据）
-    productGroups: [
-      {
-        groupId: 'racket',
-        groupName: '羽毛球拍',
-        groupDesc: '专业球拍，助你提升球技',
-        products: [
-          {
-            id: 101,
-            name: 'YONEX尤尼克斯ARC-11羽毛球拍',
-            imageUrl: '/assets/images/racket1.jpg',
-            price: 899,
-            salesCount: 268,
-            tag: '热销'
-          },
-          {
-            id: 102,
-            name: 'Victor胜利挑战者9500羽毛球拍',
-            imageUrl: '/assets/images/racket2.jpg',
-            price: 599,
-            salesCount: 156,
-            tag: '新品'
-          },
-          {
-            id: 103,
-            name: 'KAWASAKI川崎EXPLORE 850羽毛球拍',
-            imageUrl: '/assets/images/racket3.jpg',
-            price: 459,
-            salesCount: 89,
-            tag: ''
-          },
-          {
-            id: 104,
-            name: 'MIZUNO美津浓FORTIUS 30羽毛球拍',
-            imageUrl: '/assets/images/racket4.jpg',
-            price: 1299,
-            salesCount: 45,
-            tag: '专业'
-          }
-        ]
-      },
-      {
-        groupId: 'shoes',
-        groupName: '羽毛球鞋',
-        groupDesc: '专业球鞋，稳定支撑每一步',
-        products: [
-          {
-            id: 201,
-            name: 'YONEX尤尼克斯POWER CUSHION65Z2羽毛球鞋',
-            imageUrl: '/assets/images/shoes1.jpg',
-            price: 699,
-            salesCount: 324,
-            tag: '热销'
-          },
-          {
-            id: 202,
-            name: 'Victor胜利A922羽毛球鞋',
-            imageUrl: '/assets/images/shoes2.jpg',
-            price: 499,
-            salesCount: 198,
-            tag: ''
-          },
-          {
-            id: 203,
-            name: 'KAWASAKI川崎K-080羽毛球鞋',
-            imageUrl: '/assets/images/shoes3.jpg',
-            price: 359,
-            salesCount: 167,
-            tag: '性价比'
-          },
-          {
-            id: 204,
-            name: 'MIZUNO美津浓WAVE FANG ZERO羽毛球鞋',
-            imageUrl: '/assets/images/shoes4.jpg',
-            price: 899,
-            salesCount: 76,
-            tag: '专业'
-          }
-        ]
-      },
-      {
-        groupId: 'accessories',
-        groupName: '运动必备',
-        groupDesc: '运动装备，提升运动体验',
-        products: [
-          {
-            id: 301,
-            name: 'RSL亚狮龙7号羽毛球',
-            imageUrl: '/assets/images/ball1.jpg',
-            price: 89,
-            salesCount: 456,
-            tag: '热销'
-          },
-          {
-            id: 302,
-            name: 'YONEX尤尼克斯羽毛球包',
-            imageUrl: '/assets/images/bag1.jpg',
-            price: 189,
-            salesCount: 234,
-            tag: ''
-          },
-          {
-            id: 303,
-            name: 'Victor胜利护腕套装',
-            imageUrl: '/assets/images/wrist1.jpg',
-            price: 59,
-            salesCount: 189,
-            tag: '实用'
-          },
-          {
-            id: 304,
-            name: 'KAWASAKI川崎运动毛巾',
-            imageUrl: '/assets/images/towel1.jpg',
-            price: 29,
-            salesCount: 321,
-            tag: ''
-          }
-        ]
-      }
-    ]
+    // 商品分组数据（使用API获取，不再使用静态数据）
+    productGroups: [],
+    
+    // 活动列表数据（使用API获取）
+    activityList: [],
+    
+    // 热门活动数据（使用API获取）
+    hotActivities: []
   },
 
   /**
@@ -263,55 +102,236 @@ Page({
     this.loadSeckillProducts();
     this.loadBannerList();
     this.loadProductGroups();
+    this.loadActivityList();
+    this.loadHotActivities();
   },
 
   /**
    * 加载秒杀商品数据
    */
   loadSeckillProducts() {
-    // TODO: 替换为真实的接口调用
     console.log('加载秒杀商品数据');
-    // 示例接口调用（需要后期实现）
-    // const seckillApi = require('../../api/seckillApi');
-    // seckillApi.getSeckillProducts().then(data => {
-    //   this.setData({ seckillProducts: data });
-    // });
+    
+    // 显示加载状态
+    wx.showLoading({
+      title: '加载中...',
+      mask: true
+    });
+    
+    // 调用真实API获取秒杀商品数据
+    mallApi.getSeckillProducts()
+      .then(data => {
+        console.log('获取秒杀商品成功：', data);
+        
+        // 确保数据结构正确，使用接口文档定义的字段名
+        const seckillProducts = data.products || [];
+        
+        // 设置秒杀商品数据
+        this.setData({ 
+          seckillProducts: seckillProducts 
+        });
+        
+        wx.hideLoading();
+      })
+      .catch(error => {
+        console.error('获取秒杀商品失败：', error);
+        
+        // 设置默认空数据，避免页面报错
+        this.setData({ 
+          seckillProducts: [] 
+        });
+        
+        wx.hideLoading();
+        wx.showToast({
+          title: '获取秒杀商品失败',
+          icon: 'none',
+          duration: 2000
+        });
+      });
   },
 
   /**
    * 加载轮播Banner数据
    */
   loadBannerList() {
-    // TODO: 替换为真实的接口调用
     console.log('加载轮播Banner数据');
-    // 示例接口调用（需要后期实现）
-    // const bannerApi = require('../../api/bannerApi');
-    // bannerApi.getBannerList().then(data => {
-    //   this.setData({ bannerList: data });
-    // });
+    
+    // 调用真实API获取Banner数据
+    mallApi.getBannerList()
+      .then(data => {
+        console.log('获取Banner数据成功：', data);
+        
+        // 确保数据结构正确，使用接口文档定义的字段名
+        const bannerList = data.bannerList || [];
+        
+        // 设置Banner数据
+        this.setData({ 
+          bannerList: bannerList 
+        });
+      })
+      .catch(error => {
+        console.error('获取Banner数据失败：', error);
+        
+        // 设置默认空数据，避免页面报错
+        this.setData({ 
+          bannerList: [] 
+        });
+        
+        wx.showToast({
+          title: '获取轮播图失败',
+          icon: 'none',
+          duration: 2000
+        });
+      });
   },
 
   /**
    * 加载商品分组数据
    */
   loadProductGroups() {
-    // TODO: 替换为真实的接口调用
     console.log('加载商品分组数据');
-    // 示例接口调用（需要后期实现）
-    // const productApi = require('../../api/productApi');
-    // productApi.getProductGroups().then(data => {
-    //   this.setData({ productGroups: data });
-    // });
+    
+    // 调用真实API获取商品分组数据
+    mallApi.getProductGroups()
+      .then(data => {
+        console.log('获取商品分组数据成功：', data);
+        
+        // 兼容后端返回 body.groups 与 mock 的 productGroups
+        const groups = data.productGroups || data.groups || [];
+
+        // 归一化为前端使用的结构：groupId/groupName/groupDesc/products
+        const normalizedGroups = groups.map(g => ({
+          groupId: g.groupId || g.id,
+          groupName: g.groupName,
+          groupDesc: g.groupDesc || '',
+          products: (g.products || []).map(p => ({
+            id: p.id,
+            name: p.name || p.title || p.product_name,
+            imageUrl: p.imageUrl,
+            price: p.price || p.salePrice || p.originalPrice || p.seckillPrice || 0,
+            salesCount: p.salesCount || p.sales || 0,
+            tag: p.tag || ''
+          }))
+        }));
+
+        // 设置商品分组数据
+        this.setData({ 
+          productGroups: normalizedGroups 
+        });
+      })
+      .catch(error => {
+        console.error('获取商品分组数据失败：', error);
+        
+        // 设置默认空数据，避免页面报错
+        this.setData({ 
+          productGroups: [] 
+        });
+        
+        wx.showToast({
+          title: '获取商品数据失败',
+          icon: 'none',
+          duration: 2000
+        });
+      });
+  },
+
+  /**
+   * 加载活动列表数据
+   */
+  loadActivityList() {
+    console.log('加载活动列表数据');
+    
+    // 调用真实API获取活动列表数据
+    mallApi.getActivityList()
+      .then(data => {
+        console.log('获取活动列表数据成功：', data);
+        
+        // 确保数据结构正确，使用接口文档定义的字段名
+        const activityList = data.activities || [];
+        
+        // 设置活动列表数据
+        this.setData({ 
+          activityList: activityList 
+        });
+      })
+      .catch(error => {
+        console.error('获取活动列表数据失败：', error);
+        
+        // 设置默认空数据，避免页面报错
+        this.setData({ 
+          activityList: [] 
+        });
+        
+        wx.showToast({
+          title: '获取活动数据失败',
+          icon: 'none',
+          duration: 2000
+        });
+      });
+  },
+
+  /**
+   * 加载热门活动数据
+   */
+  loadHotActivities() {
+    console.log('加载热门活动数据');
+    
+    // 调用真实API获取热门活动数据
+    mallApi.getHotActivities()
+      .then(data => {
+        console.log('获取热门活动数据成功：', data);
+        
+        // 确保数据结构正确，使用接口文档定义的字段名
+        const hotActivities = data.activities || [];
+        
+        // 设置热门活动数据
+        this.setData({ 
+          hotActivities: hotActivities 
+        });
+      })
+      .catch(error => {
+        console.error('获取热门活动数据失败：', error);
+        
+        // 设置默认空数据，避免页面报错
+        this.setData({ 
+          hotActivities: [] 
+        });
+        
+        // 热门活动加载失败不影响主要流程，只记录日志
+        console.log('使用默认空数据作为热门活动');
+      });
   },
 
   /**
    * 获取购物车商品数量
    */
   getCartCount() {
-    // 从本地存储或接口获取购物车数量
+    console.log('获取购物车商品数量');
+    
+    // 调用真实API获取购物车数量
+    mallApi.getCartCount()
+      .then(data => {
+        console.log('获取购物车数量成功：', data);
+        
+        // 确保数据结构正确，使用接口文档定义的字段名
+        const cartCount = data.cartCount || 0;
+        
+        // 设置购物车数量
+        this.setData({ cartCount });
+        
+        // 同步到本地存储，用作备用
+        wx.setStorageSync('cartCount', cartCount);
+      })
+      .catch(error => {
+        console.error('获取购物车数量失败：', error);
+        
+        // 尝试从本地存储获取作为备用
     const cartCount = wx.getStorageSync('cartCount') || 0;
     this.setData({ cartCount });
-    console.log('当前购物车商品数量：', cartCount);
+        
+        // 不显示错误提示，购物车数量不是关键功能
+        console.log('使用本地存储的购物车数量：', cartCount);
+      });
   },
 
   /**
@@ -404,6 +424,30 @@ Page({
           icon: 'none'
         });
       }
+    });
+  },
+
+  /**
+   * 快速搜索商品（可选：在当前页面显示简单搜索结果）
+   */
+  quickSearchProducts(keyword) {
+    console.log('商城页面快速搜索:', keyword);
+    
+    // 调用真实API进行搜索
+    mallApi.searchProducts({ keyword })
+      .then(data => {
+        console.log('搜索商品成功：', data);
+        
+        // 可以在这里处理搜索结果，比如显示在搜索建议中
+        const products = data.products || [];
+        
+        // 这里可以根据需求处理搜索结果
+        // 比如显示搜索建议、自动补全等
+        console.log('搜索到', products.length, '个商品');
+      })
+      .catch(error => {
+        console.error('搜索商品失败：', error);
+        // 搜索失败不影响主要流程，只记录日志
     });
   },
 
@@ -506,6 +550,49 @@ Page({
       },
       fail: (error) => {
         console.error('跳转秒杀页面失败:', error);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  /**
+   * 跳转到活动详情页面
+   */
+  goToActivityDetail(event) {
+    const activityId = event.currentTarget.dataset.id;
+    console.log('跳转到活动详情页，活动ID：', activityId);
+    
+    wx.navigateTo({
+      url: `/pages/activityDetail/index?id=${activityId}`,
+      success: () => {
+        console.log('成功跳转到活动详情页');
+      },
+      fail: (error) => {
+        console.error('跳转活动详情页失败:', error);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none'
+        });
+      }
+    });
+  },
+
+  /**
+   * 跳转到活动列表页面
+   */
+  goToActivityList() {
+    console.log('用户点击查看更多活动');
+    
+    wx.navigateTo({
+      url: '/pages/activity/index',
+      success: () => {
+        console.log('成功跳转到活动列表页');
+      },
+      fail: (error) => {
+        console.error('跳转活动列表页失败:', error);
         wx.showToast({
           title: '页面跳转失败',
           icon: 'none'

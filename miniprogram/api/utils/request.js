@@ -194,6 +194,131 @@ const mockData = {
     throw new Error('地址不存在');
   },
 
+  // 商城相关API Mock数据
+  '/api/mall/banners': {
+    bannerList: [
+      {
+        id: 1,
+        imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800',
+        link: '/pages/activityDetail/index?id=1'
+      },
+      {
+        id: 2,
+        imageUrl: 'https://images.unsplash.com/photo-1594736797933-d0403ba2fe65?w=800',
+        link: '/pages/activityDetail/index?id=2'
+      },
+      {
+        id: 3,
+        imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
+        link: '/pages/productDetail/index?id=10'
+      }
+    ]
+  },
+
+  '/api/mall/seckill': {
+    products: [
+      {
+        id: 1,
+        title: 'YONEX尤尼克斯羽毛球拍',
+        imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400',
+        originalPrice: 899,
+        seckillPrice: 599
+      },
+      {
+        id: 2,
+        title: 'Victor胜利羽毛球鞋',
+        imageUrl: 'https://images.unsplash.com/photo-1594736797933-d0403ba2fe65?w=400',
+        originalPrice: 699,
+        seckillPrice: 399
+      },
+      {
+        id: 3,
+        title: 'RSL亚狮龙羽毛球',
+        imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
+        originalPrice: 89,
+        seckillPrice: 59
+      }
+    ]
+  },
+
+  '/api/mall/product-groups': {
+    productGroups: [
+      {
+        groupId: 'racket',
+        groupName: '羽毛球拍',
+        groupDesc: '专业球拍，助你提升球技',
+        products: [
+          {
+            id: 101,
+            name: 'YONEX尤尼克斯ARC-11羽毛球拍',
+            imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400',
+            price: 899,
+            salesCount: 268,
+            tag: '热销'
+          },
+          {
+            id: 102,
+            name: 'Victor胜利挑战者9500羽毛球拍',
+            imageUrl: 'https://images.unsplash.com/photo-1594736797933-d0403ba2fe65?w=400',
+            price: 599,
+            salesCount: 156,
+            tag: '新品'
+          }
+        ]
+      },
+      {
+        groupId: 'shoes',
+        groupName: '羽毛球鞋',
+        groupDesc: '专业球鞋，稳定支撑每一步',
+        products: [
+          {
+            id: 201,
+            name: 'YONEX尤尼克斯POWER CUSHION65Z2羽毛球鞋',
+            imageUrl: 'https://images.unsplash.com/photo-1594736797933-d0403ba2fe65?w=400',
+            price: 699,
+            salesCount: 324,
+            tag: '热销'
+          },
+          {
+            id: 202,
+            name: 'Victor胜利A922羽毛球鞋',
+            imageUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400',
+            price: 499,
+            salesCount: 198,
+            tag: ''
+          }
+        ]
+      }
+    ]
+  },
+
+  '/api/mall/cart/count': {
+    cartCount: 3
+  },
+
+  '/api/mall/search': (data) => {
+    // 模拟搜索功能
+    const keyword = data.keyword || '';
+    return {
+      products: [
+        {
+          id: 101,
+          name: `搜索结果：${keyword} 相关商品1`,
+          imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400',
+          price: 899,
+          salesCount: 268
+        },
+        {
+          id: 102,
+          name: `搜索结果：${keyword} 相关商品2`,
+          imageUrl: 'https://images.unsplash.com/photo-1594736797933-d0403ba2fe65?w=400',
+          price: 599,
+          salesCount: 156
+        }
+      ]
+    };
+  },
+
   // 新的地址接口路径 - 符合接口文档规范
   '/api/user/addresses/list': (data) => {
     // 获取地址列表 - 符合接口文档响应格式
@@ -1170,6 +1295,279 @@ const mockData = {
 
     // 直接返回数组，符合接口文档中body字段是array的定义
     return pageRecords;
+  },
+
+  // 购物车相关mock数据 - 严格按照接口文档规范
+  '/api/cart/list': (data) => {
+    // 模拟购物车商品列表 - 完全符合接口文档
+    console.log('模拟获取购物车列表');
+
+    return {
+      cartList: [
+        {
+          id: 1,
+          name: 'YONEX尤尼克斯ARC-11羽毛球拍',
+          spec: '颜色：蓝色 重量：4U',
+          price: 899.00,
+          quantity: 1,
+          image: '/assets/images/racket1.jpg',
+          selected: true,
+          specGroups: [
+            {
+              name: '颜色',
+              options: [
+                { value: '蓝色', selected: true, disabled: false },
+                { value: '红色', selected: false, disabled: false },
+                { value: '黑色', selected: false, disabled: false }
+              ]
+            },
+            {
+              name: '重量',
+              options: [
+                { value: '3U', selected: false, disabled: false },
+                { value: '4U', selected: true, disabled: false },
+                { value: '5U', selected: false, disabled: false }
+              ]
+            }
+          ]
+        },
+        {
+          id: 2,
+          name: 'VICTOR胜利JS-12羽毛球',
+          spec: '速度：77 包装：12只装',
+          price: 65.00,
+          quantity: 2,
+          image: '/assets/images/shuttlecock1.jpg',
+          selected: false,
+          specGroups: [
+            {
+              name: '速度',
+              options: [
+                { value: '76', selected: false, disabled: false },
+                { value: '77', selected: true, disabled: false },
+                { value: '78', selected: false, disabled: false }
+              ]
+            },
+            {
+              name: '包装',
+              options: [
+                { value: '12只装', selected: true, disabled: false },
+                { value: '25只装', selected: false, disabled: false }
+              ]
+            }
+          ]
+        },
+        {
+          id: 3,
+          name: 'LI-NING李宁专业手胶',
+          spec: '颜色：白色 厚度：标准',
+          price: 25.00,
+          quantity: 3,
+          image: '/assets/images/grip1.jpg',
+          selected: true,
+          specGroups: [
+            {
+              name: '颜色',
+              options: [
+                { value: '白色', selected: true, disabled: false },
+                { value: '黑色', selected: false, disabled: false },
+                { value: '蓝色', selected: false, disabled: false }
+              ]
+            },
+            {
+              name: '厚度',
+              options: [
+                { value: '标准', selected: true, disabled: false },
+                { value: '加厚', selected: false, disabled: false }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+  },
+
+  '/api/cart/add': (data) => {
+    // 模拟添加商品到购物车 - 严格按照接口文档规范
+    console.log('模拟添加商品到购物车:', data);
+
+    // 模拟业务错误场景
+    const random = Math.random();
+    
+    if (random < 0.05) {
+      // 5% 概率模拟未登录错误
+      throw {
+        error: 401,
+        message: '请先登录',
+        body: null
+      };
+    } else if (random < 0.1) {
+      // 5% 概率模拟商品库存不足
+      throw {
+        error: 1001,
+        message: '商品库存不足',
+        body: null
+      };
+    }
+
+    // 90% 概率模拟成功
+    return {
+      cartId: Math.floor(Math.random() * 1000) + 100,
+      action: Math.random() > 0.7 ? 'updated' : 'added',
+      newQuantity: data.quantity,
+      cartCount: Math.floor(Math.random() * 10) + 1
+    };
+  },
+
+  '/api/cart/update-quantity': (data) => {
+    // 模拟修改购物车商品数量 - 严格按照接口文档规范
+    console.log('模拟修改购物车数量:', data);
+
+    // 模拟业务错误场景
+    const random = Math.random();
+    
+    if (random < 0.05) {
+      // 5% 概率模拟数量超出库存
+      throw {
+        error: 1002,
+        message: '商品数量超出库存',
+        body: null
+      };
+    }
+
+    return {
+      cartId: data.cartId,
+      newQuantity: data.quantity,
+      newSubtotal: data.quantity * 899.00,
+      cartSummary: {
+        totalItems: 5,
+        selectedItems: 3,
+        totalAmount: data.quantity * 899.00 + 200.00
+      }
+    };
+  },
+
+  '/api/cart/update-specs': (data) => {
+    // 模拟修改购物车商品规格 - 严格按照接口文档规范
+    console.log('模拟修改购物车规格:', data);
+
+    const specsText = Object.entries(data.newSpecs).map(([key, value]) => `${key}：${value}`).join(' ');
+
+    return {
+      cartId: data.cartId,
+      action: Math.random() > 0.5 ? 'updated' : 'merged',
+      newSpec: specsText,
+      merged: Math.random() > 0.7,
+      cartSummary: {
+        totalItems: 5,
+        selectedItems: 3,
+        totalAmount: 2697.00
+      }
+    };
+  },
+
+  '/api/cart/toggle-select': (data) => {
+    // 模拟切换购物车商品选择状态 - 严格按照接口文档规范
+    console.log('模拟切换选择状态:', data);
+
+    return {
+      updatedItems: data.selectAll ? [1, 2, 3] : (data.cartIds || []),
+      cartSummary: {
+        totalItems: 3,
+        selectedItems: data.selected ? (data.selectAll ? 3 : 1) : 0,
+        totalAmount: data.selected ? (data.selectAll ? 1989.00 : 899.00) : 0.00,
+        originalAmount: data.selected ? (data.selectAll ? 2189.00 : 999.00) : 0.00,
+        discountAmount: data.selected ? (data.selectAll ? 200.00 : 100.00) : 0.00,
+        allSelected: data.selectAll && data.selected
+      }
+    };
+  },
+
+  '/api/cart/remove': (data) => {
+    // 模拟删除购物车商品 - 严格按照接口文档规范
+    console.log('模拟删除购物车商品:', data);
+
+    return {
+      deletedItems: data.cartIds,
+      deletedCount: data.cartIds.length,
+      cartSummary: {
+        totalItems: Math.max(0, 3 - data.cartIds.length),
+        selectedItems: Math.max(0, 2 - data.cartIds.length),
+        totalAmount: Math.max(0, 1989.00 - (data.cartIds.length * 300))
+      }
+    };
+  },
+
+  '/api/cart/checkout-prepare': (data) => {
+    // 模拟购物车结算准备 - 严格按照接口文档规范
+    console.log('模拟购物车结算准备:', data);
+
+    return {
+      checkoutItems: [
+        {
+          cartId: 1,
+          productId: 'product_101',
+          name: 'YONEX尤尼克斯ARC-11羽毛球拍',
+          image: '/assets/images/racket1.jpg',
+          spec: '颜色：蓝色 重量：4U',
+          price: 899.00,
+          quantity: 1,
+          subtotal: 899.00,
+          shippingFee: 15.00
+        },
+        {
+          cartId: 3,
+          productId: 'product_103',
+          name: 'LI-NING李宁专业手胶',
+          image: '/assets/images/grip1.jpg',
+          spec: '颜色：白色 厚度：标准',
+          price: 25.00,
+          quantity: 3,
+          subtotal: 75.00,
+          shippingFee: 0.00
+        }
+      ],
+      defaultAddress: {
+        addressId: 'addr_001',
+        recipientName: '张三',
+        phone: '138****5678',
+        region: '广东省 深圳市 南山区',
+        detailAddress: '科技园南区深圳软件园'
+      },
+      availableCoupons: [
+        {
+          couponId: 'coupon_001',
+          name: '满200减30优惠券',
+          discountType: 'amount',
+          discountValue: 30.00,
+          minAmount: 200.00,
+          validUntil: '2024-12-31T23:59:59Z'
+        },
+        {
+          couponId: 'coupon_002',
+          name: '全场9折优惠券',
+          discountType: 'percent',
+          discountValue: 0.9,
+          minAmount: 100.00,
+          validUntil: '2024-12-31T23:59:59Z'
+        }
+      ],
+      priceDetail: {
+        itemsTotal: 974.00,
+        shippingTotal: 15.00,
+        discountTotal: 0.00,
+        finalTotal: 989.00
+      }
+    };
+  },
+
+  '/api/cart/clear': (data) => {
+    // 模拟清空购物车 - 严格按照接口文档规范
+    console.log('模拟清空购物车');
+
+    return {
+      clearedCount: 3
+    };
   },
 
   // 搜索相关mock数据

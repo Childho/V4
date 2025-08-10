@@ -1,152 +1,118 @@
-# 订单确认页面说明
+# 订单确认页面 API 集成说明
 
-## 页面功能
-该页面是微信小程序的订单确认页面，用户从购物车结算后进入此页面确认订单信息并提交。
+**状态：✅ API集成已完成**
 
-## 页面结构
-- `order-confirm.wxml` - 页面结构文件
-- `order-confirm.wxss` - 页面样式文件  
-- `order-confirm.js` - 页面逻辑文件
-- `order-confirm.json` - 页面配置文件
+## 更新概览
 
-## 主要功能模块
+订单确认页面(`/pages/order-confirm/order-confirm.js`)已完成静态数据向真实API的转换，严格按照接口文档(`/api-docs/order-confirm.md`)进行字段映射。
 
-### 1. 收货地址模块
-- 显示收件人姓名、电话、详细地址
-- 如果还没有地址，显示"请选择收货地址"
-- 点击跳转地址管理页面
+## 主要变更
 
-### 2. 商品列表模块
-- 每个商品包含：商品图片、名称、规格、数量、实付价
-- 样式紧凑美观，不会超出屏幕
-- 支持多个商品展示
-
-### 3. 优惠券选择模块
-- 展示当前可用优惠券数量
-- 默认显示"未使用"状态
-- 点击跳转优惠券选择页面
-
-### 4. 备注模块
-- 输入框，提示"可填写备注内容（选填）"
-- 最大输入长度100字符
-- 内容实时保存到页面数据中
-
-### 5. 金额明细模块
-- 显示商品金额
-- 显示优惠券优惠（如果有选择）
-- 显示运费（默认免运费）
-- 实付金额使用红色字体、加粗、高亮显示
-
-## 页面跳转方式
-
-### 从购物车进入
+### 1. API模块导入
 ```javascript
-// 购物车页面跳转示例
-const selectedGoods = [
-  {
-    id: 1,
-    name: '商品名称',
-    image: '商品图片URL',
-    spec: '商品规格',
-    price: 15.00,
-    quantity: 1
-  }
-];
-
-wx.navigateTo({
-  url: `/pages/order-confirm/order-confirm?goods=${encodeURIComponent(JSON.stringify(selectedGoods))}`
-});
+import { 
+  getOrderPreview, 
+  checkStock, 
+  calculateOrderAmount, 
+  getUserDefaultAddress, 
+  getAvailableCoupons, 
+  createOrder 
+} from '../../api/orderApi.js';
 ```
 
-### 从商品详情页进入
-```javascript
-// 商品详情页直接下单
-const orderGoods = [{
-  id: productId,
-  name: productName,
-  image: productImage,
-  spec: selectedSpec,
-  price: productPrice,
-  quantity: buyQuantity
-}];
+### 2. 页面数据结构
+- 新增 `loading: true` 状态管理页面加载
+- 保持原有数据结构不变，确保页面渲染兼容性
 
-wx.navigateTo({
-  url: `/pages/order-confirm/order-confirm?goods=${encodeURIComponent(JSON.stringify(orderGoods))}`
-});
-```
+### 3. 核心方法改造
 
-## 数据流程
+#### initOrderData() - 替代原getOrderData()
+- **接口**：`/api/orders/preview` (POST)
+- **功能**：获取订单预览信息，包括商品详情、默认地址、可用优惠券等
+- **字段映射**：严格按照接口文档进行数据映射
+- **错误处理**：提供重试机制和友好的错误提示
 
-### 页面加载时
-1. 获取传入的商品数据
-2. 获取用户收货地址（从本地存储）
-3. 获取可用优惠券数量
-4. 计算商品总金额
+#### checkGoodsStock() - 库存验证
+- **接口**：`/api/goods/check-stock` (POST) 
+- **功能**：验证商品库存是否充足
+- **数据转换**：`{ goodsId, quantity }` 格式
+- **错误处理**：库存不足时阻止下单并提示用户
 
-### 用户操作
-1. 选择收货地址 → 跳转地址管理页面
-2. 选择优惠券 → 跳转优惠券选择页面  
-3. 填写备注 → 实时更新数据
-4. 提交订单 → 调用API接口
+#### getUserAddress() - 获取默认地址
+- **接口**：`/api/user/address/default` (GET)
+- **功能**：获取用户默认收货地址
+- **字段转换**：`addressId` → `id` 确保页面兼容性
+- **错误处理**：静默处理，不阻断主流程
 
-### 页面返回时
-1. 检查地址更新（从本地存储）
-2. 检查优惠券选择更新（从本地存储）
-3. 重新计算金额
+#### getAvailableCoupons() - 优惠券数量
+- **接口**：`/api/user/coupons/available` (GET)
+- **功能**：获取当前订单可用优惠券数量
+- **参数**：订单金额和商品ID列表
+- **错误处理**：设置默认值0，不影响下单流程
 
-## 接口调用
+#### calculateOrderAmountFromServer() - 服务端金额计算
+- **接口**：`/api/orders/calculate-amount` (POST)
+- **功能**：服务端重新计算订单金额（地址/优惠券变更时）
+- **字段映射**：按照接口文档格式传参
+- **错误处理**：失败时保持本地计算结果
 
-### 订单创建接口
-```javascript
-import { createOrder } from '../../api/orderApi.js';
+#### submitOrder() - 订单提交
+- **接口**：`/api/orders/create` (POST)
+- **功能**：创建订单并返回订单ID
+- **数据结构**：完全按照接口文档格式构建
+- **成功处理**：跳转到支付页面或订单列表
+- **错误处理**：提供重试机制
 
-const orderData = {
-  goods: this.data.orderGoods,
-  address: this.data.addressInfo,
-  coupon: this.data.selectedCoupon,
-  remark: this.data.remark,
-  amounts: {
-    goodsAmount: this.data.totalGoodsAmount,
-    shippingFee: this.data.shippingFee,
-    finalAmount: this.data.finalAmount
-  }
-};
+### 4. 生命周期优化
 
-const result = await createOrder(orderData);
-```
+#### onShow() - 页面显示处理
+- `checkAddressUpdate()` - 检查地址选择更新
+- `checkCouponUpdate()` - 检查优惠券选择更新
+- 自动触发金额重算
 
-### 库存检查接口
-```javascript
-import { checkStock } from '../../api/orderApi.js';
+#### onPullDownRefresh() - 下拉刷新
+- 重新获取地址和优惠券信息
+- 保持当前商品数据不变
 
-const stockData = goods.map(item => ({
-  goodsId: item.id,
-  quantity: item.quantity
-}));
+## 接口对应关系
 
-const stockResult = await checkStock(stockData);
-```
+| 功能 | 接口地址 | 请求方式 | 状态 |
+|-----|---------|---------|-----|
+| 订单预览 | `/api/orders/preview` | POST | ✅ 已集成 |
+| 库存检查 | `/api/goods/check-stock` | POST | ✅ 已集成 |
+| 金额计算 | `/api/orders/calculate-amount` | POST | ✅ 已集成 |
+| 默认地址 | `/api/user/address/default` | GET | ✅ 已集成 |
+| 优惠券数量 | `/api/user/coupons/available` | GET | ✅ 已集成 |
+| 创建订单 | `/api/orders/create` | POST | ✅ 已集成 |
 
-## 样式特点
-- 采用现代化卡片式设计
-- 支持深色模式适配
-- 响应式布局，兼容不同屏幕尺寸
-- 底部固定操作栏，适配安全区域
-- 优雅的动画过渡效果
+## 错误处理策略
 
-## 注意事项
-1. 必须先选择收货地址才能提交订单
-2. 商品数据不能为空
-3. 提交订单时会显示加载状态
-4. 支持下拉刷新重新获取数据
-5. 页面卸载时会清理相关数据
+1. **页面加载错误**：提供重试和返回选项
+2. **库存检查错误**：阻止下单，要求重新选择商品
+3. **地址获取错误**：静默处理，允许用户手动选择
+4. **优惠券错误**：设置默认值，不影响主流程
+5. **金额计算错误**：使用本地计算，显示异常提示
+6. **订单提交错误**：提供重试机制
 
-## 依赖页面
-- `/pages/address-list/address-list` - 地址管理页面
-- `/pages/coupon-list/coupon-list` - 优惠券选择页面
-- `/pages/payment/payment` - 支付页面
+## 兼容性保证
 
-## 本地存储使用
-- `selectedAddress` - 选择的收货地址
-- `selectedCoupon` - 选择的优惠券（临时存储）
-- `cartSelectedItems` - 购物车选中商品（提交后清除） 
+- 保持原有页面数据结构不变
+- 字段缺失时使用合理默认值
+- 渐进式降级，API失败不阻断核心流程
+- 保持与WXML模板的字段映射一致
+
+## 开发者注意事项
+
+1. 所有API调用都包含详细的console.log，便于调试
+2. 错误信息对用户友好，对开发者详细
+3. 关键业务逻辑（如库存检查）有严格的错误处理
+4. 支持重试机制，提升用户体验
+5. 遵循小程序异步编程最佳实践
+
+## 测试建议
+
+1. 测试各种商品组合的订单预览
+2. 测试库存不足场景的处理
+3. 测试网络异常时的错误处理
+4. 测试地址和优惠券选择的数据更新
+5. 测试订单提交的成功和失败场景 

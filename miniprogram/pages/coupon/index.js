@@ -1,15 +1,14 @@
 /**
- * 优惠券列表页面逻辑
+ * 优惠券列表页面逻辑 - 基于接口文档实现真实API调用
  * 主要功能：显示用户的优惠券列表、切换不同状态、使用优惠券
  */
 
-// TODO: 实际开发时取消下面的注释，引入真实的API文件
-// 引入优惠券相关API
-// import { 
-//   getCouponList, 
-//   useCoupon, 
-//   getAvailableCouponCount 
-// } from '../../api/couponApi.js';
+// 引入优惠券相关API - 基于接口文档实现
+import { 
+  getCouponList, 
+  useCoupon, 
+  getAvailableCouponCount 
+} from '../../api/couponApi.js';
 
 Page({
   /**
@@ -24,16 +23,14 @@ Page({
       { id: 1, name: '可使用', status: 1 },
       { id: 2, name: '即将过期', status: 4 } // 状态4表示即将过期，原来的已过期状态3改为即将过期状态4
     ],
-    // 优惠券列表数据
+    // 优惠券列表数据 - 对应接口文档 couponList
     couponList: [],
+    // 分页信息 - 对应接口文档返回结构
+    currentPage: 1,      // 当前页码
+    pageSize: 10,        // 每页数量
+    hasMore: true,       // 是否还有更多数据
     // 加载状态
     loading: false,
-    // 是否还有更多数据
-    hasMore: true,
-    // 当前页码
-    currentPage: 1,
-    // 每页数据数量
-    pageSize: 10,
     // 空状态提示文案
     emptyText: '暂无可用优惠券',
     // 显示使用确认弹窗
@@ -158,44 +155,45 @@ Page({
       // 获取当前tab对应的状态值
       const currentTabStatus = tabs[currentTab].status;
       
-      const params = {
-        status: currentTabStatus,    // 根据当前tab的状态查询对应的优惠券
-        page: 1,              // 重新加载从第一页开始
-        pageSize: pageSize
-      };
-      
-      console.log('加载优惠券列表，参数：', params);
+      console.log('加载优惠券列表，参数：');
+      console.log('- status:', currentTabStatus);
+      console.log('- page: 1');
+      console.log('- pageSize:', pageSize);
       console.log('当前tab索引:', currentTab, '对应的status:', currentTabStatus);
       
-      // TODO: 实际开发时取消下面的注释，使用真实API
-      // const result = await getCouponList(params);
-      // console.log('获取到优惠券列表：', result);
+      // 调用真实API - 完全按照接口文档参数
+      const response = await getCouponList(currentTabStatus, 1, pageSize);
+      console.log('获取到优惠券列表：', response);
       
-      // 使用模拟数据（实际开发中替换为 result.list 或 result）
-      const mockData = this.getMockCouponData(currentTabStatus);
-      console.log('生成的mock数据：', mockData);
+      // 处理API返回数据 - 按照接口文档字段结构
+      const couponListData = this.safeCouponList(response.couponList || []);
       
       this.setData({
-        couponList: mockData,           // 实际应该是 result.list 或 result
-        hasMore: mockData.length >= pageSize,  // 实际应该根据后端返回的总数判断
-        currentPage: 1
+        couponList: couponListData,               // 对应接口文档 couponList
+        currentPage: response.currentPage || 1,   // 对应接口文档 currentPage
+        pageSize: response.pageSize || pageSize,  // 对应接口文档 pageSize
+        hasMore: response.hasMore || false       // 对应接口文档 hasMore
       });
       
     } catch (error) {
       console.error('加载优惠券列表失败：', error);
-      wx.showToast({
-        title: '加载失败，请重试',
-        icon: 'none'
+      
+      // API失败时的错误处理，使用默认值避免页面报错
+      this.setData({
+        couponList: [],
+        currentPage: 1,
+        hasMore: false
       });
       
-      // 即使API失败，也尝试使用mock数据作为降级方案
-      const currentTabStatus = this.data.tabs[this.data.currentTab].status;
-      const mockData = this.getMockCouponData(currentTabStatus);
-      this.setData({
-        couponList: mockData,
-        hasMore: mockData.length >= pageSize,
-        currentPage: 1
-      });
+      // 根据错误类型显示不同提示
+      if (error.message === '未登录') {
+        // 已在apiRequest中处理跳转
+      } else {
+        wx.showToast({
+          title: error.message || '加载失败，请重试',
+          icon: 'none'
+        });
+      }
     } finally {
       this.setData({ loading: false });
     }
@@ -224,25 +222,28 @@ Page({
       
       // 获取当前tab对应的状态值
       const currentTabStatus = tabs[currentTab].status;
-      
       const nextPage = currentPage + 1;
-      const params = {
-        status: currentTabStatus,
-        page: nextPage,
-        pageSize: pageSize
-      };
       
-      // TODO: 实际开发时取消下面的注释，使用真实API
-      // const result = await getCouponList(params);
+      console.log('加载更多优惠券，参数：');
+      console.log('- status:', currentTabStatus);
+      console.log('- page:', nextPage);
+      console.log('- pageSize:', pageSize);
       
-      // 使用模拟数据（实际开发中替换为 result.list 或 result）
-      const mockData = this.getMockCouponData(currentTabStatus, nextPage);
+      // 调用真实API - 加载更多数据
+      const response = await getCouponList(currentTabStatus, nextPage, pageSize);
+      console.log('获取到更多优惠券：', response);
       
-      if (mockData.length > 0) {
+      // 处理API返回数据
+      const newCouponListData = this.safeCouponList(response.couponList || []);
+      
+      if (newCouponListData.length > 0) {
+        // 合并新数据到现有列表
+        const updatedList = [...this.data.couponList, ...newCouponListData];
+        
         this.setData({
-          couponList: [...this.data.couponList, ...mockData],
-          currentPage: nextPage,
-          hasMore: mockData.length >= pageSize
+          couponList: updatedList,
+          currentPage: response.currentPage || nextPage,
+          hasMore: response.hasMore || false
         });
       } else {
         this.setData({
@@ -340,7 +341,7 @@ Page({
   },
 
   /**
-   * 确认使用优惠券
+   * 确认使用优惠券 - 基于接口文档实现
    */
   async confirmUseCoupon() {
     const { currentCoupon } = this.data;
@@ -349,277 +350,100 @@ Page({
       return;
     }
     
+    // 检查用户登录状态
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      wx.navigateTo({
+        url: '/pages/login/index'
+      });
+      return;
+    }
+    
     try {
       wx.showLoading({ title: '使用中...' });
       
-      // TODO: 实际开发时取消下面的注释，使用真实API
-      // await useCoupon(currentCoupon.id);
+      // 调用真实API - 按照接口文档参数
+      const response = await useCoupon(currentCoupon.id);
+      console.log('[Use Coupon Success]', response);
       
-      // 模拟API调用成功（实际开发中删除这个延时）
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      wx.hideLoading();
       
-      wx.showToast({
-        title: '使用成功',
-        icon: 'success'
-      });
-      
-      // 隐藏弹窗
-      this.hideUseCouponModal();
-      
-      // 刷新列表
-      this.loadCouponList();
+      // 根据接口文档返回的跳转信息处理
+      if (response.useResult && response.useResult.success) {
+        const { jumpInfo, message } = response.useResult;
+        
+        wx.showToast({
+          title: '使用成功',
+          icon: 'success',
+          duration: 1500
+        });
+        
+        // 隐藏弹窗
+        this.hideUseCouponModal();
+        
+        // 根据返回的跳转信息进行页面跳转
+        setTimeout(() => {
+          if (jumpInfo.type === 'mall') {
+            wx.switchTab({
+              url: jumpInfo.url
+            });
+          } else if (jumpInfo.type === 'product' && jumpInfo.productId) {
+            wx.navigateTo({
+              url: `${jumpInfo.url}?productId=${jumpInfo.productId}`
+            });
+          } else {
+            // 默认跳转到商城
+            wx.switchTab({
+              url: '/pages/mall/index'
+            });
+          }
+        }, 1500);
+        
+      } else {
+        // 刷新列表
+        this.loadCouponList();
+      }
       
     } catch (error) {
-      console.error('使用优惠券失败：', error);
-      wx.showToast({
-        title: '使用失败，请重试',
-        icon: 'none'
-      });
-    } finally {
       wx.hideLoading();
+      console.error('使用优惠券失败：', error);
+      
+      // 根据错误类型显示不同提示
+      if (error.message === '未登录') {
+        // 已在apiRequest中处理跳转
+      } else {
+        wx.showToast({
+          title: error.message || '使用失败，请重试',
+          icon: 'none'
+        });
+      }
     }
   },
 
   /**
-   * 获取模拟优惠券数据（实际开发中删除）
-   * 这个方法模拟了不同状态的优惠券数据，方便前端UI联调
+   * 安全处理优惠券列表 - 确保每张优惠券的字段完整性
    */
-  getMockCouponData(status, page = 1) {
-    // 创建完整的模拟数据集，专门针对羽毛球产品商场
-    const allMockData = [
-      // ========== 可使用的羽毛球优惠券 ==========
-      {
-        id: 101,
-        title: '新球友专享大礼包',
-        amount: 50,
-        minAmount: 299,
-        type: 1, // 1=满减券，2=折扣券，3=免邮券
-        scope: '全场羽毛球用品',
-        startTime: '2024-01-01',
-        endTime: '2024-12-31',
-        status: 1, // 1=可使用，4=即将过期
-        useTime: null,
-        description: '新用户注册即得，购买羽毛球拍、球鞋等满299元可用',
-        discount: 50
-      },
-      {
-        id: 102,
-        title: '羽毛球拍8折优惠券',
-        amount: 80, // 表示8折，80代表80%
-        minAmount: 500,
-        type: 2,
-        scope: '羽毛球拍类',
-        startTime: '2024-02-01',
-        endTime: '2024-08-31',
-        status: 1,
-        useTime: null,
-        description: '尤尼克斯、胜利、李宁等知名品牌球拍享8折优惠',
-        discount: 0 // 折扣券的优惠金额需要根据订单金额计算
-      },
-      {
-        id: 103,
-        title: '满500减80羽毛球装备券',
-        amount: 80,
-        minAmount: 500,
-        type: 1,
-        scope: '羽毛球装备套装',
-        startTime: '2024-01-15',
-        endTime: '2024-07-15',
-        status: 1,
-        useTime: null,
-        description: '购买球拍+球鞋+球包套装专用，装备一步到位',
-        discount: 80
-      },
-      {
-        id: 104,
-        title: '羽毛球用品免邮券',
-        amount: 0,
-        minAmount: 0,
-        type: 3,
-        scope: '全场羽毛球用品',
-        startTime: '2024-01-01',
-        endTime: '2024-12-31',
-        status: 1,
-        useTime: null,
-        description: '购买任意羽毛球用品免运费，最高免15元运费',
-        discount: 0
-      },
-      {
-        id: 105,
-        title: '运动服装9折券',
-        amount: 90,
-        minAmount: 200,
-        type: 2,
-        scope: '羽毛球运动服装',
-        startTime: '2024-03-01',
-        endTime: '2024-09-30',
-        status: 1,
-        useTime: null,
-        description: '专业羽毛球运动服、短裤、裙装享9折优惠',
-        discount: 0
-      },
-      {
-        id: 106,
-        title: '满300减60球鞋券',
-        amount: 60,
-        minAmount: 300,
-        type: 1,
-        scope: '羽毛球鞋类',
-        startTime: '2024-01-01',
-        endTime: '2024-06-30',
-        status: 1,
-        useTime: null,
-        description: '尤尼克斯、胜利、李宁专业羽毛球鞋限时优惠',
-        discount: 60
-      },
-      {
-        id: 107,
-        title: '无门槛15元羽毛球券',
-        amount: 15,
-        minAmount: 0,
-        type: 1,
-        scope: '羽毛球用球类',
-        startTime: '2024-02-14',
-        endTime: '2024-05-14',
-        status: 1,
-        useTime: null,
-        description: '购买羽毛球用球无门槛使用，练球必备',
-        discount: 15
-      },
-
-      // ========== 即将过期的羽毛球优惠券（新增数据替换原来的已使用） ==========
-      {
-        id: 401,
-        title: '限时满200减35球拍券',
-        amount: 35,
-        minAmount: 200,
-        type: 1,
-        scope: '入门级羽毛球拍',
-        startTime: '2024-01-01',
-        endTime: '2024-03-31', // 即将过期
-        status: 4, // 4=即将过期状态
-        useTime: null,
-        description: '即将过期，入门球拍特惠最后机会！',
-        discount: 35
-      },
-      {
-        id: 402,
-        title: '球鞋专区7.5折券',
-        amount: 75,
-        minAmount: 280,
-        type: 2,
-        scope: '专业羽毛球鞋',
-        startTime: '2024-01-15',
-        endTime: '2024-04-15', // 即将过期
-        status: 4,
-        useTime: null,
-        description: '专业球鞋清仓特惠，抓紧时间抢购',
-        discount: 0
-      },
-      {
-        id: 403,
-        title: '满120减25配件券',
-        amount: 25,
-        minAmount: 120,
-        type: 1,
-        scope: '羽毛球配件类',
-        startTime: '2024-02-01',
-        endTime: '2024-04-01', // 即将过期
-        status: 4,
-        useTime: null,
-        description: '球线、手胶、护腕等配件优惠即将结束',
-        discount: 25
-      },
-      {
-        id: 404,
-        title: '训练装备85折券',
-        amount: 85,
-        minAmount: 300,
-        type: 2,
-        scope: '羽毛球训练装备',
-        startTime: '2024-01-01',
-        endTime: '2024-03-20', // 即将过期
-        status: 4,
-        useTime: null,
-        description: '发球机、陪练器等训练装备特惠即将结束',
-        discount: 0
-      },
-      {
-        id: 405,
-        title: '运动套装满400减70券',
-        amount: 70,
-        minAmount: 400,
-        type: 1,
-        scope: '羽毛球运动套装',
-        startTime: '2024-01-10',
-        endTime: '2024-04-10', // 即将过期
-        status: 4,
-        useTime: null,
-        description: '春季运动套装大促，机会难得',
-        discount: 70
-      },
-      {
-        id: 406,
-        title: '青少年装备9折券',
-        amount: 90,
-        minAmount: 200,
-        type: 2,
-        scope: '青少年羽毛球用品',
-        startTime: '2024-02-01',
-        endTime: '2024-04-30', // 即将过期
-        status: 4,
-        useTime: null,
-        description: '青少年专用球拍、球鞋等，优惠即将到期',
-        discount: 0
-      },
-      {
-        id: 407,
-        title: '球包满180减30券',
-        amount: 30,
-        minAmount: 180,
-        type: 1,
-        scope: '羽毛球包类',
-        startTime: '2024-01-20',
-        endTime: '2024-03-25', // 即将过期
-        status: 4,
-        useTime: null,
-        description: '单肩包、双肩包、拖轮包等，优惠最后机会',
-        discount: 30
-      }
-    ];
-
-    // 根据选择的tab状态过滤数据
-    let filteredData;
-    if (status === 0) {
-      // status = 0 表示"全部"tab，返回所有优惠券（包括可使用和即将过期）
-      filteredData = allMockData.filter(item => item.status === 1 || item.status === 4);
-    } else if (status === 4) {
-      // status = 4 表示"即将过期"tab
-      filteredData = allMockData.filter(item => item.status === 4);
-    } else {
-      // 根据具体状态过滤：1=可使用
-      filteredData = allMockData.filter(item => item.status === status);
-    }
-
-    // 模拟分页逻辑，每页显示10条数据
-    const pageSize = 10;
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
+  safeCouponList(couponList) {
+    if (!Array.isArray(couponList)) return [];
     
-    // 获取当前页的数据
-    const currentPageData = filteredData.slice(startIndex, endIndex);
-    
-    // 如果是第一页，直接返回数据
-    if (page === 1) {
-      return currentPageData;
-    }
-    
-    // 如果是后续页面，有一定概率返回空数据模拟加载完毕
-    if (page > 2 && Math.random() > 0.7) {
-      return []; // 70%的概率返回空数据，模拟数据加载完毕
-    }
-    
-    return currentPageData;
+    return couponList.map(coupon => ({
+      id: coupon.id || 0,
+      title: coupon.title || '优惠券',
+      amount: parseFloat(coupon.amount) || 0,
+      minAmount: parseFloat(coupon.minAmount) || 0,
+      type: parseInt(coupon.type) || 1, // 1满减券/2折扣券/3免邮券
+      scope: coupon.scope || '全场通用',
+      startTime: coupon.startTime || '',
+      endTime: coupon.endTime || '',
+      status: parseInt(coupon.status) || 1, // 1可使用/4即将过期
+      useTime: coupon.useTime || null,
+      description: coupon.description || '',
+      discount: parseFloat(coupon.discount) || 0
+    }));
   },
 
   /**

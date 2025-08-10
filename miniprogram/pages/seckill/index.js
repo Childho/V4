@@ -1,5 +1,8 @@
 // 限时秒杀页面逻辑
-const { formatCountdown, getRemainingTime, generateRandomEndTime } = require('../../utils/countdown.js');
+const { formatCountdown, getRemainingTime } = require('../../utils/countdown.js');
+
+// 引入秒杀相关API
+import { getSeckillProducts, seckillBuyNow, getCartCount } from '../../api/seckillApi.js';
 
 Page({
   /**
@@ -13,21 +16,11 @@ Page({
     selectedBrand: 'all', // 当前选中的品牌
     brandsExpanded: false, // 品牌列表是否展开
     
-    // 品牌列表数据（默认显示的品牌）
-    defaultBrands: [
-      { key: 'beta', name: '倍特爱' },
-      { key: 'lining', name: '李宁' },
-      { key: 'victor', name: '威克多' },
-      { key: 'super', name: '超牌' }
-    ],
+    // 品牌列表数据（动态从API加载）
+    defaultBrands: [],
     
-    // 额外的品牌（点击"全部"展开显示）
-    extraBrands: [
-      { key: 'lingmei', name: '翎美' },
-      { key: 'yashilong', name: '亚狮龙' },
-      { key: 'weiken', name: '威肯' },
-      { key: 'taiang', name: '泰昂' }
-    ],
+    // 额外的品牌（动态从API加载）
+    extraBrands: [],
     
     // 当前显示的品牌列表
     displayBrands: [],
@@ -54,12 +47,6 @@ Page({
   onLoad(options) {
     console.log('秒杀页面加载，参数：', options);
     
-    // 初始化品牌列表
-    this.initBrandList();
-    
-    // 加载商品数据
-    this.loadProductData();
-    
     // 处理页面传参（如从商城首页跳转过来的品牌参数）
     if (options.brand) {
       this.setData({
@@ -73,6 +60,9 @@ Page({
         searchKeyword: options.keyword
       });
     }
+    
+    // 加载秒杀数据
+    this.loadSeckillData();
     
     // 启动倒计时定时器
     this.startCountdown();
@@ -103,91 +93,126 @@ Page({
   },
 
   /**
-   * 初始化品牌列表
+   * 加载秒杀数据（商品列表、品牌数据、购物车数量）
    */
-  initBrandList() {
-    // 品牌数据已在data中定义，无需额外初始化
-    console.log('品牌列表初始化完成');
-  },
-
-  /**
-   * 加载商品数据（这里使用mock数据，实际项目中应该调用API）
-   */
-  loadProductData() {
+  async loadSeckillData() {
     this.setData({ isLoading: true });
     
-    // 模拟API请求延迟
-    setTimeout(() => {
-      const mockProducts = this.generateMockProducts();
-      this.setData({
-        allProducts: mockProducts,
-        isLoading: false
-      }, () => {
-        // 数据加载完成后进行筛选
-        this.filterProducts();
-      });
-    }, 1000);
-  },
-
-  /**
-   * 生成mock商品数据
-   */
-  generateMockProducts() {
-    const brands = ['beta', 'lining', 'victor', 'super', 'lingmei', 'yashilong', 'weiken', 'taiang'];
-    const brandNames = {
-      'beta': '倍特爱',
-      'lining': '李宁',
-      'victor': '威克多',
-      'super': '超牌',
-      'lingmei': '翎美',
-      'yashilong': '亚狮龙',
-      'weiken': '威肯',
-      'taiang': '泰昂'
-    };
-    
-    const products = [];
-    
-    // 生成20个mock商品
-    for (let i = 1; i <= 20; i++) {
-      const brand = brands[Math.floor(Math.random() * brands.length)];
-      const endTime = generateRandomEndTime(1, 24); // 使用工具类生成随机结束时间
+    try {
+      console.log('[秒杀数据] 开始加载秒杀商品和相关数据');
       
-      products.push({
-        id: i,
-        brand: brandNames[brand],
-        brandKey: brand,
-        title: `${brandNames[brand]}羽毛球拍碳纤维单拍超轻进攻型专业比赛拍子${i}`,
-        imageUrl: `https://picsum.photos/400/400?random=${i}`, // 使用随机图片服务
-        seckillPrice: (Math.random() * 200 + 50).toFixed(2), // 秒杀价格：50-250
-        originalPrice: (Math.random() * 300 + 200).toFixed(2), // 原价：200-500
-        stock: Math.floor(Math.random() * 100) + 1, // 库存：1-100
-        soldCount: Math.floor(Math.random() * 500), // 已售数量
-        endTime: endTime,
-        countdownText: formatCountdown(getRemainingTime(endTime)), // 使用工具类格式化倒计时
-        tags: this.getRandomTags()
+      // 构建请求参数
+      const params = {
+        page: 1,
+        pageSize: 20,
+        brand: this.data.selectedBrand,
+        keyword: this.data.searchKeyword
+      };
+      
+      // 调用秒杀商品API
+      const result = await getSeckillProducts(params);
+      
+      if (result.success && result.body) {
+        console.log('[秒杀数据] API调用成功，返回数据：', result.body);
+        
+        const { products, defaultBrands, extraBrands, cartCount } = result.body;
+        
+        // 处理商品数据，确保字段映射正确
+        const processedProducts = this.processProductData(products || []);
+        
+        // 更新页面数据
+        this.setData({
+          allProducts: processedProducts,
+          filteredProducts: processedProducts,
+          defaultBrands: defaultBrands || [],
+          extraBrands: extraBrands || [],
+          cartCount: cartCount || 0,
+          isLoading: false
+        });
+        
+        console.log(`[秒杀数据] 成功加载 ${processedProducts.length} 个商品`);
+        
+      } else {
+        throw new Error(result.message || '获取秒杀商品列表失败');
+      }
+      
+    } catch (error) {
+      console.error('[秒杀数据] 加载失败:', error);
+      
+      this.setData({
+        isLoading: false
+      });
+      
+      // 显示错误提示并提供重试选项
+      wx.showModal({
+        title: '加载失败',
+        content: error.message || '网络异常，请检查网络连接后重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试加载
+            this.loadSeckillData();
+          } else {
+            // 设置默认数据避免页面空白
+            this.setDefaultData();
+          }
+        }
       });
     }
-    
-    return products;
   },
 
   /**
-   * 获取随机标签
+   * 处理商品数据，确保字段映射与接口文档一致
    */
-  getRandomTags() {
-    const allTags = ['包邮', '正品', '现货', '热销', '新品', '特价'];
-    const tagCount = Math.floor(Math.random() * 3) + 1; // 1-3个标签
-    const tags = [];
-    
-    for (let i = 0; i < tagCount; i++) {
-      const tag = allTags[Math.floor(Math.random() * allTags.length)];
-      if (!tags.includes(tag)) {
-        tags.push(tag);
-      }
-    }
-    
-    return tags;
+  processProductData(products) {
+    return products.map(product => ({
+      id: product.id || 0,
+      brand: product.brand || '',
+      brandKey: product.brandKey || '',
+      title: product.title || '商品信息缺失',
+      imageUrl: product.imageUrl || '',
+      seckillPrice: product.seckillPrice || '0.00',
+      originalPrice: product.originalPrice || '0.00',
+      stock: product.stock || 0,
+      soldCount: product.soldCount || 0,
+      endTime: product.endTime || '',
+      countdownText: product.countdownText || '已结束',
+      tags: Array.isArray(product.tags) ? product.tags : []
+    }));
   },
+
+  /**
+   * 设置默认数据（API失败时的降级处理）
+   */
+  setDefaultData() {
+    const defaultBrands = [
+      { key: 'beta', name: '倍特爱' },
+      { key: 'lining', name: '李宁' },
+      { key: 'victor', name: '威克多' },
+      { key: 'super', name: '超牌' }
+    ];
+    
+    const extraBrands = [
+      { key: 'lingmei', name: '翎美' },
+      { key: 'yashilong', name: '亚狮龙' },
+      { key: 'weiken', name: '威肯' },
+      { key: 'taiang', name: '泰昂' }
+    ];
+    
+    this.setData({
+      allProducts: [],
+      filteredProducts: [],
+      defaultBrands: defaultBrands,
+      extraBrands: extraBrands,
+      cartCount: 0
+    });
+    
+    console.log('[秒杀数据] 使用默认数据');
+  },
+
+
 
   /**
    * 搜索输入处理
@@ -253,30 +278,13 @@ Page({
   },
 
   /**
-   * 过滤商品列表
+   * 过滤商品列表（重新调用API获取最新数据）
    */
   filterProducts() {
-    let filtered = [...this.data.allProducts];
+    console.log('[商品筛选] 筛选条件变更，重新加载数据');
     
-    // 按品牌筛选
-    if (this.data.selectedBrand !== 'all') {
-      filtered = filtered.filter(product => product.brandKey === this.data.selectedBrand);
-    }
-    
-    // 按搜索关键词筛选
-    if (this.data.searchKeyword.trim()) {
-      const keyword = this.data.searchKeyword.trim().toLowerCase();
-      filtered = filtered.filter(product => 
-        product.title.toLowerCase().includes(keyword) ||
-        product.brand.toLowerCase().includes(keyword)
-      );
-    }
-    
-    console.log('过滤后的商品数量:', filtered.length);
-    
-    this.setData({
-      filteredProducts: filtered
-    });
+    // 重新调用API获取筛选后的数据
+    this.loadSeckillData();
   },
 
   /**
@@ -332,8 +340,8 @@ Page({
   /**
    * 立即购买处理
    */
-  onBuyNow(e) {
-    const productId = e.currentTarget.dataset.id;
+  async onBuyNow(e) {
+    const productId = parseInt(e.currentTarget.dataset.id);
     const product = this.data.filteredProducts.find(p => p.id === productId);
     
     if (!product || product.stock <= 0) {
@@ -344,40 +352,124 @@ Page({
       return;
     }
     
-    console.log('立即购买商品:', product);
+    console.log('[秒杀购买] 商品信息:', product);
     
-    // 这里可以跳转到订单确认页面或者加入购物车
+    // 确认购买对话框
     wx.showModal({
-      title: '确认购买',
-      content: `确定要购买 ${product.title} 吗？`,
-      success: (res) => {
+      title: '确认秒杀',
+      content: `确定要秒杀 ${product.title} 吗？\n秒杀价：¥${product.seckillPrice}`,
+      success: async (res) => {
         if (res.confirm) {
-          // 模拟购买成功
-          wx.showToast({
-            title: '购买成功！',
-            icon: 'success'
-          });
-          
-          // 更新购物车数量
-          this.setData({
-            cartCount: this.data.cartCount + 1
-          });
-          
-          // 减少商品库存
-          const updatedProducts = this.data.filteredProducts.map(p => {
-            if (p.id === productId) {
-              p.stock = Math.max(0, p.stock - 1);
-              p.soldCount += 1;
-            }
-            return p;
-          });
-          
-          this.setData({
-            filteredProducts: updatedProducts
-          });
+          await this.processSeckillBuy(productId, product);
         }
       }
     });
+  },
+
+  /**
+   * 处理秒杀购买
+   */
+  async processSeckillBuy(productId, product) {
+    try {
+      wx.showLoading({ title: '正在抢购...' });
+      
+      console.log('[秒杀购买] 开始处理购买请求，商品ID:', productId);
+      
+      // 调用秒杀购买API
+      const result = await seckillBuyNow({
+        productId: productId,
+        quantity: 1
+      });
+      
+      wx.hideLoading();
+      
+      if (result.success && result.body && result.body.success) {
+        console.log('[秒杀购买] 购买成功，返回数据:', result.body);
+        
+        const { message, orderId, productInfo, remainingStock } = result.body;
+        
+        // 显示购买成功信息
+        wx.showModal({
+          title: '秒杀成功！',
+          content: `${message}\n订单号：${orderId}`,
+          showCancel: false,
+          confirmText: '确定',
+          success: () => {
+            // 更新商品库存
+            this.updateProductStock(productId, remainingStock);
+            
+            // 更新购物车数量
+            this.updateCartCount();
+          }
+        });
+        
+      } else {
+        throw new Error(result.body?.message || result.message || '秒杀失败');
+      }
+      
+    } catch (error) {
+      wx.hideLoading();
+      console.error('[秒杀购买] 购买失败:', error);
+      
+      // 处理不同类型的错误
+      let errorMessage = '秒杀失败，请重试';
+      
+      if (error.message) {
+        if (error.message.includes('库存不足')) {
+          errorMessage = '商品已被抢完，下次要更快哦！';
+        } else if (error.message.includes('重复购买')) {
+          errorMessage = '您已购买过此商品，每人限购1件';
+        } else if (error.message.includes('秒杀结束')) {
+          errorMessage = '秒杀活动已结束';
+        } else if (error.message.includes('未登录')) {
+          errorMessage = '请先登录再进行秒杀';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      wx.showModal({
+        title: '秒杀失败',
+        content: errorMessage,
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试购买
+            this.processSeckillBuy(productId, product);
+          }
+        }
+      });
+    }
+  },
+
+  /**
+   * 更新商品库存
+   */
+  updateProductStock(productId, remainingStock) {
+    const updatedAllProducts = this.data.allProducts.map(p => {
+      if (p.id === productId) {
+        p.stock = remainingStock;
+        p.soldCount = p.soldCount + 1;
+      }
+      return p;
+    });
+    
+    const updatedFilteredProducts = this.data.filteredProducts.map(p => {
+      if (p.id === productId) {
+        p.stock = remainingStock;
+        p.soldCount = p.soldCount + 1;
+      }
+      return p;
+    });
+    
+    this.setData({
+      allProducts: updatedAllProducts,
+      filteredProducts: updatedFilteredProducts
+    });
+    
+    console.log(`[库存更新] 商品${productId}库存更新为: ${remainingStock}`);
   },
 
   /**
@@ -415,22 +507,48 @@ Page({
   /**
    * 更新购物车数量
    */
-  updateCartCount() {
-    // 这里从缓存或API获取购物车数量
-    // 模拟获取购物车数量
-    const cartCount = wx.getStorageSync('cartCount') || 0;
-    this.setData({
-      cartCount: cartCount
-    });
+  async updateCartCount() {
+    try {
+      console.log('[购物车数量] 开始获取购物车数量');
+      
+      // 调用购物车数量API
+      const result = await getCartCount();
+      
+      if (result.success && result.body) {
+        const cartCount = result.body.cartCount || 0;
+        
+        this.setData({
+          cartCount: cartCount
+        });
+        
+        console.log('[购物车数量] 获取成功，数量:', cartCount);
+      } else {
+        throw new Error(result.message || '获取购物车数量失败');
+      }
+      
+    } catch (error) {
+      console.error('[购物车数量] 获取失败:', error);
+      
+      // 获取失败时从本地缓存读取，或设为0
+      const localCartCount = wx.getStorageSync('cartCount') || 0;
+      this.setData({
+        cartCount: localCartCount
+      });
+      
+      console.log('[购物车数量] 使用本地缓存数量:', localCartCount);
+    }
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh() {
-    console.log('下拉刷新');
-    this.loadProductData();
-    wx.stopPullDownRefresh();
+    console.log('[下拉刷新] 用户下拉刷新');
+    
+    // 重新加载秒杀数据
+    this.loadSeckillData().finally(() => {
+      wx.stopPullDownRefresh();
+    });
   },
 
   /**

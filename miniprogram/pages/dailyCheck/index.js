@@ -1,23 +1,13 @@
-// 引入API接口
-const userApi = require('../../api/userApi')
-const { api } = require('../../api/utils/request')
+// 每日签到页面逻辑 - 基于接口文档实现真实API调用
+// 引入API接口 - 基于接口文档实现
+const { 
+  getPointsInfo, 
+  signIn, 
+  getSignInRecord 
+} = require('../../api/dailyCheckApi');
+const { getUserInfo } = require('../../api/userApi');
 
-// 获取积分信息
-const getPoints = () => {
-  return api.post('/api/points/info', {});
-};
-
-// 签到
-const signIn = () => {
-  return api.post('/api/points/signIn', {});
-};
-
-// 获取签到记录
-const getSignInRecord = () => {
-  return api.post('/api/points/signInRecord', {});
-};
-
-// 签到奖励配置 - 根据连续签到天数获得不同积分
+// 签到奖励配置 - 根据连续签到天数获得不同积分（与接口文档一致）
 const getSignInReward = (continuousDays) => {
   const rewards = {
     1: 5,   // 第1天：5积分
@@ -31,19 +21,37 @@ const getSignInReward = (continuousDays) => {
   return rewards[continuousDays] || 5; // 默认5积分
 };
 
+// 数据安全处理工具函数 - 确保API数据的安全性和一致性
+const safeParseInt = (value, defaultValue = 0) => {
+  const parsed = parseInt(value);
+  return isNaN(parsed) ? defaultValue : parsed;
+};
+
+const safeParseArray = (value, defaultValue = []) => {
+  return Array.isArray(value) ? value : defaultValue;
+};
+
+const safeParseBoolean = (value, defaultValue = false) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') return value === 'true';
+  if (typeof value === 'number') return value === 1;
+  return defaultValue;
+};
+
 Page({
   data: {
+    // 用户信息 - 对应接口文档返回结构
     userInfo: {
       nickName: '微信用户',
       pointsBalance: 0
     },
     today: '',
     weekday: '',
-    signedToday: false,
-    continuousDays: 0,
+    signedToday: false,          // 对应接口文档 isSigned
+    continuousDays: 0,           // 对应接口文档 continuousDays
     currentMonth: '',
-    signDays: [], // 本月已签到的日期数组
-    daysInMonth: [], // 本月的所有天数
+    signDays: [],                // 对应接口文档 days (本月已签到的日期数组)
+    daysInMonth: [],             // 本月的所有天数
     // 签到奖励展示
     signRewards: [
       { day: 1, reward: 5, status: 'pending' },
@@ -55,11 +63,11 @@ Page({
       { day: 7, reward: 50, status: 'pending' }
     ],
     loading: false,
-    // 签到统计信息
+    // 签到统计信息 - 对应接口文档返回字段
     signStats: {
-      totalDays: 0,      // 总签到天数
-      maxContinuous: 0,  // 最大连续签到天数
-      currentStreak: 0   // 当前连续签到天数
+      totalDays: 0,             // 对应接口文档 totalDays
+      maxContinuous: 0,         // 对应接口文档 maxContinuous
+      currentStreak: 0          // 对应接口文档 continuousDays
     },
     // 签到动画控制
     showSignAnimation: false,
@@ -102,53 +110,87 @@ Page({
     this.setData({ daysInMonth: days });
   },
 
-  // 获取用户信息
+  // 获取用户信息 - 基于接口文档实现
   async getUserInfo() {
     try {
       const token = wx.getStorageSync('token');
-      if (!token) return;
+      if (!token) {
+        console.log('用户未登录，使用默认数据');
+        return;
+      }
       
-      const userInfo = await userApi.getUserInfo();
-      if (userInfo) {
+      const response = await getUserInfo();
+      if (response && response.userInfo) {
+        // 安全处理用户信息数据 - 按照接口文档结构
         this.setData({
-          'userInfo.nickName': userInfo.nickName || '微信用户',
-          'userInfo.pointsBalance': userInfo.pointsBalance || 0
+          'userInfo.nickName': response.userInfo.nickName || '微信用户',
+          'userInfo.pointsBalance': response.userInfo.pointsBalance || 0
         });
+        console.log('用户信息获取成功', response);
       }
     } catch (error) {
       console.error('[获取用户信息失败]', error);
+      // 根据错误类型显示不同提示
+      const errorMessage = (error)?.message || '未知错误';
+      if (errorMessage === '未登录') {
+        // 已在apiRequest中处理跳转
+      } else {
+        console.log('API失败，使用默认用户数据:', errorMessage);
+      }
     }
   },
 
-  // 获取签到状态
+  // 获取签到状态 - 基于接口文档实现
   async getSignInStatus() {
     try {
       const token = wx.getStorageSync('token');
-      if (!token) return;
+      if (!token) {
+        console.log('用户未登录，跳过积分信息获取');
+        return;
+      }
       
-      const pointsInfo = await getPoints();
+      const pointsInfo = await getPointsInfo();
       if (pointsInfo) {
+        // 按照接口文档字段处理数据 - 使用安全解析函数
+        const isSigned = safeParseBoolean(pointsInfo.isSigned, false);     // 对应接口文档 isSigned
+        const balance = safeParseInt(pointsInfo.balance, 0);               // 对应接口文档 balance
+        
         this.setData({
-          signedToday: pointsInfo.isSigned || false,
-          'tasks[0].status': pointsInfo.isSigned ? 1 : 0
+          signedToday: isSigned,
+          'userInfo.pointsBalance': balance,
+          'tasks[0].status': isSigned ? 1 : 0
         });
+        console.log('积分信息获取成功', pointsInfo);
       }
     } catch (error) {
       console.error('[获取签到状态失败]', error);
+      // 根据错误类型显示不同提示
+      const errorMessage = (error)?.message || '未知错误';
+      if (errorMessage === '未登录') {
+        // 已在apiRequest中处理跳转
+      } else {
+        console.log('API失败，使用默认积分数据:', errorMessage);
+      }
     }
   },
 
-  // 获取签到记录
+  // 获取签到记录 - 基于接口文档实现
   async getSignInRecord() {
     try {
       this.setData({ loading: true });
       const token = wx.getStorageSync('token');
-      if (!token) return;
+      if (!token) {
+        console.log('用户未登录，跳过签到记录获取');
+        return;
+      }
       
       const record = await getSignInRecord();
       if (record) {
-        const continuousDays = record.continuousDays || 0;
-        const signDays = record.days || [];
+        // 按照接口文档字段处理数据 - 使用安全解析函数
+        const continuousDays = safeParseInt(record.continuousDays, 0);     // 对应接口文档 continuousDays
+        const signDays = safeParseArray(record.days, []);                  // 对应接口文档 days
+        const totalDays = safeParseInt(record.totalDays, 0);               // 对应接口文档 totalDays
+        const maxContinuous = safeParseInt(record.maxContinuous, 0);       // 对应接口文档 maxContinuous
         
         // 更新签到奖励状态
         const signRewards = this.data.signRewards.map(item => {
@@ -164,20 +206,38 @@ Page({
           continuousDays: continuousDays,
           signRewards: signRewards,
           signStats: {
-            totalDays: record.totalDays || 0,
-            maxContinuous: record.maxContinuous || 0,
+            totalDays: totalDays,
+            maxContinuous: maxContinuous,
             currentStreak: continuousDays
           }
         });
+        console.log('签到记录获取成功', record);
       }
     } catch (error) {
       console.error('[获取签到记录失败]', error);
+      // 根据错误类型显示不同提示
+      const errorMessage = (error)?.message || '未知错误';
+      if (errorMessage === '未登录') {
+        // 已在apiRequest中处理跳转
+      } else {
+        console.log('API失败，使用默认签到记录:', errorMessage);
+        // 设置默认值避免页面报错
+        this.setData({
+          signDays: [],
+          continuousDays: 0,
+          signStats: {
+            totalDays: 0,
+            maxContinuous: 0,
+            currentStreak: 0
+          }
+        });
+      }
     } finally {
       this.setData({ loading: false });
     }
   },
 
-  // 签到功能 - 增强版
+  // 签到功能 - 基于接口文档实现
   async handleSignIn() {
     if (this.data.signedToday) {
       wx.showToast({
@@ -187,32 +247,38 @@ Page({
       return;
     }
     
+    // 检查用户登录状态
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      setTimeout(() => {
+        wx.navigateTo({
+          url: '/pages/login/index'
+        });
+      }, 1500);
+      return;
+    }
+    
     try {
       this.setData({ loading: true });
-      const token = wx.getStorageSync('token');
-      if (!token) {
-        wx.showToast({
-          title: '请先登录',
-          icon: 'none'
-        });
-        setTimeout(() => {
-          wx.navigateTo({
-            url: '/pages/login/index'
-          });
-        }, 1500);
-        return;
-      }
       
       const result = await signIn();
+      console.log('[Sign In Success]', result);
+      
       if (result && result.success) {
-        const newContinuousDays = this.data.continuousDays + 1;
-        const rewardPoints = result.points || getSignInReward(newContinuousDays);
+        // 按照接口文档处理返回数据 - 使用安全解析函数
+        const rewardPoints = safeParseInt(result.points, 5);                    // 对应接口文档 points
+        const newContinuousDays = safeParseInt(result.continuousDays, 1);       // 对应接口文档 continuousDays
+        const totalPoints = safeParseInt(result.totalPoints, 0);               // 对应接口文档 totalPoints
         
         // 更新签到状态
         this.setData({
           signedToday: true,
           'tasks[0].status': 1,
-          'userInfo.pointsBalance': this.data.userInfo.pointsBalance + rewardPoints,
+          'userInfo.pointsBalance': totalPoints,                              // 使用API返回的总积分
           continuousDays: newContinuousDays,
           signAnimationReward: rewardPoints,
           showSignAnimation: true
@@ -234,6 +300,13 @@ Page({
         });
         this.setData({ signRewards });
         
+        // 更新统计信息
+        this.setData({
+          'signStats.currentStreak': newContinuousDays,
+          'signStats.totalDays': this.data.signStats.totalDays + 1,
+          'signStats.maxContinuous': Math.max(this.data.signStats.maxContinuous, newContinuousDays)
+        });
+        
         // 显示签到成功动画
         this.showSignSuccess(rewardPoints, newContinuousDays);
         
@@ -244,22 +317,80 @@ Page({
       }
     } catch (error) {
       console.error('[签到失败]', error);
-      wx.showToast({
-        title: '签到失败，请稍后重试',
-        icon: 'none'
-      });
+      
+      // 根据接口文档的错误码处理
+      const errorCode = error?.error || error?.code || 0;
+      const errorMessage = error?.message || '未知错误';
+      
+      switch (errorCode) {
+        case 401:
+          // 未登录 - 跳转到登录页面
+          wx.showToast({
+            title: '请先登录',
+            icon: 'none'
+          });
+          setTimeout(() => {
+            wx.navigateTo({
+              url: '/pages/login/index'
+            });
+          }, 1500);
+          break;
+          
+        case 1001:
+          // 今日已签到
+          wx.showToast({
+            title: '今日已签到',
+            icon: 'none'
+          });
+          // 更新本地状态
+          this.setData({ signedToday: true });
+          break;
+          
+        case 1002:
+          // 签到失败
+          wx.showToast({
+            title: '签到失败，请重试',
+            icon: 'none'
+          });
+          break;
+          
+        case 500:
+          // 系统异常
+          wx.showToast({
+            title: '系统异常，请稍后重试',
+            icon: 'none'
+          });
+          break;
+          
+        default:
+          // 其他错误
+          if (errorMessage.includes('已签到')) {
+            wx.showToast({
+              title: '今日已签到',
+              icon: 'none'
+            });
+            this.setData({ signedToday: true });
+          } else {
+            wx.showToast({
+              title: errorMessage || '签到失败，请稍后重试',
+              icon: 'none'
+            });
+          }
+      }
     } finally {
       this.setData({ loading: false });
     }
   },
 
-  // 显示签到成功动画和提示
+  // 显示签到成功动画和提示 - 基于接口文档优化
   showSignSuccess(points, continuousDays) {
     let title = `签到成功 +${points}积分`;
     
-    // 连续签到特殊提示
+    // 根据接口文档的奖励机制显示特殊提示
     if (continuousDays === 7) {
-      title = `连续签到7天！获得${points}积分大奖！`;
+      title = `连续签到7天！获得${points}积分大奖！🎉`;
+    } else if (continuousDays === 6) {
+      title = `连续签到${continuousDays}天！获得${points}积分，明天可得大奖！`;
     } else if (continuousDays >= 3) {
       title = `连续签到${continuousDays}天！获得${points}积分`;
     }
@@ -272,22 +403,82 @@ Page({
     
     // 振动反馈
     wx.vibrateShort();
+    
+    // 特殊节点的额外反馈
+    if (continuousDays === 7) {
+      // 连续7天的特殊庆祝
+      setTimeout(() => {
+        wx.showModal({
+          title: '恭喜您！',
+          content: '连续签到7天达成！您是最棒的！明天开始新的签到周期。',
+          showCancel: false,
+          confirmText: '继续加油'
+        });
+      }, 2500);
+    }
   },
 
-  // 分享小程序
-  handleShare() {
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    });
+  // 分享小程序 - 增强版功能
+  async handleShare() {
+    try {
+      const token = wx.getStorageSync('token');
+      if (!token) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        return;
+      }
+
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      });
+
+      // 这里可以调用分享任务完成接口（如果有的话）
+      wx.showToast({
+        title: '分享功能已开启',
+        icon: 'success'
+      });
+    } catch (error) {
+      console.error('[分享功能失败]', error);
+      // 即使API失败，仍然显示分享菜单
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      });
+    }
   },
   
-  // 邀请好友
-  handleInvite() {
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    });
+  // 邀请好友 - 增强版功能
+  async handleInvite() {
+    try {
+      const token = wx.getStorageSync('token');
+      if (!token) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        return;
+      }
+
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      });
+
+      wx.showToast({
+        title: '请将签到页面分享给好友',
+        icon: 'none'
+      });
+    } catch (error) {
+      console.error('[邀请功能失败]', error);
+      // 即使出错，仍然显示分享菜单
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      });
+    }
   },
   
   // 处理任务点击

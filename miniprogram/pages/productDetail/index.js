@@ -179,15 +179,60 @@ Page({
    */
   async getProductDetail(productId) {
     try {
-      console.log('[Product Detail] 尝试获取商品详情...');
-      const productData = await getProductDetail(productId);
-      console.log('[Product Detail] API返回数据:', productData);
-      return productData;
+      console.log('[Product Detail] 获取商品详情，商品ID：', productId);
+      
+      const result = await getProductDetail(productId);
+      
+      if (result.success && result.body && result.body.product) {
+        const productData = result.body.product;
+        
+        console.log('[Product Detail] 商品详情获取成功：', productData);
+        
+        // 确保必要字段存在，使用默认值
+        return {
+          id: productData.id || productId,
+          name: productData.name || '商品名称',
+          price: productData.price || '0.00',
+          originalPrice: productData.originalPrice || '',
+          description: productData.description || '暂无商品描述',
+          brand: productData.brand || '',
+          salesCount: productData.salesCount || 0,
+          shippingInfo: productData.shippingInfo || '24小时发货',
+          images: productData.images && productData.images.length > 0 ? productData.images : [
+            'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWVhuWTgeWbvueJh+WKoOi9veS4rS4uLjwvdGV4dD48L3N2Zz4='
+          ],
+          specs: productData.specs || [],
+          detailContent: productData.detailContent || '<p style="text-align:center;color:#999;">详情加载中...</p>',
+          optionGroups: productData.optionGroups || []
+        };
+      } else {
+        throw new Error(result.message || '获取商品详情失败');
+      }
     } catch (error) {
-      console.error('[Get Product Detail Error]', error);
-      console.log('[Product Detail] API调用失败，使用模拟数据');
-      // 使用模拟数据作为备用方案
-      return this.getMockProductData(productId);
+      console.error('[Product Detail] 获取商品详情失败：', error);
+      
+      // 显示错误并返回默认数据结构
+      wx.showToast({
+        title: '商品详情加载失败',
+        icon: 'none'
+      });
+      
+      return {
+        id: productId,
+        name: '商品信息加载失败',
+        price: '0.00',
+        originalPrice: '',
+        description: '网络异常，请重试',
+        brand: '',
+        salesCount: 0,
+        shippingInfo: '24小时发货',
+        images: [
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWVhuWTgeWbvueJh+WKoOi9veS4rS4uLjwvdGV4dD48L3N2Zz4='
+        ],
+        specs: [],
+        detailContent: '<p style="text-align:center;color:#999;">详情加载失败</p>',
+        optionGroups: []
+      };
     }
   },
 
@@ -196,12 +241,35 @@ Page({
    */
   async getProductComments(productId) {
     try {
-      const commentsData = await getProductComments(productId, 1, 10);
-      return commentsData;
+      console.log('[Product Detail] 获取商品评论，商品ID：', productId);
+      
+      const result = await getProductComments(productId, 1, 10, 'all');
+      
+      if (result.success && result.body && result.body.comments) {
+        const commentsData = result.body.comments;
+        
+        console.log('[Product Detail] 评论数据获取成功：', commentsData);
+        
+        // 确保必要字段存在，使用默认值
+        return {
+          total: commentsData.total || 0,
+          averageRating: commentsData.averageRating || 5.0,
+          tags: commentsData.tags || [],
+          list: commentsData.list || []
+        };
+      } else {
+        throw new Error(result.message || '获取评论失败');
+      }
     } catch (error) {
-      console.error('[Get Product Comments Error]', error);
-      // 返回模拟评论数据
-      return this.getMockCommentsData();
+      console.error('[Product Detail] 获取商品评论失败：', error);
+      
+      // 返回默认评论数据结构
+      return {
+        total: 0,
+        averageRating: 5.0,
+        tags: [],
+        list: []
+      };
     }
   },
 
@@ -210,12 +278,24 @@ Page({
    */
   async getRelatedProducts(productId) {
     try {
-      const relatedData = await getRelatedProducts(productId);
-      this.setData({ relatedProducts: relatedData });
+      console.log('[Product Detail] 获取相关推荐商品，商品ID：', productId);
+      
+      const result = await getRelatedProducts(productId, 10);
+      
+      if (result.success && result.body && result.body.relatedProducts) {
+        const relatedProducts = result.body.relatedProducts;
+        
+        console.log('[Product Detail] 推荐商品获取成功：', relatedProducts);
+        
+        this.setData({ relatedProducts: relatedProducts });
+      } else {
+        throw new Error(result.message || '获取推荐商品失败');
+      }
     } catch (error) {
-      console.error('[Get Related Products Error]', error);
-      // 设置模拟推荐数据
-      this.setData({ relatedProducts: this.getMockRelatedProducts() });
+      console.error('[Product Detail] 获取相关推荐商品失败：', error);
+      
+      // 设置空数组，不显示推荐区域
+      this.setData({ relatedProducts: [] });
     }
   },
 
@@ -224,11 +304,19 @@ Page({
    */
   async getCartCount() {
     try {
-      const count = await getCartCount();
-      return count;
+      console.log('[Product Detail] 获取购物车数量');
+      
+      const result = await getCartCount();
+      
+      if (result.success && result.body && typeof result.body.cartCount === 'number') {
+        console.log('[Product Detail] 购物车数量获取成功：', result.body.cartCount);
+        return result.body.cartCount;
+      } else {
+        throw new Error(result.message || '获取购物车数量失败');
+      }
     } catch (error) {
-      console.error('[Get Cart Count Error]', error);
-      return 2; // 返回一个默认值用于演示
+      console.error('[Product Detail] 获取购物车数量失败：', error);
+      return 0; // 返回默认值
     }
   },
 
@@ -237,12 +325,19 @@ Page({
    */
   async getAvailableCouponCount() {
     try {
+      console.log('[Product Detail] 获取可用优惠券数量');
+      
       const result = await getAvailableCouponCount();
-      return result.availableCount || 0;
+      
+      if (result.success && result.body && typeof result.body.availableCount === 'number') {
+        console.log('[Product Detail] 可用优惠券数量获取成功：', result.body.availableCount);
+        return result.body.availableCount;
+      } else {
+        throw new Error(result.message || '获取优惠券数量失败');
+      }
     } catch (error) {
-      console.error('[Get Available Coupon Count Error]', error);
-      // 返回模拟数据用于演示
-      return 3;
+      console.error('[Product Detail] 获取可用优惠券数量失败：', error);
+      return 0; // 返回默认值
     }
   },
 
@@ -361,35 +456,54 @@ Page({
     try {
       wx.showLoading({ title: '添加中...' });
       
-      await addToCart({
+      console.log('[Product Detail] 添加到购物车，参数：', {
         productId: product.id,
         quantity,
         specs: selectedOptions,
         remark: orderRemark
       });
       
-      wx.showToast({
-        title: '已加入购物车',
-        icon: 'success'
+      const result = await addToCart({
+        productId: product.id,
+        quantity,
+        specs: selectedOptions,
+        remark: orderRemark
       });
       
-      // 更新购物车数量
-      this.updateCartCount();
-      
-      // 关闭弹窗并清空备注
-      this.closeSpecsPopup();
-      this.setData({ orderRemark: '' });
+      if (result.success) {
+        wx.showToast({
+          title: '已加入购物车',
+          icon: 'success'
+        });
+        
+        console.log('[Product Detail] 添加购物车成功');
+        
+        // 更新购物车数量
+        this.updateCartCount();
+        
+        // 关闭弹窗并清空备注
+        this.closeSpecsPopup();
+        this.setData({ orderRemark: '' });
+      } else {
+        throw new Error(result.message || '添加到购物车失败');
+      }
       
     } catch (error) {
-      console.error('[Add To Cart Error]', error);
-      // 模拟成功添加（用于演示）
-      wx.showToast({
-        title: '已加入购物车',
-        icon: 'success'
+      console.error('[Product Detail] 添加到购物车失败：', error);
+      
+      wx.showModal({
+        title: '添加失败',
+        content: error.message || '添加到购物车失败，请重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试添加
+            this.confirmAddToCart();
+          }
+        }
       });
-      const newCount = this.data.cartCount + 1;
-      this.setData({ cartCount: newCount, orderRemark: '' });
-      this.closeSpecsPopup();
     } finally {
       wx.hideLoading();
     }
@@ -404,28 +518,61 @@ Page({
     try {
       wx.showLoading({ title: '正在跳转...' });
       
-      const orderData = await buyNow({
+      console.log('[Product Detail] 立即购买，参数：', {
         productId: product.id,
         quantity,
         specs: selectedOptions,
         remark: orderRemark
       });
       
-      // 关闭弹窗并清空备注
-      this.closeSpecsPopup();
-      this.setData({ orderRemark: '' });
-      
-      // 跳转到订单确认页
-      wx.navigateTo({
-        url: `/pages/order-confirm/index?data=${encodeURIComponent(JSON.stringify(orderData))}`
+      const result = await buyNow({
+        productId: product.id,
+        quantity,
+        specs: selectedOptions,
+        remark: orderRemark
       });
       
+      if (result.success && result.body && result.body.orderData) {
+        const orderData = result.body.orderData;
+        
+        console.log('[Product Detail] 获取订单预览成功：', orderData);
+        
+        // 关闭弹窗并清空备注
+        this.closeSpecsPopup();
+        this.setData({ orderRemark: '' });
+        
+        // 跳转到订单确认页，传递订单数据
+        const goodsData = [{
+          id: orderData.product.productId,
+          name: orderData.product.name,
+          image: orderData.product.image,
+          spec: orderData.product.spec,
+          price: orderData.product.price,
+          quantity: orderData.product.quantity
+        }];
+        
+        wx.navigateTo({
+          url: `/pages/order-confirm/order-confirm?goods=${encodeURIComponent(JSON.stringify(goodsData))}&source=detail`
+        });
+      } else {
+        throw new Error(result.message || '获取订单预览失败');
+      }
+      
     } catch (error) {
-      console.error('[Buy Now Error]', error);
-      // 模拟跳转（用于演示）
-      wx.showToast({
-        title: '功能开发中',
-        icon: 'none'
+      console.error('[Product Detail] 立即购买失败：', error);
+      
+      wx.showModal({
+        title: '购买失败',
+        content: error.message || '无法跳转到订单确认页，请重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试购买
+            this.confirmBuyNow();
+          }
+        }
       });
     } finally {
       wx.hideLoading();
@@ -531,118 +678,7 @@ Page({
     });
   },
 
-  /**
-   * 模拟商品数据（接口调用失败时的备用方案）
-   */
-  getMockProductData(productId) {
-    return {
-      id: productId,
-      name: 'YONEX 网球拍 VR-800 专业训练拍',
-      price: '899.00',
-      originalPrice: '1299.00',
-      description: '轻量碳素纤维材质，适合初学者和进阶球员使用',
-      brand: 'YONEX',
-      salesCount: 256,
-      shippingInfo: '24小时发货',
-      images: [
-        'https://picsum.photos/800/800?random=1&blur=0',  // 模拟商品主图1 - 800*800像素
-        'https://picsum.photos/800/800?random=2&blur=0',  // 模拟商品主图2 - 800*800像素  
-        'https://picsum.photos/800/800?random=3&blur=0',  // 模拟商品主图3 - 800*800像素
-        'https://picsum.photos/800/800?random=4&blur=0',  // 模拟商品主图4 - 800*800像素
-        'https://picsum.photos/800/800?random=5&blur=0'   // 模拟商品主图5 - 800*800像素
-      ],
-      specs: [
-        { name: '材质', value: '碳素纤维' },
-        { name: '规格', value: '27英寸' },
-        { name: '重量', value: '280g' },
-        { name: '适用人群', value: '成人' },
-        { name: '保修期', value: '12个月' }
-      ],
-      detailContent: `
-        <div style="text-align:center;">
-          <img src="https://img.alicdn.com/imgextra/i4/6000000003702/O1CN01detail1_!!6000000003702-0-tps-800-800.jpg" style="width:100%;max-width:800px;" />
-          <p style="color:#333;font-size:16px;line-height:1.6;padding:20px;">
-            YONEX VR-800 是一款专业的网球拍，采用高质量的碳素纤维材质，能够提供良好的控制性和舒适的手感。
-            特殊的框架设计增强了拍面稳定性，减少振动，降低手臂疲劳。适合初学者和进阶球员使用。
-          </p>
-        </div>
-      `,
-      optionGroups: [
-        {
-          name: '颜色',
-          options: [
-            { value: '蓝色', selected: false, disabled: false },
-            { value: '红色', selected: false, disabled: false },
-            { value: '黑色', selected: false, disabled: false }
-          ]
-        },
-        {
-          name: '规格',
-          options: [
-            { value: '标准版', selected: false, disabled: false },
-            { value: '豪华版', selected: false, disabled: false }
-          ]
-        }
-      ]
-    };
-  },
 
-  /**
-   * 模拟评论数据
-   */
-  getMockCommentsData() {
-    return {
-      total: 128,
-      averageRating: 4.8,
-      tags: ['质量好', '发货快', '包装精美', '性价比高'],
-      list: [
-        {
-          id: '1',
-          username: '用户***123',
-          userAvatar: 'https://img.alicdn.com/imgextra/i1/6000000003702/O1CN01avatar1_!!6000000003702-0-tps-100-100.jpg',
-          rating: 5,
-          content: '商品质量很好，发货速度也很快，包装很精美，值得推荐！',
-          images: ['https://img.alicdn.com/imgextra/i1/6000000003702/O1CN01comment1_!!6000000003702-0-tps-200-200.jpg'],
-          createTime: '2024-01-15'
-        },
-        {
-          id: '2',
-          username: '用户***456',
-          userAvatar: 'https://img.alicdn.com/imgextra/i2/6000000003702/O1CN01avatar2_!!6000000003702-0-tps-100-100.jpg',
-          rating: 4,
-          content: '性价比不错，使用体验良好。',
-          images: [],
-          createTime: '2024-01-14'
-        }
-      ]
-    };
-  },
-
-  /**
-   * 模拟相关推荐数据
-   */
-  getMockRelatedProducts() {
-    return [
-      {
-        id: 'product_2',
-        name: 'VICTOR 专业球鞋',
-        price: '499.00',
-        imageUrl: 'https://img.alicdn.com/imgextra/i1/6000000003702/O1CN01related1_!!6000000003702-0-tps-400-400.jpg'
-      },
-      {
-        id: 'product_3',
-        name: '高弹性网球 8只装',
-        price: '129.00',
-        imageUrl: 'https://img.alicdn.com/imgextra/i2/6000000003702/O1CN01related2_!!6000000003702-0-tps-400-400.jpg'
-      },
-      {
-        id: 'product_4',
-        name: '专业运动护腕',
-        price: '69.00',
-        imageUrl: 'https://img.alicdn.com/imgextra/i3/6000000003702/O1CN01related3_!!6000000003702-0-tps-400-400.jpg'
-      }
-    ];
-  },
 
   /**
    * 用户点击右上角分享

@@ -1,10 +1,11 @@
 // 退款详情页面逻辑
-// 遵循API规范：后续接入真实API时header中设置auth，参数使用json格式
+// 导入退款相关API
+import { getRefundDetail } from '../../api/refundApi.js';
 
 /**
  * 退款详情页面
  * 功能：展示退款的详细信息、商品信息、退款进度等
- * 数据来源：目前使用mock数据，后续替换为真实API
+ * 数据来源：真实API接口
  */
 Page({
   /**
@@ -103,7 +104,7 @@ Page({
 
   /**
    * 加载退款详情信息
-   * 目前使用mock数据，后续替换为真实API调用
+   * 调用真实API获取退款详情数据
    */
   async loadRefundDetail() {
     this.setData({ loading: true, hasError: false });
@@ -111,189 +112,87 @@ Page({
     try {
       console.log('[退款详情] 开始加载数据, 订单号:', this.data.orderNo, '退款编号:', this.data.refundNo);
       
-      // 🔧 目前使用Mock数据，后续替换为真实API
-      // const refundData = await apiRequest('/api/refund/detail', {
-      //   orderNo: this.data.orderNo,
-      //   refundNo: this.data.refundNo
-      // }, 'POST');
+      // 调用真实API获取退款详情
+      const result = await getRefundDetail({
+        orderNo: this.data.orderNo,
+        refundNo: this.data.refundNo
+      });
       
-      const refundData = this.getMockRefundData();
-      
-      // 处理数据并更新页面
-      this.processRefundData(refundData);
+      if (result.success && result.body) {
+        console.log('[退款详情] API调用成功，数据：', result.body);
+        
+        // 处理数据并更新页面
+        this.processRefundData(result.body);
+      } else {
+        throw new Error(result.message || '获取退款详情失败');
+      }
       
     } catch (error) {
       console.error('[退款详情] 加载失败:', error);
+      
       this.setData({
         loading: false,
         hasError: true,
         errorMessage: error.message || '加载退款详情失败'
       });
       
-      wx.showToast({
-        title: '加载失败，请重试',
-        icon: 'none'
+      // 显示友好的错误提示
+      wx.showModal({
+        title: '加载失败',
+        content: error.message || '网络异常，请检查网络连接后重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试加载
+            this.loadRefundDetail();
+          }
+        }
       });
     }
   },
 
-  /**
-   * 获取Mock退款数据
-   * 模拟不同退款状态的数据
-   */
-  getMockRefundData() {
-    // 根据退款编号模拟不同状态的数据
-    const refundNo = this.data.refundNo;
-    const mockDataSets = [
-      // Mock数据集1：退款中状态
-      {
-        productInfo: {
-          image: 'https://img.alicdn.com/tfs/TB1V4g3d.H1gK0jSZSyXXXtlpXa-400-400.png',
-          title: '苹果iPhone 15 Pro Max 1TB 天然钛金色',
-          spec: '天然钛金色 1TB',
-          quantity: 1,
-          price: 9999.00
-        },
-        refundInfo: {
-          amount: 9999.00,
-          status: 'refunding',
-          statusText: '退款中',
-          refundMethod: 'original',
-          refundMethodText: '原路退回',
-          reason: '不想要了',
-          applyTime: '2024-01-16 10:30:25',
-          processTime: '2024-01-16 14:20:30',
-          completeTime: ''
-        },
-        progressList: [
-          {
-            step: 1,
-            title: '申请提交',
-            desc: '您已提交退款申请',
-            time: '2024-01-16 10:30:25',
-            status: 'completed'
-          },
-          {
-            step: 2,
-            title: '商家处理',
-            desc: '商家正在审核您的退款申请',
-            time: '2024-01-16 14:20:30',
-            status: 'current'
-          },
-          {
-            step: 3,
-            title: '退款完成',
-            desc: '退款将原路返回您的支付账户',
-            time: '',
-            status: 'pending'
-          }
-        ]
-      },
-      // Mock数据集2：已完成状态
-      {
-        productInfo: {
-          image: 'https://img.alicdn.com/tfs/TB1KQ.4d.Y1gK0jSZFMXXaWcVXa-400-400.png',
-          title: '华为Mate 60 Pro 12GB+512GB 雅川青',
-          spec: '雅川青 12GB+512GB',
-          quantity: 1,
-          price: 6999.00
-        },
-        refundInfo: {
-          amount: 6999.00,
-          status: 'completed',
-          statusText: '已完成',
-          refundMethod: 'wechat',
-          refundMethodText: '微信零钱',
-          reason: '商品有瑕疵',
-          applyTime: '2024-01-15 09:15:20',
-          processTime: '2024-01-15 15:30:45',
-          completeTime: '2024-01-16 09:20:10'
-        },
-        progressList: [
-          {
-            step: 1,
-            title: '申请提交',
-            desc: '您已提交退款申请',
-            time: '2024-01-15 09:15:20',
-            status: 'completed'
-          },
-          {
-            step: 2,
-            title: '商家处理',
-            desc: '商家已同意退款申请',
-            time: '2024-01-15 15:30:45',
-            status: 'completed'
-          },
-          {
-            step: 3,
-            title: '退款完成',
-            desc: '退款已到账，请查收',
-            time: '2024-01-16 09:20:10',
-            status: 'completed'
-          }
-        ]
-      },
-      // Mock数据集3：已驳回状态
-      {
-        productInfo: {
-          image: 'https://img.alicdn.com/tfs/TB1mg.7d7Y2gK0jSZFgXXc5OFXa-400-400.png',
-          title: '小米14 Ultra 16GB+1TB 黑色 徕卡光学镜头',
-          spec: '黑色 16GB+1TB',
-          quantity: 1,
-          price: 6499.00
-        },
-        refundInfo: {
-          amount: 6499.00,
-          status: 'rejected',
-          statusText: '已驳回',
-          refundMethod: 'original',
-          refundMethodText: '原路退回',
-          reason: '尺寸不合适',
-          applyTime: '2024-01-14 16:45:30',
-          processTime: '2024-01-15 10:20:15',
-          completeTime: ''
-        },
-        progressList: [
-          {
-            step: 1,
-            title: '申请提交',
-            desc: '您已提交退款申请',
-            time: '2024-01-14 16:45:30',
-            status: 'completed'
-          },
-          {
-            step: 2,
-            title: '商家处理',
-            desc: '商家已驳回退款申请，原因：商品无质量问题',
-            time: '2024-01-15 10:20:15',
-            status: 'rejected'
-          }
-        ]
-      }
-    ];
-    
-    // 根据退款编号的最后一位数字选择Mock数据
-    const dataIndex = parseInt(refundNo.slice(-1)) % mockDataSets.length;
-    const selectedMockData = mockDataSets[dataIndex];
-    
-    console.log('[Mock数据] 选择数据集:', dataIndex, selectedMockData);
-    
-    return selectedMockData;
-  },
+
 
   /**
    * 处理退款数据
-   * 设置页面数据并停止加载状态
+   * 设置页面数据并停止加载状态，确保字段映射与接口文档一致
    */
   processRefundData(refundData) {
     if (!refundData) {
       throw new Error('退款数据为空');
     }
     
+    // 处理商品信息，使用默认值避免页面报错
+    const productInfo = {
+      image: refundData.productInfo?.image || '',
+      title: refundData.productInfo?.title || '商品信息缺失',
+      spec: refundData.productInfo?.spec || '',
+      quantity: refundData.productInfo?.quantity || 0,
+      price: refundData.productInfo?.price || 0
+    };
+    
+    // 处理退款信息，使用默认值避免页面报错
+    const refundInfo = {
+      amount: refundData.refundInfo?.amount || 0,
+      status: refundData.refundInfo?.status || 'refunding',
+      statusText: refundData.refundInfo?.statusText || '退款中',
+      refundMethod: refundData.refundInfo?.refundMethod || 'original',
+      refundMethodText: refundData.refundInfo?.refundMethodText || '原路退回',
+      reason: refundData.refundInfo?.reason || '',
+      applyTime: refundData.refundInfo?.applyTime || '',
+      processTime: refundData.refundInfo?.processTime || '',
+      completeTime: refundData.refundInfo?.completeTime || ''
+    };
+    
+    // 处理进度列表，确保数组结构正确
+    const progressList = Array.isArray(refundData.progressList) ? refundData.progressList : [];
+    
     this.setData({
-      productInfo: refundData.productInfo,
-      refundInfo: refundData.refundInfo,
-      progressList: refundData.progressList,
+      productInfo: productInfo,
+      refundInfo: refundInfo,
+      progressList: progressList,
       loading: false,
       hasError: false
     });
@@ -399,6 +298,13 @@ Page({
    */
   reloadData() {
     console.log('[退款详情] 重新加载数据');
+    
+    // 重置错误状态
+    this.setData({
+      hasError: false,
+      errorMessage: ''
+    });
+    
     this.loadRefundDetail();
   },
 
@@ -407,6 +313,8 @@ Page({
    */
   onPullDownRefresh() {
     console.log('[下拉刷新] 用户下拉刷新');
+    
+    // 重置错误状态并重新加载
     this.reloadData();
     
     // 停止下拉刷新动画

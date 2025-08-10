@@ -3,12 +3,23 @@
  * 功能包括：商品展示、数量修改、选择/全选、删除、结算等
  */
 
+// 引入购物车API接口
+const { 
+  getCartList, 
+  updateQuantity, 
+  updateSpecs, 
+  toggleSelect, 
+  removeItems, 
+  checkoutPrepare, 
+  clearCart 
+} = require('../../api/cartApi');
+
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    cartList: [], // 购物车商品列表
+    cartList: [], // 购物车商品列表 - 从API获取
     isManageMode: false, // 是否为管理模式
     allSelected: false, // 是否全选
     selectedCount: 0, // 已选择商品数量
@@ -20,7 +31,9 @@ Page({
     currentIndex: -1, // 当前操作的商品索引
     currentItem: {}, // 当前操作的商品
     specOptions: [], // 规格选项
-    selectedSpecs: '' // 已选择的规格文本
+    selectedSpecs: '', // 已选择的规格文本
+    loading: false, // 页面加载状态
+    isEmpty: false // 购物车是否为空
   },
 
   /**
@@ -40,120 +53,57 @@ Page({
   },
 
   /**
-   * 加载购物车数据
-   * 优先从缓存加载，如果没有则加载模拟数据
+   * 加载购物车数据 - 使用真实API接口
    */
-  loadCartData() {
+  async loadCartData() {
+    this.setData({ loading: true });
+    
     try {
-      // 从本地缓存获取购物车数据
-      const cartData = wx.getStorageSync('cartList');
-      if (cartData && cartData.length > 0) {
-        this.setData({
-          cartList: cartData
-        });
-      } else {
-        // 如果没有缓存数据，加载模拟数据用于演示
-        this.loadMockData();
-      }
+      const cartData = await getCartList();
+      
+      console.log('购物车数据加载成功:', cartData);
+      
+      // 确保数据结构安全，使用默认值避免页面报错
+      const safeCartData = {
+        cartList: cartData.cartList || []
+      };
+      
+      this.setData({
+        cartList: safeCartData.cartList,
+        isEmpty: safeCartData.cartList.length === 0
+      });
+      
       this.calculatePrice(); // 计算价格
+      
     } catch (error) {
       console.error('加载购物车数据失败:', error);
-      this.loadMockData(); // 加载失败时使用模拟数据
-    }
-  },
-
-  /**
-   * 加载模拟数据（用于演示）
-   */
-  loadMockData() {
-    const mockData = [
-      {
-        id: 1,
-        name: '苹果iPhone 14 Pro Max 紫色 128GB',
-        spec: '颜色：紫色 容量：128GB',
-        price: 9999.00,
-        quantity: 1,
-        image: '/assets/images/phone1.jpg',
-        selected: true,
-        specGroups: [
-          {
-            name: '颜色',
-            options: [
-              { value: '紫色', selected: true, disabled: false },
-              { value: '黑色', selected: false, disabled: false },
-              { value: '白色', selected: false, disabled: false }
-            ]
-          },
-          {
-            name: '容量',
-            options: [
-              { value: '128GB', selected: true, disabled: false },
-              { value: '256GB', selected: false, disabled: false },
-              { value: '512GB', selected: false, disabled: false }
-            ]
-          }
-        ]
-      },
-      {
-        id: 2,
-        name: '华为Mate50 Pro 昆仑破晓 256GB',
-        spec: '颜色：昆仑破晓 容量：256GB',
-        price: 6999.00,
-        quantity: 2,
-        image: '/assets/images/phone2.jpg',
-        selected: false,
-        specGroups: [
-          {
-            name: '颜色',
-            options: [
-              { value: '昆仑破晓', selected: true, disabled: false },
-              { value: '冰霜银', selected: false, disabled: false },
-              { value: '曜金黑', selected: false, disabled: false }
-            ]
-          },
-          {
-            name: '容量',
-            options: [
-              { value: '128GB', selected: false, disabled: false },
-              { value: '256GB', selected: true, disabled: false },
-              { value: '512GB', selected: false, disabled: false }
-            ]
-          }
-        ]
-      },
-      {
-        id: 3,
-        name: '小米13 Ultra 黑色 512GB',
-        spec: '颜色：黑色 容量：512GB',
-        price: 5999.00,
-        quantity: 1,
-        image: '/assets/images/phone3.jpg',
-        selected: true,
-        specGroups: [
-          {
-            name: '颜色',
-            options: [
-              { value: '黑色', selected: true, disabled: false },
-              { value: '白色', selected: false, disabled: false },
-              { value: '橄榄绿', selected: false, disabled: false }
-            ]
-          },
-          {
-            name: '容量',
-            options: [
-              { value: '256GB', selected: false, disabled: false },
-              { value: '512GB', selected: true, disabled: false },
-              { value: '1TB', selected: false, disabled: false }
-            ]
-          }
-        ]
+      
+      if (error.error === 401) {
+        // 未登录错误处理
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
+      } else {
+        // 加载失败时显示空购物车状态
+        this.setData({
+          cartList: [],
+          isEmpty: true
+        });
+        
+        wx.showToast({
+          title: '获取购物车数据失败',
+          icon: 'none'
+        });
       }
-    ];
-    
-    this.setData({
-      cartList: mockData
-    });
-    this.saveCartToStorage(); // 保存到本地缓存
+    } finally {
+      this.setData({ loading: false });
+    }
   },
 
   /**
@@ -172,44 +122,87 @@ Page({
   },
 
   /**
-   * 切换商品选择状态
+   * 切换商品选择状态 - 使用真实API接口
    */
-  toggleItemSelect(e) {
+  async toggleItemSelect(e) {
     const index = e.currentTarget.dataset.index;
     const cartList = this.data.cartList;
+    const item = cartList[index];
     
-    // 切换选中状态
-    cartList[index].selected = !cartList[index].selected;
+    if (!item || !item.id) {
+      console.error('商品数据错误，缺少id字段');
+      return;
+    }
     
-    this.setData({
-      cartList: cartList
-    });
+    // 构建API调用参数
+    const newSelected = !item.selected;
+    const params = {
+      cartIds: [item.id],
+      selected: newSelected,
+      selectAll: false
+    };
     
-    this.updateSelectStatus(); // 更新选择状态
-    this.calculatePrice(); // 重新计算价格
-    this.saveCartToStorage(); // 保存到缓存
+    try {
+      const result = await toggleSelect(params);
+      
+      console.log('切换选择状态成功:', result);
+      
+      // 更新本地数据
+      cartList[index].selected = newSelected;
+      
+      this.setData({
+        cartList: cartList
+      });
+      
+      this.updateSelectStatus(); // 更新选择状态
+      this.calculatePrice(); // 重新计算价格
+      
+    } catch (error) {
+      console.error('切换选择状态失败:', error);
+      wx.showToast({
+        title: '操作失败，请重试',
+        icon: 'none'
+      });
+    }
   },
 
   /**
-   * 切换全选状态
+   * 切换全选状态 - 使用真实API接口
    */
-  toggleSelectAll() {
+  async toggleSelectAll() {
     const allSelected = !this.data.allSelected;
-    const cartList = this.data.cartList;
     
-    // 更新所有商品的选中状态
-    cartList.forEach(item => {
-      item.selected = allSelected;
-    });
+    const params = {
+      selected: allSelected,
+      selectAll: true
+    };
     
-    this.setData({
-      cartList: cartList,
-      allSelected: allSelected
-    });
-    
-    this.updateSelectStatus(); // 更新选择状态
-    this.calculatePrice(); // 重新计算价格
-    this.saveCartToStorage(); // 保存到缓存
+    try {
+      const result = await toggleSelect(params);
+      
+      console.log('全选切换成功:', result);
+      
+      // 更新本地数据
+      const cartList = this.data.cartList;
+      cartList.forEach(item => {
+        item.selected = allSelected;
+      });
+      
+      this.setData({
+        cartList: cartList,
+        allSelected: allSelected
+      });
+      
+      this.updateSelectStatus(); // 更新选择状态
+      this.calculatePrice(); // 重新计算价格
+      
+    } catch (error) {
+      console.error('全选切换失败:', error);
+      wx.showToast({
+        title: '操作失败，请重试',
+        icon: 'none'
+      });
+    }
   },
 
   /**
@@ -228,19 +221,20 @@ Page({
   },
 
   /**
-   * 减少商品数量
+   * 减少商品数量 - 使用真实API接口
    */
-  decreaseQuantity(e) {
+  async decreaseQuantity(e) {
     const index = e.currentTarget.dataset.index;
     const cartList = this.data.cartList;
+    const item = cartList[index];
     
-    if (cartList[index].quantity > 1) {
-      cartList[index].quantity--;
-      this.setData({
-        cartList: cartList
-      });
-      this.calculatePrice(); // 重新计算价格
-      this.saveCartToStorage(); // 保存到缓存
+    if (!item || !item.id) {
+      console.error('商品数据错误，缺少id字段');
+      return;
+    }
+    
+    if (item.quantity > 1) {
+      await this.updateItemQuantity(item.id, item.quantity - 1, index);
     } else {
       // 如果数量为1，提示用户是否删除
       this.confirmDeleteItem(index);
@@ -248,20 +242,21 @@ Page({
   },
 
   /**
-   * 增加商品数量
+   * 增加商品数量 - 使用真实API接口
    */
-  increaseQuantity(e) {
+  async increaseQuantity(e) {
     const index = e.currentTarget.dataset.index;
     const cartList = this.data.cartList;
+    const item = cartList[index];
+    
+    if (!item || !item.id) {
+      console.error('商品数据错误，缺少id字段');
+      return;
+    }
     
     // 限制最大数量为99
-    if (cartList[index].quantity < 99) {
-      cartList[index].quantity++;
-      this.setData({
-        cartList: cartList
-      });
-      this.calculatePrice(); // 重新计算价格
-      this.saveCartToStorage(); // 保存到缓存
+    if (item.quantity < 99) {
+      await this.updateItemQuantity(item.id, item.quantity + 1, index);
     } else {
       wx.showToast({
         title: '商品数量不能超过99件',
@@ -271,21 +266,22 @@ Page({
   },
 
   /**
-   * 输入数量变化
+   * 输入数量变化 - 使用真实API接口
    */
-  inputQuantity(e) {
+  async inputQuantity(e) {
     const index = e.currentTarget.dataset.index;
     const value = parseInt(e.detail.value) || 1;
     const cartList = this.data.cartList;
+    const item = cartList[index];
+    
+    if (!item || !item.id) {
+      console.error('商品数据错误，缺少id字段');
+      return;
+    }
     
     // 限制数量范围为1-99
     if (value >= 1 && value <= 99) {
-      cartList[index].quantity = value;
-      this.setData({
-        cartList: cartList
-      });
-      this.calculatePrice(); // 重新计算价格
-      this.saveCartToStorage(); // 保存到缓存
+      await this.updateItemQuantity(item.id, value, index);
     } else {
       wx.showToast({
         title: '请输入1-99之间的数量',
@@ -294,6 +290,51 @@ Page({
       // 恢复原来的值
       this.setData({
         cartList: cartList
+      });
+    }
+  },
+
+  /**
+   * 更新商品数量的通用方法
+   * @param {string} cartId 购物车条目ID
+   * @param {number} quantity 新数量
+   * @param {number} index 商品在列表中的索引
+   */
+  async updateItemQuantity(cartId, quantity, index) {
+    const params = {
+      cartId: cartId,
+      quantity: quantity
+    };
+    
+    try {
+      const result = await updateQuantity(params);
+      
+      console.log('更新数量成功:', result);
+      
+      // 更新本地数据
+      const cartList = this.data.cartList;
+      cartList[index].quantity = result.newQuantity;
+      
+      this.setData({
+        cartList: cartList
+      });
+      
+      this.calculatePrice(); // 重新计算价格
+      
+    } catch (error) {
+      console.error('更新数量失败:', error);
+      
+      let errorMessage = '更新失败，请重试';
+      
+      if (error.error === 1002) {
+        errorMessage = '商品数量超出库存';
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      wx.showToast({
+        title: errorMessage,
+        icon: 'none'
       });
     }
   },
@@ -316,35 +357,14 @@ Page({
       content: `确定要删除"${item.name}"吗？`,
       success: (res) => {
         if (res.confirm) {
-          this.removeItemFromCart(index);
+          this.removeItemFromCart([item.id]);
         }
       }
     });
   },
 
   /**
-   * 从购物车移除商品
-   */
-  removeItemFromCart(index) {
-    const cartList = this.data.cartList;
-    cartList.splice(index, 1);
-    
-    this.setData({
-      cartList: cartList
-    });
-    
-    this.updateSelectStatus(); // 更新选择状态
-    this.calculatePrice(); // 重新计算价格
-    this.saveCartToStorage(); // 保存到缓存
-    
-    wx.showToast({
-      title: '删除成功',
-      icon: 'success'
-    });
-  },
-
-  /**
-   * 删除选中的商品
+   * 删除选中的商品 - 使用真实API接口
    */
   deleteSelectedItems() {
     const selectedItems = this.data.cartList.filter(item => item.selected);
@@ -362,22 +382,42 @@ Page({
       content: `确定要删除选中的${selectedItems.length}件商品吗？`,
       success: (res) => {
         if (res.confirm) {
-          const cartList = this.data.cartList.filter(item => !item.selected);
-          this.setData({
-            cartList: cartList
-          });
-          
-          this.updateSelectStatus(); // 更新选择状态
-          this.calculatePrice(); // 重新计算价格
-          this.saveCartToStorage(); // 保存到缓存
-          
-          wx.showToast({
-            title: '删除成功',
-            icon: 'success'
-          });
+          const cartIds = selectedItems.map(item => item.id);
+          this.removeItemFromCart(cartIds);
         }
       }
     });
+  },
+
+  /**
+   * 从购物车移除商品 - 使用真实API接口
+   * @param {Array} cartIds 要删除的购物车条目ID列表
+   */
+  async removeItemFromCart(cartIds) {
+    const params = {
+      cartIds: cartIds
+    };
+    
+    try {
+      const result = await removeItems(params);
+      
+      console.log('删除商品成功:', result);
+      
+      // 重新加载购物车数据
+      await this.loadCartData();
+      
+      wx.showToast({
+        title: '删除成功',
+        icon: 'success'
+      });
+      
+    } catch (error) {
+      console.error('删除商品失败:', error);
+      wx.showToast({
+        title: '删除失败，请重试',
+        icon: 'none'
+      });
+    }
   },
 
   /**
@@ -412,20 +452,9 @@ Page({
   },
 
   /**
-   * 保存购物车到本地缓存
+   * 去结算 - 使用真实API接口准备结算数据
    */
-  saveCartToStorage() {
-    try {
-      wx.setStorageSync('cartList', this.data.cartList);
-    } catch (error) {
-      console.error('保存购物车数据失败:', error);
-    }
-  },
-
-  /**
-   * 去结算 - 跳转到订单确认页面
-   */
-  goToCheckout() {
+  async goToCheckout() {
     const selectedItems = this.data.cartList.filter(item => item.selected);
     
     if (selectedItems.length === 0) {
@@ -436,27 +465,43 @@ Page({
       return;
     }
     
-    // 准备订单商品数据
-    const orderGoods = selectedItems.map(item => ({
-      id: item.id,
-      name: item.name,
-      image: item.image,
-      spec: item.spec,
-      price: item.price,
-      quantity: item.quantity
-    }));
+    // 检查登录状态
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      setTimeout(() => {
+        wx.navigateTo({
+          url: '/pages/login/index'
+        });
+      }, 1500);
+      return;
+    }
     
-    // 保存选中的商品到缓存，供订单确认页面使用
+    wx.showLoading({
+      title: '准备结算...',
+      mask: true
+    });
+    
     try {
-      wx.setStorageSync('checkoutItems', selectedItems);
+      // 获取结算准备信息
+      const cartIds = selectedItems.map(item => item.id);
+      const checkoutData = await checkoutPrepare({ cartIds });
+      
+      console.log('结算准备成功:', checkoutData);
+      
+      // 保存结算数据到缓存，供订单确认页面使用
+      wx.setStorageSync('checkoutData', checkoutData);
       wx.setStorageSync('checkoutTotal', this.data.totalPrice);
       wx.setStorageSync('checkoutDiscount', this.data.discountAmount);
       
-      // 跳转到订单确认页面，通过URL参数传递商品数据
+      // 跳转到订单确认页面
       wx.navigateTo({
-        url: `/pages/order-confirm/order-confirm?goods=${encodeURIComponent(JSON.stringify(orderGoods))}`,
+        url: '/pages/order-confirm/order-confirm',
         success: () => {
-          console.log('成功跳转到订单确认页面，商品数量：', orderGoods.length);
+          console.log('成功跳转到订单确认页面，商品数量：', checkoutData.checkoutItems.length);
         },
         fail: (error) => {
           console.error('跳转订单确认页面失败：', error);
@@ -466,12 +511,29 @@ Page({
           });
         }
       });
+      
     } catch (error) {
-      console.error('保存结算数据失败:', error);
+      console.error('结算准备失败:', error);
+      
+      let errorMessage = '结算失败，请重试';
+      
+      if (error.error === 401) {
+        errorMessage = '请先登录';
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       wx.showToast({
-        title: '结算失败，请重试',
+        title: errorMessage,
         icon: 'none'
       });
+    } finally {
+      wx.hideLoading();
     }
   },
 
@@ -489,8 +551,9 @@ Page({
    */
   onPullDownRefresh() {
     console.log('下拉刷新购物车');
-    this.loadCartData();
-    wx.stopPullDownRefresh(); // 停止下拉刷新
+    this.loadCartData().then(() => {
+      wx.stopPullDownRefresh(); // 停止下拉刷新
+    });
   },
 
   /**
@@ -597,9 +660,9 @@ Page({
   },
 
   /**
-   * 确认规格修改
+   * 确认规格修改 - 使用真实API接口
    */
-  confirmSpecsChange() {
+  async confirmSpecsChange() {
     // 检查是否选择了所有规格
     if (!this.checkAllSpecsSelected()) {
       wx.showToast({
@@ -611,25 +674,58 @@ Page({
     
     const index = this.data.currentIndex;
     const cartList = [...this.data.cartList];
+    const item = cartList[index];
     
-    // 更新商品规格和数量
-    cartList[index].specGroups = this.data.specOptions;
-    cartList[index].spec = this.data.selectedSpecs;
-    cartList[index].quantity = this.data.currentItem.quantity;
+    if (!item || !item.id) {
+      console.error('商品数据错误，缺少id字段');
+      return;
+    }
     
-    this.setData({
-      cartList: cartList,
-      showSpecsPopup: false
+    // 构建新规格对象
+    const newSpecs = {};
+    this.data.specOptions.forEach(group => {
+      const selectedOption = group.options.find(option => option.selected);
+      if (selectedOption) {
+        newSpecs[group.name] = selectedOption.value;
+      }
     });
     
-    // 重新计算价格并保存
-    this.calculatePrice();
-    this.saveCartToStorage();
+    const params = {
+      cartId: item.id,
+      newSpecs: newSpecs,
+      quantity: this.data.currentItem.quantity
+    };
     
-    wx.showToast({
-      title: '规格已更新',
-      icon: 'success'
-    });
+    try {
+      const result = await updateSpecs(params);
+      
+      console.log('更新规格成功:', result);
+      
+      // 更新本地数据
+      cartList[index].specGroups = this.data.specOptions;
+      cartList[index].spec = result.newSpec;
+      cartList[index].quantity = this.data.currentItem.quantity;
+      
+      this.setData({
+        cartList: cartList,
+        showSpecsPopup: false
+      });
+      
+      // 重新计算价格
+      this.calculatePrice();
+      
+      wx.showToast({
+        title: '规格已更新',
+        icon: 'success'
+      });
+      
+    } catch (error) {
+      console.error('更新规格失败:', error);
+      wx.showToast({
+        title: '更新失败，请重试',
+        icon: 'none'
+      });
+    }
   },
 
   /**
@@ -671,6 +767,40 @@ Page({
   hidePriceDetail() {
     this.setData({
       showPriceDetail: false
+    });
+  },
+
+  /**
+   * 清空购物车 - 使用真实API接口
+   */
+  async clearCartData() {
+    wx.showModal({
+      title: '确认清空',
+      content: '确定要清空购物车中的所有商品吗？',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            const result = await clearCart();
+            
+            console.log('清空购物车成功:', result);
+            
+            // 重新加载购物车数据
+            await this.loadCartData();
+            
+            wx.showToast({
+              title: '购物车已清空',
+              icon: 'success'
+            });
+            
+          } catch (error) {
+            console.error('清空购物车失败:', error);
+            wx.showToast({
+              title: '清空失败，请重试',
+              icon: 'none'
+            });
+          }
+        }
+      }
     });
   }
 }); 

@@ -1,11 +1,11 @@
-// 物流查询页面逻辑
+// 物流查询页面逻辑 - 基于接口文档logistics.md实现
 // 遵循API规范：header中设置auth，参数使用json格式
 
 /**
- * 导入通用API请求函数
+ * 导入物流查询API函数 - 基于接口文档实现
  * 根据@api.mdc规范，后端返回统一格式：{error, body, message}
  */
-const { request } = require('../../api/request');
+const { queryLogistics } = require('../../api/logisticsApi');
 
 Page({
   /**
@@ -21,15 +21,19 @@ Page({
       orderNo: ''
     },
     
-    // 物流信息（包含时间线轨迹）
+    // 物流信息（完全按照接口文档字段定义）
     logisticsInfo: {
       // 物流状态：pending-待发货，shipping-运输中，delivered-已签收，exception-异常
-      status: 'shipping',
-      statusText: '运输中',
-      companyName: '',
-      trackingNo: '',
-      tracks: [], // 物流轨迹数组
-      companyInfo: null // 物流公司详细信息
+      status: 'pending',                    // 对应接口文档 status
+      statusText: '待发货',                 // 对应接口文档 statusText
+      companyName: '',                      // 对应接口文档 companyName
+      trackingNo: '',                       // 对应接口文档 trackingNo
+      tracks: [],                           // 对应接口文档 tracks 数组
+      companyInfo: {                        // 对应接口文档 companyInfo 对象
+        name: '',                           // 对应接口文档 companyInfo.name
+        phone: '',                          // 对应接口文档 companyInfo.phone
+        logo: ''                            // 对应接口文档 companyInfo.logo
+      }
     },
     
     // 错误状态
@@ -76,157 +80,54 @@ Page({
   },
 
   /**
-   * 加载物流信息
-   * 优先调用真实API，失败时降级使用Mock数据
+   * 加载物流信息 - 基于接口文档实现
+   * 使用真实API调用，不再依赖Mock数据
    */
   async loadLogisticsInfo() {
     this.setData({ loading: true, hasError: false });
     
+    // 检查用户登录状态
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      console.log('用户未登录，跳过物流查询');
+      this.setData({
+        loading: false,
+        hasError: true,
+        errorMessage: '请先登录'
+      });
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      return;
+    }
+    
     try {
       console.log('[物流查询] 开始查询物流信息, 订单ID:', this.data.orderInfo.orderId);
       
-      // 🌐 尝试调用真实API
-      let logisticsData;
-      try {
-        // 根据@api.mdc规范：POST请求，header设置auth，参数用json格式
-        logisticsData = await apiRequest('/api/logistics/query', {
-          orderId: this.data.orderInfo.orderId
-        }, 'POST');
-        
-        console.log('[物流查询] API调用成功:', logisticsData);
-        
-      } catch (apiError) {
-        console.warn('[物流查询] API调用失败，使用Mock数据:', apiError);
-        
-        // 🔧 API调用失败，使用Mock数据降级处理
-        logisticsData = this.getMockLogisticsData();
-      }
+      // 调用真实API - 按照接口文档实现
+      const logisticsData = await queryLogistics(this.data.orderInfo.orderId);
+      
+      console.log('[物流查询] API调用成功:', logisticsData);
       
       // 处理物流数据
       this.processLogisticsData(logisticsData);
       
     } catch (error) {
       console.error('[物流查询] 加载失败:', error);
-      this.setData({
-        loading: false,
-        hasError: true,
-        errorMessage: error.message || '查询物流信息失败'
-      });
       
-      wx.showToast({
-        title: '查询失败，请重试',
-        icon: 'none'
-      });
+      // 根据接口文档的错误码处理
+      const errorCode = error?.error || error?.code || 0;
+      const errorMessage = error?.message || '查询物流信息失败';
+      
+      this.handleLogisticsError(errorCode, errorMessage);
     }
   },
 
-  /**
-   * 获取Mock物流数据
-   * 模拟不同的物流状态和轨迹信息
-   */
-  getMockLogisticsData() {
-    // 根据订单ID模拟不同的物流状态
-    const orderId = this.data.orderInfo.orderId;
-    const mockDataSets = [
-      // Mock数据集1：正常运输中
-      {
-        status: 'shipping',
-        statusText: '运输中',
-        companyName: '顺丰速运',
-        trackingNo: 'SF1234567890123',
-        tracks: [
-          {
-            time: '2024-01-16 14:30:25',
-            status: '快件已到达 【北京朝阳分拣中心】',
-            location: '北京朝阳分拣中心'
-          },
-          {
-            time: '2024-01-16 10:15:30',
-            status: '快件已从 【北京天通苑营业点】 发出，下一站 【北京朝阳分拣中心】',
-            location: '北京天通苑营业点'
-          },
-          {
-            time: '2024-01-16 08:20:15',
-            status: '快件已在 【北京天通苑营业点】 装车，准备发往下一站',
-            location: '北京天通苑营业点'
-          },
-          {
-            time: '2024-01-15 18:45:00',
-            status: '已收件',
-            location: '北京天通苑营业点'
-          }
-        ],
-        companyInfo: {
-          name: '顺丰速运',
-          phone: '95338',
-          logo: 'https://img.alicdn.com/tfs/TB1V4g3d.H1gK0jSZSyXXXtlpXa-200-200.png'
-        }
-      },
-      // Mock数据集2：已签收
-      {
-        status: 'delivered',
-        statusText: '已签收',
-        companyName: '中通快递',
-        trackingNo: 'ZT9876543210987',
-        tracks: [
-          {
-            time: '2024-01-16 16:20:30',
-            status: '快件已签收，签收人：本人签收，如有疑问请联系派件员',
-            location: '北京朝阳区配送点'
-          },
-          {
-            time: '2024-01-16 15:45:20',
-            status: '快件正在派送中，派送员：李师傅，联系电话：138****8888',
-            location: '北京朝阳区配送点'
-          },
-          {
-            time: '2024-01-16 08:30:15',
-            status: '快件已到达 【北京朝阳区配送点】',
-            location: '北京朝阳区配送点'
-          },
-          {
-            time: '2024-01-15 22:15:00',
-            status: '快件已从 【北京分拣中心】 发出',
-            location: '北京分拣中心'
-          },
-          {
-            time: '2024-01-15 18:30:00',
-            status: '已收件',
-            location: '上海浦东营业点'
-          }
-        ],
-        companyInfo: {
-          name: '中通快递',
-          phone: '95311',
-          logo: 'https://img.alicdn.com/tfs/TB1KQ.4d.Y1gK0jSZFMXXaWcVXa-200-200.png'
-        }
-      },
-      // Mock数据集3：暂无物流信息
-      {
-        status: 'pending',
-        statusText: '待发货',
-        companyName: '申通快递',
-        trackingNo: 'ST5555666677778',
-        tracks: [],
-        companyInfo: {
-          name: '申通快递',
-          phone: '95543',
-          logo: 'https://img.alicdn.com/tfs/TB1mg.7d7Y2gK0jSZFgXXc5OFXa-200-200.png'
-        }
-      }
-    ];
-    
-    // 根据订单ID的最后一位数字选择Mock数据
-    const dataIndex = parseInt(orderId.slice(-1)) % mockDataSets.length;
-    const selectedMockData = mockDataSets[dataIndex];
-    
-    console.log('[Mock数据] 选择数据集:', dataIndex, selectedMockData);
-    
-    return selectedMockData;
-  },
+
 
   /**
-   * 处理物流数据
+   * 处理物流数据 - 按照接口文档字段安全处理
    * 设置页面数据并停止加载状态
    */
   processLogisticsData(logisticsData) {
@@ -234,11 +135,22 @@ Page({
       throw new Error('物流数据为空');
     }
     
+    // 按照接口文档安全处理各字段 - 提供默认值避免页面报错
+    const safeLogisticsInfo = {
+      status: logisticsData.status || 'pending',                             // 对应接口文档 status
+      statusText: logisticsData.statusText || '待发货',                       // 对应接口文档 statusText
+      companyName: logisticsData.companyName || '',                          // 对应接口文档 companyName
+      trackingNo: logisticsData.trackingNo || '',                            // 对应接口文档 trackingNo
+      tracks: Array.isArray(logisticsData.tracks) ? logisticsData.tracks : [], // 对应接口文档 tracks 数组
+      companyInfo: {                                                          // 对应接口文档 companyInfo 对象
+        name: logisticsData.companyInfo?.name || logisticsData.companyName || '',     // 对应接口文档 companyInfo.name
+        phone: logisticsData.companyInfo?.phone || '',                                // 对应接口文档 companyInfo.phone
+        logo: logisticsData.companyInfo?.logo || ''                                   // 对应接口文档 companyInfo.logo
+      }
+    };
+    
     this.setData({
-      logisticsInfo: {
-        ...this.data.logisticsInfo,
-        ...logisticsData
-      },
+      logisticsInfo: safeLogisticsInfo,
       loading: false,
       hasError: false
     });
@@ -247,11 +159,90 @@ Page({
   },
 
   /**
-   * 刷新物流信息
+   * 错误处理函数 - 根据接口文档错误码处理
+   * @param {number} errorCode - 错误码
+   * @param {string} errorMessage - 错误信息
+   */
+  handleLogisticsError(errorCode, errorMessage) {
+    console.error('[物流查询错误] 错误码:', errorCode, '错误信息:', errorMessage);
+    
+    this.setData({
+      loading: false,
+      hasError: true,
+      errorMessage: errorMessage
+    });
+    
+    // 根据接口文档的错误码显示不同提示
+    switch (errorCode) {
+      case 401:
+        // 未登录，需要重新登录
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        });
+        setTimeout(() => {
+          wx.navigateTo({
+            url: '/pages/login/index'
+          });
+        }, 1500);
+        break;
+        
+      case 1001:
+        // 参数错误，订单ID不能为空
+        wx.showToast({
+          title: '订单参数错误',
+          icon: 'none'
+        });
+        break;
+        
+      case 1002:
+        // 订单不存在
+        wx.showToast({
+          title: '订单不存在',
+          icon: 'none'
+        });
+        break;
+        
+      case 1003:
+        // 该订单暂无物流信息
+        wx.showToast({
+          title: '暂无物流信息',
+          icon: 'none'
+        });
+        // 设置默认状态为待发货
+        this.setData({
+          logisticsInfo: {
+            ...this.data.logisticsInfo,
+            status: 'pending',
+            statusText: '待发货',
+            tracks: []
+          }
+        });
+        break;
+        
+      case 500:
+        // 系统异常，请稍后重试
+        wx.showToast({
+          title: '系统异常，请稍后重试',
+          icon: 'none'
+        });
+        break;
+        
+      default:
+        // 其他错误
+        wx.showToast({
+          title: errorMessage || '查询失败，请重试',
+          icon: 'none'
+        });
+    }
+  },
+
+  /**
+   * 刷新物流信息 - 基于真实API
    * 用户主动刷新或重新查询时调用
    */
   refreshLogistics() {
-    console.log('[物流刷新] 用户触发刷新');
+    console.log('[物流刷新] 用户触发刷新，使用真实API');
     this.loadLogisticsInfo();
   },
 
@@ -310,10 +301,12 @@ Page({
   },
 
   /**
-   * 拨打物流公司电话
+   * 拨打物流公司电话 - 使用接口返回的真实数据
    */
   callCompany() {
     const companyPhone = this.data.logisticsInfo.companyInfo?.phone;
+    const companyName = this.data.logisticsInfo.companyInfo?.name || this.data.logisticsInfo.companyName;
+    
     if (!companyPhone) {
       wx.showToast({
         title: '暂无物流公司电话',
@@ -322,17 +315,26 @@ Page({
       return;
     }
     
-    wx.makePhoneCall({
-      phoneNumber: companyPhone,
-      success: () => {
-        console.log('[电话] 拨打物流公司电话成功');
-      },
-      fail: (error) => {
-        console.error('[电话] 拨打物流公司电话失败:', error);
-        wx.showToast({
-          title: '拨打失败',
-          icon: 'none'
-        });
+    // 显示确认对话框
+    wx.showModal({
+      title: '拨打电话',
+      content: `确定要拨打${companyName}客服电话：${companyPhone}吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          wx.makePhoneCall({
+            phoneNumber: companyPhone,
+            success: () => {
+              console.log('[电话] 拨打物流公司电话成功:', companyPhone);
+            },
+            fail: (error) => {
+              console.error('[电话] 拨打物流公司电话失败:', error);
+              wx.showToast({
+                title: '拨打失败',
+                icon: 'none'
+              });
+            }
+          });
+        }
       }
     });
   },

@@ -91,6 +91,45 @@
       </swiper>
     </view>
 
+    <!-- 热门活动/活动列表区域（优先展示接口返回的活动列表） -->
+    <view class="activity-section" wx:if="{{activityList.length > 0}}">
+      <view class="activity-header">
+        <view class="activity-title">
+          <image class="activity-icon" src="/assets/icons/activity.svg" mode="aspectFit"></image>
+          <text class="activity-text">热门活动</text>
+        </view>
+        <view class="activity-more" bindtap="goToActivityList">
+          <text class="more-text">更多</text>
+          <image class="more-icon" src="/assets/icons/arrow-right.svg" mode="aspectFit"></image>
+        </view>
+      </view>
+      
+      <!-- 活动卡片列表 -->
+      <view class="activity-list">
+        <view 
+          class="activity-card" 
+          wx:for="{{activityList}}" 
+          wx:key="id"
+          bindtap="goToActivityDetail"
+          data-id="{{item.id}}"
+        >
+          <view class="activity-image-wrapper">
+            <image class="activity-image" src="{{item.coverUrl}}" mode="aspectFill"></image>
+            <view class="activity-status" wx:if="{{item.status === 'ongoing'}}">进行中</view>
+            <view class="activity-status coming" wx:if="{{item.status === 'coming'}}">即将开始</view>
+          </view>
+          <view class="activity-info">
+            <text class="activity-name">{{item.title}}</text>
+            <text class="activity-desc">{{item.description}}</text>
+            <view class="activity-meta">
+              <text class="activity-time">{{item.startTime}} - {{item.endTime}}</text>
+              <text class="activity-location">{{item.location}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 商品分组区域 -->
     <view class="product-groups">
       <!-- 动态渲染商品分组 -->

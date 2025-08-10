@@ -1,6 +1,21 @@
+// 个人页面逻辑 - 基于接口文档实现真实API调用
 // 引入API接口 - 用于获取用户信息和积分相关数据
-import { getUserInfo, UserInfo as ApiUserInfo } from '../../api/userApi'
-import { api } from '../../api/utils/request'
+import { 
+  getUserInfo, 
+  getPointsInfo, 
+  getOrderCounts, 
+  signIn as apiSignIn, 
+  getDailyTasks, 
+  completeShareTask, 
+  completeInviteTask,
+  UserInfo as ApiUserInfo,
+  PointsInfo as ApiPointsInfo,
+  OrderCounts as ApiOrderCounts,
+  SignInResult as ApiSignInResult,
+  DailyTasksResponse,
+  ShareTaskResult,
+  InviteTaskResult
+} from '../../api/userApi'
 
 // 移除未使用的app变量声明，如果后续需要可以再加回来
 // const app = getApp()
@@ -10,45 +25,12 @@ import { api } from '../../api/utils/request'
 interface PageUserInfo {
   avatarUrl?: string;    // 头像地址
   nickName?: string;     // 用户昵称
-  pointsTotal?: number;  // 总积分
-  userId?: number;       // 用户ID
-  pointsBalance?: number; // 当前积分余额
-  coupons?: number;      // 优惠券数量
-  services?: number;     // 服务数量
   level?: string;        // 会员等级
   id?: string;           // 用户编号（字符串格式）
+  pointsBalance?: number; // 当前积分余额
 }
 
-// 积分信息接口
-interface PointsInfo {
-  balance?: number;   // 积分余额
-  isSigned?: boolean; // 是否已签到
-}
-
-// 签到结果接口
-interface SignInResult {
-  success: boolean;  // 签到是否成功
-  points?: number;   // 获得的积分数
-}
-
-// 订单统计数据接口
-interface OrderCounts {
-  unpaid?: number;      // 待付款订单数
-  unshipped?: number;   // 待发货订单数
-  shipped?: number;     // 待收货订单数
-  uncommented?: number; // 待评价订单数
-  refunding?: number;   // 退款/售后订单数
-}
-
-// 定义获取积分信息的API函数
-const getPoints = () => {
-  return api.post('/api/points/info', {});
-};
-
-// 定义签到的API函数
-const signIn = () => {
-  return api.post('/api/points/signIn', {});
-};
+  // API函数已从userApi导入，删除重复定义
 
 Page({
   data: {
@@ -60,12 +42,8 @@ Page({
       id: '未登录',
       pointsBalance: 0
     } as PageUserInfo,
-    // 任务列表数据 - 每日任务信息
-    tasks: [
-      { id: 1, name: '每日签到', desc: '连续签到7天额外奖励30积分', icon: 'check-in', status: 0 },
-      { id: 2, name: '分享小程序', desc: '分享给好友获得5积分', icon: 'share', status: 0 },
-      { id: 3, name: '邀请好友', desc: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
-    ],
+    // 任务列表数据 - 从API获取每日任务信息
+    tasks: [] as any[],
     // 统计数据 - 初始值为0，从API获取实际数据
     coupons: 0,        // 优惠券数量
     services: 0,       // 服务数量
@@ -90,9 +68,10 @@ Page({
   onShow() {
     console.log('个人中心页面显示')
     // 每次页面显示都获取最新的用户信息和数据
-    this.getUserInfo()      // 获取用户基本信息
-    this.getPointsInfo()    // 获取积分信息
-    this.getOrderCounts()   // 获取订单统计数据
+    this.getUserInfo()         // 获取用户基本信息
+    this.getPointsInfo()       // 获取积分信息
+    this.getOrderCounts()      // 获取订单统计数据
+    this.getDailyTasksInfo()   // 获取每日任务信息
 
     // 调试信息 - 检查页面数据是否正常
     console.log('当前页面数据:', this.data)
@@ -123,29 +102,34 @@ Page({
       }
       
       // 调用API获取用户信息
-      const userInfo = await getUserInfo() as ApiUserInfo
-      if (userInfo) {
+      const response = await getUserInfo() as ApiUserInfo
+      if (response && response.userInfo) {
+        // 安全处理用户信息数据
+        const safeUserInfo = this.safeUserInfo(response.userInfo)
+        
         // 更新页面数据 - 使用API返回的真实数据
         this.setData({ 
-          userInfo: {
-            avatarUrl: userInfo.avatarUrl || '/assets/icons/default-avatar.png',
-            nickName: userInfo.nickName || '微信用户',
-            level: this.getUserLevel(userInfo.pointsTotal || 0),
-            id: String(userInfo.userId) || '10086',
-            pointsBalance: userInfo.pointsBalance || 0
-          },
-          coupons: userInfo.coupons || 0,
-          services: userInfo.services || 0
+          userInfo: safeUserInfo,
+          coupons: parseInt(String(response.coupons)) || 0,
+          services: parseInt(String(response.services)) || 0
         })
-        console.log('用户信息获取成功', userInfo)
+        console.log('用户信息获取成功', response)
       }
     } catch (error) {
       console.error('[获取用户信息失败]', error)
-      // 失败时使用默认数据，不影响页面显示
+      
+      // 根据错误类型显示不同提示
+      const errorMessage = (error as any)?.message || '未知错误'
+      if (errorMessage === '未登录') {
+        // 已在apiRequest中处理跳转
+      } else {
+        // API失败时保持默认数据，不影响页面显示
+        console.log('API失败，使用默认用户数据:', errorMessage)
+      }
     }
   },
 
-  // 根据积分计算用户等级 - 业务逻辑函数
+  // 根据积分计算用户等级 - 业务逻辑函数（已废弃，等级从API直接获取）
   getUserLevel(points: number): string {
     if (points >= 1000) return '高级会员'
     if (points >= 500) return '中级会员'
@@ -161,7 +145,7 @@ Page({
         return
       }
       
-      const pointsInfo = await getPoints() as PointsInfo
+      const pointsInfo = await getPointsInfo() as ApiPointsInfo
       if (pointsInfo) {
         this.setData({
           'userInfo.pointsBalance': pointsInfo.balance || 0,
@@ -184,7 +168,7 @@ Page({
       }
       
       // 调用订单统计API
-      const orderCounts = await api.post('/api/order/counts', {}) as OrderCounts
+      const orderCounts = await getOrderCounts() as ApiOrderCounts
       if (orderCounts) {
         this.setData({
           paymentCount: orderCounts.unpaid || 0,      // 待付款
@@ -198,6 +182,55 @@ Page({
     } catch (error) {
       console.error('[获取订单统计失败]', error)
       // 失败时保持默认值0，不影响页面显示
+    }
+  },
+
+  // 获取每日任务信息 - 从API获取任务列表和状态
+  async getDailyTasksInfo() {
+    try {
+      const token = wx.getStorageSync('token')
+      if (!token) {
+        console.log('用户未登录，使用默认任务数据')
+        // 未登录时使用默认任务数据
+        this.setData({
+          tasks: [
+            { id: 1, name: '每日签到', description: '连续签到7天额外奖励30积分', icon: 'check-in', status: 0 },
+            { id: 2, name: '分享小程序', description: '分享给好友获得5积分', icon: 'share', status: 0 },
+            { id: 3, name: '邀请好友', description: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
+          ]
+        })
+        return
+      }
+      
+      const response = await getDailyTasks() as DailyTasksResponse
+      if (response && response.dailyTasks) {
+        // 转换API数据格式以匹配页面需要的格式
+        const tasksData = response.dailyTasks.map(task => ({
+          id: task.id,
+          name: task.name,
+          desc: task.description,  // API中是description，页面中用desc
+          icon: task.icon,
+          status: task.status,
+          pointsReward: task.pointsReward,
+          buttonText: task.buttonText,
+          completed: task.completed
+        }))
+        
+        this.setData({
+          tasks: tasksData
+        })
+        console.log('每日任务获取成功', response)
+      }
+    } catch (error) {
+      console.error('[获取每日任务失败]', error)
+      // 失败时使用默认任务数据
+      this.setData({
+        tasks: [
+          { id: 1, name: '每日签到', description: '连续签到7天额外奖励30积分', icon: 'check-in', status: 0 },
+          { id: 2, name: '分享小程序', description: '分享给好友获得5积分', icon: 'share', status: 0 },
+          { id: 3, name: '邀请好友', description: '成功邀请1位好友获得30积分', icon: 'invite', status: 0 }
+        ]
+      })
     }
   },
   
@@ -241,7 +274,7 @@ Page({
       }
       
       // 调用签到API
-      const result = await signIn() as SignInResult
+      const result = await apiSignIn() as ApiSignInResult
       if (result && result.success) {
         // 签到成功，更新页面数据
         const currentPoints = this.data.userInfo.pointsBalance || 0
@@ -279,20 +312,80 @@ Page({
     }
   },
   
-  // 立即分享 - 显示分享菜单
-  handleShare() {
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    })
+  // 立即分享 - 显示分享菜单并记录分享任务
+  async handleShare() {
+    try {
+      const token = wx.getStorageSync('token')
+      if (!token) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        })
+        this.navigateTo('/pages/login/index')
+        return
+      }
+
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      })
+
+      // 调用分享任务完成接口
+      const result = await completeShareTask('friend') as ShareTaskResult
+      if (result && result.taskResult && result.taskResult.completed) {
+        // 更新积分
+        this.setData({
+          'userInfo.pointsBalance': result.taskResult.totalPoints,
+          'tasks[1].status': 1  // 标记分享任务为已完成
+        })
+        
+        wx.showToast({
+          title: result.taskResult.message,
+          icon: 'success'
+        })
+      }
+    } catch (error) {
+      console.error('[分享任务失败]', error)
+      // 即使API失败，仍然显示分享菜单
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      })
+    }
   },
   
   // 立即邀请 - 显示分享菜单邀请好友
-  handleInvite() {
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    })
+  async handleInvite() {
+    try {
+      const token = wx.getStorageSync('token')
+      if (!token) {
+        wx.showToast({
+          title: '请先登录',
+          icon: 'none'
+        })
+        this.navigateTo('/pages/login/index')
+        return
+      }
+
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      })
+
+      // 邀请任务需要在被邀请人完成注册或首次购买后才能调用完成接口
+      // 这里只显示分享菜单，实际的邀请任务完成会在其他地方触发
+      wx.showToast({
+        title: '请将小程序分享给好友完成邀请',
+        icon: 'none'
+      })
+    } catch (error) {
+      console.error('[邀请功能失败]', error)
+      // 即使出错，仍然显示分享菜单
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      })
+    }
   },
 
   // 点击积分卡片 - 跳转到积分兑换tab页面
@@ -429,5 +522,16 @@ Page({
     wx.makePhoneCall({
       phoneNumber: '400-123-4567'
     })
+  },
+
+  // 安全处理用户信息 - 确保字段完整性
+  safeUserInfo(userInfo: any): PageUserInfo {
+    return {
+      avatarUrl: userInfo?.avatarUrl || '/assets/icons/default-avatar.png',
+      nickName: userInfo?.nickName || '微信用户',
+      level: userInfo?.level || '初级会员',
+      id: userInfo?.id || '10086',
+      pointsBalance: parseInt(String(userInfo?.pointsBalance)) || 0
+    }
   }
 }) 

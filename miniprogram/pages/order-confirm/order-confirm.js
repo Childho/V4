@@ -1,6 +1,13 @@
 // 订单确认页面逻辑
 // 导入订单相关API
-import { createOrder, calculateOrderAmount, checkStock } from '../../api/orderApi.js';
+import { 
+  getOrderPreview, 
+  checkStock, 
+  calculateOrderAmount, 
+  getUserDefaultAddress, 
+  getAvailableCoupons, 
+  createOrder 
+} from '../../api/orderApi.js';
 
 Page({
   /**
@@ -26,7 +33,10 @@ Page({
     finalAmount: 0, // 最终实付金额
     
     // 提交状态
-    submitting: false
+    submitting: false,
+    
+    // 页面加载状态
+    loading: true
   },
 
   /**
@@ -35,70 +45,99 @@ Page({
   onLoad(options) {
     console.log('订单确认页面加载，参数：', options);
     
-    // 获取传递的商品数据
-    this.getOrderData(options);
-    
-    // 获取用户收货地址
-    this.getUserAddress();
-    
-    // 获取可用优惠券数量
-    this.getAvailableCoupons();
+    // 获取传递的商品数据并加载订单预览
+    this.initOrderData(options);
   },
 
   /**
-   * 获取订单数据 - 从购物车或商品详情页传递过来
+   * 初始化订单数据 - 调用订单预览接口
    */
-  getOrderData(options) {
+  async initOrderData(options) {
     try {
-      // 从页面参数获取商品数据，实际应用中可能从全局数据或接口获取
+      // 设置加载状态
+      this.setData({
+        loading: true
+      });
+
+      // 准备商品数据
       let goods = [];
       
-      // 如果有传递商品数据（JSON字符串格式）
       if (options.goods) {
+        // 从页面参数获取商品数据
         goods = JSON.parse(decodeURIComponent(options.goods));
+        // 转换为API需要的格式 { id, quantity }
+        goods = goods.map(item => ({
+          id: item.id,
+          quantity: item.quantity
+        }));
       } else {
-        // 模拟商品数据，实际开发中应该从购物车获取
+        // 如果没有传递商品数据，使用模拟数据（开发阶段）
         goods = [
-          {
-            id: 1,
-            name: 'NCS#75速【多啦A梦黄】【3只装】',
-            image: 'https://via.placeholder.com/120x120/ff9800/fff?text=商品',
-            spec: '黄色 3只装',
-            price: 15.00,
-            quantity: 1
-          },
-          {
-            id: 2,
-            name: '示例商品2',
-            image: 'https://via.placeholder.com/120x120/2196f3/fff?text=商品2',
-            spec: '蓝色 1只装',
-            price: 25.00,
-            quantity: 2
-          }
+          { id: 1, quantity: 1 },
+          { id: 2, quantity: 2 }
         ];
       }
-      
-      // 计算商品总金额
-      const totalAmount = goods.reduce((sum, item) => {
-        return sum + (item.price * item.quantity);
-      }, 0);
-      
-      // 更新页面数据
-      this.setData({
-        orderGoods: goods,
-        totalGoodsAmount: totalAmount.toFixed(2),
-        finalAmount: totalAmount.toFixed(2)
+
+      console.log('调用订单预览接口，商品数据：', goods);
+
+      // 调用订单预览接口
+      const previewResult = await getOrderPreview({
+        goods: goods,
+        source: options.source || 'cart'
       });
-      
-      console.log('订单商品数据设置完成：', goods);
-      
-      // 检查商品库存
-      this.checkGoodsStock(goods);
+
+      if (previewResult.success && previewResult.body) {
+        const { orderGoods, addressInfo, availableCoupons, totalGoodsAmount, shippingFee, finalAmount } = previewResult.body;
+        
+        // 更新页面数据
+        this.setData({
+          orderGoods: orderGoods || [],
+          addressInfo: addressInfo || null,
+          availableCoupons: availableCoupons || 0,
+          totalGoodsAmount: totalGoodsAmount || 0,
+          shippingFee: shippingFee || 0,
+          finalAmount: finalAmount || 0,
+          loading: false
+        });
+
+        console.log('订单预览数据加载成功：', previewResult.body);
+
+        // 检查商品库存
+        if (orderGoods && orderGoods.length > 0) {
+          this.checkGoodsStock(orderGoods);
+        }
+      } else {
+        throw new Error(previewResult.message || '获取订单预览失败');
+      }
     } catch (error) {
-      console.error('获取订单数据失败：', error);
-      wx.showToast({
-        title: '获取订单数据失败',
-        icon: 'none'
+      console.error('初始化订单数据失败：', error);
+      
+      // 设置默认数据，避免页面报错
+      this.setData({
+        orderGoods: [],
+        addressInfo: null,
+        availableCoupons: 0,
+        totalGoodsAmount: 0,
+        shippingFee: 0,
+        finalAmount: 0,
+        loading: false
+      });
+
+      wx.showModal({
+        title: '加载失败',
+        content: error.message || '获取订单数据失败，请重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '返回',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试加载
+            this.initOrderData(options);
+          } else {
+            // 返回上一页
+            wx.navigateBack();
+          }
+        }
       });
     }
   },
@@ -106,28 +145,53 @@ Page({
   /**
    * 检查商品库存
    */
-  async checkGoodsStock(goods) {
+  async checkGoodsStock(orderGoods) {
     try {
-      const stockData = goods.map(item => ({
+      // 转换为库存检查接口需要的格式 { goodsId, quantity }
+      const stockData = orderGoods.map(item => ({
         goodsId: item.id,
         quantity: item.quantity
       }));
       
+      console.log('检查商品库存，数据：', stockData);
+
       // 调用库存检查接口
-      // const stockResult = await checkStock(stockData);
-      // console.log('库存检查结果：', stockResult);
+      const stockResult = await checkStock(stockData);
       
-      // 模拟库存检查（实际项目中使用上面的接口调用）
-      console.log('模拟库存检查通过');
+      if (stockResult.success && stockResult.body) {
+        const { allInStock, details } = stockResult.body;
+        
+        if (!allInStock) {
+          console.warn('部分商品库存不足：', details);
+          
+          // 找出库存不足的商品
+          const outOfStockItems = details.filter(item => !item.inStock);
+          const itemNames = outOfStockItems.map(item => {
+            const goods = orderGoods.find(g => g.id === item.id);
+            return goods ? goods.name : `商品${item.id}`;
+          }).join('、');
+
+          wx.showModal({
+            title: '库存不足',
+            content: `${itemNames} 库存不足，请重新选择商品`,
+            showCancel: false,
+            success: () => {
+              wx.navigateBack();
+            }
+          });
+          return;
+        }
+        
+        console.log('库存检查通过');
+      } else {
+        throw new Error(stockResult.message || '库存检查失败');
+      }
     } catch (error) {
       console.error('库存检查失败：', error);
-      wx.showModal({
-        title: '提示',
-        content: '部分商品库存不足，请重新选择',
-        showCancel: false,
-        success: () => {
-          wx.navigateBack();
-        }
+      // 库存检查失败不阻断流程，只记录日志
+      wx.showToast({
+        title: '库存检查异常',
+        icon: 'none'
       });
     }
   },
@@ -135,40 +199,80 @@ Page({
   /**
    * 获取用户收货地址
    */
-  getUserAddress() {
+  async getUserAddress() {
     try {
-      // 从本地存储获取用户地址信息
-      const addressInfo = wx.getStorageSync('selectedAddress');
+      console.log('获取用户默认收货地址');
+
+      const addressResult = await getUserDefaultAddress();
       
-      if (addressInfo) {
+      if (addressResult.success && addressResult.body && addressResult.body.address) {
+        const addressInfo = addressResult.body.address;
+        
+        // 转换字段名以匹配页面使用的格式
+        const formattedAddress = {
+          id: addressInfo.addressId,
+          name: addressInfo.name,
+          phone: addressInfo.phone,
+          address: addressInfo.address
+        };
+        
         this.setData({
-          addressInfo: addressInfo
+          addressInfo: formattedAddress
         });
-        console.log('获取到用户地址：', addressInfo);
+        
+        console.log('获取到用户地址：', formattedAddress);
       } else {
         console.log('用户暂未设置收货地址');
+        this.setData({
+          addressInfo: null
+        });
       }
     } catch (error) {
       console.error('获取用户地址失败：', error);
+      // 获取地址失败不阻断流程，用户可以手动选择
+      this.setData({
+        addressInfo: null
+      });
     }
   },
 
   /**
    * 获取可用优惠券数量
    */
-  getAvailableCoupons() {
+  async getAvailableCoupons() {
     try {
-      // 实际开发中应该调用接口获取用户可用优惠券
-      // 这里模拟数据
-      const coupons = 3; // 假设有3张可用优惠券
+      const orderAmount = parseFloat(this.data.totalGoodsAmount);
+      const goodsIds = this.data.orderGoods.map(item => item.id);
       
-      this.setData({
-        availableCoupons: coupons
+      if (orderAmount <= 0 || goodsIds.length === 0) {
+        console.log('订单金额为0或无商品，跳过优惠券查询');
+        return;
+      }
+
+      console.log('获取可用优惠券数量，订单金额：', orderAmount, '商品ID：', goodsIds);
+
+      const couponResult = await getAvailableCoupons({
+        orderAmount: orderAmount,
+        goodsIds: goodsIds
       });
       
-      console.log('获取到可用优惠券数量：', coupons);
+      if (couponResult.success && couponResult.body) {
+        const { availableCount } = couponResult.body;
+        
+        this.setData({
+          availableCoupons: availableCount || 0
+        });
+        
+        console.log('获取到可用优惠券数量：', availableCount);
+      } else {
+        throw new Error(couponResult.message || '获取优惠券失败');
+      }
     } catch (error) {
       console.error('获取优惠券数据失败：', error);
+      // 设置默认值，不阻断流程
+      this.setData({
+        availableCoupons: 0
+      });
     }
   },
 
@@ -247,6 +351,7 @@ Page({
   async calculateOrderAmountFromServer() {
     try {
       if (!this.data.addressInfo) {
+        console.log('无收货地址，跳过服务端金额计算');
         return;
       }
       
@@ -260,19 +365,33 @@ Page({
         couponId: this.data.selectedCoupon ? this.data.selectedCoupon.id : null
       };
       
+      console.log('调用服务端金额计算，参数：', params);
+
       // 调用服务端计算接口
-      // const result = await calculateOrderAmount(params);
-      // console.log('服务端计算结果：', result);
+      const result = await calculateOrderAmount(params);
       
-      // 更新金额数据
-      // this.setData({
-      //   totalGoodsAmount: result.goodsAmount.toFixed(2),
-      //   shippingFee: result.shippingFee.toFixed(2),
-      //   finalAmount: result.finalAmount.toFixed(2)
-      // });
+      if (result.success && result.body && result.body.amounts) {
+        const { goodsAmount, shippingFee, finalAmount } = result.body.amounts;
+        
+        console.log('服务端计算结果：', result.body);
+        
+        // 更新金额数据
+        this.setData({
+          totalGoodsAmount: goodsAmount.toFixed(2),
+          shippingFee: shippingFee.toFixed(2),
+          finalAmount: finalAmount.toFixed(2)
+        });
+      } else {
+        throw new Error(result.message || '服务端金额计算失败');
+      }
       
     } catch (error) {
       console.error('服务端金额计算失败：', error);
+      // 计算失败时使用本地计算结果，不阻断流程
+      wx.showToast({
+        title: '金额计算异常',
+        icon: 'none'
+      });
     }
   },
 
@@ -305,50 +424,68 @@ Page({
     });
     
     try {
-      // 构建订单数据
+      // 构建订单数据，严格按照接口文档格式
       const orderData = {
         goods: this.data.orderGoods,
         address: this.data.addressInfo,
         coupon: this.data.selectedCoupon,
         remark: this.data.remark,
         amounts: {
-          goodsAmount: this.data.totalGoodsAmount,
-          shippingFee: this.data.shippingFee,
-          finalAmount: this.data.finalAmount
+          goodsAmount: parseFloat(this.data.totalGoodsAmount),
+          shippingFee: parseFloat(this.data.shippingFee),
+          finalAmount: parseFloat(this.data.finalAmount)
         }
       };
       
       console.log('提交的订单数据：', orderData);
       
       // 调用后端接口提交订单
-      // const result = await createOrder(orderData);
-      // console.log('订单创建成功：', result);
+      const result = await createOrder(orderData);
       
-      // 模拟接口调用延迟
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // 提交成功
-      wx.showToast({
-        title: '订单提交成功',
-        icon: 'success'
-      });
-      
-      // 清除购物车相关数据（如果是从购物车进入的）
-      wx.removeStorageSync('cartSelectedItems');
-      
-      // 跳转到支付页面或订单详情页
-      setTimeout(() => {
-        wx.redirectTo({
-          url: '/pages/payment/payment?orderId=mock123456'
+      if (result.success && result.body && result.body.order) {
+        const { orderId, orderNo } = result.body.order;
+        
+        console.log('订单创建成功：', result.body);
+        
+        // 提交成功
+        wx.showToast({
+          title: '订单提交成功',
+          icon: 'success'
         });
-      }, 1500);
+        
+        // 清除购物车相关数据（如果是从购物车进入的）
+        wx.removeStorageSync('cartSelectedItems');
+        
+        // 跳转到支付页面或订单详情页
+        setTimeout(() => {
+          wx.redirectTo({
+            url: `/pages/payment/payment?orderId=${orderId}&orderNo=${orderNo}`,
+            fail: () => {
+              // 如果支付页面不存在，跳转到订单列表
+              wx.redirectTo({
+                url: '/pages/order-list/index'
+              });
+            }
+          });
+        }, 1500);
+      } else {
+        throw new Error(result.message || '订单创建失败');
+      }
       
     } catch (error) {
       console.error('提交订单失败：', error);
       wx.showModal({
         title: '提交失败',
         content: error.message || '订单提交失败，请重试',
-        showCancel: false
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试提交
+            this.submitOrder();
+          }
+        }
       });
     } finally {
       // 重置提交状态
@@ -364,10 +501,34 @@ Page({
    */
   onShow() {
     // 检查是否有地址更新
-    this.getUserAddress();
+    this.checkAddressUpdate();
     
     // 检查是否有优惠券选择更新
     this.checkCouponUpdate();
+  },
+
+  /**
+   * 检查地址更新
+   */
+  checkAddressUpdate() {
+    try {
+      const selectedAddress = wx.getStorageSync('selectedAddress');
+      if (selectedAddress) {
+        this.setData({
+          addressInfo: selectedAddress
+        });
+        
+        // 地址更新后重新计算金额（可能影响运费）
+        this.calculateOrderAmountFromServer();
+        
+        // 清除临时存储
+        wx.removeStorageSync('selectedAddress');
+        
+        console.log('地址选择已更新：', selectedAddress);
+      }
+    } catch (error) {
+      console.error('检查地址更新失败：', error);
+    }
   },
 
   /**
@@ -383,6 +544,9 @@ Page({
         
         // 重新计算金额
         this.calculateFinalAmount();
+        
+        // 也可以调用服务端重新计算
+        this.calculateOrderAmountFromServer();
         
         // 清除临时存储
         wx.removeStorageSync('selectedCoupon');

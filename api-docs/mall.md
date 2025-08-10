@@ -1,5 +1,32 @@
 # 商城页面接口文档（已对齐index.js字段，含详细注释）
 
+**状态：✅ API集成已完成**
+
+## API集成说明
+
+商城页面(`/pages/mall/index.js`)已完成静态数据向真实API的转换，主要变更包括：
+
+1. **引入mallApi模块**：`const mallApi = require('../../api/mallApi');`
+2. **数据初始化**：所有静态数据改为空数组`[]`，通过API动态获取
+3. **错误处理**：每个API调用都包含错误处理和用户友好的错误提示
+4. **字段映射**：严格按照接口文档的字段名进行数据处理
+
+### 已集成的API接口：
+
+- ✅ 获取轮播图数据：`loadBannerList()` → `/api/mall/banners`
+- ✅ 获取秒杀商品：`loadSeckillProducts()` → `/api/mall/seckill`  
+- ✅ 获取商品分组：`loadProductGroups()` → `/api/mall/product-groups`
+- ✅ 获取购物车数量：`getCartCount()` → `/api/mall/cart/count`
+- ✅ 商品搜索：`quickSearchProducts()` → `/api/mall/search`
+
+### 错误处理策略：
+
+- **加载错误**：显示友好提示，设置空数据避免页面崩溃
+- **购物车错误**：使用本地存储作为备用，不影响主要功能
+- **搜索错误**：静默处理，不中断用户操作流程
+
+---
+
 ## 获取轮播图数据
 
 **接口名称：** 获取商城首页轮播图数据

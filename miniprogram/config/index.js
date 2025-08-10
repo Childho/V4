@@ -2,10 +2,10 @@
 const environments = {
   // 开发环境配置
   development: {
-    apiBaseUrl: 'http://localhost:5000',  // 开发环境API地址
-    timeout: 10000,                             // 请求超时时间(毫秒)
-    enableMock: false,                          // 是否启用Mock数据 - 修改为false以发起真实API请求
-    debug: true                                 // 是否开启调试模式
+    apiBaseUrl: 'http://127.0.0.1:5200',  // 开发环境API地址 - 使用真实API地址
+    timeout: 10000,                            // 请求超时时间(毫秒)
+    enableMock: true,                          // 是否启用Mock数据 - 临时启用测试API集成
+    debug: true                                // 是否开启调试模式
   },
   
   // 测试环境配置  
@@ -18,7 +18,7 @@ const environments = {
   
   // 生产环境配置
   production: {
-    apiBaseUrl: 'https://api.example.com',      // 正式环境API地址
+    apiBaseUrl: 'https://api2222.example.com',      // 正式环境API地址
     timeout: 6000,
     enableMock: false,
     debug: true  // 👈 临时开启生产环境日志，便于调试API对接

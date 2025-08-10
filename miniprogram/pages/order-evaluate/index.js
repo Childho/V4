@@ -1,5 +1,12 @@
 // 商品评价页面逻辑
-const { api } = require('../../api/utils/request');
+// 导入评价相关API
+import { 
+  getOrderDetail, 
+  uploadFile, 
+  getEvaluationTags, 
+  submitEvaluation, 
+  deleteMediaFile 
+} from '../../api/evaluationApi.js';
 
 Page({
   /**
@@ -23,6 +30,7 @@ Page({
     // 配置项
     maxTextLength: 500, // 最大文字长度
     maxMediaCount: 9, // 最大媒体文件数量
+    maxSelectCount: 5, // 最大标签选择数量
     
     // 星级评价文本
     ratingTexts: [
@@ -33,12 +41,13 @@ Page({
       '非常满意，超出期待'
     ],
     
-    // 可选标签（根据商品类型动态加载）
-    availableTags: [
-      '质量很好', '做工精细', '包装完整', '发货迅速',
-      '客服态度好', '性价比高', '样式好看', '尺寸合适',
-      '材质舒适', '颜色正', '功能齐全', '使用方便'
-    ]
+    // 可选标签（从API动态获取）
+    availableTags: [],
+    
+    // 页面状态
+    loading: true,
+    uploading: false,
+    submitting: false // 防止重复提交
   },
 
   /**
@@ -57,7 +66,17 @@ Page({
     // 获取订单ID
     const orderId = options.orderId;
     if (orderId) {
-      this.loadOrderInfo(orderId);
+      this.initPageData(orderId);
+    } else {
+      wx.showModal({
+        title: '参数错误',
+        content: '缺少订单ID',
+        showCancel: false,
+        success: () => {
+          wx.navigateBack();
+        }
+      });
+      return;
     }
     
     // 延时显示弹窗动画
@@ -70,11 +89,61 @@ Page({
   },
 
   /**
-   * 页面卸载时的处理
+   * 初始化页面数据
    */
-  onUnload() {
-    // 清理资源
-    this.setData({ show: false });
+  async initPageData(orderId) {
+    try {
+      // 设置加载状态
+      this.setData({
+        loading: true
+      });
+
+      // 并行加载订单信息和评价标签
+      const [orderResult, tagsResult] = await Promise.allSettled([
+        this.loadOrderInfo(orderId),
+        this.loadEvaluationTags()
+      ]);
+
+      // 处理订单信息加载结果
+      if (orderResult.status === 'rejected') {
+        throw new Error(orderResult.reason?.message || '加载订单信息失败');
+      }
+
+      // 处理标签加载结果（失败不影响主流程）
+      if (tagsResult.status === 'rejected') {
+        console.warn('[评价页面] 加载评价标签失败：', tagsResult.reason);
+        // 使用默认标签
+        this.setDefaultTags();
+      }
+
+      this.setData({
+        loading: false
+      });
+
+    } catch (error) {
+      console.error('[评价页面] 初始化页面数据失败：', error);
+      
+      this.setData({
+        loading: false
+      });
+
+      wx.showModal({
+        title: '加载失败',
+        content: error.message || '页面初始化失败，请重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '返回',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试加载
+            this.initPageData(orderId);
+          } else {
+            // 返回上一页
+            wx.navigateBack();
+          }
+        }
+      });
+    }
   },
 
   /**
@@ -84,54 +153,125 @@ Page({
     try {
       console.log('[评价页面] 加载订单信息，订单ID:', orderId);
       
-      // 模拟订单数据
-      const mockOrderInfo = {
-        id: orderId,
-        goods: [{
-          id: 1,
-          title: '李宁N72三代羽毛球拍全碳素超轻进攻型单拍',
-          image: 'https://img.alicdn.com/imgextra/i1/2200756107659/O1CN01YXz5Tl1H8QBqKJPYu_!!2200756107659.jpg',
-          spec: '颜色:炫酷黑 重量:4U',
-          price: 299.00
-        }]
-      };
+      // 调用API获取订单详情
+      const result = await getOrderDetail(orderId);
       
-      // 真实项目中调用接口获取订单详情
-      // const orderInfo = await api.get('/api/order/detail', { orderId });
-      
-      this.setData({
-        orderInfo: mockOrderInfo
-      });
-      
-      // 根据商品类型调整可用标签
-      this.adjustTagsByProduct(mockOrderInfo.goods[0]);
-      
+      if (result.success && result.body) {
+        const orderInfo = result.body;
+        
+        // 验证订单是否可以评价
+        if (!orderInfo.canEvaluate) {
+          throw new Error('该订单暂不支持评价');
+        }
+
+        // 检查评价截止时间
+        if (orderInfo.evaluateDeadline) {
+          const deadline = new Date(orderInfo.evaluateDeadline);
+          if (deadline < new Date()) {
+            throw new Error('评价时间已过期');
+          }
+        }
+
+        this.setData({
+          orderInfo: orderInfo
+        });
+        
+        console.log('[评价页面] 订单信息加载成功：', orderInfo);
+
+        // 根据商品类型调整可用标签
+        if (orderInfo.goods && orderInfo.goods.length > 0) {
+          this.adjustTagsByProduct(orderInfo.goods[0]);
+        }
+
+        return orderInfo;
+      } else {
+        throw new Error(result.message || '获取订单信息失败');
+      }
     } catch (error) {
       console.error('[评价页面] 加载订单信息失败:', error);
-      wx.showToast({
-        title: '加载订单信息失败',
-        icon: 'none'
-      });
+      throw error;
     }
+  },
+
+  /**
+   * 加载评价标签
+   */
+  async loadEvaluationTags() {
+    try {
+      console.log('[评价页面] 加载评价标签');
+
+      const result = await getEvaluationTags();
+      
+      if (result.success && result.body) {
+        const { tags, maxSelectCount } = result.body;
+        
+        this.setData({
+          availableTags: tags || [],
+          maxSelectCount: maxSelectCount || 5
+        });
+        
+        console.log('[评价页面] 评价标签加载成功：', tags);
+        return result.body;
+      } else {
+        throw new Error(result.message || '获取评价标签失败');
+      }
+    } catch (error) {
+      console.error('[评价页面] 加载评价标签失败:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * 设置默认标签（API加载失败时使用）
+   */
+  setDefaultTags() {
+    const defaultTags = [
+      '质量很好', '做工精细', '包装完整', '发货迅速',
+      '客服态度好', '性价比高', '样式好看', '尺寸合适',
+      '材质舒适', '颜色正', '功能齐全', '使用方便'
+    ];
+    
+    this.setData({
+      availableTags: defaultTags,
+      maxSelectCount: 5
+    });
+    
+    console.log('[评价页面] 使用默认标签');
   },
 
   /**
    * 根据商品调整可用标签
    */
   adjustTagsByProduct(goods) {
+    // 如果已经从API获取了标签，优先使用API标签
+    if (this.data.availableTags.length > 0) {
+      return;
+    }
+
     // 根据商品类型提供不同的标签选项
-    let tags = [...this.data.availableTags];
+    let tags = [
+      '质量很好', '做工精细', '包装完整', '发货迅速',
+      '客服态度好', '性价比高', '样式好看', '尺寸合适'
+    ];
     
-    // 根据商品标题判断类型并添加特定标签
-    if (goods.title.includes('羽毛球拍')) {
+    // 根据商品标题或分类判断类型并添加特定标签
+    const title = goods.title || '';
+    const category = goods.category || '';
+    
+    if (title.includes('羽毛球拍') || category === 'badminton') {
       tags = ['手感很好', '重量合适', '弹性不错', '外观漂亮', ...tags];
-    } else if (goods.title.includes('球鞋')) {
+    } else if (title.includes('球鞋') || category === 'shoes') {
       tags = ['舒适度好', '防滑效果好', '透气性好', '脚感不错', ...tags];
-    } else if (goods.title.includes('球服')) {
+    } else if (title.includes('球服') || category === 'clothing') {
       tags = ['面料舒适', '吸汗性好', '版型合身', '颜色好看', ...tags];
     }
     
-    this.setData({ availableTags: tags });
+    this.setData({ 
+      availableTags: tags,
+      maxSelectCount: 5
+    });
+    
+    console.log('[评价页面] 根据商品类型调整标签：', tags);
   },
 
   /**
@@ -163,11 +303,11 @@ Page({
     if (index > -1) {
       selectedTags.splice(index, 1); // 取消选择
     } else {
-      if (selectedTags.length < 5) { // 最多选择5个标签
+      if (selectedTags.length < this.data.maxSelectCount) { // 最多选择5个标签
         selectedTags.push(tag); // 添加选择
       } else {
         wx.showToast({
-          title: '最多选择5个标签',
+          title: `最多选择${this.data.maxSelectCount}个标签`,
           icon: 'none'
         });
         return;
@@ -264,33 +404,44 @@ Page({
   async uploadMedia(filePaths, type, thumbPath) {
     console.log('[评价页面] 开始上传媒体文件:', filePaths, type);
     
+    // 设置上传状态
+    this.setData({
+      uploading: true
+    });
+    
     wx.showLoading({
       title: '上传中...'
     });
     
     try {
-      const uploadPromises = filePaths.map(async (filePath, index) => {
-        // 模拟上传过程
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      const uploadPromises = filePaths.map(async (filePath) => {
+        // 调用API上传文件
+        const uploadResult = await uploadFile(filePath, type);
         
-        // 实际项目中调用上传接口
-        // const uploadResult = await this.uploadFile(filePath);
-        
-        // 模拟返回结果
-        const mockResult = {
-          type: type,
-          url: filePath, // 实际应该是服务器返回的URL
-          thumb: type === 'video' ? thumbPath : filePath,
-          size: '1.2MB' // 模拟文件大小
-        };
-        
-        return mockResult;
+        if (uploadResult.success && uploadResult.body && uploadResult.body.length > 0) {
+          const fileInfo = uploadResult.body[0];
+          
+          // 返回标准化的文件信息
+          return {
+            type: fileInfo.type,
+            url: fileInfo.url,
+            thumb: fileInfo.thumb || fileInfo.url,
+            size: fileInfo.size,
+            fileName: fileInfo.fileName,
+            uploadTime: fileInfo.uploadTime
+          };
+        } else {
+          throw new Error(uploadResult.message || '文件上传失败');
+        }
       });
       
       const results = await Promise.all(uploadPromises);
       
       const uploadedMedia = [...this.data.uploadedMedia, ...results];
-      this.setData({ uploadedMedia });
+      this.setData({ 
+        uploadedMedia: uploadedMedia,
+        uploading: false
+      });
       
       wx.hideLoading();
       wx.showToast({
@@ -298,12 +449,28 @@ Page({
         icon: 'success'
       });
       
+      console.log('[评价页面] 文件上传成功：', results);
+      
     } catch (error) {
+      this.setData({
+        uploading: false
+      });
+      
       wx.hideLoading();
       console.error('[评价页面] 上传失败:', error);
-      wx.showToast({
-        title: '上传失败，请重试',
-        icon: 'none'
+      
+      wx.showModal({
+        title: '上传失败',
+        content: error.message || '文件上传失败，请重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试上传
+            this.uploadMedia(filePaths, type, thumbPath);
+          }
+        }
       });
     }
   },
@@ -335,17 +502,42 @@ Page({
   /**
    * 删除媒体文件
    */
-  deleteMedia(e) {
+  async deleteMedia(e) {
     const index = e.currentTarget.dataset.index;
-    const uploadedMedia = [...this.data.uploadedMedia];
-    uploadedMedia.splice(index, 1);
+    const media = this.data.uploadedMedia[index];
     
-    this.setData({ uploadedMedia });
-    
-    wx.showToast({
-      title: '删除成功',
-      icon: 'success'
-    });
+    try {
+      // 调用API删除服务器文件
+      const deleteResult = await deleteMediaFile(media.url);
+      
+      if (deleteResult.success) {
+        const uploadedMedia = [...this.data.uploadedMedia];
+        uploadedMedia.splice(index, 1);
+        
+        this.setData({ uploadedMedia });
+        
+        wx.showToast({
+          title: '删除成功',
+          icon: 'success'
+        });
+        
+        console.log('[评价页面] 文件删除成功：', media.url);
+      } else {
+        throw new Error(deleteResult.message || '删除失败');
+      }
+    } catch (error) {
+      console.error('[评价页面] 删除文件失败:', error);
+      
+      // 即使删除服务器文件失败，也从本地列表中移除
+      const uploadedMedia = [...this.data.uploadedMedia];
+      uploadedMedia.splice(index, 1);
+      this.setData({ uploadedMedia });
+      
+      wx.showToast({
+        title: '删除成功',
+        icon: 'success'
+      });
+    }
   },
 
   /**
@@ -377,12 +569,23 @@ Page({
       });
       return;
     }
+
+    // 防止重复提交
+    if (this.data.submitting) {
+      return;
+    }
     
     wx.showLoading({
       title: '提交中...'
     });
     
+    // 设置提交状态
+    this.setData({
+      submitting: true
+    });
+    
     try {
+      // 构建评价数据，严格按照接口文档格式
       const evaluationData = {
         orderId: this.data.orderInfo.id,
         goodsId: this.data.orderInfo.goods[0].id,
@@ -391,35 +594,61 @@ Page({
         tags: this.data.selectedTags,
         mediaUrls: this.data.uploadedMedia.map(item => item.url),
         isAnonymous: this.data.isAnonymous,
-        isPublic: this.data.isPublic,
-        createTime: new Date().toISOString()
+        isPublic: this.data.isPublic
       };
       
       console.log('[评价页面] 提交评价数据:', evaluationData);
       
-      // 实际项目中调用提交评价接口
-      // await api.post('/api/evaluation/submit', evaluationData);
+      // 调用API提交评价
+      const result = await submitEvaluation(evaluationData);
       
-      // 模拟提交延时
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      wx.hideLoading();
-      wx.showToast({
-        title: '评价提交成功',
-        icon: 'success'
-      });
-      
-      // 延时关闭页面
-      setTimeout(() => {
-        this.closePage();
-      }, 1500);
+      if (result.success && result.body) {
+        console.log('[评价页面] 评价提交成功：', result.body);
+        
+        wx.hideLoading();
+        
+        // 显示成功信息，包括奖励积分
+        const rewardPoints = result.body.rewardPoints || 0;
+        const successMsg = rewardPoints > 0 ? 
+          `评价提交成功，获得${rewardPoints}积分` : 
+          '评价提交成功';
+        
+        wx.showToast({
+          title: successMsg,
+          icon: 'success',
+          duration: 2000
+        });
+        
+        // 延时关闭页面
+        setTimeout(() => {
+          this.closePage();
+        }, 2000);
+      } else {
+        throw new Error(result.message || '评价提交失败');
+      }
       
     } catch (error) {
-      wx.hideLoading();
       console.error('[评价页面] 提交评价失败:', error);
-      wx.showToast({
-        title: '提交失败，请重试',
-        icon: 'none'
+      
+      wx.hideLoading();
+      
+      wx.showModal({
+        title: '提交失败',
+        content: error.message || '评价提交失败，请重试',
+        showCancel: true,
+        confirmText: '重试',
+        cancelText: '确定',
+        success: (res) => {
+          if (res.confirm) {
+            // 重试提交
+            this.submitEvaluation();
+          }
+        }
+      });
+    } finally {
+      // 重置提交状态
+      this.setData({
+        submitting: false
       });
     }
   },
@@ -435,5 +664,13 @@ Page({
     setTimeout(() => {
       wx.navigateBack();
     }, 300);
+  },
+
+  /**
+   * 页面卸载时的处理
+   */
+  onUnload() {
+    // 清理资源
+    this.setData({ show: false });
   }
 }); 
